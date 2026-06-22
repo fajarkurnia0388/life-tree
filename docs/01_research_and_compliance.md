@@ -1,7 +1,7 @@
 # Research Paper & Compliance Guideline: LifeTree Personal OS
 
 **Abstrak**
-Dokumen ini merupakan landasan empiris, psikologis, dan hukum dari pengembangan LifeTree. Berbeda dengan aplikasi produktivitas konvensional yang mengandalkan *loss aversion* (penghindaran kerugian) melalui sistem *streak*, LifeTree dirancang berbasis filosofi *Anti-Guilt* (Anti Rasa Bersalah). Makalah ini membedah integrasi *Habit Formation Theory*, *Cognitive Load Theory*, serta batas-batas hukum terkait privasi dan keselamatan pengguna di bawah payung yurisdiksi Indonesia (PP TUNAS) dan standar internasional (COPPA).
+Dokumen ini merupakan landasan empiris, psikologis, dan hukum dari pengembangan LifeTree. Berbeda dengan aplikasi produktivitas konvensional yang mengandalkan *loss aversion* (penghindaran kerugian) melalui sistem *streak*, LifeTree dirancang berbasis filosofi *Anti-Guilt* (Anti Rasa Bersalah). Makalah ini membedah integrasi *Habit Formation Theory*, *Cognitive Load Theory*, serta batas-batas hukum terkait privasi dan keselamatan pengguna di bawah payung yurisdiksi Indonesia (PP TUNAS + Permenkomdigi 9/2026) dan standar internasional (COPPA).
 
 ---
 
@@ -9,40 +9,89 @@ Dokumen ini merupakan landasan empiris, psikologis, dan hukum dari pengembangan 
 
 ### 1.1 Dekonstruksi Mitos 21 Hari & Validasi 66 Hari
 Industri pengembangan diri sering berpatokan pada mitos bahwa kebiasaan terbentuk dalam 21 hari. LifeTree menolak kerangka ini dan menggunakan temuan **Lally et al. (2010)** dari University College London (UCL).
-- **Temuan Kunci:** Waktu median menuju otomatisasi perilaku adalah 66 hari, dengan rentang variasi yang sangat ekstrem (18 hingga 254 hari). 
+- **Temuan Kunci:** Waktu median menuju otomatisasi perilaku adalah 66 hari, dengan rentang variasi yang sangat ekstrem (18 hingga 254 hari).
 - **Landasan *Anti-Guilt*:** Studi yang sama membuktikan bahwa hilangnya kesempatan satu atau dua hari berturut-turut (*missed opportunity*) tidak merusak proses otomatisasi secara material. Oleh karena itu, arsitektur LifeTree mengizinkan *Recovery Mode* (Mode Istirahat) tanpa menghukum (*punish*) pengguna dengan me-reset visual pohon mereka.
+- **Implikasi Teknis:** Ambang batas *Automaticity Decay* ditetapkan pada **60 hari kumulatif (recency-weighted)** — ini adalah **hipotesis produk** yang terinspirasi oleh literatur pembentukan kebiasaan (median 66 hari, dikurangi buffer 6 hari). Angka ini bukan klaim ilmiah baku, melainkan parameter produk yang akan divalidasi melalui pengujian iteratif dan A/B testing. Formula decay (`floor(cumulative_done / 20)`) adalah **model produk yang disederhanakan**, bukan representasi langsung dari penelitian Lally et al. — Lally hanya mengatakan median 66 hari dan rentang 18–254 hari, tanpa fungsi decay linear. Parameter akan dikalibrasi melalui A/B testing pada 500+ pengguna beta.
 
 ### 1.2 Manajemen Beban Kognitif (*Cognitive Load Theory*)
-LifeTree menggunakan konsep *Canopy Load* yang diilhami dari *Cognitive Load Theory* (Sweller, 1988). Otak manusia (terutama *Working Memory*) memiliki kapasitas terbatas.
-- **Rasionalisasi:** Kegagalan dalam mempertahankan kebiasaan seringkali bukan masalah motivasi, melainkan *overload* (kelebihan beban). 
-- **Implementasi Produk:** Sistem mengkalibrasi beban kebiasaan melalui dua matriks: *Initiation Friction* (Kesulitan Memulai) dan *Energy Cost* (Biaya Tenaga). Beban ini otomatis turun seiring berjalannya waktu (*Automaticity Decay*) untuk membebaskan ruang memori kognitif.
+LifeTree menggunakan konsep *Canopy Load* yang **konstruk produk** — bukan backing ilmiah yang kuat. Otak manusia (terutama *Working Memory*) memiliki kapasitas terbatas.
+- **Rasionalisasi:** Kegagalan dalam mempertahankan kebiasaan seringkali bukan masalah motivasi, melainkan *overload* (kelebihan beban).
+- **Implementasi Produk:** Sistem mengkalibrasi beban kebiasaan melalui dua matriks: *Initiation Friction* (Kesulitan Memulai) dan *Energy Cost* (Biaya Tenaga). Beban ini otomatis turun seiring berjalannya waktu (*Automaticity Decay*) untuk membebaskan ruang memori kognitif. **Recency-weighted:** 90 hari terakhir bobot penuh, 91–180 hari bobot 0.5, >180 hari tidak dihitung — automaticity bukan "saldo permanen".
 
 ### 1.3 Model Intervensi Perilaku (Fogg Behavior Model)
 Berdasarkan rumusan B=MAP (*Behavior = Motivation + Ability + Prompt*) dari Dr. BJ Fogg, LifeTree tidak menangani kegagalan dengan "Peringatan Hukuman".
-- Jika *Ability* (Kemampuan) bermasalah ("Kurang Waktu/Energi"), sistem menurunkan durasi aksi (membuatnya menjadi *Minimum Viable Action*).
-- Jika *Prompt* (Pemicu) bermasalah ("Lupa"), sistem menyarankan *Routine Stacking* (Menumpuk kebiasaan baru ke kebiasaan lama yang sudah ada).
+
+| Hambatan | Diagnosis | Intervensi LifeTree |
+|----------|-----------|-------------------|
+| *Ability* bermasalah ("Kurang Waktu/Energi") | Daya tampung kognitif terlampaui | Turunkan durasi aksi → *Minimum Viable Action* (versi 2 menit) |
+| *Prompt* bermasalah ("Lupa") | Kebiasaan belum menempel pada rutinitas | Sarankan *Routine Stacking* (Habit Loop: Cue–Routine–Reward, Duhigg 2012; Implementation Intention: Gollwitzer 1999) |
+| *Motivation* bermasalah ("Tidak mau") | Domain hidup tidak sejalan dengan nilai | Arahkan ke *Life Compass* & *Decision Journal* — motivasi intrinsik via Self-Determination Theory |
+
+### 1.4 Referensi Akademis
+- Lally, P., van Jaarsveld, C. H. M., Potts, H. W. W., & Wardle, J. (2010). *How are habits formed: Modelling habit formation in the real world.* European Journal of Social Psychology, 40(6), 998–1009.
+- Sweller, J. (1988). *Cognitive load during problem solving: Effects on learning.* Cognitive Science, 12(2), 257–285.
+- Fogg, B. J. (2009). *A behavior model for persuasive design.* Proceedings of the 4th International Conference on Persuasive Technology.
+- World Health Organization. (1998). *WHO-5 Well-Being Index.* WHO Regional Office for Europe.
+- Deci, E. L., & Ryan, R. M. (2000). *The "What" and "Why" of Goal Pursuits: Human Needs and the Self-Determination of Behavior.* Psychological Inquiry, 11(4), 227–268.
+- Duhigg, C. (2012). *The Power of Habit: Why We Do What We Do in Life and Business.* Random House.
+- Gollwitzer, P. M. (1999). *Implementation Intentions: Strong Effects of Simple Plans.* American Psychologist, 54(7), 493–503.
 
 ---
 
 ## Bagian 2: Kepatuhan Hukum & Etika Digital (Compliance)
 
-### 2.1 Perlindungan Data Pribadi (UU PDP & PP 17/2025 - PP TUNAS)
+### 2.1 Perlindungan Data Pribadi (UU PDP & PP 17/2025 - PP TUNAS + Permenkomdigi 9/2026)
 Jurnal emosi, kebiasaan, dan kondisi finansial adalah **Data Bersifat Spesifik/Sensitif**. LifeTree mematuhi peraturan hukum perlindungan data Indonesia:
-- **Hak Atas Privasi Anak (Usia 13-17):** Sesuai PP 17/2025, remaja adalah anak di bawah 18 tahun. Namun, secara psikologis, remaja membutuhkan ruang aman. LifeTree memberikan *Parental Dashboard* (Dasbor Orang Tua) yang **hanya** menampilkan tren agregat (grafik sentimen), dan secara sistem **membatasi orang tua untuk membaca teks asli isi jurnal anak**. Ini adalah jembatan antara perlindungan wali dan *Trust* (Kepercayaan) remaja.
-- **Usia < 13 Tahun (COPPA & PP TUNAS):** Anak usia 3-12 tahun diwajibkan menggunakan mode *Offline-First* mutlak tanpa sinkronisasi *cloud*. Data tidak pernah keluar dari perangkat. Selain itu, **Autentikasi Biometrik (FaceID) dilarang mutlak** untuk menghindari pengumpulan data wajah anak.
-- **Age Graduation (Kelulusan Usia):** Tepat pada hari ulang tahun ke-18, sistem mencabut (*revoke*) akses orang tua dari akun secara otomatis.
+
+#### Hak Atas Privasi Anak (Usia 13-17)
+Sesuai **PP No. 17 Tahun 2025** tentang Penyelenggaraan Sistem Elektronik dalam Pelindungan Anak (berlaku sejak 27 Maret 2025) dan **Permenkomdigi No. 9 Tahun 2026** sebagai aturan pelaksanaannya, remaja adalah anak di bawah 18 tahun. PP ini mengacu pada praktik *Age-Appropriate Design Code*. Permenkomdigi 9/2026 menetapkan bahwa anak di bawah 16 tahun tidak dapat memiliki akun pada platform digital berisiko tinggi, dan membagi batasan usia menjadi 5 kelompok: 3–5, 6–9, 10–12, 13–15, dan 16–<18 tahun. LifeTree saat ini menggunakan pembagian sederhana (< 13, 13–17) untuk Fase 1; jika masuk Fase 2, compliance rule akan mengikuti granularitas ini.
+
+*Parental Dashboard* **hanya** menampilkan tren agregat dan *Conversation Starters*, dan secara sistem **membatasi orang tua untuk membaca teks asli isi jurnal anak**.
+
+#### Usia < 13 Tahun (COPPA & PP TUNAS)
+Anak usia 3-12 tahun diwajibkan menggunakan mode *Offline-First* mutlak tanpa sinkronisasi *cloud*.
+
+**Kebijakan Biometrik:** LifeTree secara kebijakan internal memilih **tidak menggunakan autentikasi biometrik (FaceID)** untuk akun anak sebagai tindakan perlindungan berlebih (*precautionary principle*). COPPA memperlakukan biometrik sebagai *personal information* yang menuntut consent/protection/retention controls — bukan larangan absolut.
+
+**Catatan:** App-level biometric lock untuk pengguna dewasa (saat kembali dari background > 5 menit) berbeda dari larangan biometrik untuk akun anak — ini adalah keamanan akses, bukan autentikasi akun anak.
+
+#### Age Graduation (Kelulusan Usia)
+Tepat pada hari ulang tahun ke-18, sistem mencabut (*revoke*) akses orang tua dari akun secara otomatis. Membutuhkan `date_of_birth` atau `verified_age_token` (bukan hanya `age_band`). Diimplementasikan di Fase 2.
 
 ### 2.2 Passive Crisis Safety Protocol (Protokol Keselamatan)
-Memproses deteksi bunuh diri atau depresi menggunakan AI (*Machine Learning Keyword Matching*) membawa risiko hukum (*Liability*) yang sangat masif, termasuk potensi tuntutan atas kelalaian jika terjadi *False Negative* (sistem gagal mendeteksi sandi kiasan dari pengguna yang sedang depresi).
-- **Rasionalisasi Etis:** LifeTree BUKAN *Medical Device* (Alat Medis) atau layanan terapi. 
-- **Implementasi Kepatuhan:** Sistem menggunakan **Passive Safety Protocol**. Menyediakan "Safety Card" (Kartu Keselamatan) yang selalu tampil (*Always-On*) di antarmuka Lapis 0. Tombol ini terhubung ke *Hotline* Darurat (misal: 119 di Indonesia) tanpa melibatkan algoritma deteksi membaca isi jurnal.
+LifeTree BUKAN *Medical Device* atau layanan terapi.
+
+**Multi-Layer Medical Disclaimer:**
+1. **Onboarding** (wajib scroll + checkbox): *"LifeTree adalah alat refleksi diri, BUKAN pengganti konseling profesional. Jika Anda mengalami krisis, hubungi 119."*
+2. **Crisis Modal pertama** (sebelum muncul): *"Kami mendeteksi pola yang mungkin memerlukan perhatian. LifeTree tidak dapat mendiagnosis kondisi kesehatan mental."*
+3. **Safety Card** (selalu terlihat): *"Darurat? Hubungi profesional."*
+
+`crisis_disclaimer_acknowledged` di UserProfile mencatat pemahaman pengguna. Dicatat di ConsentLog `consent_type = 'Crisis_Disclaimer'`.
+
+**Implementasi Kepatuhan:** Sistem menggunakan **Passive Safety Protocol**:
+- **Safety Card (Always-On):** Tombol permanen. **Nomor primer di-hardcode** (119 PSC, 119 ext 8 SEJIWA).
+- **`Called_Hotline` → `Tapped_Hotline_CTA`:** Tracking berhenti di interaksi UI — apakah panggilan berhasil tidak bisa diketahui aplikasi.
+- **Anti-Banner-Blindness:** Visual berrotasi periodik.
+- **Out-of-App Wellness Check:** > 5 hari tidak buka → 1 push empatik (maks. 1x/14 hari, tracked via `last_wellness_push_at`). Deep-link ke Safety Card.
+- **Crisis Escalation (> 14 hari):** Modal eskalasi langsung ke hotline, maks. 1x/14 hari.
 
 ### 2.3 Hak Atas Data & Enkripsi (*Right to Erasure*)
-- **E2EE (End-to-End Encryption):** Semua data awan (*cloud sync*) dienkripsi.
-- **Batasan Akses Perusahaan:** Pihak LifeTree *zero-knowledge* (tidak memiliki kunci untuk melihat data pengguna).
-- Jika pengguna kehilangan/lupa kunci sandi, mereka **kehilangan data selamanya**. Kebijakan ini dijabarkan secara tegas di *Term of Service* (ToS) saat pendaftaran. Sistem menyediakan Ekspor Lokal (JSON/CSV) agar pengguna dapat melakukan pencadangan mandiri yang bisa dibaca oleh manusia.
+- **E2EE:** Semua data cloud dienkripsi. Server hanya menyimpan *Encrypted Ciphertext BLOB*.
+- **Zero-Knowledge untuk Konten:** Server tidak memiliki kunci dekripsi konten. Metadata sistem (device token, last sync, subscription, timestamps) tetap terlihat.
+- **Client-Side Computation:** Seluruh logika komputasi berjalan di perangkat pengguna. Optimasi: incremental query 90 hari terakhir, background computation, cumulative_done_count counter.
+- **Multi-Device Bootstrap:** (A) QR code transfer jika perangkat lama ada, (B) Recovery Contact / seed phrase jika hilang, (C) OS Keychain auto-sync sebagai default.
+- **Autentikasi Akun:** Email + password hash (bcrypt) — terpisah dari enkripsi konten.
+- **Key Rotation:** Re-encryption bertahap di client-side. Key version di metadata.
+- **Sync Conflict Resolution:** Berlapis — HabitLog: LWW aman (append-only). JournalEntry/mutable: Conflict Copy jika timestamp < 5 menit, pengguna memilih. Habit metadata: LWW + warning.
+- **Recovery Contact:** **Shamir 2-of-3** — tiga fragment, dua diperlukan: (1) OS Keychain, (2) Recovery Contact, (3) Secondary backup. Toleransi kehilangan 1 fragment.
+- **Soft Delete (Tombstone):** `deleted_at` di setiap tabel — sinkronisasi penghapusan antar perangkat.
+- **CrisisPromptLog: Local-Only** — tidak di-sync ke cloud, retention 90 hari, tidak diekspor JSON/CSV.
+- **App-Level Biometric Lock:** Autentikasi saat kembali dari background > 5 menit.
+- **Ekspor Lokal (JSON/CSV):** Pencadangan mandiri di tier gratis.
+- **Right to Erasure:** Data lokal: factory wipe terenkripsi. Data cloud: secure deletion dengan konfirmasi ganda.
+- **Cross-Border Data:** Penilaian kesetaraan perlindungan data sesuai UU PDP. Dokumentasi: data flow map, vendor register, lawful basis, retention schedule, DSAR workflow, breach response plan.
 
 ---
 
 ## Kesimpulan Akademis
-LifeTree menjembatani kesejangan antara aplikasi produktivitas yang menghukum, dengan aplikasi kesehatan mental yang terlalu klinis. Dengan berlandaskan sains perilaku dan kepatuhan hukum yang ekstrem (terutama pelindungan anak), LifeTree berdiri sebagai paradigma baru dalam *Ethical Technology Design* (Desain Teknologi Beretika).
+LifeTree menjembatani kesejajaran antara aplikasi produktivitas yang menghukum, dengan aplikasi kesehatan mental yang terlalu klinis. Dengan berlandaskan sains perilaku dan kepatuhan hukum yang ketat (terutama pelindungan anak), LifeTree berdiri sebagai paradigma baru dalam *Ethical Technology Design* (Desain Teknologi Beretika).
