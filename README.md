@@ -1,6 +1,6 @@
 # 🌳 LifeTree — Personal OS untuk Orientasi Diri
 
-> **Versi 12.0 (Production-Ready Spec)** — Arsitektur Sistem, Algoritma, Kepatuhan Hukum, Strategi Bisnis & Spesifikasi Teknis
+> **Versi 13.0 (Production-Ready Spec)** — Arsitektur Sistem, Algoritma, Kepatuhan Hukum, Strategi Bisnis & Spesifikasi Teknis
 
 **Repositori ini adalah dokumen gabungan konseptual aplikasi LifeTree.** Semua spesifikasi — dari landasan ilmiah, compliance hukum, strategi bisnis, product requirements, hingga technical specs — disatukan di sini sebagai *single source of truth*.
 
@@ -62,7 +62,7 @@ Berdasarkan rumusan **B = MAP** (*Behavior = Motivation + Ability + Prompt*) dar
 
 | Hambatan | Diagnosis | Intervensi LifeTree |
 |----------|-----------|-------------------|
-| *Ability* bermasalah ("Kurang Waktu/Energi") | Daya tampung terlampaui | Turunkan durasi aksi → *Minimum Viable Action* (versi `mva_duration_min` menit — field di Habit table yang menentukan durasi minimum versi habit saat Friction Intervention menawarkan "versi ringan") |
+| *Ability* bermasalah ("Kurang Waktu/Energi") | Daya tampung terlampaui | Turunkan durasi aksi → *Minimum Viable Action* (versi `mva_duration_min` menit — satu kali, lalu kembali ke durasi normal. Jika user pilih "Kurang Waktu" di Friction Intervention, sistem menawarkan mengurangi target durasi besok ke `mva_duration_min` menit; durasi aktual dicatat di `duration_actual_min` HabitLog) |
 | *Prompt* bermasalah ("Lupa") | Kebiasaan belum menempel pada rutinitas | Sarankan *Routine Stacking* (tumpuk ke kebiasaan lama yang sudah otomatis) |
 | *Motivation* bermasalah ("Tidak mau") | Domain hidup tidak sejalan dengan nilai | Arahkan ke *Life Compass* & *Decision Journal* |
 
@@ -312,9 +312,9 @@ Mencegah *drop-off* dengan membagi proses secara bertahap:
 
 | Tahap | Waktu | Aksi | Beban Kognitif |
 |-------|-------|------|---------------|
-| **Welcome Screen** | Hari 1 | Jelaskan filosofi Anti-Guilt. Tanya 2 dari 6 pertanyaan *Life Audit* (*Quick Start* — pilih 2 pertanyaan Tubuh). | Rendah |
+| **Welcome Screen** | Hari 1 | Jelaskan filosofi Anti-Guilt. Tanya 1 pertanyaan *Life Audit* (*Quick Start* — pertanyaan #1 Tubuh). | Rendah |
 | **Setup Keamanan** | Hari 3 | Minta pengguna mengamankan jurnal. **Default:** kunci disimpan di secure enclave/keystore (1-ketuk). **Opsi lanjutan:** 12-Word Recovery Key + Recovery Contact untuk pengguna yang mengaktifkan *advanced security*. | Sedang → Rendah |
-| **Full Audit** | Akhir Minggu 1 | Sisa 4 pertanyaan audit diselesaikan saat *Weekly Pulse* pertama. | Sedang |
+| **Full Audit** | Akhir Minggu 1 | Sisa 5 pertanyaan audit diselesaikan saat *Weekly Pulse* pertama. | Sedang |
 
 > **Perubahan UX Keamanan (v9.0):** Seed phrase BIP-39 di hari ke-3 terasa seperti onboarding *crypto wallet*, bukan *wellness app*. Sekarang: **default = OS Keychain auto-save** (1 ketuk). Seed phrase hanya untuk pengguna yang mengaktifkan *Cloud Sync* atau *advanced recovery*. Ini mengurangi friksi onboarding secara signifikan.
 
@@ -346,7 +346,9 @@ Jika habit berstatus *Missed* melebihi threshold berdasarkan **frekuensi habit**
    └→ Teks: "Hari ini sepertinya berat. Apa hambatan terbesarmu kemarin?"
 
 2. Pilihan:
-   ├→ (A) Kurang Waktu  → Tombol: "Mau potong durasi jadi 5 menit saja besok?"
+   ├→ (A) Kurang Waktu  → Tombol: "Mau potong durasi jadi `mva_duration_min` menit saja besok?"
+   │                       Jika diterima: target durasi habit besok = `mva_duration_min` menit (one-time override).
+   │                       Durasi aktual dicatat di `duration_actual_min`. Setelah 1 kali, override otomatis terhapus.
    ├→ (B) Kelelahan     → Tombol: "Mau aktifkan Recovery Mode?"
    └→ (C) Lupa          → Saran: "Mau tumpuk habit ini ke rutinitas yang sudah ada?"
 
@@ -871,7 +873,7 @@ Fallback nomor darurat:
 | `user_id` | UUID | FK → UserProfile | |
 | `device_name` | VARCHAR(100) | NULLABLE | "iPhone 15", "Pixel 8" |
 | `platform` | VARCHAR(10) | NOT NULL | 'ios', 'android' |
-| `public_key` | TEXT | NOT NULL | Kunci publik perangkat untuk E2EE handshake. **Format:** Base64-encoded raw bytes. **Algoritma:** X25519 (ECDH) untuk key exchange — dipilih karena ukuran kunci kecil (32 byte) dan performa tinggi di mobile. **Enkripsi konten:** AES-256-GCM dengan 12-byte nonce. **Key derivation:** BIP-39 seed → HKDF-SHA256 → X25519 keypair + AES-256 key. **Proses QR key transfer:** QR berisi *ephemeral X25519 public key* + *encrypted AES-256 master key* (dienkripsi dengan shared secret dari ECDH antara perangkat). Masa berlaku QR: 5 menit. |
+| `public_key` | TEXT | NOT NULL | Kunci publik perangkat untuk E2EE handshake. **Format:** Base64-encoded X25519 public key (32 byte raw, encoded ~44 karakter). **Algoritma:** X25519 (ECDH) untuk key exchange — dipilih karena ukuran kunci kecil (32 byte) dan performa tinggi di mobile. **Enkripsi konten:** AES-256-GCM dengan 12-byte nonce. **Key derivation:** BIP-39 seed → HKDF-SHA256 → X25519 keypair + AES-256 key. **Proses QR key transfer:** QR berisi *ephemeral X25519 public key* + *encrypted AES-256 master key* (dienkripsi dengan shared secret dari ECDH antara perangkat). Masa berlaku QR: 5 menit. |
 | `key_version` | INTEGER | DEFAULT 1 | Versi kunci enkripsi — increment saat key rotation |
 | `last_sync_at` | TIMESTAMP | NULLABLE | Terakhir sinkronisasi |
 | `registered_at` | TIMESTAMP | NOT NULL | |
@@ -941,7 +943,7 @@ Index krusial untuk performa query yang sering dijalankan:
 ### MVP Lean — "MVP Core" (Core Launch, 16–20 minggu)
 
 | Komponen | Fitur | Prioritas |
-|----------|-------|-----------|\n| Onboarding | Life Audit (domain Tubuh only, 2 pertanyaan) | P0 |
+|----------|-------|-----------|\n| Onboarding | Life Audit (domain Tubuh, 1 pertanyaan) | P0 |
 | Onboarding | OS Keychain setup (1-ketuk, default) | P0 |
 | Dashboard | Central Command Dashboard (3 elemen: Pohon + Action + Journal) | P0 |
 | Lapis 0 | Journal Lite (emoji + keyword) | P0 |
@@ -1063,6 +1065,18 @@ Notion memiliki ekosistem template gratis/berbayar untuk *life management* ("Lif
 ---
 
 ## Changelog Revisi
+
+### Versi 13.0 — Penutupan Inkonsistensi & Spesifikasi Eksplisit
+
+| # | Perubahan | Sumber Evaluasi | Alasan |
+|---|-----------|----------------|--------|
+| 91 | **MVP Quick Start: "2 pertanyaan" → "1 pertanyaan"** — Onboarding table menyebut "2 dari 6 pertanyaan Life Audit (Quick Start — pilih 2 pertanyaan Tubuh)" tapi §5.3A Life Audit mengatakan "Hanya tanyakan #1 (Tubuh)". Domain Tubuh hanya punya 1 pertanyaan di tabel — "2 pertanyaan Tubuh" tidak masuk akal. | Evaluasi v12.0 (🔴) | Inkonsistensi internal. Developer tidak tahu apakah harus menanyakan 1 atau 2 pertanyaan di MVP Quick Start. Jika domain Tubuh hanya punya 1 pertanyaan (#1), maka Quick Start = 1 pertanyaan. |
+| 92 | **`mva_duration_min` integrasi eksplisit ke Friction Intervention** — Field ada di Habit table (DEFAULT 2) tapi Friction Intervention hardcoded "5 menit" alih-alih mereferensikan field. Sekarang: opsi "Kurang Waktu" menawarkan durasi `mva_duration_min` menit sebagai *one-time override* untuk hari berikutnya; setelah 1 kali, override otomatis terhapus. Durasi aktual dicatat di `duration_actual_min`. | Evaluasi v12.0 (🟡) | Field orphaned = developer tidak tahu kapan nilainya digunakan. Hardcoded "5 menit" mengabaikan per-habit customization. |
+| 93 | **Public key format precision** — "Base64-encoded raw bytes" → "Base64-encoded X25519 public key (32 byte raw, encoded ~44 karakter)" | Evaluasi v12.0 (🟡) | "Raw bytes" ambigu — berapa byte? X25519 = 32 byte, tapi tanpa spesifikasi developer bisa salah asumsi (misal: 64 karakter hex). |
+| 94 | **Fix docs/04 Database Index Specification table** — Sel tabel kosong di dokumen teknis (README §7.5 benar tapi docs/04 rusak). Diisi ulang dengan data yang sama. | Evaluasi v12.0 + audit internal (🟡) | Dokumen teknis yang tidak bisa dibaca = tidak berguna untuk developer. |
+| 95 | **Tambah Daylio ke docs/00 competitive table + fix column alignment docs/02** — Daylio ada di README dan docs/02 tapi hilang dari blueprint; docs/02 Daylio row memiliki kolom tergeser (Kategori masuk ke kolom Streak). | Evaluasi v12.0 + audit internal (🟡) | Kompetitor paling relevan (mood + habit, SEA) tidak muncul di semua dokumen; formatting rusak menyesatkan. |
+| 96 | **Fix docs/01 §1.2 title** — "Manajemen Beban Kognitif (*Cognitive Load Theory*)" → "Canopy Load — Konstruk Produk (Bukan Klaim Ilmiah)" | Audit internal (🟢) | Judul masih menyebut CLT padahal konten sudah diposisikan sebagai konstruk produk — inkonsistensi antara README dan docs. |
+| 97 | **Fix docs/01 abstrak** — "integrasi *Habit Formation Theory*, *Cognitive Load Theory*" → "integrasi *Habit Formation Theory*, *Canopy Load (Konstruk Produk)*" | Audit internal (🟢) | Abstrak masih menyebut CLT sebagai integrasi, bertentangan dengan reframing v12.0 yang menyatakan Canopy Load bukan backing ilmiah. |
 
 ### Versi 12.0 — Perbaikan Fondasi Ilmiah, Kriptografi & Operasional
 

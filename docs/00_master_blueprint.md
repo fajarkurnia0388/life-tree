@@ -1,5 +1,5 @@
 # Whitepaper: Sistem Orientasi Diri "LifeTree" (Grow)
-**Versi 12.0 (Production-Ready Spec) – Arsitektur Sistem, Algoritma & Panduan UX**
+**Versi 13.0 (Production-Ready Spec) – Arsitektur Sistem, Algoritma & Panduan UX**
 
 ## 1. Pendahuluan & Filosofi (Anti-Guilt)
 LifeTree adalah **Personal OS** untuk orientasi hidup. Dibangun di atas 3 pilar teori:
@@ -69,6 +69,7 @@ Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal, Friction Intervention, 
   - *3x/Minggu:* 2x Missed dalam 7 hari (dari 3 jadwal)
   - *Weekly:* 2x Missed berturut-turut
   - *Custom:* `(missed / scheduled_per_period) > 0.5`
+- **Opsi "Kurang Waktu":** Saat user pilih "Kurang Waktu", sistem menawarkan one-time override durasi ke `mva_duration_min` menit untuk hari berikutnya. Durasi aktual dicatat di `duration_actual_min` HabitLog. Override otomatis terhapus setelah 1 kali.
 
 ### Lapis 1: Batang (Canopy Load & Goal Hierarchy)
 - **Canopy Load:**
@@ -147,7 +148,7 @@ String UI file terpisah, format locale-aware, Anti-Guit dilokalize oleh native s
 **Asumsi Tim:** 3–5 developer (16–20 minggu). 1–2 developer: 24–30 minggu realistis.
 
 ### MVP Core (Core Launch)
-- Onboarding Life Audit (domain Tubuh only), OS Keychain setup (1-ketuk), Dashboard 3 elemen (Pohon + Action + Journal), Journal Lite, Friction Intervention (dengan Recovery Mode duration selector), Safety Card (hardcoded), Canopy Load + Automaticity Decay (recency-weighted), SQLCipher, Local Backup, Export, Accessibility, Tier Gratis.
+- Onboarding Life Audit (domain Tubuh, 1 pertanyaan), OS Keychain setup (1-ketuk), Dashboard 3 elemen (Pohon + Action + Journal), Journal Lite, Friction Intervention (dengan Recovery Mode duration selector + `mva_duration_min` one-time override), Safety Card (hardcoded), Canopy Load + Automaticity Decay (recency-weighted), SQLCipher, Local Backup, Export, Accessibility, Tier Gratis.
 
 ### Iterasi 1 (Bulan 3–4 setelah core stabil)
 - Seed Phrase opsional, Recovery Contact (Shamir 2-of-3), Radar Keseimbangan, Deep Reflection, Anti-Banner-Blindness, Weekly Pulse + WHO-5, Out-of-App Wellness Check, LifeTree Plus & Student & Annual, Life Compass, Goal Hierarchy, Tree Vitality Blooming.
@@ -168,6 +169,7 @@ Semua fitur untuk Anak/Remaja dan Dasbor Orang tua ditunda ke Fase 2.
 | **Day One** | ❌ | Netral | ✅✅ | ❌ | ❌ | ✅ | ❌ | Rp 44K/bln |
 | **Reflectly** | ❌ | Netral | ✅ | ❌ | ❌ | ❌ | ❌ | Rp 75K/bln |
 | **Finch** | ✅ | Sebagian | ✅ | ✅ | ❌ | ❌ | ❌ | Rp 50K/bln |
+| **Daylio** | ❌ | Sebagian | ✅ (mood) | ✅ | ❌ | ❌ | ❌ | Gratis + Premium ~Rp 50K/bln |
 | **Notion Life OS** | ❌ | Netral | ❌ | ✅ | Sebagian | ❌ | ❌ | Gratis + template Rp 50-200K |
 
 **Differentiator Utama:**

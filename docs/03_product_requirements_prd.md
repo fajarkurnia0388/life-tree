@@ -48,7 +48,7 @@ Saat pengguna membuka aplikasi, layar "Home" menampilkan **3 elemen** di MVP Lea
 
 | Tahap | Waktu | Aksi | Beban Kognitif |
 |-------|-------|------|---------------|
-| **Welcome Screen** | Hari 1 | Jelaskan filosofi Anti-Guilt. Tanya 2 pertanyaan *Life Audit* (domain Tubuh). | Rendah |
+| **Welcome Screen** | Hari 1 | Jelaskan filosofi Anti-Guilt. Tanya 1 pertanyaan *Life Audit* (pertanyaan #1 Tubuh). | Rendah |
 | **Setup Keamanan** | Hari 3 | **Default:** OS Keychain auto-save (1-ketuk). **Opsi lanjutan:** 12-Word Recovery Key + Recovery Contact (Shamir 2-of-3). | Rendah → Sedang |
 | **Full Audit** | Akhir Minggu 1 | Sisa pertanyaan audit diselesaikan saat *Weekly Pulse* pertama. | Sedang |
 | **Medical Disclaimer** | Hari 1 | Scroll + checkbox: *"LifeTree adalah alat refleksi diri, BUKAN pengganti konseling profesional."* | Rendah |
@@ -68,7 +68,9 @@ Trigger intervensi **bervariasi berdasarkan frekuensi habit**:
    └→ Teks: "Hari ini sepertinya berat. Apa hambatan terbesarmu kemarin?"
 
 2. Pilihan:
-   ├→ (A) Kurang Waktu  → "Mau potong durasi jadi 5 menit saja besok?"
+   ├→ (A) Kurang Waktu  → "Mau potong durasi jadi `mva_duration_min` menit saja besok?"
+   │                       Jika diterima: target durasi besok = `mva_duration_min` menit (one-time override).
+   │                       Durasi aktual dicatat di `duration_actual_min`. Override otomatis terhapus setelah 1 kali.
    ├→ (B) Kelelahan     → "Mau aktifkan Recovery Mode?"
    └→ (C) Lupa          → "Mau tumpuk habit ini ke rutinitas yang sudah ada?"
 
@@ -150,7 +152,7 @@ Trigger intervensi **bervariasi berdasarkan frekuensi habit**:
 
 | Komponen | Fitur | Prioritas |
 |----------|-------|-----------|
-| Onboarding | Life Audit (domain Tubuh, 2 pertanyaan) | P0 |
+| Onboarding | Life Audit (domain Tubuh, 1 pertanyaan) | P0 |
 | Onboarding | OS Keychain setup (1-ketuk, default) | P0 |
 | Onboarding | Medical Disclaimer (scroll + checkbox) | P0 |
 | Dashboard | Central Command Dashboard (3 elemen: Pohon + Action + Journal) | P0 |

@@ -128,7 +128,7 @@
 | `total_load_score` | INTEGER | GENERATED | `initiation_friction + energy_cost`. **SQLite ≥ 3.31.0** — gunakan `sqlite3_flutter_libs` |
 | `impact_score` | INTEGER | CHECK(1-5), DEFAULT 3 | **UX:** Guided prompt saat membuat habit: *"Seberapa penting habit ini? (1 = tambahan, 5 = sangat penting)"* |
 | `cumulative_done_count` | INTEGER | DEFAULT 0 | **Denormalisasi counter** — di-increment setiap HabitLog Done. Menghindari full table scan. Recency adjustment dihitung saat evaluasi decay. |
-| `mva_duration_min` | INTEGER | DEFAULT 2 | |
+| `mva_duration_min` | INTEGER | DEFAULT 2 | Durasi Minimum Viable Action (menit). Digunakan saat Friction Intervention opsi "Kurang Waktu" dipilih: sistem menawarkan one-time override durasi ke `mva_duration_min` menit untuk hari berikutnya. Durasi aktual dicatat di `duration_actual_min` HabitLog. Override otomatis terhapus setelah 1 kali. |
 | `stacked_to_habit_id` | UUID | FK → Habit, NULLABLE | **Validasi circular reference di application layer: DFS traversal max depth 5 level — jika habit target ada di chain, tolak. Batasan: maks 5 level stacking.** |
 | `deleted_at` | TIMESTAMP | NULLABLE | Tombstone |
 | `created_at` | TIMESTAMP | NOT NULL | |
@@ -228,7 +228,7 @@
 | `user_id` | UUID | FK → UserProfile | |
 | `device_name` | VARCHAR(100) | NULLABLE | |
 | `platform` | VARCHAR(10) | NOT NULL | 'ios', 'android' |
-| `public_key` | TEXT | NOT NULL | Kunci publik perangkat untuk E2EE handshake. **Format:** Base64-encoded raw bytes. **Algoritma:** X25519 (ECDH) untuk key exchange. **Enkripsi konten:** AES-256-GCM (12-byte nonce). **Key derivation:** BIP-39 seed → HKDF-SHA256 → X25519 keypair + AES-256 key. **QR transfer:** QR berisi ephemeral X25519 public key + encrypted AES-256 master key (via ECDH shared secret). Masa berlaku QR: 5 menit. |
+| `public_key` | TEXT | NOT NULL | Kunci publik perangkat untuk E2EE handshake. **Format:** Base64-encoded X25519 public key (32 byte raw, encoded ~44 karakter). **Algoritma:** X25519 (ECDH) untuk key exchange. **Enkripsi konten:** AES-256-GCM (12-byte nonce). **Key derivation:** BIP-39 seed → HKDF-SHA256 → X25519 keypair + AES-256 key. **QR transfer:** QR berisi ephemeral X25519 public key + encrypted AES-256 master key (via ECDH shared secret). Masa berlaku QR: 5 menit. |
 | `key_version` | INTEGER | DEFAULT 1 | Increment saat key rotation |
 | `last_sync_at` | TIMESTAMP | NULLABLE | |
 | `registered_at` | TIMESTAMP | NOT NULL | |
@@ -279,15 +279,15 @@ GoalHierarchy 1───∞ GoalHierarchy (parent_goal_id, tree structure)
 
 | Tabel | Index | Tujuan |
 |-------|-------|--------|
-|  |  | cumulative_done recency-weighted query |
-|  |  | Friction Intervention: Missed terbaru |
-|  |  | Crisis Detection: mood_score ≤ 2 |
-|  |  | Action of the Day: habit aktif per domain |
-|  |  | Domain score TTL |
-|  |  | Frequency cap crisis modal |
-|  |  | Status consent terkini |
+| `HabitLog` | `(habit_id, date, status)` | Query `cumulative_done` recency-weighted: filter Done dalam 90/180 hari terakhir |
+| `HabitLog` | `(habit_id, date DESC)` | Query Missed terbaru untuk Friction Intervention threshold |
+| `JournalEntry` | `(user_id, date, mood_score)` | Crisis Detection: scan mood_score ≤ 2 dalam 3–14 hari terakhir |
+| `Habit` | `(user_id, status, domain_tag)` | Action of the Day: query habit aktif per domain |
+| `WeeklyPulse` | `(user_id, domain_tag, week_start_date DESC)` | Domain score TTL: cek kebaruan skor per domain |
+| `CrisisPromptLog` | `(user_id, prompted_at DESC)` | Frequency cap: cek kapan terakhir crisis modal ditampilkan |
+| `ConsentLog` | `(user_id, consent_type)` | Cek status consent terkini per tipe |
 
->  otomatis membuat index composite, tapi tidak mencakup  — index tambahan diperlukan.
+> **Catatan:** `UNIQUE(habit_id, date)` di HabitLog otomatis membuat index composite — tapi tidak mencakup `status`, sehingga index tambahan diperlukan untuk query yang memfilter status.
 ## 5. Algoritma Mesin & Logic Flow
 
 ### A. Algoritma "Action of the Day"

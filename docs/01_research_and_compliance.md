@@ -1,7 +1,7 @@
 # Research Paper & Compliance Guideline: LifeTree Personal OS
 
 **Abstrak**
-Dokumen ini merupakan landasan empiris, psikologis, dan hukum dari pengembangan LifeTree. Berbeda dengan aplikasi produktivitas konvensional yang mengandalkan *loss aversion* (penghindaran kerugian) melalui sistem *streak*, LifeTree dirancang berbasis filosofi *Anti-Guilt* (Anti Rasa Bersalah). Makalah ini membedah integrasi *Habit Formation Theory*, *Cognitive Load Theory*, serta batas-batas hukum terkait privasi dan keselamatan pengguna di bawah payung yurisdiksi Indonesia (PP TUNAS + Permenkomdigi 9/2026) dan standar internasional (COPPA).
+Dokumen ini merupakan landasan empiris, psikologis, dan hukum dari pengembangan LifeTree. Berbeda dengan aplikasi produktivitas konvensional yang mengandalkan *loss aversion* (penghindaran kerugian) melalui sistem *streak*, LifeTree dirarsitekturi berbasis filosofi *Anti-Guilt* (Anti Rasa Bersalah). Makalah ini membedah integrasi *Habit Formation Theory*, *Canopy Load (Konstruk Produk)*, serta batas-batas hukum terkait privasi dan keselamatan pengguna di bawah payung yurisdiksi Indonesia (PP TUNAS + Permenkomdigi 9/2026) dan standar internasional (COPPA).
 
 ---
 
@@ -13,7 +13,7 @@ Industri pengembangan diri sering berpatokan pada mitos bahwa kebiasaan terbentu
 - **Landasan *Anti-Guilt*:** Studi yang sama membuktikan bahwa hilangnya kesempatan satu atau dua hari berturut-turut (*missed opportunity*) tidak merusak proses otomatisasi secara material. Oleh karena itu, arsitektur LifeTree mengizinkan *Recovery Mode* (Mode Istirahat) tanpa menghukum (*punish*) pengguna dengan me-reset visual pohon mereka.
 - **Implikasi Teknis:** Ambang batas *Automaticity Decay* ditetapkan pada **60 hari kumulatif (recency-weighted)** — ini adalah **hipotesis produk** yang terinspirasi oleh literatur pembentukan kebiasaan (median 66 hari, dikurangi buffer 6 hari). Angka ini bukan klaim ilmiah baku, melainkan parameter produk yang akan divalidasi melalui pengujian iteratif dan A/B testing. Formula decay (`floor(cumulative_done / 20)`) adalah **model produk yang disederhanakan**, bukan representasi langsung dari penelitian Lally et al. — Lally hanya mengatakan median 66 hari dan rentang 18–254 hari, tanpa fungsi decay linear. Parameter akan dikalibrasi melalui A/B testing pada 500+ pengguna beta.
 
-### 1.2 Manajemen Beban Kognitif (*Cognitive Load Theory*)
+### 1.2 Canopy Load — Konstruk Produk (Bukan Klaim Ilmiah)
 LifeTree menggunakan konsep *Canopy Load* yang **konstruk produk** — bukan backing ilmiah yang kuat. Otak manusia (terutama *Working Memory*) memiliki kapasitas terbatas.
 - **Rasionalisasi:** Kegagalan dalam mempertahankan kebiasaan seringkali bukan masalah motivasi, melainkan *overload* (kelebihan beban).
 - **Implementasi Produk:** Sistem mengkalibrasi beban kebiasaan melalui dua matriks: *Initiation Friction* (Kesulitan Memulai) dan *Energy Cost* (Biaya Tenaga). Beban ini otomatis turun seiring berjalannya waktu (*Automaticity Decay*) untuk membebaskan ruang memori kognitif. **Recency-weighted:** 90 hari terakhir bobot penuh, 91–180 hari bobot 0.5, >180 hari tidak dihitung — automaticity bukan "saldo permanen".
