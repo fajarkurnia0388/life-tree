@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../../core/theme/theme.dart';
@@ -79,7 +80,7 @@ class SafetyCardView extends ConsumerWidget {
                       CalmTheme.alertMutedRed,
                     ];
               
-              final index1 = DateTime.now().millisecond % accentColors.length;
+              final index1 = DateTime.now().day % accentColors.length;
               final index2 = (index1 + 2) % accentColors.length;
               final color1 = accentColors[index1];
               final color2 = accentColors[index2];
@@ -96,8 +97,13 @@ class SafetyCardView extends ConsumerWidget {
                     color: color1,
                     onTap: () async {
                       await _logHotlineTap(ref, 'SEJIWA');
-                      if (context.mounted) {
-                        _showCallMockDialog(context, 'Layanan SEJIWA (119 Ext 8)');
+                      final uri = Uri.parse('tel:119');
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(uri);
+                      } else {
+                        if (context.mounted) {
+                          _showCallMockDialog(context, 'Layanan SEJIWA (119 Ext 8)');
+                        }
                       }
                     },
                   ),
@@ -112,8 +118,13 @@ class SafetyCardView extends ConsumerWidget {
                     color: color2,
                     onTap: () async {
                       await _logHotlineTap(ref, 'PSC 119');
-                      if (context.mounted) {
-                        _showCallMockDialog(context, 'Pusat Medis Darurat PSC (119)');
+                      final uri = Uri.parse('tel:119');
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(uri);
+                      } else {
+                        if (context.mounted) {
+                          _showCallMockDialog(context, 'Pusat Medis Darurat PSC (119)');
+                        }
                       }
                     },
                   ),

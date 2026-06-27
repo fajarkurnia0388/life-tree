@@ -23,6 +23,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
 
   String _selectedMethod = 'MindDump';
   bool _addToHabits = false;
+  String _habitDomain = 'Tubuh';
 
   final List<Map<String, String>> _methods = [
     {'key': 'MindDump', 'name': 'Mind Dump', 'desc': 'Keluarkan semua beban pikiran tanpa diedit.'},
@@ -48,14 +49,14 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
 
     final actionText = _actionController.text.trim();
 
-    // If user checked "Add to Habits", insert a new habit in the Body domain
+    // If user checked "Add to Habits", insert a new habit in the selected domain
     if (_addToHabits && actionText.isNotEmpty) {
       createdHabitId = const Uuid().v4();
       await db.into(db.habits).insert(
             HabitsCompanion.insert(
               habitId: createdHabitId,
               userId: userId,
-              domainTag: const drift.Value('Tubuh'),
+              domainTag: drift.Value(_habitDomain),
               title: actionText,
               status: const drift.Value('Active'),
               frequency: const drift.Value('Daily'),
@@ -274,6 +275,34 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                   ),
                 ],
               ),
+
+              if (_addToHabits) ...[
+                const SizedBox(height: 12),
+                const Text('Domain Kebiasaan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: _habitDomain,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'Tubuh', child: Text('Tubuh (Body) 🏃')),
+                    DropdownMenuItem(value: 'Keuangan', child: Text('Keuangan (Finance) 💰')),
+                    DropdownMenuItem(value: 'Hubungan', child: Text('Hubungan (Relations) 🤝')),
+                    DropdownMenuItem(value: 'Emosi', child: Text('Emosi (Emotion) 🧠')),
+                    DropdownMenuItem(value: 'Karir', child: Text('Karir/Belajar (Career) 📚')),
+                    DropdownMenuItem(value: 'Rekreasi', child: Text('Rekreasi (Recreation) 🎮')),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() {
+                        _habitDomain = val;
+                      });
+                    }
+                  },
+                ),
+              ],
 
               const SizedBox(height: 32),
 

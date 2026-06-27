@@ -23,6 +23,47 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
   int _selectedMood = 3; // Default 3 (Biasa Saja)
   bool _showDeepReflection = false;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadExistingEntry();
+    });
+  }
+
+  Future<void> _loadExistingEntry() async {
+    final db = ref.read(dbProvider);
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+    
+    final profiles = await db.select(db.userProfiles).get();
+    if (profiles.isEmpty) return;
+    final userId = profiles.first.userId;
+
+    final existing = await (db.select(db.journalEntries)
+          ..where((tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart)))
+        .get();
+
+    if (existing.isNotEmpty && mounted) {
+      final entry = existing.first;
+      setState(() {
+        _selectedMood = entry.moodScore;
+        _keywordController.text = entry.keyword ?? '';
+        _showDeepReflection = entry.entryType == 'Deep';
+        if (entry.entryType == 'Deep' && entry.textContent != null) {
+          final parts = entry.textContent!.split('\n\nRespons: ');
+          if (parts.length == 2) {
+            _q1Controller.text = parts[0].replaceAll('Pikiran: ', '');
+            _q2Controller.text = parts[1];
+          } else {
+            _q1Controller.text = entry.textContent!;
+          }
+          _q3Controller.text = entry.gratitudeText ?? '';
+        }
+      });
+    }
+  }
+
   final List<Map<String, dynamic>> _moods = [
     {'score': 1, 'emoji': '😢', 'label': 'Sangat Buruk'},
     {'score': 2, 'emoji': '🙁', 'label': 'Buruk'},

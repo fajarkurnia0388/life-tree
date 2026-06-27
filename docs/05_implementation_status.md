@@ -10,8 +10,8 @@ Laporan ini menyajikan status pencapaian pengembangan aplikasi **LifeTree** (Per
 *   **Penyimpanan Data:** Offline-First (SQLite Local Database via Drift Generator)
 *   **Versi Skema Database Saat Ini:** `5` (Mendukung target goals, kustomisasi review period, dan kompas hidup)
 *   **Status Analisis & Tes:** 
-    *   `flutter analyze` $\to$ **Lolos 100%** (Bersih dari error visual/pemrograman)
-    *   `flutter test` $\to$ **Lolos 100%** (Smoke tests passed)
+*   `flutter analyze` $\to$ **Lolos 100%** (Bersih dari error visual/pemrograman)
+*   `flutter test` $\to$ **Lolos 100%** (Widget smoke test & Unit tests passed)
 
 ---
 
@@ -21,11 +21,11 @@ Berikut adalah status detil pemenuhan fitur berdasarkan pembagian lapis arsitekt
 
 ### 🌱 Lapis 0: Akar (Refleksi Adaptif & Diagnosis)
 *   **Onboarding & Life Audit:** **[SELESAI]** Kuesioner pemetaan domain awal pengguna, persetujuan T&C/Disclaimer, dan pencatatan Consent Log lokal.
-*   **Journal Lite:** **[SELESAI]** Pencatatan suasana hati harian (1-5 emoji) beserta 1 kata kunci pencarian. Memiliki detektor mood rendah berturut-turut (3 hari) yang memicu dialog bantuan.
+*   **Journal Lite:** **[SELESAI]** Pencatatan suasana hati harian (1-5 emoji) beserta 1 kata kunci pencarian. Memiliki detektor mood rendah berturut-turut (3 hari) yang memicu dialog bantuan. **Mendukung pre-filling data hari ini secara otomatis** jika form dibuka kembali.
 *   **Deep Reflection (Refleksi Mendalam):** **[SELESAI]** Sakelar ekspansi formulir di dalam halaman jurnal berisi 3 pertanyaan kualitatif dan **Gratitude Suggestion Chips** (Keluarga, Makanan Enak, Kesehatan, dll.) untuk pengisian instan.
-*   **Thinking Canvas Lite:** **[SELESAI]** Manajemen sesi corat-coret kertas (PMI, Mind Dump, Reverse Brainstorming) terintegrasi dengan **Pemandu Tur Interaktif 4 Langkah** dan AppBar Help Button.
-*   **Weekly Pulse (WHO-5 Check-In):** **[SELESAI]** Survei indeks kesejahteraan mental 5 pertanyaan WHO-5 yang otomatis aktif setiap hari Minggu (atau via tombol uji coba pengembang).
-*   **Safety Card (Papan Darurat):** **[SELESAI]** Hotline darurat kesehatan mental terintegrasi panggilan instan (SEJIWA & PSC 119) dengan **rotasi dinamis warna border aksen** untuk mencegah visual habituasi (*banner blindness*).
+*   **Thinking Canvas Lite:** **[SELESAI]** Manajemen sesi corat-coret kertas (PMI, Mind Dump, Reverse Brainstorming) terintegrasi dengan **Pemandu Tur Interaktif 4 Langkah** dan AppBar Help Button. **Mendukung pemilihan domain tag** saat menyimpan aksi kecil ke daftar kebiasaan.
+*   **Weekly Pulse (WHO-5 Check-In):** **[SELESAI]** Survei indeks kesejahteraan mental 5 pertanyaan WHO-5 yang otomatis aktif setiap hari Minggu (atau via tombol uji coba pengembang). **Mencegah duplikasi data** dengan mengupdate entri jika sudah diisi di minggu yang sama.
+*   **Safety Card (Papan Darurat):** **[SELESAI]** Hotline darurat kesehatan mental terintegrasi panggilan instan via **panggilan dialer asli telepon (url_launcher)** ke nomor 119 dengan **rotasi dinamis warna border aksen (harian/day-based)** untuk mencegah visual habituasi (*banner blindness*).
 
 ### 🪵 Lapis 1: Batang (Beban & Goal Hierarchy)
 *   **Canopy Load System:** **[SELESAI]** Kapasitas pembatasan beban harian (10 poin) dengan sistem peringatan halus (*soft warning*) jika kebiasaan yang dibuat berlebih.
@@ -35,7 +35,7 @@ Berikut adalah status detil pemenuhan fitur berdasarkan pembagian lapis arsitekt
 
 ### 🌿 Lapis 2: Cabang (6 Domain Kehidupan)
 *   **6 Domain Kehidupan Aktif:** **[SELESAI]** Form pembuatan kebiasaan mendukung pemilihan 6 bidang kehidupan (Tubuh, Keuangan, Hubungan, Emosi, Karir, Rekreasi).
-*   **Radar Chart Keseimbangan:** **[SELESAI]** Diagram radar kustom hexagon di dasbor utama yang merender vertex keseimbangan secara dinamis dan *real-time* berdasarkan kebiasaan harian yang terselesaikan.
+*   **Radar Chart Keseimbangan:** **[SELESAI]** Diagram radar kustom hexagon di dasbor utama yang merender keseimbangan secara dinamis berdasarkan formula **blended score (70% audit baseline + 30% rasio harian)** untuk menghindari fluktuasi visual yang terlalu ekstrem.
 
 ### 🍎 Lapis 3: Buah & Kompas (Advanced OS)
 *   **Life Compass (Nilai Inti):** **[SELESAI]** Manajemen 3 nilai inti pembimbing hidup (Core Values) terintegrasi dengan **Preset Chips Nilai Populer** (Kesehatan, Kebebasan, Disiplin, dll.) dan visualisasi kartu lencana di atas dasbor utama.

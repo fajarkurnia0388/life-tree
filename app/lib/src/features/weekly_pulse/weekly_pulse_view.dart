@@ -78,16 +78,29 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
       final mondayOffset = now.weekday - DateTime.monday;
       final weekStartDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: mondayOffset));
 
-      await db.into(db.weeklyPulses).insert(
-            WeeklyPulsesCompanion.insert(
-              pulseId: const Uuid().v4(),
-              userId: userId,
-              domainTag: 'WHO-5',
-              score: mappedScore,
+      final existing = await (db.select(db.weeklyPulses)
+            ..where((tbl) => tbl.userId.equals(userId) & tbl.weekStartDate.equals(weekStartDate)))
+          .get();
+
+      if (existing.isNotEmpty) {
+        await (db.update(db.weeklyPulses)
+              ..where((tbl) => tbl.pulseId.equals(existing.first.pulseId)))
+            .write(WeeklyPulsesCompanion(
+              score: drift.Value(mappedScore),
               reflectionText: drift.Value(jsonEncode(metadata)),
-              weekStartDate: weekStartDate,
-            ),
-          );
+            ));
+      } else {
+        await db.into(db.weeklyPulses).insert(
+              WeeklyPulsesCompanion.insert(
+                pulseId: const Uuid().v4(),
+                userId: userId,
+                domainTag: 'WHO-5',
+                score: mappedScore,
+                reflectionText: drift.Value(jsonEncode(metadata)),
+                weekStartDate: weekStartDate,
+              ),
+            );
+      }
 
       ref.invalidate(dashboardDataProvider);
 

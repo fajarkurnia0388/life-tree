@@ -14,39 +14,60 @@ import 'widgets/radar_chart_widget.dart';
 class DashboardView extends ConsumerWidget {
   const DashboardView({super.key});
 
-  // Toggles the completion of a habit
+  String _getDomainEmoji(String domain) {
+    switch (domain) {
+      case 'Tubuh': return '🏃';
+      case 'Keuangan': return '💰';
+      case 'Hubungan': return '🤝';
+      case 'Emosi': return '🧠';
+      case 'Karir': return '📚';
+      case 'Rekreasi': return '🎮';
+      default: return '🌱';
+    }
+  }
+
   Future<void> _toggleHabit(BuildContext context, WidgetRef ref, Habit habit, HabitLog? log) async {
     final db = ref.read(dbProvider);
     final now = DateTime.now();
     final todayStart = DateTime(now.year, now.month, now.day);
 
-    if (log != null && log.status == 'Done') {
-      // Uncheck habit: Delete the log, decrement count
-      await (db.delete(db.habitLogs)..where((tbl) => tbl.logId.equals(log.logId))).go();
-      
-      final newCount = (habit.lifetimeDoneCount - 1).clamp(0, 99999);
-      await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
-          .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
-    } else {
-      // Check habit: Insert Done log, increment count
-      final logId = const Uuid().v4();
-      await db.into(db.habitLogs).insert(
-            HabitLogsCompanion.insert(
-              logId: logId,
-              habitId: habit.habitId,
-              date: todayStart,
-              status: 'Done',
-              durationTargetMin: drift.Value(habit.mvaDurationMin),
-              durationActualMin: drift.Value(habit.mvaDurationMin),
-            ),
-          );
+    try {
+      if (log != null && log.status == 'Done') {
+        // Uncheck habit: Delete the log, decrement count
+        await (db.delete(db.habitLogs)..where((tbl) => tbl.logId.equals(log.logId))).go();
+        
+        final newCount = (habit.lifetimeDoneCount - 1).clamp(0, 99999);
+        await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
+            .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+      } else {
+        // Check habit: Insert Done log, increment count
+        final logId = const Uuid().v4();
+        await db.into(db.habitLogs).insert(
+              HabitLogsCompanion.insert(
+                logId: logId,
+                habitId: habit.habitId,
+                date: todayStart,
+                status: 'Done',
+                durationTargetMin: drift.Value(habit.mvaDurationMin),
+                durationActualMin: drift.Value(habit.mvaDurationMin),
+              ),
+            );
 
-      final newCount = habit.lifetimeDoneCount + 1;
-      await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
-          .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+        final newCount = habit.lifetimeDoneCount + 1;
+        await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
+            .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+      }
+      ref.invalidate(dashboardDataProvider);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal memperbarui status kebiasaan: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
-
-    ref.invalidate(dashboardDataProvider);
   }
 
   // Opens the Friction Intervention sheet when user taps "Tidak Sanggup"
@@ -445,8 +466,10 @@ class DashboardView extends ConsumerWidget {
       final domainHabits = data.habitsToday.where((h) => h.habit.domainTag == domain);
       final completedHabits = domainHabits.where((h) => h.log?.status == 'Done');
       if (domainHabits.isNotEmpty) {
-        final ratio = completedHabits.length / domainHabits.length;
-        scores[domain] = (ratio * 10.0).clamp(1.0, 10.0);
+        final baselineScore = scores[domain] ?? 5.0;
+        final dailyRatio = completedHabits.length / domainHabits.length;
+        final dailyScore = dailyRatio * 10.0;
+        scores[domain] = (baselineScore * 0.7 + dailyScore * 0.3).clamp(1.0, 10.0);
       }
     }
 
@@ -647,11 +670,11 @@ class DashboardView extends ConsumerWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                const Chip(
-                  avatar: Text('🏃'),
-                  label: Text('Tubuh'),
+                Chip(
+                  avatar: Text(_getDomainEmoji(habit.domainTag ?? 'Tubuh')),
+                  label: Text(habit.domainTag ?? 'Tubuh'),
                   backgroundColor: Colors.transparent,
-                  side: BorderSide(color: Colors.grey, width: 0.5),
+                  side: const BorderSide(color: Colors.grey, width: 0.5),
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -1289,6 +1312,7 @@ class DashboardView extends ConsumerWidget {
       await db.delete(db.consentLogs).go();
       await db.delete(db.reminderPreferences).go();
       await db.delete(db.wellnessPromptLogs).go();
+      await db.delete(db.decisionEntries).go();
     });
 
     ref.invalidate(onboardingCompletedProvider);

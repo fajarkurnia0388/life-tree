@@ -50,6 +50,23 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
       if (profiles.isEmpty) throw Exception('Profil tidak ditemukan');
       final userId = profiles.first.userId;
 
+      // Check if habit with same title already exists
+      final existing = await (db.select(db.habits)
+            ..where((tbl) => tbl.userId.equals(userId) & tbl.title.equals(t.title) & tbl.deletedAt.isNull()))
+          .get();
+
+      if (existing.isNotEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Anda sudah memiliki kebiasaan "${t.title}"!'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+
       // 2. Map to local Drift database model
       final habitId = const Uuid().v4();
       final now = DateTime.now();

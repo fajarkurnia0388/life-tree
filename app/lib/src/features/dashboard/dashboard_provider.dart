@@ -106,9 +106,6 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
     } catch (_) {}
   }
   
-  double bodyScore = (domainScores['Tubuh'] ?? 5).toDouble();
-  double domainDeficit = 10.0 - bodyScore;
-
   Habit? actionOfTheDay;
   double highestPriority = -1.0;
 
@@ -117,6 +114,11 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
 
   for (final hwl in uncompletedToday) {
     final habit = hwl.habit;
+    final domain = habit.domainTag ?? 'Tubuh';
+    final domainScoreVal = domainScores[domain] ?? 5;
+    final domainScore = (domainScoreVal is num) ? domainScoreVal.toDouble() : 5.0;
+    final domainDeficit = 10.0 - domainScore;
+
     final totalLoad = habit.initiationFriction + habit.energyCost;
     final score = (domainDeficit * habit.impactScore) / (totalLoad > 0 ? totalLoad : 1);
     

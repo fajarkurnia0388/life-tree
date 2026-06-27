@@ -131,6 +131,13 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kebiasaan Baru'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.storefront_outlined),
+            tooltip: 'Marketplace Kebiasaan',
+            onPressed: () => context.push('/marketplace'),
+          ),
+        ],
       ),
       body: Form(
         key: _formKey,
@@ -198,6 +205,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                                       _energyCost = t.energy;
                                       _impactScore = t.impact;
                                       _mvaDurationMin = t.mvaDuration;
+                                      _domainTag = t.domain;
                                     });
                                   },
                                   child: Container(
@@ -249,6 +257,18 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                                   ),
                                 );
                               },
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          OutlinedButton.icon(
+                            onPressed: () => context.push('/marketplace'),
+                            icon: const Icon(Icons.storefront_outlined, size: 18),
+                            label: const Text('Cari Template Lain di Marketplace 🛒'),
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size(88, 44),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -487,6 +507,7 @@ class HabitTemplate {
   final int impact;
   final int mvaDuration;
   final String description;
+  final String domain;
 
   const HabitTemplate({
     required this.title,
@@ -495,6 +516,7 @@ class HabitTemplate {
     required this.impact,
     required this.mvaDuration,
     required this.description,
+    required this.domain,
   });
 }
 
@@ -506,6 +528,7 @@ const List<HabitTemplate> _bodyHabitTemplates = [
     impact: 4,
     mvaDuration: 1,
     description: 'Rehidrasi instan untuk merangsang metabolisme tubuh.',
+    domain: 'Tubuh',
   ),
   HabitTemplate(
     title: 'Peregangan leher & pundak',
@@ -514,6 +537,7 @@ const List<HabitTemplate> _bodyHabitTemplates = [
     impact: 3,
     mvaDuration: 2,
     description: 'Melepaskan otot kaku setelah duduk atau bekerja.',
+    domain: 'Tubuh',
   ),
   HabitTemplate(
     title: 'Plank statis 1 menit',
@@ -522,6 +546,7 @@ const List<HabitTemplate> _bodyHabitTemplates = [
     impact: 4,
     mvaDuration: 1,
     description: 'Latihan core singkat untuk stabilitas tulang belakang.',
+    domain: 'Tubuh',
   ),
   HabitTemplate(
     title: 'Jalan kaki santai 10 menit',
@@ -530,6 +555,7 @@ const List<HabitTemplate> _bodyHabitTemplates = [
     impact: 5,
     mvaDuration: 5,
     description: 'Sirkulasi darah & udara segar di luar ruangan.',
+    domain: 'Tubuh',
   ),
   HabitTemplate(
     title: 'Jeda mata 20-20-20 rule',
@@ -538,6 +564,7 @@ const List<HabitTemplate> _bodyHabitTemplates = [
     impact: 3,
     mvaDuration: 1,
     description: 'Jeda mata melihat jauh mengurangi screen fatigue.',
+    domain: 'Tubuh',
   ),
   HabitTemplate(
     title: 'Pernapasan 4-7-8 sebelum tidur',
@@ -546,5 +573,6 @@ const List<HabitTemplate> _bodyHabitTemplates = [
     impact: 5,
     mvaDuration: 3,
     description: 'Latihan pernapasan rileks untuk kualitas tidur nyenyak.',
+    domain: 'Tubuh',
   ),
 ];
