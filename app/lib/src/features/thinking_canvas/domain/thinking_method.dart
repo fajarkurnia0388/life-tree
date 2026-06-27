@@ -109,16 +109,7 @@ class ThinkingMethod {
       desc: 'Modifikasi ide yang sudah ada lewat 7 sudut pandang kognitif.',
       level: 'Menengah',
       isPremium: true,
-      template: WorkspaceTemplate.sequential,
-      stepLabels: [
-        'Substitute (Ganti komponen/bahan)',
-        'Combine (Gabungkan dengan hal lain)',
-        'Adapt (Adaptasi dari konteks lain)',
-        'Modify/Magnify (Perbesar/ubah bentuk)',
-        'Put to other use (Gunakan untuk hal lain)',
-        'Eliminate (Hilangkan bagian tidak penting)',
-        'Reverse (Balikkan proses/urutan)'
-      ],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Pilih satu ide dasar atau produk yang ingin dikembangkan.',
         'Tanyakan setiap pertanyaan dari akronim SCAMPER secara berurutan.',
@@ -155,13 +146,7 @@ class ThinkingMethod {
       desc: 'Tabrakan ide secara paksa dengan kata acak untuk memicu lompatan kreatif.',
       level: 'Menengah',
       isPremium: true,
-      template: WorkspaceTemplate.sequential,
-      stepLabels: [
-        'Masalah Utama',
-        'Kata Acak Pilihan',
-        'Karakteristik Kata Acak',
-        'Ide Hubungan / Solusi Baru'
-      ],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Tulis masalah utama Anda di kertas.',
         'Pilih satu kata benda acak dari kamus atau benda di sekitar Anda (misal: "Kulkas").',
@@ -193,13 +178,7 @@ class ThinkingMethod {
       desc: 'Jawab masalah dari sudut pandang tokoh atau peran orang lain.',
       level: 'Menengah',
       isPremium: true,
-      template: WorkspaceTemplate.sequential,
-      stepLabels: [
-        'Masalah Utama',
-        'Tokoh Pilihan (Misal: Steve Jobs, Sherlock Holmes)',
-        'Cara Pandang Tokoh Tersebut',
-        'Solusi / Langkah yang Diusulkan'
-      ],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Pilih satu tokoh terkenal, karakter fiksi, atau profesi berbeda (misal: Detektif, Petani).',
         'Bayangkan bagaimana tokoh tersebut akan mendekati masalah Anda.',
@@ -214,15 +193,7 @@ class ThinkingMethod {
       desc: 'Uji satu ide dari 6 sudut pertanyaan 5W1H secara mendalam.',
       level: 'Menengah',
       isPremium: true,
-      template: WorkspaceTemplate.sequential,
-      stepLabels: [
-        'Siapa (Who) yang terlibat?',
-        'Apa (What) ide/produknya?',
-        'Mengapa (Why) ini dibutuhkan?',
-        'Di mana (Where) ini dijalankan?',
-        'Kapan (When) ini dieksekusi?',
-        'Bagaimana (How) cara kerjanya?'
-      ],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Gambarkan bintang bersudut enam di kertas dengan ide Anda di tengahnya.',
         'Tulis pertanyaan 5W1H (Who, What, Why, Where, When, How) pada masing-masing sudut.',
@@ -327,8 +298,7 @@ class ThinkingMethod {
       desc: 'Evaluasi ide dari sisi internal (Kekuatan & Kelemahan) dan eksternal (Peluang & Ancaman).',
       level: 'Menengah',
       isPremium: true,
-      template: WorkspaceTemplate.multiColumn,
-      columns: ['Strengths (Kekuatan)', 'Weaknesses (Kelemahan)', 'Opportunities (Peluang)', 'Threats (Ancaman)'],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Bagi kertas Anda menjadi 4 kuadran: Strengths, Weaknesses, Opportunities, Threats.',
         'Isi kuadran atas (S & W) untuk faktor internal di dalam kendali Anda.',
@@ -361,16 +331,7 @@ class ThinkingMethod {
       desc: 'Analisis satu topik secara objektif dari 6 kacamata berpikir yang berbeda secara bergantian.',
       level: 'Lanjutan',
       isPremium: true,
-      template: WorkspaceTemplate.sequential,
-      stepLabels: [
-        'Topik Bahasan',
-        'Topi Putih (Informasi & Data)',
-        'Topi Merah (Firasat & Emosi)',
-        'Topi Hitam (Risiko & Kelemahan)',
-        'Topi Kuning (Manfaat & Optimisme)',
-        'Topi Hijau (Kreativitas & Alternatif)',
-        'Topi Biru (Kesimpulan & Proses)'
-      ],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Tuliskan topik yang ingin dibahas.',
         'Lalui setiap mode berpikir "Topi" secara bergantian satu per satu.',
@@ -385,13 +346,7 @@ class ThinkingMethod {
       desc: 'Gunakan 3 peran bergantian untuk mematangkan ide: Pemimpi, Realis, dan Pengkritik.',
       level: 'Kerangka Kerja',
       isPremium: true,
-      template: WorkspaceTemplate.sequential,
-      stepLabels: [
-        'Ide Awal',
-        '1. Dreamer (Impian Tanpa Batas)',
-        '2. Realist (Langkah Kerja Praktis)',
-        '3. Critic (Analisis Celah & Resiko)'
-      ],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Peran Pemimpi (Dreamer): Tulis ide seliar mungkin seolah tidak ada batas uang/waktu.',
         'Peran Realis (Realist): Pikirkan bagaimana mengeksekusi mimpi tersebut secara praktis.',

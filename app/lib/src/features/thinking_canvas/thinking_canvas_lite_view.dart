@@ -278,12 +278,24 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
     }
   }
 
+  bool _isPremiumUserCached = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkFirstTimeUsage();
+      _loadPremiumStatus();
     });
+  }
+
+  Future<void> _loadPremiumStatus() async {
+    final status = await _isUserPremium();
+    if (mounted) {
+      setState(() {
+        _isPremiumUserCached = status;
+      });
+    }
   }
 
   Future<void> _checkFirstTimeUsage() async {
@@ -412,11 +424,33 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
         } else if (_selectedMethod == 'LotusBlossom') {
           return LotusBlossomWorkspace(onChanged: (val) => _customWorkspaceValue = val);
         } else if (_selectedMethod == 'MorphologicalAnalysis') {
-          return MorphologicalWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return MorphologicalWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+            isPremiumUser: _isPremiumUserCached,
+            onPremiumLocked: _showPremiumDialog,
+          );
         } else if (_selectedMethod == 'Brainstorming' || _selectedMethod == 'WorstPossibleIdea') {
           return RapidBrainstormWorkspace(onChanged: (val) => _customWorkspaceValue = val);
-        } else if (_selectedMethod == 'QuestionStorming' || _selectedMethod == 'Starbursting') {
+        } else if (_selectedMethod == 'QuestionStorming') {
           return QuestionStormWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'RandomWord') {
+          return RandomWordWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'RoleStorming') {
+          return RoleStormingWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+            isPremiumUser: _isPremiumUserCached,
+            onPremiumLocked: _showPremiumDialog,
+          );
+        } else if (_selectedMethod == 'SixThinkingHats') {
+          return SixThinkingHatsWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'DisneyStrategy') {
+          return DisneyStrategyWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'SCAMPER') {
+          return ScamperWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'SWOT') {
+          return SwotMatrixWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'Starbursting') {
+          return StarburstingWorkspace(onChanged: (val) => _customWorkspaceValue = val);
         }
 
         // Fallback for default freeform (e.g. Mind Dump)
