@@ -7,8 +7,8 @@
 | | |
 |---|---|
 | **Masalah** | Pasar aplikasi produktivitas dan *habit tracker* saat ini (senilai miliaran dolar) memiliki masalah fundamental: *Churn rate* (pengguna berhenti) yang sangat tinggi. Hal ini disebabkan oleh "Toxic Productivity" di mana aplikasi mengandalkan fitur *streak* (hari beruntun) yang memicu rasa bersalah (*guilt*) dan kelelahan mental (*burnout*) saat pengguna melewatkan 1 hari saja. |
-| **Solusi** | LifeTree adalah **Personal OS (Sistem Orientasi Diri)** pertama yang berlandaskan filosofi **Anti-Guilt**. LifeTree mengonversi "kegagalan" menjadi data refleksi (*Friction Journaling*) dan membantu pengguna memetakan kembali arah hidup mereka secara holistik, bukan sekadar mencentang daftar tugas. |
-| **Differentiator** | Satu-satunya aplikasi yang secara eksplisit menghapus mekanisme *punishment* dari arsitektur, didukung oleh sains perilaku & kepatuhan hukum. |
+| **Solusi** | LifeTree adalah **Personal OS (Sistem Orientasi Diri)** yang dirancang secara eksplisit dengan filosofi **Anti-Guilt**. LifeTree mengonversi "kegagalan" menjadi data refleksi (*Friction Journaling*), menyediakan **Thinking Canvas** sebagai pilar refleksi berbasis kertas untuk menjernihkan pikiran dan memilih aksi kecil, serta membantu pengguna memetakan kembali arah hidup mereka secara holistik. |
+| **Differentiator** | Dirancang secara eksplisit untuk menghapus mekanisme *punishment loop* dari arsitektur, dengan inspirasi dari behavioral science dan privacy-by-design. |
 
 ## 2. Target Pasar & Strategi Peluncuran (Go-to-Market)
 
@@ -52,6 +52,8 @@ LifeTree **TIDAK** menjual data pengguna dan **TIDAK** menampilkan iklan (*Zero 
 | **Day-30 Retention** | 10% - 15% | *Top-Quartile* di industri |
 | **Shame-Free Return Rate** *(North Star)* | ≥ 30% | **Formula:** `(pengguna absen > 3 hari DAN complete ≥ 1 habit dalam 7 hari setelah Friction Intervention) / (total pengguna absen > 3 hari DAN melihat Friction Intervention)`. Rolling 30 hari. |
 | **Weekly Clarity Rate** | ≥ 40% | Pengguna menyatakan *"Saya tahu apa yang menjadi fokus saya minggu depan"* setelah *Weekly Pulse Check* |
+| **Clarity-to-Action Rate** | ≥ 35% | Sesi Thinking Canvas yang berakhir dengan 1 aksi kecil, asumsi yang diuji, atau kandidat Action of the Day |
+| **Paper Reflection Adoption** | ≥ 25% | Pengguna aktif mingguan yang menandai minimal 1 sesi Thinking Canvas sebagai paper session |
 | **WHO-5 Well-being Monitoring** | Pantau tren skor WHO-5 setiap 90 hari | Indikator monitoring, bukan klaim kausal. UX: di Weekly Pulse (opsional), hasil sebagai tren pribadi. |
 | **Anti-Guilt Score** *(Internal)* | Pantau secara internal, bukan KPI publik | Rasio (Friction Journaling + Recovery Mode) / total Missed. Semakin tinggi → semakin banyak fitur suportif digunakan. |
 | **CAC : LTV Ratio** | ≤ 1:3 | LTV = ARPU × (1/churn). Asumsi: Plus Rp 29K/bln, churn 15% → LTV ≈ Rp 193K. CAC maks ≤ Rp 64K. Sensitivitas: churn 20% → LTV Rp 145K; churn 10% → LTV Rp 290K. |
@@ -87,12 +89,15 @@ Fase 1 hanya Bahasa Indonesia, tapi struktur i18n disiapkan sejak awal:
 | **Daylio** | ❌ | Sebagian | ✅ (mood) | ✅ | ❌ | ❌ | ❌ | Gratis + Premium ~Rp 50K/bln |
 | **Notion Life OS** | ❌ | Netral | ❌ | ✅ | Sebagian | ❌ | ❌ | Gratis + template Rp 50-200K |
 
+**Catatan:** Competitive positioning based on publicly observable product behavior at time of writing; not legal certification.
+
 **Differentiator Utama:**
-1. Satu-satunya yang menghapus *streak punishment*.
+1. Secara eksplisit menghindari *streak punishment* — berbeda dari mayoritas habit apps berbasis loss aversion.
 2. *Canopy Load System* — tidak ada di kompetitor.
 3. *Life Audit / Radar Keseimbangan* — integrasi 6 domain.
 4. *Friction Journaling* — kegagalan = data refleksi.
-5. *Compliance* anak Indonesia (PP TUNAS).
+5. *Thinking Canvas* — pilar refleksi paper-first untuk membangun kebiasaan corat-coret di kertas asli dan mengubah kebingungan menjadi aksi kecil.
+6. *Compliance* anak Indonesia (PP TUNAS).
 6. *Zero-Knowledge E2EE* dengan habit tracker terintegrasi.
 
 **Notion Life OS:** Kompetitor indirect — template gratis/berbayar untuk life management. LifeTree unggul di: guided experience, native mobile, E2EE, automation built-in. Rekomendasi: fitur import dari Notion di Fase 1.5 untuk menurunkan switching cost.

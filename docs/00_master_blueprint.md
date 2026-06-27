@@ -1,5 +1,5 @@
 # Whitepaper: Sistem Orientasi Diri "LifeTree" (Grow)
-**Versi 13.0 (Production-Ready Spec) – Arsitektur Sistem, Algoritma & Panduan UX**
+**Versi 13.0 (Master Product & System Spec) – Arsitektur Sistem, Algoritma & Panduan UX**
 
 ## 1. Pendahuluan & Filosofi (Anti-Guilt)
 LifeTree adalah **Personal OS** untuk orientasi hidup. Dibangun di atas 3 pilar teori:
@@ -41,7 +41,7 @@ MVP Lean menampilkan **3 elemen** (Radar ditambahkan di Iterasi 1):
    |--------|---------|----------|
    | Growth (Default) | Normal | Semua berjalan normal |
    | Recovery | Manual/Hybrid | Notifikasi pause, pohon bersalju, durasi 1/3/7 hari |
-   | Dormant | > 14 hari tidak buka app | Notifikasi dikurangi, habit lama diarsipkan, pohon daun rontok sebagian (TIDAK mengecil) |
+   | Dormant | > 14 hari tidak buka app | Notifikasi dikurangi; saat pengguna kembali, sistem menawarkan review habit. Visual memakai kabut/cahaya redup/idle lebih lambat — bukan daun rontok/regresi. |
 3. **Action of the Day (Algoritma Prioritas):**
    `domain_deficit = 10 - latest_domain_score`
    `priority_score = (domain_deficit * impact_score) / (initiation_friction + energy_cost)`
@@ -56,13 +56,14 @@ MVP Lean menampilkan **3 elemen** (Radar ditambahkan di Iterasi 1):
 Lapis 3: 🍎 Buah & Kompas (Advanced)     → Life Compass, Decision Journal
 Lapis 2: 🌿 Cabang (6 Domain Kehidupan)   → Keuangan, Tubuh, Hubungan, Emosi, Karir/Belajar, Rekreasi
 Lapis 1: 🪵 Batang (Canopy Load & Goals)  → Manajemen beban, Goal Hierarchy
-Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal, Friction Intervention, Safety Card
+Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal Lite, Deep Reflection, Thinking Canvas, Friction Journaling, Weekly Pulse, Safety Card
 ```
 
 ### Lapis 0: Akar (Refleksi Adaptif & Diagnosis)
 - **Adaptive Micro-Journaling:**
   - *Journal Lite (Default):* Hanya 1 ketuk emoji mood + 1 kata kunci.
   - *Deep Reflection:* 3 pertanyaan + *Gratitude prompt* (Hanya jika pengguna memilih).
+- **Thinking Canvas — Pilar Refleksi Berbasis Kertas:** mode paper-first untuk kondisi buntu, terlalu banyak opsi, ragu pada rencana, atau perlu mengubah ide menjadi aksi kecil. Pengguna dianjurkan corat-coret di buku/kertas asli; LifeTree menyimpan ringkasan digital berupa metode, temuan, asumsi, dan aksi kecil.
 - **Friction Journaling & Status Habit:**
   Habit memiliki 5 status: *Done, Missed, Skipped Intentionally, Paused*, dan implisit *Not_Scheduled* (hari di luar jadwal — tidak ada log dibuat).
   - *Daily:* 3x Missed dalam 7 hari
@@ -74,7 +75,7 @@ Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal, Friction Intervention, 
 ### Lapis 1: Batang (Canopy Load & Goal Hierarchy)
 - **Canopy Load:**
   Default kapasitas: 10 poin. **Enforcement:** Soft — peringatan ramah jika melebihi, pengguna tetap bisa menambahkan (Anti-Guilt).
-  - *Automaticity Decay:* **Recency-weighted cumulative** — 90 hari terakhir bobot 1, 91-180 hari bobot 0.5, >180 hari tidak dihitung. `cumulative_done_count` counter di Habit table untuk performance. `original_friction` snapshot untuk referensi baseline. Formula decay adalah **model produk yang disederhanakan**, bukan representasi langsung dari Lally et al. — akan dikalibrasi via A/B testing.
+  - *Automaticity Decay:* **Recency-weighted cumulative** — 90 hari terakhir bobot 1, 91-180 hari bobot 0.5, >180 hari tidak dihitung. `lifetime_done_count` counter dan `weighted_done_score` materialized value di Habit table untuk performance. `original_friction` snapshot untuk referensi baseline. Formula decay adalah **model produk yang disederhanakan**, bukan representasi langsung dari Lally et al. — akan dikalibrasi via A/B testing.
 - **Goal Hierarchy:** Visi (5 Thn) → Project (Tenggat Waktu) → Habit Harian / *Tasks*.
 
 ### Lapis 2: Cabang (6 Domain Kehidupan)
@@ -107,7 +108,7 @@ Aplikasi harus di-*coding* dengan tata bahasa empati.
 | *"Peringatan! Streak-mu terputus."* | *"Pohonmu sedang beristirahat. Tidak apa-apa."* |
 
 ## 5. Segmentasi Usia, Keamanan Data (E2EE) & Aksesibilitas
-- **Hukum Privasi (PP TUNAS & Permenkomdigi 9/2026):** Usia 13-17 (Teen Mode) mendapat privasi jurnal mutlak; Orang Tua di dasbor HANYA menerima tren agregat dan *Conversation Starters*. Permenkomdigi 9/2026 menetapkan 5 kelompok usia: 3–5, 6–9, 10–12, 13–15, 16–<18. LifeTree Fase 1 menggunakan <13/13–17; Fase 2 mengikuti granularitas ini.
+- **Hukum Privasi (PP TUNAS & Permenkomdigi 9/2026):** Usia 13-17 (Teen Mode) mendapat privasi jurnal mutlak; Orang Tua di dasbor HANYA menerima tren agregat dan *Conversation Starters*. PP 17/2025 menetapkan 5 kelompok usia: 3–5, 6–9, 10–12, 13–15, 16–<18; Permenkomdigi 9/2026 mengatur tahapan implementasi dan klasifikasi risiko platform. LifeTree Fase 1 menggunakan <13/13–17; Fase 2 mengikuti granularitas ini.
 - **Usia < 13 Tahun:** Wajib *Offline-First* mutlak. **Biometrik tidak digunakan untuk akun anak** (*precautionary principle*).
 - **Age Graduation:** Tepat hari ulang tahun ke-18, revoke akses orang tua otomatis. Membutuhkan `date_of_birth`, bukan hanya `age_band`.
 - **Keamanan (Local Encrypted Storage):** Data jurnal dienkripsi *at-rest* via SQLCipher.
@@ -128,7 +129,7 @@ LifeTree BUKAN aplikasi medis (Tercantum jelas di T&C).
 - Tidak menggunakan deteksi AI/Keyword (*False Negative/Positive* risk).
 - **Passive Safety:** Safety Card permanen. **Nomor primer di-hardcode** (119 PSC, 119 ext 8 SEJIWA).
 - **Anti-Banner-Blindness:** Visual berrotasi periodik.
-- **Out-of-App Wellness Check:** Jika > 5 hari tidak buka → 1 push empatik (maks. 1x/14 hari, tracked via `last_wellness_push_at`). Deep-link ke Safety Card.
+- **Out-of-App Wellness Check:** Jika > 5 hari tidak buka → 1 push empatik (maks. 1x/14 hari, tracked via `last_wellness_push_at`). Deep-link ke Home / Journal Lite. Safety Card tetap always-on, tetapi inactivity saja tidak dianggap distress.
 - **Crisis Escalation (> 14 hari `mood_score ≤ 2`):** Modal eskalasi langsung, maks. 1x/14 hari.
 - **`Called_Hotline` → `Tapped_Hotline_CTA`:** Tracking hanya sampai interaksi UI — apakah panggilan berhasil tidak bisa diketahui.
 
@@ -148,10 +149,10 @@ String UI file terpisah, format locale-aware, Anti-Guit dilokalize oleh native s
 **Asumsi Tim:** 3–5 developer (16–20 minggu). 1–2 developer: 24–30 minggu realistis.
 
 ### MVP Core (Core Launch)
-- Onboarding Life Audit (domain Tubuh, 1 pertanyaan), OS Keychain setup (1-ketuk), Dashboard 3 elemen (Pohon + Action + Journal), Journal Lite, Friction Intervention (dengan Recovery Mode duration selector + `mva_duration_min` one-time override), Safety Card (hardcoded), Canopy Load + Automaticity Decay (recency-weighted), SQLCipher, Local Backup, Export, Accessibility, Tier Gratis.
+- Onboarding Life Audit (domain Tubuh, 1 pertanyaan), OS Keychain setup (1-ketuk), Dashboard 3 elemen (Pohon + Action + Journal), Journal Lite, Thinking Canvas Lite (paper-first prompt + ringkasan), Friction Intervention (dengan Recovery Mode duration selector + `mva_duration_min` one-time override), Safety Card (hardcoded), Canopy Load + Automaticity Decay (recency-weighted), SQLCipher, Local Backup, Export, Accessibility, Tier Gratis.
 
 ### Iterasi 1 (Bulan 3–4 setelah core stabil)
-- Seed Phrase opsional, Recovery Contact (Shamir 2-of-3), Radar Keseimbangan, Deep Reflection, Anti-Banner-Blindness, Weekly Pulse + WHO-5, Out-of-App Wellness Check, LifeTree Plus & Student & Annual, Life Compass, Goal Hierarchy, Tree Vitality Blooming.
+- Seed Phrase opsional, Recovery Contact (Shamir 2-of-3), Radar Keseimbangan, Deep Reflection, **Thinking Canvas Full**, Anti-Banner-Blindness, Weekly Pulse + WHO-5, Out-of-App Wellness Check, LifeTree Plus & Student & Annual, Life Compass, Goal Hierarchy, Tree Vitality Blooming.
 
 ### Iterasi 2 (Fase 1.5)
 - Domain Keuangan/Hubungan/Emosi/Karir/Rekreasi, Micro-transaksi kosmetik, Decision Journal.
@@ -173,11 +174,12 @@ Semua fitur untuk Anak/Remaja dan Dasbor Orang tua ditunda ke Fase 2.
 | **Notion Life OS** | ❌ | Netral | ❌ | ✅ | Sebagian | ❌ | ❌ | Gratis + template Rp 50-200K |
 
 **Differentiator Utama:**
-1. Satu-satunya yang menghapus *streak punishment*.
+1. Secara eksplisit menghindari *streak punishment* — berbeda dari mayoritas habit apps berbasis loss aversion.
 2. *Canopy Load System* — tidak ada di kompetitor.
 3. *Life Audit / Radar Keseimbangan* — integrasi 6 domain.
 4. *Friction Journaling* — kegagalan = data refleksi.
-5. *Compliance* anak Indonesia (PP TUNAS).
+5. *Thinking Canvas* — pilar refleksi paper-first untuk membangun kebiasaan corat-coret di kertas asli dan mengubah kebingungan menjadi aksi kecil.
+6. *Compliance* anak Indonesia (PP TUNAS).
 6. *Zero-Knowledge E2EE* dengan habit tracker terintegrasi.
 
 **Notion Life OS:** Kompetitor indirect. Keunggulan LifeTree: guided (bukan setup manual), native mobile, E2EE, automation built-in. Rekomendasi: fitur import dari Notion di Fase 1.5.

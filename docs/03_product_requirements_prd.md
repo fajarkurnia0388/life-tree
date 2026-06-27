@@ -80,7 +80,7 @@ Trigger intervensi **bervariasi berdasarkan frekuensi habit**:
    │                                      │
    │ Mau aktifkan Recovery Mode?          │
    │ - Semua notifikasi habit di-pause    │
-   │ - Pohonmu tetap tumbuh perlahan      │
+   │ - Pohonmu tetap terawat saat kamu beristirahat      │
    │ - Kamu tetap bisa journaling         │
    │                                      │
    │ Durasi: [1 hari] [3 hari] [7 hari]  │
@@ -101,8 +101,54 @@ Trigger intervensi **bervariasi berdasarkan frekuensi habit**:
 
 ### D. Out-of-App Wellness Check
 - Jika pengguna tidak membuka aplikasi > 5 hari:
-  - Kirim 1 push notification empatik: *"Kamu sudah tidur cukup? Pohonmu menunggu dengan sabar 🌱"*
-  - Deep-link ke Safety Card. Maks. 1x per 14 hari (tracked via `last_wellness_push_at`).
+  - Kirim 1 push notification empatik: *"Kalau hari-hari ini berat, kamu bisa mulai dari sesuatu yang kecil 🌱"*
+  - Deep-link ke Home / Journal Lite. Safety Card tetap always-on, tetapi inactivity saja tidak dianggap distress. Maks. 1x per 14 hari (tracked via `last_wellness_push_at`).
+
+
+### E. Thinking Canvas — Pilar Refleksi Berbasis Kertas
+
+Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 LifeTree. Mode ini muncul saat pengguna buntu, terlalu banyak opsi, ragu pada rencana, takut gagal, atau perlu mengubah ide menjadi aksi kecil. Prinsip utamanya: **LifeTree tidak menggantikan buku catatan**. LifeTree menyarankan pengguna membangun kebiasaan corat-coret di buku/kertas asli, lalu menyimpan ringkasan hasilnya di aplikasi.
+
+| Kondisi Pengguna | Metode yang Disarankan | Output Produk |
+|------------------|------------------------|---------------|
+| Pikiran penuh | Mind Dump + Cluster + Refine | 1 klaster pikiran + 1 aksi kecil |
+| Belum punya ide | Brainstorming Klasik | 20–30 ide mentah |
+| Terlalu banyak opsi | Skoring Ide Sederhana | 2–3 kandidat prioritas |
+| Ragu pada ide | PMI (Plus, Minus, Implications) | Keputusan: lanjut/ubah/butuh data/tunda |
+| Takut gagal | Reverse Brainstorming | 3 risiko utama + pencegahan |
+| Perlu uji nyata | Validasi Ide 48 Jam–2 Minggu | Sinyal awal dari calon pengguna/lingkungan |
+
+#### Paper-First Interaction Model
+
+1. LifeTree menyarankan metode berdasarkan kondisi pengguna.
+2. Pengguna dianjurkan mengambil buku/kertas asli.
+3. Pengguna melakukan sesi corat-coret 5–30 menit: mind dump, mind map, skoring ide, PMI, reverse brainstorming, atau validasi asumsi.
+4. Setelah selesai, pengguna hanya memasukkan ringkasan:
+   - metode yang dipakai,
+   - temuan utama,
+   - asumsi yang perlu diuji,
+   - satu aksi kecil.
+5. Aksi kecil dapat dikirim ke Action of the Day atau disimpan untuk Weekly Pulse.
+
+**MVP copy principle:** *“Gunakan kertas untuk berpikir. Gunakan LifeTree untuk memilih metode, menyimpan ringkasan, dan menentukan aksi kecil.”*
+
+#### Thinking Canvas Integration Contract
+
+| Elemen | Kontrak Produk |
+|--------|----------------|
+| Entry point | Dashboard, Friction Intervention, Weekly Pulse, dan Decision Journal (Iterasi 2) |
+| Trigger | User buntu, terlalu banyak opsi, ragu, takut gagal, atau perlu validasi ringan |
+| Mode | Ringan = 3 field (topik, coretan, aksi kecil). Penuh = metode terstruktur sesuai kondisi |
+| Data output | `ThinkingCanvasSession`: `method_key`, `topic`, `paper_session`, `paper_artifact_ref`, `summary_text`, `raw_notes`, `structured_output`, `next_action` |
+| Relasi | `linked_habit_id` jika menjadi habit/action; `linked_decision_id` jika dikirim ke Decision Journal |
+| Scope | Thinking Canvas Lite masuk MVP Lean P0; Thinking Canvas Full masuk Iterasi 1 P1. Bukan Plus-gated untuk mode ringan. Export/PDF bisa menjadi Plus value later |
+| Algorithmic effect | Tidak otomatis mengubah rekomendasi tanpa konfirmasi user. `next_action` bisa ditawarkan menjadi Action of the Day |
+
+**Integrasi LifeTree:**
+- Hasil Thinking Canvas dapat diubah menjadi **Action of the Day**.
+- Hambatan yang muncul dapat masuk ke **Friction Journal**.
+- Keputusan penting dapat dikirim ke **Decision Journal** (Iterasi 2).
+- Review mingguan memakai pertanyaan: *Apa yang jadi lebih jelas? Asumsi apa yang perlu diuji? Apa satu tindakan besok?*
 
 ## 4. Panduan Copywriting (UX Writing Guidelines)
 **Nada Suara (Tone of Voice):** Empatik, Tenang, Netral, Mendukung.
@@ -128,6 +174,8 @@ Trigger intervensi **bervariasi berdasarkan frekuensi habit**:
 |-------|:--------:|:---------:|:---------:|:------:|
 | Journal Lite | ✅ P0 | — | — | — |
 | Deep Reflection | ❌ | ✅ P1 | — | — |
+| Thinking Canvas Lite (paper-first summary) | ✅ P0 | — | — | — |
+| Thinking Canvas Full | ❌ | ✅ P1 | — | — |
 | Friction Intervention | ✅ P0 | — | — | — |
 | Safety Card | ✅ P0 | — | — | — |
 | Canopy Load | ✅ P0 | — | — | — |
@@ -159,6 +207,7 @@ Trigger intervensi **bervariasi berdasarkan frekuensi habit**:
 | Dashboard | Tree Vitality (Seedling → Mature + Snow-Covered) | P0 |
 | Dashboard | Action of the Day + Celebration State | P0 |
 | Lapis 0 | Journal Lite (emoji + keyword) | P0 |
+| Lapis 0 | Thinking Canvas Lite (paper-first prompt + simpan ringkasan) | P0 |
 | Lapis 0 | Friction Intervention (threshold per frekuensi + Recovery Mode duration selector) | P0 |
 | Lapis 0 | Safety Card (hardcoded 119 + 119 ext 8) | P0 |
 | Lapis 1 | Canopy Load System (friction + energy, soft enforcement) | P0 |
@@ -181,6 +230,7 @@ Trigger intervensi **bervariasi berdasarkan frekuensi habit**:
 | Dashboard | Radar Keseimbangan (domain Tubuh + Coming Soon) | P1 |
 | Dashboard | Tree Vitality Blooming state | P1 |
 | Lapis 0 | Deep Reflection (opsional) | P1 |
+| Lapis 0 | Thinking Canvas Full: skoring, reverse brainstorming, validasi, review mingguan, Decision Journal link | P1 |
 | Lapis 0 | Anti-Banner-Blindness Safety Card | P1 |
 | Weekly | Weekly Pulse Check + WHO-5 (opsional) | P1 |
 | Notification | Out-of-App Wellness Check | P1 |

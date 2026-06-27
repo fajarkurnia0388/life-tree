@@ -1,8 +1,14 @@
 # 🌳 LifeTree — Personal OS untuk Orientasi Diri
 
-> **Versi 13.0 (Production-Ready Spec)** — Arsitektur Sistem, Algoritma, Kepatuhan Hukum, Strategi Bisnis & Spesifikasi Teknis
+> **Versi 13.0 (Master Product & System Spec)** — Arsitektur Sistem, Algoritma, Kepatuhan Hukum, Strategi Bisnis & Spesifikasi Teknis
 
-**Repositori ini adalah dokumen gabungan konseptual aplikasi LifeTree.** Semua spesifikasi — dari landasan ilmiah, compliance hukum, strategi bisnis, product requirements, hingga technical specs — disatukan di sini sebagai *single source of truth*.
+**Repositori ini adalah canonical documentation hub untuk LifeTree.** README berfungsi sebagai peta induk; detail normatif per domain ditempatkan pada dokumen khusus di folder `docs/`.
+
+## Thinking Canvas — Pilar Refleksi Berbasis Kertas
+
+LifeTree tidak hanya meminta pengguna mencatat mood atau menyelesaikan habit. Di **Lapis 0: Refleksi & Diagnosis**, LifeTree menyediakan **Thinking Canvas**: pilar refleksi berbasis kertas yang membantu pengguna mengurai pikiran, memilih opsi, dan menutup sesi dengan satu aksi kecil.
+
+Thinking Canvas dirancang dengan prinsip **paper-first, app-summary-second**. Pengguna dianjurkan membangun kebiasaan corat-coret di buku/kertas asli — mind dump, mind map, skoring ide, PMI, reverse brainstorming, atau validasi asumsi. LifeTree tidak menggantikan proses berpikir di kertas; LifeTree membantu memilih metode, menjaga ritme refleksi, menyimpan ringkasan, dan menghubungkannya ke Action of the Day, Friction Journal, Weekly Pulse, dan Decision Journal.
 
 ---
 
@@ -65,6 +71,7 @@ Berdasarkan rumusan **B = MAP** (*Behavior = Motivation + Ability + Prompt*) dar
 | *Ability* bermasalah ("Kurang Waktu/Energi") | Daya tampung terlampaui | Turunkan durasi aksi → *Minimum Viable Action* (versi `mva_duration_min` menit — satu kali, lalu kembali ke durasi normal. Jika user pilih "Kurang Waktu" di Friction Intervention, sistem menawarkan mengurangi target durasi besok ke `mva_duration_min` menit; durasi aktual dicatat di `duration_actual_min` HabitLog) |
 | *Prompt* bermasalah ("Lupa") | Kebiasaan belum menempel pada rutinitas | Sarankan *Routine Stacking* (tumpuk ke kebiasaan lama yang sudah otomatis) |
 | *Motivation* bermasalah ("Tidak mau") | Domain hidup tidak sejalan dengan nilai | Arahkan ke *Life Compass* & *Decision Journal* |
+| *Clarity* bermasalah ("Bingung harus mulai dari mana") | Pikiran belum terstruktur, terlalu banyak opsi, atau takut salah langkah | Arahkan ke **Thinking Canvas** — sesi paper-first untuk dump, klaster, skoring, PMI, dan aksi kecil |
 
 ### 2.4 Referensi Akademis
 
@@ -83,10 +90,10 @@ Berdasarkan rumusan **B = MAP** (*Behavior = Motivation + Ability + Prompt*) dar
 
 ### 3.1 Perlindungan Data Pribadi (UU PDP & PP 17/2025 — PP TUNAS)
 
-Jurnal emosi, kebiasaan, dan kondisi finansial adalah **Data Spesifik/Sensitif** menurut UU PDP. LifeTree mematuhi regulasi Indonesia:
+Menurut UU PDP, data kesehatan, data anak, dan data keuangan pribadi termasuk Data Pribadi yang bersifat spesifik. Dalam konteks LifeTree, jurnal emosi, skor mood, sinyal krisis, dan data finansial pengguna **diperlakukan dengan standar proteksi setara data sensitif** karena dapat memuat atau menghasilkan inferensi terkait kesehatan mental/kehidupan pribadi. LifeTree merancang arsitektur yang directionally aligned dengan regulasi Indonesia; seluruh bagian compliance membutuhkan formal legal counsel review sebelum launch:
 
 #### Usia 13–17 Tahun (Teen Mode — Fase 2)
-- Sesuai **PP No. 17 Tahun 2025** tentang Penyelenggaraan Sistem Elektronik dalam Pelindungan Anak (berlaku sejak 27 Maret 2025) dan **Permenkomdigi No. 9 Tahun 2026** sebagai aturan pelaksanaannya, remaja (di bawah 18 tahun) membutuhkan ruang aman. PP ini mengacu pada praktik *Age-Appropriate Design Code*. Permenkomdigi 9/2026 menetapkan bahwa anak di bawah 16 tahun tidak dapat memiliki akun pada platform digital berisiko tinggi, dan membagi batasan usia menjadi 5 kelompok: 3–5, 6–9, 10–12, 13–15, dan 16–<18 tahun. LifeTree saat ini menggunakan pembagian sederhana (< 13, 13–17) untuk Fase 1; jika masuk Fase 2, compliance rule akan mengikuti granularitas ini.
+- Sesuai **PP No. 17 Tahun 2025** tentang Penyelenggaraan Sistem Elektronik dalam Pelindungan Anak (ditetapkan 28 Maret 2025; implementasi bertahap mulai 28 Maret 2026 melalui Permenkomdigi 9/2026) dan **Permenkomdigi No. 9 Tahun 2026** sebagai aturan pelaksanaannya, remaja (di bawah 18 tahun) membutuhkan ruang aman. PP ini mengacu pada praktik *Age-Appropriate Design Code*. PP 17/2025 menetapkan kelompok usia anak 3–5, 6–9, 10–12, 13–15, dan 16–<18 tahun. Permenkomdigi 9/2026 menjadi aturan pelaksana yang mengatur tahapan implementasi, termasuk pembatasan/penonaktifan akun anak di bawah 16 tahun pada platform digital berisiko tinggi. LifeTree saat ini menggunakan pembagian sederhana (< 13, 13–17) untuk Fase 1; jika masuk Fase 2, compliance rule akan mengikuti granularitas ini.
 - *Parental Dashboard* **hanya** menampilkan **tren agregat** (grafik sentimen) dan *Conversation Starters* (contoh: *"Ajak anak ngobrol ringan, tren emosinya sedang turun"*).
 - Sistem **membatasi orang tua membaca teks asli jurnal anak** — jembatan antara perlindungan wali dan *trust* remaja.
 
@@ -123,11 +130,12 @@ Field `crisis_disclaimer_acknowledged BOOLEAN DEFAULT FALSE` di `UserProfile` me
 | Komponen | Deskripsi |
 |----------|-----------|
 | **Safety Card (Always-On)** | Tombol permanen di antarmuka Lapis 0. Nomor darurat Indonesia **di-hardcode** sebagai *absolute fallback* di kode aplikasi (119 — PSC, 119 ext 8 — SEJIWA). Remote Config digunakan untuk nomor tambahan/regional, bukan pengganti nomor primer. |
+| **Emergency Resource Governance** | Nomor darurat diverifikasi sebelum launch dan direview tiap 90 hari oleh Legal/Ops menggunakan sumber resmi (Kemenkes/KemenPPPA/partner regional). Remote Config dipakai untuk update nomor sekunder tanpa app update. |
 | **Mood-Based Gentle Prompt** | Jika `mood_score ≤ 2` selama 3 hari berturut-turut ATAU turun > 2 poin dalam 5 hari → muncul *Pop-up Modal* empatik + Safety Card. Frequency Cap: maks. 1x per 7 hari untuk modal penuh. |
 | **Crisis Escalation (> 14 hari)** | Jika `mood_score ≤ 2` terus berlanjut > 14 hari berturut-turut → tampilkan 1 modal eskalasi yang lebih langsung ke hotline (bukan hanya empatik), maks. 1x per 14 hari. Safety Card tetap *highlighted* dengan visual berbeda selama periode krisis. |
-| **Recovery Mode Offer** | Di saat prompt krisis, ditawarkan untuk mengubah `current_season` ke *Recovery Mode* → semua notifikasi habit di-pause, status harian menjadi `Paused`. |
+| **Recovery Mode Offer** | Di saat prompt krisis, ditawarkan untuk mengubah `support_mode` ke *Recovery Mode* → semua notifikasi habit di-pause, status harian menjadi `Paused`. |
 | **Anti-Banner-Blindness** | Safety Card menggunakan **posisi tetap tapi visual berrotasi** (ikon berubah periodik, warna halus berubah per musim) agar tetap terlihat tanpa menjadi *noise*. |
-| **Out-of-App Wellness Check** | Jika pengguna tidak membuka aplikasi > 5 hari, kirim **1 push notification empatik** (bukan alarm): *"Kamu sudah tidur cukup? Pohonmu menunggu dengan sabar 🌱"* — dengan *deep-link* ke Safety Card. Maks. 1x per 14 hari. |
+| **Out-of-App Wellness Check** | Jika pengguna tidak membuka aplikasi > 5 hari, kirim **1 push notification empatik** (bukan alarm): *"Kalau hari-hari ini berat, kamu bisa mulai dari sesuatu yang kecil 🌱"* — dengan deep-link ke Home / Journal Lite. Safety Card tetap always-on, tetapi inactivity saja tidak dianggap distress. Maks. 1x per 14 hari. |
 
 ### 3.3 Hak Atas Data & Enkripsi (*Right to Erasure*)
 
@@ -137,7 +145,7 @@ Field `crisis_disclaimer_acknowledged BOOLEAN DEFAULT FALSE` di `UserProfile` me
 | **Zero-Knowledge untuk Konten** | Pihak LifeTree tidak memiliki kunci dekripsi untuk **konten pengguna**. Server tetap dapat melihat **metadata sistem** (device token, last sync, subscription status, ukuran ciphertext, timestamps) yang diperlukan untuk operasional. Klaim zero-knowledge berlaku untuk konten, bukan seluruh metadata sistem. |
 | **Client-Side Computation** | Seluruh logika komputasi (algoritma Action of the Day, Automaticity Decay, Crisis Detection) berjalan di perangkat pengguna (*client-side*). Server hanya menerima, menyimpan, dan mengembalikan ciphertext. Ini berarti **battery/CPU usage** perlu diuji — terutama untuk pengguna dengan ratusan HabitLog entries. Optimasi: gunakan incremental query (hanya hitung log 90 hari terakhir, bukan seluruh riwayat). |
 | **Autentikasi Akun** | Autentikasi menggunakan **email + password hash** (bcrypt) di server — ini terpisah dari enkripsi konten. Server mengautentikasi *identitas* pengguna, tapi tidak memiliki kunci untuk membuka *konten* mereka. Setiap perangkat melakukan key bootstrap lokal: seed phrase → derive encryption key → encrypt/decrypt data lokal. |
-| **Multi-Device Bootstrap** | Saat pengguna menambahkan perangkat baru: **(A) Jika perangkat lama masih bisa diakses:** Transfer kunci via QR code antar-perangkat (local peer-to-peer, tidak melalui server). **(B) Jika perangkat lama hilang:** Pemulihan via Recovery Contact (Shamir 2-of-3) atau seed phrase. **(C) Jika menggunakan OS Keychain (Standard):** iCloud Keychain / Google Cloud Sync dapat otomatis menyalin kunci ke perangkat baru — ini adalah *default experience* yang paling minim friksi. Pengguna Advanced (seed phrase) mengelola key recovery mandiri. |
+| **Multi-Device Bootstrap** | Saat pengguna menambahkan perangkat baru: **(A) Jika perangkat lama masih bisa diakses:** Transfer kunci via QR code antar-perangkat (local peer-to-peer, tidak melalui server). **(B) Jika perangkat lama hilang:** Pemulihan via Recovery Contact (Shamir 2-of-3) atau seed phrase. **(C) Jika menggunakan Standard Mode:** iOS dapat memanfaatkan sinkronisasi Keychain yang didukung platform. Android tidak diasumsikan memulihkan kunci otomatis via cloud backup; gunakan transfer antar-perangkat, recovery key, atau recovery contact eksplisit. Pengguna Advanced (seed phrase) mengelola key recovery mandiri. |
 | **Key Rotation** | Jika kunci enkripsi perlu dirotasi (misal: setelah kebocoran), sistem melakukan *re-encryption* secara bertahap di client-side: generate key baru → decrypt dengan key lama → encrypt dengan key baru → upload ciphertext baru. Key version disimpan di metadata entri. |
 | **Sync Conflict Resolution** | Strategi berlapis berdasarkan tipe data: **(A) HabitLog (append-only):** LWW aman karena `UNIQUE(habit_id, date)`. **(B) JournalEntry & data mutable:** Jika konflik terdeteksi (timestamp berdekatan < 5 menit dari perangkat berbeda), sistem menyimpan **Conflict Copy** — kedua versi ditampilkan dan pengguna memilih mana yang disimpan. LWW hanya berlaku jika perbedaan timestamp > 5 menit. Jurnal tidak di-overwrite diam-diam — data emosional yang hilang tanpa peringatan bisa menyakitkan. **(C) Habit metadata:** LWW + conflict warning: *\"Habit ini baru saja diubah di perangkat lain. Muat ulang sebelum mengedit?\"* |
 | **Lupa Seed Phrase = Data Hilang** | Kebijakan ini dijabarkan secara tegas di ToS saat pendaftaran. Ini konsekuensi arsitektur zero-knowledge. |
@@ -158,8 +166,8 @@ Field `crisis_disclaimer_acknowledged BOOLEAN DEFAULT FALSE` di `UserProfile` me
 | | |
 |---|---|
 | **Masalah** | Pasar *habit tracker* (senilai miliaran dolar) memiliki *churn rate* tinggi akibat "Toxic Productivity" — *streak* memicu *guilt* & *burnout*. |
-| **Solusi** | LifeTree: Personal OS berbasis **Anti-Guilt**. Mengonversi "kegagalan" menjadi data refleksi (*Friction Journaling*) dan memetakan arah hidup secara holistik. |
-| **Differentiator** | Satu-satunya aplikasi yang secara eksplisit menghapus mekanisme *punishment* dari arsitektur, didukung oleh sains perilaku & kepatuhan hukum. |
+| **Solusi** | LifeTree: Personal OS berbasis **Anti-Guilt**. Mengonversi "kegagalan" menjadi data refleksi (*Friction Journaling*), menyediakan **Thinking Canvas** sebagai pilar refleksi berbasis kertas untuk menjernihkan pikiran dan memilih aksi kecil, serta memetakan arah hidup secara holistik. |
+| **Differentiator** | Dirancang secara eksplisit untuk menghapus mekanisme *punishment loop* dari arsitektur, dengan inspirasi dari behavioral science dan privacy-by-design. |
 
 ### 4.2 Target Pasar & Strategi Peluncuran
 
@@ -206,7 +214,8 @@ Berbeda dari aplikasi yang memuja DAU berbasis kecanduan, LifeTree mengukur **re
 | **Day-30 Retention** | 10–15% | *Top-quartile* di industri |
 | **Shame-Free Return Rate** *(North Star)* | ≥ 30% | Pengguna absen > 3 hari kembali aktif setelah *Friction Journaling* empatik. **Formula eksplisit:** `(Jumlah pengguna yang absen > 3 hari DAN complete ≥ 1 habit dalam 7 hari setelah Friction Intervention) / (Total pengguna yang absen > 3 hari DAN melihat Friction Intervention)`. Periode: rolling 30 hari. |
 | **Weekly Clarity Rate** | ≥ 40% | Pengguna menyatakan "Saya tahu fokus saya minggu depan" setelah *Weekly Pulse Check* |
-| **WHO-5 Well-being Monitoring** | Pantau tren skor WHO-5 setiap 90 hari | Skor WHO-5 digunakan sebagai **indikator monitoring**, bukan klaim kausal efektivitas aplikasi. Peningkatan tidak bisa diatribusikan secara kausal tanpa *control group*. **UX:** 5 pertanyaan WHO-5 ditampilkan di layar Weekly Pulse (opsional, bukan wajib). Hasil ditampilkan sebagai tren pribadi di samping Radar Keseimbangan. Disimpan di tabel `JournalEntry` atau tabel baru `WellnessAssessment` (Iterasi 1). |
+| **Clarity-to-Action Rate** | ≥ 35% | Sesi Thinking Canvas yang berakhir dengan 1 aksi kecil, asumsi yang diuji, atau kandidat Action of the Day |
+| **WHO-5 Well-being Monitoring** | Pantau tren skor WHO-5 setiap 90 hari | Skor WHO-5 digunakan sebagai **indikator monitoring**, bukan klaim kausal efektivitas aplikasi. Peningkatan tidak bisa diatribusikan secara kausal tanpa *control group*. **UX:** 5 pertanyaan WHO-5 ditampilkan di layar Weekly Pulse (opsional, bukan wajib). Hasil ditampilkan sebagai tren pribadi di samping Radar Keseimbangan. Disimpan di tabel `WellnessAssessment` terpisah (Iterasi 1), bukan di `JournalEntry`. |
 | **Anti-Guilt Score** *(Internal)* | Pantau secara internal, bukan KPI publik | Metrik internal: rasio (Friction Journaling events + Recovery Mode activations) / total Missed habits. Semakin tinggi rasio → semakin banyak pengguna yang menggunakan fitur suportif alih-alih menyerah. |
 | **CAC : LTV Ratio** | ≤ 1:3 | Target *unit economics* sehat. **LTV Calculation:** LTV = ARPU × (1 / monthly_churn_rate). Asumsi: Plus Rp 29.000/bln, monthly churn 15% (benchmark wellness app Indonesia — belum ada data empiris, merupakan estimasi konservatif). LTV = Rp 29.000 × (1/0.15) = **Rp 193.000**. Untuk CAC:LTV = 1:3 → CAC maksimal ≤ Rp 64.000 per pengguna berbayar. **Sensitivitas:** Jika churn 20%, LTV = Rp 145.000 → CAC maks ≤ Rp 48.000. Jika churn 10%, LTV = Rp 290.000 → CAC maks ≤ Rp 97.000. Angka ini akan divalidasi setelah 3 bulan data churn aktual. |
 
@@ -284,7 +293,7 @@ Visual pohon adalah *emotional anchor* pertama yang dilihat pengguna. Spesifikas
 
 **Hard Rule Anti-Guilt:** Pohon **TIDAK PERNAH mengecil atau mati**. Ini adalah aturan mutlak dari filosofi Anti-Guilt — tidak ada visual punishment. Pohon hanya bisa tumbuh atau "istirahat" (bersalju), tidak pernah mundur.
 
-**Growth Mapping:** Pertumbuhan berdasarkan `cumulative_done_count` (bukan streak). Mapping bersifat *step-based* (bukan linear) — perubahan visual terjadi di milestone tertentu, bukan setiap hari. Setiap 30 hari, muncul *Story Moment*: pohon berubah state + notifikasi *"Pohonmu sekarang punya X daun baru. Setiap daun mewakili 1 minggu konsistensi."* — pengguna bisa tap daun untuk melihat HabitLog minggu itu.
+**Growth Mapping:** Pertumbuhan visual tree berdasarkan milestone akumulatif non-streak; automaticity habit memakai `completion_rate_90d` + `weighted_done_score`, bukan raw done count. Mapping bersifat *step-based* (bukan linear) — perubahan visual terjadi di milestone tertentu, bukan setiap hari. Setiap 30 hari, muncul *Story Moment*: pohon berubah state + notifikasi *"Pohonmu sekarang punya X daun baru. Setiap daun mewakili 1 minggu konsistensi."* — pengguna bisa tap daun untuk melihat HabitLog minggu itu.
 
 **Catatan MVP:** Pohon hanya menampilkan state Seedling → Mature + Snow-Covered. Blooming ditambahkan di Iterasi 1 saat Automaticity Decay aktif.
 
@@ -358,7 +367,7 @@ Jika habit berstatus *Missed* melebihi threshold berdasarkan **frekuensi habit**
    │                                      │
    │ Mau aktifkan Recovery Mode?          │
    │ - Semua notifikasi habit di-pause    │
-   │ - Pohonmu tetap tumbuh perlahan      │
+   │ - Pohonmu tetap terawat saat kamu beristirahat      │
    │ - Kamu tetap bisa journaling         │
    │                                      │
    │ Durasi: [1 hari] [3 hari] [7 hari]  │
@@ -380,8 +389,8 @@ Jika habit berstatus *Missed* melebihi threshold berdasarkan **frekuensi habit**
 #### D. Out-of-App Wellness Check
 
 - Jika pengguna tidak membuka aplikasi > 5 hari:
-  - Kirim **1 push notification empatik** (bukan alarm): *"Kamu sudah tidur cukup? Pohonmu menunggu dengan sabar 🌱"*
-  - *Deep-link* ke Safety Card.
+  - Kirim **1 push notification empatik** (bukan alarm): *"Kalau hari-hari ini berat, kamu bisa mulai dari sesuatu yang kecil 🌱"*
+  - Deep-link ke Home / Journal Lite. Safety Card tetap always-on, tetapi inactivity saja tidak dianggap distress.
   - Maks. 1x per 14 hari.
 
 ### 5.4 Panduan Copywriting UX (Anti-Guilt Tone)
@@ -422,13 +431,13 @@ Aplikasi kesehatan mental menghadapi scrutiny khusus:
 
 | Platform | Requirement | Implementasi LifeTree |
 |----------|------------|----------------------|
-| **Apple App Store** | Guideline 1.4.5 (Safety): Apps yang memberikan medical advice harus dari institusi resmi | LifeTree BUKAN medical device — tegas di ToS + onboarding disclaimer |
-| **Apple App Store** | Crisis resources harus ditampilkan dalam format tertentu | Safety Card always-on dengan nomor hardcoded 119/SEJIWA |
-| **Google Play** | Sensitive Data Policy: mental health data = high-risk | E2EE + zero-knowledge + local-only CrisisPromptLog |
-| **Google Play** | Data safety section harus dideklarasikan | Data collection minimal: email + analytics opt-in only |
-| **Keduanya** | Age rating: 18+ untuk konten kesehatan mental | Rating 18+ di app store — konsisten dengan target segmen |
+| **Apple App Store** | Guideline 1.4.1: health-related claims harus akurat, metodologi jelas, dan tidak misleading; pengguna diarahkan ke profesional untuk keputusan medis | LifeTree BUKAN medical device — tegas di ToS + onboarding disclaimer; tidak memberi diagnosis/terapi |
+| **Apple App Store** | Guideline 1.4.5 relevan untuk challenge/aktivitas yang berisiko menimbulkan cedera fisik | Tidak ada challenge berbahaya; Action of the Day selalu bisa dibuat ringan dan non-punitive |
+| **Apple App Store** | Age rating ditentukan via App Store Connect questionnaire dan aturan regional | Target bisnis MVP = 18+, tetapi rating store tidak diasumsikan otomatis 18+ |
+| **Google Play** | Health apps declaration, Data Safety, prominent disclosure/consent untuk data personal/sensitif | E2EE + zero-knowledge + local-only CrisisPromptLog + deklarasi data sebelum submission |
+| **Google Play** | Content rating ditentukan via IARC/content rating questionnaire | Target bisnis MVP = 18+, rating publik mengikuti hasil questionnaire aktual |
 
-**Risiko Rejection:** Apple bisa menolak jika Safety Card dianggap "insufficient" — mitigasi: hardcode nomor + tampilkan saat onboarding. Google bisa menolak jika data safety declaration tidak akurat — mitigasi: audit declaration sebelum submission.
+**Risiko Rejection:** Apple/Google bisa menolak jika klaim kesehatan, disclaimer, deklarasi data, atau age/content rating tidak akurat. Mitigasi: legal/privacy review, audit Data Safety/Health declaration, dan submission checklist sebelum rilis.
 
 ### 5.8 Testing Strategy
 
@@ -450,7 +459,7 @@ Aplikasi kesehatan mental menghadapi scrutiny khusus:
 Lapis 3: 🍎 Buah & Kompas (Advanced)     → Life Compass, Decision Journal
 Lapis 2: 🌿 Cabang (6 Domain Kehidupan)   → Keuangan, Tubuh, Hubungan, Emosi, Karir/Belajar, Rekreasi
 Lapis 1: 🪵 Batang (Canopy Load & Goals)  → Manajemen beban, Goal Hierarchy
-Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal, Friction Intervention, Safety Card
+Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal Lite, Deep Reflection, Thinking Canvas, Friction Journaling, Weekly Pulse, Safety Card
 ```
 
 ### 6.2 Lapis 0: Akar (Refleksi Adaptif & Diagnosis)
@@ -458,6 +467,8 @@ Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal, Friction Intervention, 
 **Adaptive Micro-Journaling** — dua mode harian:
 - *Journal Lite (Default):* 1 ketuk emoji mood + 1 kata kunci. Beban minimal.
 - *Deep Reflection:* 3 pertanyaan + *Gratitude prompt*. Hanya jika pengguna memilih.
+
+**Thinking Canvas — Pilar Refleksi Berbasis Kertas:** mode paper-first untuk kondisi buntu, terlalu banyak opsi, ragu pada rencana, atau perlu mengubah ide menjadi aksi kecil. Pengguna dianjurkan corat-coret di buku/kertas asli, lalu LifeTree menyimpan ringkasan: metode, temuan, asumsi, dan aksi kecil. Output dapat menjadi Action of the Day, bahan Friction Journal, Weekly Pulse, atau catatan Decision Journal.
 
 **Friction Journaling & Status Habit:**
 - 4 status habit: `Done`, `Missed`, `Skipped_Intentionally`, `Paused`.
@@ -515,7 +526,7 @@ Contoh:
 |--------|---------|-----------------|
 | **Growth** (Default) | Normal | Semua notifikasi dan algoritma berjalan normal |
 | **Recovery** | Manual (pengguna memilih) atau Hybrid (sistem menawarkan saat deteksi krisis) | Semua notifikasi habit di-pause, status harian → Paused, pohon bersalju (Snow-Covered). Journaling tetap aktif. Durasi dipilih pengguna (1/3/7 hari). |
-| **Dormant** | Pengguna tidak membuka aplikasi > 14 hari (meskipun sudah dikirimi Out-of-App Wellness Check) | Sistem mengurangi frequency cap notifikasi, mengarsipkan habit yang sudah lama tidak aktif secara otomatis (dengan notifikasi: *"Kami arsipkan habit yang sudah lama tidak aktif. Kamu bisa mengaktifkan kembali kapan saja."*). Pohon menampilkan dedaunan rontok sebagian (tapi **TIDAK PERNAH mati/mengecil** — hanya "istirahat panjang"). |
+| **Dormant** | Pengguna tidak membuka aplikasi > 14 hari (meskipun sudah dikirimi Out-of-App Wellness Check) | Sistem mengurangi frekuensi notifikasi. Saat pengguna kembali, tampilkan review: *"Mau lanjutkan habit lama, ubah jadi versi ringan, atau arsipkan?"* Tidak ada auto-archive tanpa persetujuan. Visual Dormant memakai kabut/cahaya redup/idle animation lebih lambat — bukan daun rontok — agar tidak terasa seperti regresi. |
 
 ### 6.5 Lapis 3: Buah & Kompas (Advanced — LifeTree Plus)
 
@@ -529,7 +540,7 @@ Contoh:
 Sistem memprioritaskan 1 habit untuk *Central Dashboard* — **Rule-Based, NO AI/ML**:
 
 ```
-domain_deficit = 10 - latest_domain_score  // dari WeeklyPulse atau LifeAudit
+domain_deficit = 10 - latest_domain_score  // computed dari UserProfile.latest_domain_scores; fallback ke WeeklyPulse/LifeAudit jika kosong
 priority_score = (domain_deficit * impact_score) / (initiation_friction + energy_cost)
 
 Langkah:
@@ -555,50 +566,40 @@ Cold Start Fallback (pengguna baru tanpa skor domain):
 
 > **Catatan v9.0:** Algoritma sebelumnya memiliki konflik — formula Priority Score vs sort by `total_load_score`. Sekarang **menggunakan Priority Score saja** sebagai pengurut utama, karena formula ini sudah memperhitungkan friction/energy di denominator. Pendekatan ini lebih komprehensif dan konsisten.
 
-#### B. Algoritma "Automaticity Decay" (Penurunan Beban)
+#### B. Algoritma "Automaticity Decay" (Opportunity-Normalized)
 
 ```
-Trigger: HabitLog berstatus Done selama 60 hari kumulatif (recency-weighted)
-         (tidak harus berurutan — sesuai median Lally et al. 2010:
-          66 hari, dengan buffer 6 hari)
+Prinsip:
+  Jangan gunakan raw done count saja, karena habit weekly akan kalah adil dari habit daily.
+  Decay dievaluasi berdasarkan scheduled opportunities dan completion rate.
 
-         Ini adalah HIPOTESIS PRODUK yang terinspirasi oleh
-         literatur pembentukan kebiasaan, bukan parameter ilmiah baku.
-         Formula decay ini adalah MODEL PRODUK YANG DISEDERHANAKAN,
-         bukan representasi langsung dari penelitian Lally et al.
-         — Lally hanya mengatakan median 66 hari dan rentang 18–254
-         hari, tanpa fungsi decay linear. Parameter akan dikalibrasi
-         melalui A/B testing (lihat §4.6).
+Definitions:
+  scheduled_opportunities_90d = jumlah jadwal habit dalam 90 hari terakhir
+  done_count_90d = jumlah Done dari kesempatan tersebut
+  completion_rate_90d = done_count_90d / scheduled_opportunities_90d
 
-Action:
-  // Recency-weighted cumulative: automaticity bukan "saldo permanen"
-  // 90 hari terakhir berbobot penuh, 91-180 hari berbobot 0.5, >180 hari tidak dihitung
-  cumulative_done = weighted_count(HabitLog WHERE habit_id = ? AND status = 'Done')
-                    WHERE:
-                      log dalam 90 hari terakhir → bobot 1
-                      log dalam 91-180 hari → bobot 0.5
-                      log > 180 hari → bobot 0 (tidak dihitung)
+  weighted_done_score = done_count_90d + (0.5 * done_count_91_180d)
 
-  // Performance: menggunakan denormalisasi counter di Habit table
-  // cumulative_done_count INTEGER di-increment setiap kali HabitLog Done ditambahkan
-  // Recency adjustment dihitung saat Automaticity Decay dievaluasi (bukan real-time)
+Threshold exposure minimum:
+  Daily    → 45 kesempatan
+  3x/Week → 18 kesempatan
+  Weekly  → 8 kesempatan
+  Custom  → 6–12 kesempatan sesuai schedule_rule_json
 
-  initiation_friction = max(1, original_friction - floor(cumulative_done / 20))
-  → Penurunan bertahap: tiap 20 hari Done (recency-weighted), friction turun 1 poin
-  → Minimum = 1 (tidak pernah 0, karena selalu ada usaha memulai)
+automaticity_ready = completion_rate_90d >= 0.70
+                     AND scheduled_opportunities_90d >= threshold_by_frequency
 
-  energy_cost = TETAP (olahraga 1 jam tetap menguras energi fisik)
+if automaticity_ready:
+  decay_step = floor(weighted_done_score / threshold_by_frequency)
+  initiation_friction = max(1, original_friction - decay_step)
+else:
+  initiation_friction tetap
 
-  total_load_score = initiation_friction + energy_cost (dihitung ulang)
-
-Catatan performa:
-  - cumulative_done_count di tabel Habit menghindari full table scan
-  - Komputasi Automaticity Decay dijadwalkan di background (midnight / app idle),
-    bukan real-time saat user membuka app
-  - Incremental query: hanya hitung log 90 hari terakhir untuk update harian
+energy_cost = TETAP
+total_load_score = initiation_friction + energy_cost
 ```
 
-> **Perbaikan v9.0:** Variabel `consecutive_done` diganti menjadi `cumulative_done`. Sebelumnya, `consecutive_done` (berturut-turut) bertentangan dengan klaim "tidak harus berurutan" — jika pengguna melewatkan 1 hari di hari ke-19, streak reset ke 0, yang merupakan perilaku *streak punishment* yang ingin dihindari LifeTree. `cumulative_done` selaras dengan filosofi Anti-Guilt.
+> **Catatan:** Ini tetap hipotesis produk, bukan parameter ilmiah baku. `lifetime_done_count` hanya counter mentah untuk statistik/performa; input utama decay adalah `completion_rate_90d` dan `weighted_done_score`.
 
 #### C. Algoritma "Passive Crisis Intervention"
 
@@ -610,7 +611,7 @@ Trigger:
 Frequency Cap: Maks. 1x per 7 hari per pengguna (modal penuh)
 
 Action 1: Pop-up Modal empatik + Safety Card (Hotline Darurat)
-Action 2: Tawarkan ubah current_season → Recovery Mode
+Action 2: Tawarkan ubah support_mode → Recovery Mode
           (pause notifikasi habit, status harian → Paused)
 
 Crisis Escalation (> 14 hari mood_score ≤ 2 berturut-turut):
@@ -621,8 +622,8 @@ Crisis Escalation (> 14 hari mood_score ≤ 2 berturut-turut):
 Out-of-App Trigger (Anti-Ghosting):
   - Jika pengguna tidak membuka aplikasi > 5 hari:
     → 1 push notification empatik (maks. 1x per 14 hari)
-    → Deep-link ke Safety Card
-    → Teks: "Kamu sudah tidur cukup? Pohonmu menunggu dengan sabar 🌱"
+    → Deep-link ke Home / Journal Lite
+    → Teks: "Kalau hari-hari ini berat, kamu bisa mulai dari sesuatu yang kecil 🌱"
 
 Fallback nomor darurat:
   - Nomor primer di-hardcode di aplikasi (119, 119 ext 8)
@@ -686,7 +687,7 @@ Fallback nomor darurat:
 | **Frontend (Mobile)** | Flutter | Satu *codebase* iOS & Android, percepat *time-to-market* MVP |
 | **Local Database** | SQLite + SQLCipher | *Offline-first*, enkripsi *at-rest* di perangkat lokal |
 | **Key Management** | BIP-39 (12-Word Seed Phrase) | Standar industri, *derive* menjadi Encryption Key — hanya diaktifkan saat pengguna meng-enable Cloud Sync atau Advanced Security |
-| **Auto-Save Key** | OS Native Keychain | iCloud Keychain / Android Keystore — **default untuk semua pengguna** (1-ketuk setup) |
+| **Auto-Save Key** | OS Native Keychain / Keystore | Standard Mode: random 256-bit master key dibuat lokal dan disimpan di secure storage OS. iOS dapat memakai synchronizable Keychain jika dipilih; Android dianggap device-bound by default. |
 | **Backend (Cloud Sync)** | Node.js + PostgreSQL | Menyimpan *Encrypted Ciphertext BLOB*, server *Zero-Knowledge* |
 | **Remote Config** | Firebase Remote Config | Update nomor darurat tambahan tanpa *app update* |
 | **Push Notification** | Firebase Cloud Messaging | Out-of-app wellness check |
@@ -737,14 +738,16 @@ Fallback nomor darurat:
 |-------|------|-----------|------------|
 | `user_id` | UUID | PK | ID unik pengguna |
 | `age_band` | VARCHAR(10) | NOT NULL | "18-24", "25-35", dll |
-| `current_season` | VARCHAR(20) | DEFAULT 'Growth' | 'Growth', 'Recovery', 'Dormant' |
+| `support_mode` | VARCHAR(20) | DEFAULT 'Normal' | 'Normal', 'Recovery' — mode dukungan/UX emosional |
+| `engagement_state` | VARCHAR(20) | DEFAULT 'Active' | 'Active', 'Dormant' — state operasional berbasis aktivitas membuka app |
 | `canopy_load_capacity` | INTEGER | DEFAULT 10 | Kapasitas beban total (panduan, bukan batas kaku — soft enforcement) |
 | `crisis_disclaimer_acknowledged` | BOOLEAN | DEFAULT FALSE | Pengguna sudah menyatakan pemahaman disclaimer krisis |
 | `last_wellness_push_at` | TIMESTAMP | NULLABLE | Terakhir push notifikasi Out-of-App Wellness Check (frequency cap: 1x/14 hari) |
 | `last_crisis_prompt_at` | TIMESTAMP | NULLABLE | Terakhir crisis modal ditampilkan (frequency cap: 1x/7 hari). **Cloud-syncable** sebagai metadata sistem — ini BUKAN konten sensitif, melainkan timestamp operasional. Tanpa field ini di cloud, reinstall/factory reset menghapus frequency cap dan bisa menyebabkan crisis modal spam. |
 | `recovery_contact_email` | VARCHAR(255) | NULLABLE | Email kontak pemulihan (opsional) |
 | `recovery_contact_fragment` | TEXT | NULLABLE, ENCRYPTED | Fragment kunci terenkripsi untuk Recovery Contact (Shamir 2-of-3) |
-| `secondary_backup_fragment` | TEXT | NULLABLE, ENCRYPTED | Fragment cadangan untuk Recovery (Shamir 2-of-3) — disimpan pengguna |
+| `secondary_backup_configured` | BOOLEAN | DEFAULT FALSE | True jika user sudah menyimpan fragment/backup di luar platform. Fragment cadangan tidak disimpan server. |
+| `secondary_backup_hint` | VARCHAR(100) | NULLABLE | Opsional/lokal terenkripsi: petunjuk lokasi backup tanpa isi fragment |
 | `security_level` | VARCHAR(20) | DEFAULT 'Standard' | 'Standard' (OS Keychain) atau 'Advanced' (Seed Phrase) |
 | `deleted_at` | TIMESTAMP | NULLABLE | Tombstone untuk soft delete (sinkronisasi multi-perangkat) |
 | `created_at` | TIMESTAMP | NOT NULL | Waktu pembuatan akun |
@@ -768,6 +771,19 @@ Fallback nomor darurat:
 | `reflection_text` | TEXT | NULLABLE | Jawaban refleksi singkat |
 | `week_start_date` | DATE | NOT NULL | Tanggal mulai minggu |
 
+#### `WellnessAssessment` (Iterasi 1 — WHO-5 dan instrumen terstruktur)
+| Kolom | Tipe | Constraint | Keterangan |
+|-------|------|-----------|------------|
+| `assessment_id` | UUID | PK | ID assessment |
+| `user_id` | UUID | FK → UserProfile | Pemilik assessment |
+| `instrument` | VARCHAR(30) | NOT NULL | 'WHO5' untuk Iterasi 1 |
+| `item_scores` | JSONB | NOT NULL | 5 item WHO-5 |
+| `total_score` | INTEGER | NOT NULL | Skor total |
+| `assessment_date` | DATE | NOT NULL | Tanggal assessment |
+| `consent_context` | VARCHAR(50) | NULLABLE | Konteks consent/disclaimer |
+| `deleted_at` | TIMESTAMP | NULLABLE | Tombstone |
+| UNIQUE | | `(user_id, instrument, assessment_date)` | Maks. 1 assessment per instrumen per tanggal |
+
 #### `Habit`
 | Kolom | Tipe | Constraint | Keterangan |
 |-------|------|-----------|------------|
@@ -776,6 +792,7 @@ Fallback nomor darurat:
 | `domain_tag` | VARCHAR(30) | NULLABLE | Domain terkait (opsional) |
 | `title` | VARCHAR(100) | NOT NULL | Nama habit |
 | `status` | VARCHAR(20) | DEFAULT 'Active' | 'Active', 'Archived' |
+| `archived_at` | TIMESTAMP | NULLABLE | Diisi saat status berubah ke Archived |
 | `frequency` | VARCHAR(20) | DEFAULT 'Daily' | 'Daily', '3x/Week', 'Weekly', 'Custom'. Custom = pola jadwal bebas via `scheduled_days`; threshold intervensi dihitung proporsional: `(missed/scheduled_per_period) > 0.5` |
 | `scheduled_days` | VARCHAR(20) | NULLABLE | "Mon,Wed,Fri" (untuk Custom). `3x/Week` default = Mon/Wed/Fri. `Weekly` = hari yang dipilih pengguna. |
 | `initiation_friction` | INTEGER | CHECK(1-5), DEFAULT 3 | Kesulitan memulai (bisa berkurang via Automaticity Decay) |
@@ -783,7 +800,10 @@ Fallback nomor darurat:
 | `energy_cost` | INTEGER | CHECK(1-5), DEFAULT 3 | Biaya tenaga (TETAP, tidak dipengaruhi decay) |
 | `total_load_score` | INTEGER | GENERATED | `initiation_friction + energy_cost`. Catatan: SQLite mendukung generated columns ≥ 3.31.0; gunakan `sqlite3_flutter_libs` untuk bundling versi terbaru. |
 | `impact_score` | INTEGER | CHECK(1-5), DEFAULT 3 | Dampak pada domain. **UX:** Saat pengguna membuat habit, tampilkan guided prompt: *"Seberapa penting habit ini untuk kesehatan/domainmu? (1 = sekadar tambahan, 5 = sangat penting)"* |
-| `cumulative_done_count` | INTEGER | DEFAULT 0 | Counter denormalisasi: di-increment setiap HabitLog Done. Menghindari full table scan untuk Automaticity Decay. Recency adjustment dihitung saat evaluasi. |
+| `lifetime_done_count` | INTEGER | DEFAULT 0 | Counter mentah sepanjang hidup habit; bukan input utama decay. |
+| `weighted_done_score` | REAL | DEFAULT 0 | Materialized score recency-weighted untuk decay. |
+| `completion_rate_90d` | REAL | NULLABLE | Done / scheduled opportunities 90 hari terakhir. |
+| `last_decay_evaluated_at` | TIMESTAMP | NULLABLE | Kapan decay terakhir dievaluasi. |
 | `mva_duration_min` | INTEGER | DEFAULT 2 | Durasi Minimum Viable Action (menit) |
 | `stacked_to_habit_id` | UUID | FK → Habit, NULLABLE | Habit yang ditumpuk (Routine Stacking). **Validasi circular reference di application layer:** sebelum insert/update, traverse chain `stacked_to_habit_id` dengan DFS hingga depth maksimal 5 level — jika habit target sudah ada di chain, tolak dengan pesan: *"Habit ini sudah ditumpuk ke dalam rantai yang sama."* Batasan: maksimal 5 level stacking (A→B→C→D→E), mencegah chain yang terlalu dalam. |
 | `deleted_at` | TIMESTAMP | NULLABLE | Tombstone untuk soft delete |
@@ -797,6 +817,7 @@ Fallback nomor darurat:
 | `date` | DATE | NOT NULL | Tanggal log (**hanya dibuat pada hari terjadwal**) |
 | `status` | VARCHAR(25) | NOT NULL | 'Done', 'Missed', 'Skipped_Intentionally', 'Paused'. Catatan: hari di luar jadwal tidak membuat log entry (Not_Scheduled implisit). |
 | `friction_reason_selected` | VARCHAR(30) | NULLABLE | 'Kurang_Waktu', 'Kelelahan', 'Lupa' |
+| `duration_target_min` | INTEGER | NULLABLE | Snapshot target durasi saat log dibuat |
 | `duration_actual_min` | INTEGER | NULLABLE | Durasi aktual (jika Done) |
 | `deleted_at` | TIMESTAMP | NULLABLE | Tombstone |
 | UNIQUE | | `(habit_id, date)` | Satu log per habit per hari terjadwal |
@@ -814,6 +835,24 @@ Fallback nomor darurat:
 | `entry_type` | VARCHAR(15) | DEFAULT 'Lite', CHECK IN ('Lite', 'Deep') | Tipe entry |
 | `created_at` | TIMESTAMP | NOT NULL | |
 | UNIQUE | | `(user_id, date, entry_type)` | Maks. 1 Lite + 1 Deep per hari |
+
+#### `ThinkingCanvasSession` (Iterasi 1 — Refleksi Terstruktur)
+| Kolom | Tipe | Constraint | Keterangan |
+|-------|------|-----------|------------|
+| `session_id` | UUID | PK | ID unik sesi |
+| `user_id` | UUID | FK → UserProfile | Pemilik sesi |
+| `method_key` | VARCHAR(30) | NOT NULL | 'MindDump', 'Brainstorming', 'Scoring', 'PMI', 'ReverseBrainstorming', 'Validation' |
+| `topic` | VARCHAR(200) | NULLABLE | Pertanyaan/topik sesi |
+| `raw_notes` | TEXT | NULLABLE, ENCRYPTED | Coretan mentah pengguna; untuk paper-first, boleh hanya ringkasan singkat |
+| `summary_text` | TEXT | NULLABLE, ENCRYPTED | Ringkasan hasil corat-coret di kertas |
+| `paper_session` | BOOLEAN | DEFAULT TRUE | Sesi dianjurkan/dilakukan di kertas fisik |
+| `paper_artifact_ref` | VARCHAR(100) | NULLABLE | Referensi opsional: `Buku A hal. 12`, `sticky notes meja kerja` — tanpa upload foto |
+| `structured_output` | JSONB | NULLABLE, ENCRYPTED | Klaster, skor, PMI, risiko, asumsi, dsb. |
+| `next_action` | VARCHAR(200) | NULLABLE | Aksi kecil berikutnya |
+| `linked_habit_id` | UUID | FK → Habit, NULLABLE | Jika hasil sesi menjadi habit/action |
+| `linked_decision_id` | UUID | FK → DecisionJournal, NULLABLE | Jika dikirim ke Decision Journal (Iterasi 2) |
+| `created_at` | TIMESTAMP | NOT NULL | |
+| `deleted_at` | TIMESTAMP | NULLABLE | Tombstone |
 
 #### `CoreValue` (LifeTree Plus)
 | Kolom | Tipe | Constraint | Keterangan |
@@ -852,10 +891,21 @@ Fallback nomor darurat:
 | `sub_id` | UUID | PK | |
 | `user_id` | UUID | FK → UserProfile | |
 | `tier` | VARCHAR(20) | DEFAULT 'Free' | 'Free', 'Plus', 'Student' |
-| `platform` | VARCHAR(20) | NULLABLE | 'ios', 'android' |
+| `platform` | VARCHAR(20) | NULLABLE | 'ios', 'android', 'web' |
+| `billing_period` | VARCHAR(20) | NULLABLE | 'monthly', 'annual' |
+| `status` | VARCHAR(30) | DEFAULT 'active' | 'active', 'grace_period', 'expired', 'canceled', 'billing_retry' |
+| `store_product_id` | VARCHAR(100) | NULLABLE | Product ID dari store |
+| `store_transaction_id` | VARCHAR(150) | NULLABLE | Transaction ID terakhir |
+| `original_transaction_id` | VARCHAR(150) | NULLABLE | Untuk subscription chain |
+| `current_period_end` | TIMESTAMP | NULLABLE | Akhir periode aktif saat ini |
 | `started_at` | TIMESTAMP | | |
-| `expires_at` | TIMESTAMP | NULLABLE | NULL = berlangganan aktif |
+| `expires_at` | TIMESTAMP | NULLABLE | Backward-compatible; prefer `current_period_end` |
 | `auto_renew` | BOOLEAN | DEFAULT TRUE | |
+| `cancelled_at` | TIMESTAMP | NULLABLE | |
+| `cancel_reason` | VARCHAR(50) | NULLABLE | 'Price', 'Not_Using', 'Found_Alternative', 'Privacy_Concern', 'Other' |
+| `cancel_feedback` | TEXT | NULLABLE | Feedback opsional |
+| `student_verification_status` | VARCHAR(30) | NULLABLE | 'unverified', 'verified', 'expired' |
+| `student_verified_until` | DATE | NULLABLE | Masa berlaku verifikasi student |
 
 #### `CrisisPromptLog`
 | Kolom | Tipe | Constraint | Keterangan |
@@ -873,7 +923,7 @@ Fallback nomor darurat:
 | `user_id` | UUID | FK → UserProfile | |
 | `device_name` | VARCHAR(100) | NULLABLE | "iPhone 15", "Pixel 8" |
 | `platform` | VARCHAR(10) | NOT NULL | 'ios', 'android' |
-| `public_key` | TEXT | NOT NULL | Kunci publik perangkat untuk E2EE handshake. **Format:** Base64-encoded X25519 public key (32 byte raw, encoded ~44 karakter). **Algoritma:** X25519 (ECDH) untuk key exchange — dipilih karena ukuran kunci kecil (32 byte) dan performa tinggi di mobile. **Enkripsi konten:** AES-256-GCM dengan 12-byte nonce. **Key derivation:** BIP-39 seed → HKDF-SHA256 → X25519 keypair + AES-256 key. **Proses QR key transfer:** QR berisi *ephemeral X25519 public key* + *encrypted AES-256 master key* (dienkripsi dengan shared secret dari ECDH antara perangkat). Masa berlaku QR: 5 menit. |
+| `public_key` | TEXT | NOT NULL | Kunci publik perangkat untuk E2EE handshake. **Format:** Base64-encoded X25519 public key (32 byte raw, encoded ~44 karakter). **Algoritma:** X25519 (ECDH) untuk key exchange — dipilih karena ukuran kunci kecil (32 byte) dan performa tinggi di mobile. **Enkripsi konten:** AES-256-GCM dengan 12-byte nonce. **Key derivation:** Standard Mode memakai random 256-bit master key di secure storage OS. Advanced Mode dapat memakai recovery phrase/seed untuk recovery material; HKDF-SHA256 dipakai untuk derivasi wrapping/key material yang relevan. **Proses QR key transfer:** QR berisi *ephemeral X25519 public key* + *encrypted AES-256 master key* (dienkripsi dengan shared secret dari ECDH antara perangkat). Masa berlaku QR: 5 menit. |
 | `key_version` | INTEGER | DEFAULT 1 | Versi kunci enkripsi — increment saat key rotation |
 | `last_sync_at` | TIMESTAMP | NULLABLE | Terakhir sinkronisasi |
 | `registered_at` | TIMESTAMP | NOT NULL | |
@@ -943,7 +993,8 @@ Index krusial untuk performa query yang sering dijalankan:
 ### MVP Lean — "MVP Core" (Core Launch, 16–20 minggu)
 
 | Komponen | Fitur | Prioritas |
-|----------|-------|-----------|\n| Onboarding | Life Audit (domain Tubuh, 1 pertanyaan) | P0 |
+|----------|-------|-----------|
+| Onboarding | Life Audit (domain Tubuh, 1 pertanyaan) | P0 |
 | Onboarding | OS Keychain setup (1-ketuk, default) | P0 |
 | Dashboard | Central Command Dashboard (3 elemen: Pohon + Action + Journal) | P0 |
 | Lapis 0 | Journal Lite (emoji + keyword) | P0 |
@@ -961,10 +1012,13 @@ Index krusial untuk performa query yang sering dijalankan:
 ### MVP Iterasi 1 (Bulan 3–4 setelah core stabil)
 
 | Komponen | Fitur | Prioritas |
-|----------|-------|-----------|\n| Onboarding | 12-Word Recovery Key (opsional, advanced) | P1 |
+|----------|-------|-----------|
+| Onboarding | 12-Word Recovery Key (opsional, advanced) | P1 |
 | Onboarding | Recovery Contact setup (Shamir 2-of-3) | P1 |
 | Dashboard | Radar Keseimbangan (domain Tubuh + Coming Soon lainnya) | P1 |
 | Lapis 0 | Deep Reflection (opsional) | P1 |
+| Lapis 0 | Thinking Canvas Lite: prompt paper-first + 3 metode inti + simpan ringkasan | P0 |
+| Lapis 0 | Thinking Canvas Full: skoring, reverse brainstorming, validasi, review mingguan, Decision Journal link | P1 |
 | Lapis 0 | Anti-Banner-Blindness Safety Card | P1 |
 | Weekly | Weekly Pulse Check | P1 |
 | Notification | Out-of-App Wellness Check | P1 |
@@ -976,7 +1030,8 @@ Index krusial untuk performa query yang sering dijalankan:
 ### MVP Iterasi 2 (Fase 1.5)
 
 | Komponen | Fitur | Prioritas |
-|----------|-------|-----------|\n| Lapis 2 | Domain Keuangan, Hubungan, Emosi, Karir, Rekreasi (aktif bertahap) | P1 |
+|----------|-------|-----------|
+| Lapis 2 | Domain Keuangan, Hubungan, Emosi, Karir, Rekreasi (aktif bertahap) | P1 |
 | Monetisasi | Micro-transaksi kosmetik (skin pohon saja, Dark Mode gratis) | P2 |
 | Lapis 3 | Decision Journal | P2 |
 
@@ -997,6 +1052,8 @@ Index krusial untuk performa query yang sering dijalankan:
 | Dark Mode | ✅ P0 | — | — | — |
 | Journal Lite | ✅ P0 | — | — | — |
 | Deep Reflection | ❌ | ✅ P1 | — | — |
+| Thinking Canvas Lite (paper-first summary) | ✅ P0 | — | — | — |
+| Thinking Canvas Full | ❌ | ✅ P1 | — | — |
 | Friction Intervention | ✅ P0 | — | — | — |
 | Safety Card | ✅ P0 | — | — | — |
 | Canopy Load | ✅ P0 | — | — | — |
@@ -1037,12 +1094,13 @@ Index krusial untuk performa query yang sering dijalankan:
 
 ### 9.2 Differentiator Utama LifeTree
 
-1. **Satu-satunya yang menghapus streak punishment** — semua kompetitor menggunakan *loss aversion*.
+1. **Secara eksplisit menghindari streak punishment** — berbeda dari mayoritas habit apps yang masih memakai *loss aversion*.
 2. **Canopy Load System** — manajemen beban kognitif, tidak ada di kompetitor mana pun.
 3. **Life Audit / Radar Keseimbangan** — integrasi 6 domain kehidupan, bukan sekadar daftar habit.
 4. **Friction Journaling** — kegagalan dikonversi menjadi data refleksi, bukan hukuman.
-5. **Compliance anak Indonesia (PP TUNAS)** — tidak ada kompetitor yang mengakomodasi regulasi ini.
-6. **Zero-Knowledge E2EE** — hanya Day One yang menawarkan ini, tapi tanpa habit tracker.
+5. **Thinking Canvas** — pilar refleksi paper-first untuk membangun kebiasaan corat-coret di kertas asli dan mengubah kebingungan menjadi aksi kecil.
+6. **Compliance anak Indonesia (PP TUNAS)** — disiapkan sebagai future compliance track, bukan klaim sertifikasi hukum.
+7. **Zero-Knowledge E2EE** — hanya Day One yang menawarkan ini, tapi tanpa habit tracker.
 
 ### 9.3 Notion Life OS — Kompetitor Template
 
@@ -1113,7 +1171,7 @@ Notion memiliki ekosistem template gratis/berbayar untuk *life management* ("Lif
 | 45 | **Canonical Scope Matrix** — satu tabel menentukan fitur mana di iterasi mana | Agent A (🟡), Agent C (🔴) | Decision Journal di 3 tempat berbeda, Radar ambigu, On-Device Insights vs AI. Matrix menghapus semua kontradiksi. |
 | 46 | **`Called_Hotline` → `Tapped_Hotline_CTA`** | Agent A (🔴), Agent C, Agent D | Aplikasi tidak bisa tahu apakah panggilan berhasil. Tracking hanya sampai interaksi UI. |
 | 47 | **`cumulative_done` → recency-weighted** — 90 hari bobot 1, 91-180 hari bobot 0.5, >180 tidak dihitung | Agent C (🔴) | Automaticity bukan saldo permanen — 100x sukses tahun lalu + 6 bulan berhenti ≠ "mudah dimulai". |
-| 48 | **`Dormant` season definition** — trigger, perilaku, visual | Agent B (🟢), Agent C | Season Dormant sebelumnya tidak pernah didefinisikan. Sekarang: > 14 hari tidak buka app → notifikasi dikurangi, habit lama diarsipkan. |
+| 48 | **`Dormant` season definition** — trigger, perilaku, visual | Agent B (🟢), Agent C | Season Dormant sebelumnya tidak pernah didefinisikan. Sekarang: > 14 hari tidak buka app → notifikasi dikurangi; sistem menawarkan review habit saat user kembali. |
 | 49 | **Canopy Load capacity enforcement** — soft enforcement dengan peringatan ramah | Agent B (🟡) | `canopy_load_capacity = 10` tanpa enforcement = angka dekoratif. Sekarang: soft enforcement + peringatan Anti-Guilt. |
 | 50 | **Tree Vitality State Specification** — 6 state visual + hard rule "tidak pernah mengecil" | Agent B (🟡) | Pohon = emotional anchor tapi paling sedikit dispesifikasikan. Step-based growth, Story Moment tiap 30 hari. |
 | 51 | **`impact_score` user guidance** — guided prompt saat membuat habit | Agent B (🟡) | Jika semua user isi default 3, variabel tidak berpengaruh. Tooltip + deskriptor membantu pengguna mengisi secara bermakna. |
