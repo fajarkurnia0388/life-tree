@@ -11,6 +11,10 @@ import '../../core/theme/theme.dart';
 import '../onboarding/onboarding_view.dart';
 import 'widgets/radar_chart_widget.dart';
 import '../habit/services/habit_log_service.dart';
+import 'widgets/season_badge_widget.dart';
+import 'widgets/quick_actions_panel.dart';
+import 'widgets/dashboard_alerts.dart';
+import 'sheets/friction_intervention_sheet.dart';
 
 class DashboardView extends ConsumerWidget {
   const DashboardView({super.key});
@@ -59,7 +63,7 @@ class DashboardView extends ConsumerWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return _FrictionInterventionSheet(habit: habit);
+        return FrictionInterventionSheet(habit: habit);
       },
     ).then((_) {
       ref.invalidate(dashboardDataProvider);
@@ -105,7 +109,7 @@ class DashboardView extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // 1. Season status
-                  _buildSeasonBadge(context, ref, data.season),
+                  SeasonBadgeWidget(season: data.season),
                   const SizedBox(height: 12),
 
                   // Life Compass (Core Values)
@@ -125,13 +129,13 @@ class DashboardView extends ConsumerWidget {
                       (data.profile.unlockedSkins.contains('Sakura') &&
                        data.profile.unlockedSkins.contains('Maple') &&
                        data.profile.unlockedSkins.contains('Bonsai'))) ...[
-                    _buildWeeklyPulseBanner(context, DateTime.now().weekday == DateTime.sunday, true),
+                    WeeklyPulseBanner(isSunday: DateTime.now().weekday == DateTime.sunday),
                     const SizedBox(height: 16),
                   ],
 
                   // Overdue Decisions Alert Card
                   if (data.hasOverdueDecisions) ...[
-                    _buildOverdueDecisionAlert(context),
+                    const OverdueDecisionAlert(),
                     const SizedBox(height: 16),
                   ],
                   const SizedBox(height: 8),
@@ -167,7 +171,7 @@ class DashboardView extends ConsumerWidget {
                   const SizedBox(height: 32),
 
                   // 5. Quick actions panel
-                  _buildQuickActionsPanel(context, theme),
+                  const QuickActionsPanel(),
                 ],
               ),
             ),

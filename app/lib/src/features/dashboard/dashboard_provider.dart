@@ -69,14 +69,26 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
   final now = DateTime.now();
   final weekday = now.weekday; // 1 = Monday, 7 = Sunday
   
+  // Filter habits by userId for data integrity
   final allActiveHabits = await (db.select(db.habits)
-        ..where((tbl) => tbl.status.equals('Active') & tbl.deletedAt.isNull()))
+        ..where((tbl) =>
+            tbl.userId.equals(profile.userId) &
+            tbl.status.equals('Active') &
+            tbl.deletedAt.isNull()))
       .get();
   
   final todayStart = DateTime(now.year, now.month, now.day);
-  final todayLogs = await (db.select(db.habitLogs)
-        ..where((tbl) => tbl.date.equals(todayStart) & tbl.deletedAt.isNull()))
-      .get();
+  final userHabitIds = allActiveHabits.map((h) => h.habitId).toList();
+  
+  // Only fetch logs for this user's habits
+  final todayLogs = userHabitIds.isEmpty
+      ? <HabitLog>[]
+      : await (db.select(db.habitLogs)
+            ..where((tbl) =>
+                tbl.date.equals(todayStart) &
+                tbl.habitId.isIn(userHabitIds) &
+                tbl.deletedAt.isNull()))
+          .get();
 
   final List<HabitWithLog> habitsToday = [];
   
@@ -84,8 +96,12 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
     bool isScheduled = false;
     if (habit.frequency == 'Daily') {
       isScheduled = true;
-    } else if (habit.scheduledDays != null) {
-      final days = habit.scheduledDays!.split(',').map((e) => int.tryParse(e.trim()) ?? 0);
+    } else if (habit.scheduledDays != null && habit.scheduledDays!.isNotEmpty) {
+      // Safely parse scheduledDays, ignoring non-numeric tokens
+      final days = habit.scheduledDays!
+          .split(',')
+          .map((e) => int.tryParse(e.trim()))
+          .whereType<int>();
       if (days.contains(weekday)) {
         isScheduled = true;
       }

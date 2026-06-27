@@ -150,14 +150,14 @@ class SafetyCardView extends ConsumerWidget {
                         Icon(Icons.lock_outline_rounded, size: 16, color: theme.colorScheme.onBackground.withOpacity(0.6)),
                         const SizedBox(width: 6),
                         Text(
-                          'Data Anda 100% Aman & Privat',
+                          'Data Tersimpan Lokal di Perangkat Anda',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.8)),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Pencatatan interaksi bantuan ini disimpan sepenuhnya secara offline pada memori internal ponsel Anda. Tidak ada data yang diunggah ke internet maupun dibagikan ke pihak ketiga mana pun.',
+                      'LifeTree menyimpan semua data secara offline pada memori internal perangkat Anda — tidak ada yang diunggah ke internet atau dibagikan ke pihak ketiga. Enkripsi database (SQLCipher) direncanakan pada fase berikutnya.',
                       style: TextStyle(fontSize: 11, color: theme.colorScheme.onBackground.withOpacity(0.6)),
                       textAlign: TextAlign.center,
                     ),
