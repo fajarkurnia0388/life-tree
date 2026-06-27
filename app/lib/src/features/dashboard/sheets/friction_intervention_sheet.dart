@@ -5,7 +5,6 @@ import '../../../core/theme/theme.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
 import '../../habit/services/habit_log_service.dart';
-import '../dashboard_provider.dart';
 
 /// Bottom sheet for friction intervention — shown when user taps "Tidak Sanggup".
 class FrictionInterventionSheet extends ConsumerStatefulWidget {

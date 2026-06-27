@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import 'dashboard_provider.dart';
@@ -15,6 +14,7 @@ import 'widgets/season_badge_widget.dart';
 import 'widgets/quick_actions_panel.dart';
 import 'widgets/dashboard_alerts.dart';
 import 'sheets/friction_intervention_sheet.dart';
+import 'widgets/tree_display_widget.dart';
 
 class DashboardView extends ConsumerWidget {
   const DashboardView({super.key});
@@ -117,7 +117,12 @@ class DashboardView extends ConsumerWidget {
                   const SizedBox(height: 16),
 
                   // 2. Tree Vitality
-                  _buildTreeVitalityCard(context, ref, theme, data.cumulativeDays, data.season, data.profile),
+                  TreeVitalityCard(
+                    skinId: data.profile.selectedSkin,
+                    cumulativeDays: data.cumulativeDays,
+                    season: data.season,
+                    onSkinShopTap: () => _showSkinShop(context, ref, data.profile),
+                  ),
                   const SizedBox(height: 16),
                   
                   // Radar Chart Keseimbangan
@@ -185,228 +190,7 @@ class DashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildSeasonBadge(BuildContext context, WidgetRef ref, String season) {
-    Color badgeColor;
-    String label;
-    IconData icon;
-    String message;
 
-    switch (season) {
-      case 'Recovery':
-        badgeColor = CalmTheme.secondaryBlue;
-        label = 'Musim Istirahat (Recovery Mode)';
-        icon = Icons.ac_unit_rounded;
-        message = 'Notifikasi dijeda. Anda sedang memulihkan energi.';
-        break;
-      case 'Dormant':
-        badgeColor = Colors.blueGrey;
-        label = 'Musim Hening (Dormant Mode)';
-        icon = Icons.blur_on_rounded;
-        message = 'Lama tidak aktif. Waktunya mengevaluasi kebiasaan.';
-        break;
-      default:
-        badgeColor = CalmTheme.primarySage;
-        label = 'Musim Tumbuh (Growth Mode)';
-        icon = Icons.wb_sunny_outlined;
-        message = 'Laju pertumbuhan normal.';
-    }
-
-    return Card(
-      color: badgeColor.withOpacity(0.08),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: badgeColor.withOpacity(0.3), width: 1.5),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        child: Row(
-          children: [
-            Icon(icon, color: badgeColor, size: 24),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: badgeColor),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    message,
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            if (season == 'Recovery')
-              TextButton(
-                onPressed: () => _endRecoveryMode(ref),
-                child: const Text('Akhiri', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _endRecoveryMode(WidgetRef ref) async {
-    final db = ref.read(dbProvider);
-    final profiles = await db.select(db.userProfiles).get();
-    if (profiles.isNotEmpty) {
-      await (db.update(db.userProfiles)..where((tbl) => tbl.userId.equals(profiles.first.userId)))
-          .write(UserProfilesCompanion(supportMode: const drift.Value('Normal')));
-      ref.invalidate(dashboardDataProvider);
-    }
-  }
-
-  Widget _buildTreeVitalityCard(
-    BuildContext context,
-    WidgetRef ref,
-    ThemeData theme,
-    int cumulativeDays,
-    String season,
-    UserProfile profile,
-  ) {
-    final skin = profile.selectedSkin;
-    String emoji = '🌱';
-    String desc = 'Tunas Kecil (0-7 Hari)';
-    double progress = cumulativeDays / 8.0;
-
-    if (season == 'Recovery') {
-      emoji = skin == 'Sakura'
-          ? '❄️🌸'
-          : skin == 'Maple'
-              ? '❄️🍁'
-              : skin == 'Bonsai'
-                  ? '❄️🪴'
-                  : '❄️🌳';
-      desc = 'Pohon Istirahat Bersalju';
-      progress = 1.0;
-    } else if (cumulativeDays > 60) {
-      emoji = skin == 'Sakura'
-          ? '🌸🌲'
-          : skin == 'Maple'
-              ? '🍁🌲'
-              : skin == 'Bonsai'
-                  ? '🪴🌲'
-                  : '🌲';
-      desc = 'Pohon Dewasa (>60 Hari)';
-      progress = 1.0;
-    } else if (cumulativeDays >= 30) {
-      emoji = skin == 'Sakura'
-          ? '🌸🌳🌸'
-          : skin == 'Maple'
-              ? '🍁🌳🍁'
-              : skin == 'Bonsai'
-                  ? '🪴🌳🪴'
-                  : '🌳🌸';
-      desc = 'Pohon Mekar (Blooming) 💮';
-      progress = (cumulativeDays - 30) / 30.0;
-    } else if (cumulativeDays >= 8) {
-      emoji = skin == 'Sakura'
-          ? '🌸🌿'
-          : skin == 'Maple'
-              ? '🍁🌿'
-              : skin == 'Bonsai'
-                  ? '🪴🌿'
-                  : '🌿';
-      desc = 'Batang Muda (8-29 Hari)';
-      progress = (cumulativeDays - 7) / 22.0;
-    } else {
-      emoji = skin == 'Sakura'
-          ? '🌸🌱'
-          : skin == 'Maple'
-              ? '🍁🌱'
-              : skin == 'Bonsai'
-                  ? '🪴🌱'
-                  : '🌱';
-      desc = 'Tunas Kecil (0-7 Hari)';
-      progress = cumulativeDays / 8.0;
-    }
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(emoji, style: const TextStyle(fontSize: 48)),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Kesehatan & Pertumbuhan Pohon',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: theme.colorScheme.onBackground.withOpacity(0.6),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () => _showSkinShop(context, ref, profile),
-                            borderRadius: BorderRadius.circular(12),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.palette_outlined,
-                                    size: 14,
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'Skin',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: theme.colorScheme.primary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        desc,
-                        style: theme.textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '$cumulativeDays Hari Keberhasilan Kumulatif',
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(
-                value: progress.clamp(0.0, 1.0),
-                minHeight: 8,
-                backgroundColor: theme.colorScheme.primary.withOpacity(0.12),
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  season == 'Recovery' ? CalmTheme.secondaryBlue : theme.colorScheme.primary,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   void _showSkinShop(BuildContext context, WidgetRef ref, UserProfile profile) {
     showModalBottomSheet(
@@ -462,123 +246,7 @@ class DashboardView extends ConsumerWidget {
     return RadarChartWidget(scores: scores);
   }
 
-  Widget _buildWeeklyPulseBanner(BuildContext context, bool isSunday, bool isDevMode) {
-    final theme = Theme.of(context);
-    return Card(
-      color: theme.colorScheme.primaryContainer.withOpacity(0.2),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.primary.withOpacity(0.3), width: 1),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                const Text('📋', style: TextStyle(fontSize: 32)),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        isSunday ? 'Evaluasi Mingguan Tiba!' : 'Evaluasi Mingguan (Dev Mode)',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Yuk isi survei kesejahteraan emosional WHO-5 untuk memantau kondisi Anda minggu ini.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: theme.colorScheme.onBackground.withOpacity(0.7),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () => context.push('/weekly-pulse'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    minimumSize: const Size(120, 36),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('Mulai Evaluasi', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildOverdueDecisionAlert(BuildContext context) {
-    final theme = Theme.of(context);
-    return Card(
-      color: theme.colorScheme.errorContainer.withOpacity(0.08),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.error.withOpacity(0.3), width: 1.5),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text('⚠️', style: TextStyle(fontSize: 32, color: theme.colorScheme.error)),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Review Jurnal Keputusan!',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Beberapa keputusan sulit Anda telah melewati batas 90 hari. Mari luangkan waktu sejenak untuk meninjau hasilnya secara jujur.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: theme.colorScheme.onBackground.withOpacity(0.7),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () => context.push('/decision-journal'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.error,
-                    foregroundColor: theme.colorScheme.onError,
-                    minimumSize: const Size(120, 36),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('Tinjau Sekarang', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildCelebrationCard(ThemeData theme) {
     return Card(
@@ -820,85 +488,7 @@ class DashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuickActionsPanel(BuildContext context, ThemeData theme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Refleksi & Bantuan',
-          style: theme.textTheme.titleLarge,
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _buildQuickActionButton(
-                icon: Icons.mood_rounded,
-                label: 'Mood & Jurnal',
-                color: CalmTheme.primarySage,
-                onTap: () => context.push('/journal'),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildQuickActionButton(
-                icon: Icons.edit_note_rounded,
-                label: 'Thinking Canvas',
-                color: CalmTheme.secondaryBlue,
-                onTap: () => context.push('/thinking-canvas'),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ElevatedButton.icon(
-          onPressed: () => context.push('/add-habit'),
-          icon: const Icon(Icons.add_rounded),
-          label: const Text('Buat Kebiasaan Baru'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-            foregroundColor: theme.colorScheme.primary,
-            elevation: 0,
-            minimumSize: const Size(88, 48), // WCAG touch target
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget _buildQuickActionButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      color: color.withOpacity(0.06),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: color.withOpacity(0.2), width: 1.5),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 28),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                style: TextStyle(fontWeight: FontWeight.w600, color: color, fontSize: 13),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   void _toggleDeveloperMode(BuildContext context, WidgetRef ref, UserProfile profile, bool enable) async {
     final db = ref.read(dbProvider);
