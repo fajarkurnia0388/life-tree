@@ -1,0 +1,149 @@
+import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:drift/drift.dart';
+import '../../core/providers/db_provider.dart';
+import '../../data/local_db/database.dart';
+
+class DashboardData {
+  final UserProfile profile;
+  final int cumulativeDays;
+  final String season;
+  final Habit? actionOfTheDay;
+  final List<HabitWithLog> habitsToday;
+  final bool allDone;
+  final bool hasOverdueDecisions;
+
+  DashboardData({
+    required this.profile,
+    required this.cumulativeDays,
+    required this.season,
+    this.actionOfTheDay,
+    required this.habitsToday,
+    required this.allDone,
+    required this.hasOverdueDecisions,
+  });
+}
+
+class HabitWithLog {
+  final Habit habit;
+  final HabitLog? log;
+  HabitWithLog({required this.habit, this.log});
+}
+
+final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
+  final db = ref.watch(dbProvider);
+  
+  // 1. Get User Profile
+  final profiles = await db.select(db.userProfiles).get();
+  if (profiles.isEmpty) {
+    throw Exception('User profile not initialized');
+  }
+  final profile = profiles.first;
+
+  // 2. Get Cumulative success days (unique dates where at least one habit was completed)
+  final logs = await db.select(db.habitLogs).get();
+  final uniqueDoneDates = logs
+      .where((log) => log.status == 'Done')
+      .map((log) => log.date.toIso8601String().split('T').first)
+      .toSet();
+  final cumulativeDays = uniqueDoneDates.length;
+
+  // 3. Determine Current Season
+  // Dormant: > 14 days of no habit logging or app updates (fallback to profile updatedAt)
+  String season = 'Growth';
+  if (profile.supportMode == 'Recovery') {
+    season = 'Recovery';
+  } else {
+    final now = DateTime.now();
+    DateTime lastActivity = profile.updatedAt;
+    if (logs.isNotEmpty) {
+      logs.sort((a, b) => b.date.compareTo(a.date));
+      lastActivity = logs.first.date;
+    }
+    if (now.difference(lastActivity).inDays > 14) {
+      season = 'Dormant';
+    }
+  }
+
+  // 4. Get active habits scheduled for today
+  final now = DateTime.now();
+  final weekday = now.weekday; // 1 = Monday, 7 = Sunday
+  
+  final allActiveHabits = await (db.select(db.habits)
+        ..where((tbl) => tbl.status.equals('Active') & tbl.deletedAt.isNull()))
+      .get();
+  
+  final todayStart = DateTime(now.year, now.month, now.day);
+  final todayLogs = await (db.select(db.habitLogs)
+        ..where((tbl) => tbl.date.equals(todayStart) & tbl.deletedAt.isNull()))
+      .get();
+
+  final List<HabitWithLog> habitsToday = [];
+  
+  for (final habit in allActiveHabits) {
+    bool isScheduled = false;
+    if (habit.frequency == 'Daily') {
+      isScheduled = true;
+    } else if (habit.scheduledDays != null) {
+      final days = habit.scheduledDays!.split(',').map((e) => int.tryParse(e.trim()) ?? 0);
+      if (days.contains(weekday)) {
+        isScheduled = true;
+      }
+    }
+
+    if (isScheduled) {
+      final log = todayLogs.where((l) => l.habitId == habit.habitId).firstOrNull;
+      habitsToday.add(HabitWithLog(habit: habit, log: log));
+    }
+  }
+
+  // 5. Calculate Action of the Day (Priority Score)
+  // priority_score = (domain_deficit * impact_score) / (initiation_friction + energy_cost)
+  Map<String, dynamic> domainScores = {};
+  if (profile.latestDomainScores != null) {
+    try {
+      domainScores = jsonDecode(profile.latestDomainScores!);
+    } catch (_) {}
+  }
+  
+  double bodyScore = (domainScores['Tubuh'] ?? 5).toDouble();
+  double domainDeficit = 10.0 - bodyScore;
+
+  Habit? actionOfTheDay;
+  double highestPriority = -1.0;
+
+  // We filter to scheduled habits for today that are not completed yet
+  final uncompletedToday = habitsToday.where((hwl) => hwl.log?.status != 'Done').toList();
+
+  for (final hwl in uncompletedToday) {
+    final habit = hwl.habit;
+    final totalLoad = habit.initiationFriction + habit.energyCost;
+    final score = (domainDeficit * habit.impactScore) / (totalLoad > 0 ? totalLoad : 1);
+    
+    if (score > highestPriority) {
+      highestPriority = score;
+      actionOfTheDay = habit;
+    }
+  }
+
+  // 6. Check if there are overdue decisions
+  final overdueDecisions = await (db.select(db.decisionEntries)
+        ..where((tbl) => tbl.isReviewed.equals(false) & tbl.reviewDate.isSmallerThanValue(DateTime.now())))
+      .get();
+  final hasOverdueDecisions = overdueDecisions.isNotEmpty;
+
+  // 7. Check if all scheduled habits today are done
+  final totalScheduledToday = habitsToday.length;
+  final totalDoneToday = habitsToday.where((hwl) => hwl.log?.status == 'Done').length;
+  final allDone = totalScheduledToday > 0 && totalDoneToday == totalScheduledToday;
+
+  return DashboardData(
+    profile: profile,
+    cumulativeDays: cumulativeDays,
+    season: season,
+    actionOfTheDay: actionOfTheDay,
+    habitsToday: habitsToday,
+    allDone: allDone,
+    hasOverdueDecisions: hasOverdueDecisions,
+  );
+});

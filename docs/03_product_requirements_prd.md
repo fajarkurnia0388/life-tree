@@ -109,6 +109,8 @@ Trigger intervensi **bervariasi berdasarkan frekuensi habit**:
 
 Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 LifeTree. Mode ini muncul saat pengguna buntu, terlalu banyak opsi, ragu pada rencana, takut gagal, atau perlu mengubah ide menjadi aksi kecil. Prinsip utamanya: **LifeTree tidak menggantikan buku catatan**. LifeTree menyarankan pengguna membangun kebiasaan corat-coret di buku/kertas asli, lalu menyimpan ringkasan hasilnya di aplikasi.
 
+Untuk mempermudah penggunaan awal, disediakan **Panduan Interaktif (Onboarding Tour)** berupa dialog 4-langkah. Pada langkah pemilihan metode, disediakan tombol pilihan interaktif berdasarkan kondisi kognitif pengguna saat ini (misalnya: Pikiran Penuh → Mind Dump, Ragu → PMI) yang secara dinamis memperbarui pilihan Dropdown formulir di halaman utama secara real-time. Panduan ini juga dapat diakses ulang melalui tombol bantuan di AppBar.
+
 | Kondisi Pengguna | Metode yang Disarankan | Output Produk |
 |------------------|------------------------|---------------|
 | Pikiran penuh | Mind Dump + Cluster + Refine | 1 klaster pikiran + 1 aksi kecil |
@@ -246,6 +248,7 @@ MVP Core tetap membawa visi **Personal OS**, tetapi implementasinya dipangkas me
 | Lapis 2 | Domain Keuangan, Hubungan, Emosi, Karir, Rekreasi (bertahap) | P1 |
 | Monetisasi | Micro-transaksi kosmetik (skin pohon saja, Dark Mode gratis) | P2 |
 | Lapis 3 | Decision Journal | P2 |
+| Marketplace | **Habit Template Marketplace**: Upload, share, rate (1-5 stars), and download habit configurations to local database, with 100% E2EE/anonymous profile isolation and no social loops (no comments/likes) | P1 |
 
 ### OUT (Fase 2)
 - Teen Mode (13–17 tahun)

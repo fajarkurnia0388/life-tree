@@ -62,8 +62,8 @@ Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal Lite, Deep Reflection, T
 ### Lapis 0: Akar (Refleksi Adaptif & Diagnosis)
 - **Adaptive Micro-Journaling:**
   - *Journal Lite (Default):* Hanya 1 ketuk emoji mood + 1 kata kunci.
-  - *Deep Reflection:* 3 pertanyaan + *Gratitude prompt* (Hanya jika pengguna memilih).
-- **Thinking Canvas — Pilar Refleksi Berbasis Kertas:** mode paper-first untuk kondisi buntu, terlalu banyak opsi, ragu pada rencana, atau perlu mengubah ide menjadi aksi kecil. Pengguna dianjurkan corat-coret di buku/kertas asli; LifeTree menyimpan ringkasan digital berupa metode, temuan, asumsi, dan aksi kecil.
+  - *Deep Reflection:* 3 pertanyaan + *Gratitude prompt* (Hanya jika pengguna memilih). Dilengkapi dengan **Gratitude Suggestion Chips** untuk mempercepat pengisian dan memicu inspirasi rasa syukur harian secara instan.
+- **Thinking Canvas — Pilar Refleksi Berbasis Kertas:** mode paper-first untuk kondisi buntu, terlalu banyak opsi, ragu pada rencana, atau perlu mengubah ide menjadi aksi kecil. Pengguna dianjurkan corat-coret di buku/kertas asli; LifeTree menyimpan ringkasan digital berupa metode, temuan, asumsi, dan aksi kecil. Dilengkapi dengan **Panduan Interaktif (Onboarding Tour)** otomatis pada kunjungan pertama dan tombol Bantuan AppBar, di mana pengguna dapat memilih metode secara dinamis berdasarkan kondisi kognitif mereka saat ini (misalnya: Pikiran Penuh → Mind Dump).
 - **Friction Journaling & Status Habit:**
   Habit memiliki 5 status: *Done, Missed, Skipped Intentionally, Paused*, dan implisit *Not_Scheduled* (hari di luar jadwal — tidak ada log dibuat).
   - *Daily:* 3x Missed dalam 7 hari
@@ -93,8 +93,8 @@ Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal Lite, Deep Reflection, T
 - *Tagging Opsional:* Smart Suggestion saat men-tag habit ke domain.
 
 ### Lapis 3: Buah & Kompas (Advanced — LifeTree Plus)
-- **Life Compass:** 3 Core Values opsional — didukung Self-Determination Theory (Deci & Ryan, 2000).
-- **Decision Journal:** Mencatat keputusan sulit + pengingat review 90 hari. **Iterasi 2 (P2)**, bukan Scope OUT.
+- **Life Compass:** 3 Core Values opsional — didukung Self-Determination Theory (Deci & Ryan, 2000). Dilengkapi dengan **Preset Chips** nilai populer (Kesehatan, Kebebasan, Keluarga, dll.) untuk mempercepat penentuan arah hidup tanpa beban kognitif.
+- **Decision Journal:** Mencatat keputusan sulit + pengingat review kustom (7/30/90 hari). Dilengkapi dengan **Autofill Mock Templates** ("Beli Mobil vs Taksi" dan "Bootcamp vs Otodidak") untuk memvisualisasikan cara kerja dan mempercepat proses input keputusan strategis.
 
 ## 4. Panduan Copywriting UX (Anti-Guilt Tone Guidelines)
 Aplikasi harus di-*coding* dengan tata bahasa empati.
@@ -149,6 +149,7 @@ String UI file terpisah, format locale-aware, Anti-Guit dilokalize oleh native s
 
 ### Iterasi 2 (Fase 1.5)
 - Domain Keuangan/Hubungan/Emosi/Karir/Rekreasi, Micro-transaksi kosmetik, Decision Journal.
+- **Habit Template Marketplace (Berbagi Template):** Modul berbagi konfigurasi kebiasaan antar-pengguna secara anonim/dengan nama pena, dilengkapi sistem rating dan unduhan, tanpa elemen sosial pembanding (tanpa komentar/likes) untuk menjaga kesehatan mental.
 
 ### Privacy/E2EE Phase
 - Cloud Sync, zero-knowledge E2EE, seed phrase, recovery contact, key rotation, sync conflict resolution, dan DSAR workflow.

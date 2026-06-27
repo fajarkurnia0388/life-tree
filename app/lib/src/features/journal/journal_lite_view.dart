@@ -1,0 +1,369 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
+import '../../core/providers/db_provider.dart';
+import '../../data/local_db/database.dart';
+import 'package:drift/drift.dart' as drift;
+
+class JournalLiteView extends ConsumerStatefulWidget {
+  const JournalLiteView({super.key});
+
+  @override
+  ConsumerState<JournalLiteView> createState() => _JournalLiteViewState();
+}
+
+class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
+  final _formKey = GlobalKey<FormState>();
+  final _keywordController = TextEditingController();
+  final _q1Controller = TextEditingController();
+  final _q2Controller = TextEditingController();
+  final _q3Controller = TextEditingController();
+  
+  int _selectedMood = 3; // Default 3 (Biasa Saja)
+  bool _showDeepReflection = false;
+
+  final List<Map<String, dynamic>> _moods = [
+    {'score': 1, 'emoji': '😢', 'label': 'Sangat Buruk'},
+    {'score': 2, 'emoji': '🙁', 'label': 'Buruk'},
+    {'score': 3, 'emoji': '😐', 'label': 'Biasa Saja'},
+    {'score': 4, 'emoji': '🙂', 'label': 'Baik'},
+    {'score': 5, 'emoji': '😀', 'label': 'Sangat Baik'},
+  ];
+
+  Future<void> _saveJournalEntry() async {
+    if (!_formKey.currentState!.validate()) return;
+ 
+    final db = ref.read(dbProvider);
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+ 
+    // Get user id
+    final profiles = await db.select(db.userProfiles).get();
+    if (profiles.isEmpty) return;
+    final userId = profiles.first.userId;
+ 
+    final entryId = const Uuid().v4();
+ 
+    final keywordText = _keywordController.text.trim();
+    
+    // Deep reflection fields mapping
+    final String? textContent = _showDeepReflection
+        ? 'Pikiran: ${_q1Controller.text.trim()}\n\nRespons: ${_q2Controller.text.trim()}'
+        : null;
+    final String? gratitudeText = _showDeepReflection
+        ? _q3Controller.text.trim()
+        : null;
+    final String entryType = _showDeepReflection ? 'Deep' : 'Lite';
+ 
+    // Check if entry already exists for today
+    final existing = await (db.select(db.journalEntries)
+          ..where((tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart)))
+        .get();
+ 
+    if (existing.isNotEmpty) {
+      // Update existing
+      await (db.update(db.journalEntries)
+            ..where((tbl) => tbl.entryId.equals(existing.first.entryId)))
+          .write(JournalEntriesCompanion(
+            moodScore: drift.Value(_selectedMood),
+            keyword: drift.Value(keywordText.isEmpty ? null : keywordText),
+            textContent: drift.Value(textContent),
+            gratitudeText: drift.Value(gratitudeText),
+            entryType: drift.Value(entryType),
+          ));
+    } else {
+      // Insert new
+      await db.into(db.journalEntries).insert(
+            JournalEntriesCompanion.insert(
+              entryId: entryId,
+              userId: userId,
+              date: todayStart,
+              moodScore: _selectedMood,
+              keyword: drift.Value(keywordText.isEmpty ? null : keywordText),
+              textContent: drift.Value(textContent),
+              gratitudeText: drift.Value(gratitudeText),
+              entryType: drift.Value(entryType),
+              createdAt: now,
+            ),
+          );
+    }
+
+    // Trigger low mood warning if mood_score <= 2 for 3 consecutive days
+    // Let's query recent entries
+    final recentEntries = await (db.select(db.journalEntries)
+          ..where((tbl) => tbl.userId.equals(userId))
+          ..orderBy([(t) => drift.OrderingTerm(expression: t.date, mode: drift.OrderingMode.desc)])
+          ..limit(3))
+        .get();
+    
+    // Check if we have 3 days of mood <= 2
+    final lowMoodCount = recentEntries.where((e) => e.moodScore <= 2).length;
+    if (lowMoodCount >= 3) {
+      _showLowMoodWarning();
+      return;
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Jurnal harian berhasil disimpan!'), backgroundColor: Colors.green),
+      );
+      context.pop();
+    }
+  }
+
+  void _showLowMoodWarning() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('💡 Pesan Dukungan Diri'),
+          content: const Text(
+            'Kami mendeteksi suasana hati Anda kurang baik selama beberapa hari terakhir. '
+            'Ingatlah untuk tidak menekan diri Anda terlalu keras. Anda selalu bisa beristirahat. '
+            '\n\nJika membutuhkan teman berbicara atau bantuan psikologis profesional, silakan kunjungi Safety Card di pojok kanan atas layar utama.'
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+                if (mounted) {
+                  context.pop(); // Go back to dashboard
+                }
+              },
+              child: const Text('Mengerti'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                if (mounted) {
+                  context.pushReplacement('/safety');
+                }
+              },
+              child: const Text('Buka Safety Card'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _keywordController.dispose();
+    _q1Controller.dispose();
+    _q2Controller.dispose();
+    _q3Controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Jurnal Lite'),
+      ),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Bagaimana perasaan Anda hari ini?',
+                style: theme.textTheme.headlineMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+
+              // Mood Emojis
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: _moods.map((mood) {
+                  final score = mood['score'] as int;
+                  final isSelected = _selectedMood == score;
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        _selectedMood = score;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(16),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isSelected ? theme.colorScheme.primary.withOpacity(0.12) : Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            mood['emoji'] as String,
+                            style: const TextStyle(fontSize: 40),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            mood['label'] as String,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.6),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+
+              const SizedBox(height: 40),
+
+              // Keyword Tag field
+              const Text(
+                '1 Kata Kunci Hari Ini (Opsional)',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _keywordController,
+                decoration: InputDecoration(
+                  hintText: 'Misal: bersyukur, lelah, produktif, santai',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.tag_rounded),
+                ),
+                maxLength: 20,
+              ),
+              const SizedBox(height: 16),
+
+              // Switch for Deep Reflection
+              SwitchListTile(
+                value: _showDeepReflection,
+                onChanged: (val) {
+                  setState(() {
+                    _showDeepReflection = val;
+                  });
+                },
+                title: const Text('Refleksi Mendalam (Opsional) ✍️'),
+                subtitle: const Text('Jawab 3 pertanyaan reflektif untuk kesehatan emosional.'),
+                activeColor: theme.colorScheme.primary,
+                contentPadding: EdgeInsets.zero,
+              ),
+              const SizedBox(height: 8),
+
+              if (_showDeepReflection) ...[
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Apa yang paling menyita pikiran Anda hari ini?',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _q1Controller,
+                          maxLines: 2,
+                          decoration: InputDecoration(
+                            hintText: 'Tuliskan unek-unek atau fokus pikiran Anda...',
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) ? 'Harap isi kolom ini' : null,
+                        ),
+                        const SizedBox(height: 16),
+
+                        const Text(
+                          'Bagaimana Anda merespons hal tersebut?',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _q2Controller,
+                          maxLines: 2,
+                          decoration: InputDecoration(
+                            hintText: 'Tindakan atau sikap mental yang Anda ambil...',
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) ? 'Harap isi kolom ini' : null,
+                        ),
+                        const SizedBox(height: 16),
+
+                        const Text(
+                          'Tuliskan 1 hal kecil yang Anda syukuri hari ini.',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: [
+                            'Kesehatan 🍎',
+                            'Cuaca Cerah ☀️',
+                            'Keluarga 🏠',
+                            'Makanan Enak 🍲',
+                            'Istirahat Cukup 🛌',
+                          ].map((s) {
+                            return ActionChip(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                              label: Text(s, style: const TextStyle(fontSize: 10)),
+                              onPressed: () {
+                                final current = _q3Controller.text.trim();
+                                if (current.isEmpty) {
+                                  _q3Controller.text = s;
+                                } else {
+                                  _q3Controller.text = '$current, $s';
+                                }
+                              },
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _q3Controller,
+                          maxLines: 2,
+                          decoration: InputDecoration(
+                            hintText: 'Misal: Secangkir kopi hangat, senyum rekan kerja...',
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) ? 'Harap isi kolom ini' : null,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // Save Button
+              ElevatedButton(
+                onPressed: _saveJournalEntry,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  minimumSize: const Size(88, 52), // WCAG touch target
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text('Simpan Jurnal', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
