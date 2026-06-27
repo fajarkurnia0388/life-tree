@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'core/routing/router.dart';
 import 'core/theme/theme.dart';
 import 'features/onboarding/onboarding_view.dart';
@@ -16,7 +17,7 @@ class LifeTreeApp extends ConsumerWidget {
     return onboardingState.when(
       data: (completed) {
         final router = ref.watch(routerProvider);
-        return MaterialApp.router(
+        final appWidget = MaterialApp.router(
           title: 'LifeTree',
           theme: CalmTheme.lightTheme,
           darkTheme: CalmTheme.darkTheme,
@@ -24,6 +25,11 @@ class LifeTreeApp extends ConsumerWidget {
           routerConfig: router,
           debugShowCheckedModeBanner: false,
         );
+
+        if (kDebugMode) {
+          return ExcludeSemantics(child: appWidget);
+        }
+        return appWidget;
       },
       loading: () => const MaterialApp(
         debugShowCheckedModeBanner: false,
