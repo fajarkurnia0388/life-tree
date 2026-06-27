@@ -10,6 +10,7 @@ import 'package:drift/drift.dart' as drift;
 import '../../core/theme/theme.dart';
 import '../onboarding/onboarding_view.dart';
 import 'widgets/radar_chart_widget.dart';
+import '../habit/services/habit_log_service.dart';
 
 class DashboardView extends ConsumerWidget {
   const DashboardView({super.key});
@@ -27,35 +28,16 @@ class DashboardView extends ConsumerWidget {
   }
 
   Future<void> _toggleHabit(BuildContext context, WidgetRef ref, Habit habit, HabitLog? log) async {
-    final db = ref.read(dbProvider);
+    final service = ref.read(habitLogServiceProvider);
     final now = DateTime.now();
-    final todayStart = DateTime(now.year, now.month, now.day);
 
     try {
       if (log != null && log.status == 'Done') {
-        // Uncheck habit: Delete the log, decrement count
-        await (db.delete(db.habitLogs)..where((tbl) => tbl.logId.equals(log.logId))).go();
-        
-        final newCount = (habit.lifetimeDoneCount - 1).clamp(0, 99999);
-        await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
-            .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+        // Uncheck habit via service (safe delete + decrement)
+        await service.markUnchecked(habit: habit, log: log);
       } else {
-        // Check habit: Insert Done log, increment count
-        final logId = const Uuid().v4();
-        await db.into(db.habitLogs).insert(
-              HabitLogsCompanion.insert(
-                logId: logId,
-                habitId: habit.habitId,
-                date: todayStart,
-                status: 'Done',
-                durationTargetMin: drift.Value(habit.mvaDurationMin),
-                durationActualMin: drift.Value(habit.mvaDurationMin),
-              ),
-            );
-
-        final newCount = habit.lifetimeDoneCount + 1;
-        await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
-            .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+        // Check habit via service (safe upsert to Done)
+        await service.markDone(habit: habit, date: now);
       }
       ref.invalidate(dashboardDataProvider);
     } catch (e) {
@@ -1439,27 +1421,19 @@ class _FrictionInterventionSheetState extends ConsumerState<_FrictionInterventio
   Future<void> _submitIntervention() async {
     if (_selectedReason == null) return;
 
+    final service = ref.read(habitLogServiceProvider);
     final db = ref.read(dbProvider);
     final now = DateTime.now();
-    final todayStart = DateTime(now.year, now.month, now.day);
-    
-    // Log as Missed with the selected reason
-    await db.into(db.habitLogs).insert(
-          HabitLogsCompanion.insert(
-            logId: const Uuid().v4(),
-            habitId: widget.habit.habitId,
-            date: todayStart,
-            status: 'Missed',
-            frictionReasonSelected: drift.Value(_selectedReason),
-          ),
-        );
+
+    // Safe upsert Missed log via HabitLogService (no duplicate conflict)
+    await service.markMissedWithReason(
+      habit: widget.habit,
+      date: now,
+      reason: _selectedReason!,
+    );
 
     // Apply specific intervention logic based on user choice
-    if (_selectedReason == 'Kurang_Waktu') {
-      // Prompt user and apply MVA override
-      // "one-time override durasi ke mva_duration_min menit untuk hari berikutnya"
-      // We will save duration override logic by showing dialog.
-    } else if (_selectedReason == 'Kelelahan') {
+    if (_selectedReason == 'Kelelahan') {
       // Enter Recovery Mode
       final profiles = await db.select(db.userProfiles).get();
       if (profiles.isNotEmpty) {

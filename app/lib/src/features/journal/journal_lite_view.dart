@@ -130,17 +130,33 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
           );
     }
 
-    // Trigger low mood warning if mood_score <= 2 for 3 consecutive days
-    // Let's query recent entries
-    final recentEntries = await (db.select(db.journalEntries)
-          ..where((tbl) => tbl.userId.equals(userId))
-          ..orderBy([(t) => drift.OrderingTerm(expression: t.date, mode: drift.OrderingMode.desc)])
-          ..limit(3))
+    // Trigger low mood warning if mood_score <= 2 for exactly 3 consecutive days
+    // We check hari ini (H-0), kemarin (H-1), dan 2 hari lalu (H-2) secara ketat.
+    final now2 = DateTime.now();
+    final dayH0 = DateTime(now2.year, now2.month, now2.day);
+    final dayH1 = dayH0.subtract(const Duration(days: 1));
+    final dayH2 = dayH0.subtract(const Duration(days: 2));
+
+    final consecutiveEntries = await (db.select(db.journalEntries)
+          ..where((tbl) =>
+              tbl.userId.equals(userId) &
+              tbl.date.isIn([dayH0, dayH1, dayH2])))
         .get();
-    
-    // Check if we have 3 days of mood <= 2
-    final lowMoodCount = recentEntries.where((e) => e.moodScore <= 2).length;
-    if (lowMoodCount >= 3) {
+
+    // Build a map from date -> moodScore for quick lookup
+    final moodByDate = {
+      for (final e in consecutiveEntries) e.date: e.moodScore,
+    };
+
+    // All 3 consecutive days must have an entry AND moodScore <= 2
+    final hasConsecutiveLowMood = moodByDate.containsKey(dayH0) &&
+        moodByDate.containsKey(dayH1) &&
+        moodByDate.containsKey(dayH2) &&
+        moodByDate[dayH0]! <= 2 &&
+        moodByDate[dayH1]! <= 2 &&
+        moodByDate[dayH2]! <= 2;
+
+    if (hasConsecutiveLowMood) {
       _showLowMoodWarning();
       return;
     }
