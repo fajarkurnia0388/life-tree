@@ -451,6 +451,18 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
           return SwotMatrixWorkspace(onChanged: (val) => _customWorkspaceValue = val);
         } else if (_selectedMethod == 'Starbursting') {
           return StarburstingWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'MindDump') {
+          return MindDumpWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'AffinityMapping') {
+          return AffinityMappingWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == '5Whys') {
+          return FiveWhysWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'FirstPrinciples') {
+          return FirstPrinciplesWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'DoubleDiamond') {
+          return DoubleDiamondWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'Validation') {
+          return ValidationWorkspace(onChanged: (val) => _customWorkspaceValue = val);
         }
 
         // Fallback for default freeform (e.g. Mind Dump)
@@ -907,15 +919,15 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
     },
     {
       'title': '2. Pilih Metode Berpikir 🧠',
-      'desc': 'Kami mendukung 5 metode kognitif: Mind Dump (menguras pikiran), PMI (skoring opsi), Reverse Brainstorming (membalik masalah), dan lainnya.',
+      'desc': 'Kami mendukung 21 metode kognitif premium dengan panduan coretan kertas dan editor interaktif (seperti Mind Map, Slot Machine, Teratai Radial, dll) untuk memicu ide terbaik Anda.',
     },
     {
       'title': '3. Corat-Coret Tanpa Gangguan ✍️',
-      'desc': 'Tuliskan ide, buat bagan, buat mind map, atau corat-coret sesuka Anda secara offline. Kurangi screen fatigue dan ketegangan mental.',
+      'desc': 'Ikuti rekomendasi format coretan kertas fisik di dalam aplikasi untuk melatih fokus kognitif, membebaskan imajinasi, dan mengurangi screen fatigue.',
     },
     {
-      'title': '4. Ringkas & Aksi Kecil 🌳',
-      'desc': 'Kembali ke aplikasi setelah selesai untuk mendokumentasikan intisari coretan Anda, serta pilih "Aksi Kecil Berikutnya" untuk langsung dikerjakan.',
+      'title': '4. Ringkas & Lakukan Digitalisasi 🌳',
+      'desc': 'Gunakan modul editor interaktif khusus bertema kami untuk mengabadikan intisari coretan Anda, mengacak kombinasi slot parameter, memetakan SWOT, atau memilih persona kognitif.',
     },
   ];
 
@@ -1001,39 +1013,151 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
                       ),
                       const SizedBox(height: 12),
                       if (index == 1) ...[
+                        Text(
+                          step['desc']!,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(height: 1.4, fontSize: 11),
+                        ),
+                        const SizedBox(height: 10),
                         const Text(
                           'Apa yang Anda rasakan saat ini?',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 12),
                         Expanded(
                           child: SingleChildScrollView(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
+                                const SizedBox(height: 6),
+                                const Text(
+                                  'DIVERGEN (MEMBANGUN IDE)',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.blue),
+                                ),
+                                const SizedBox(height: 4),
                                 _buildInteractiveStateButton(
-                                  label: '🤯 Pikiran Penuh / Cemas',
+                                  label: '🤯 Pikiran Penuh / Cemas (Mind Dump)',
                                   methodKey: 'MindDump',
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '⚖️ Timbang Pilihan / Ragu',
+                                  label: '🗺️ Petakan Hubungan Ide (Mind Map)',
+                                  methodKey: 'MindMapping',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '⏱️ Tulis Cepat Tanpa Jeda (Freewriting)',
+                                  methodKey: 'Freewriting',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🎰 Kombinasi Unik Acak (Morphological)',
+                                  methodKey: 'MorphologicalAnalysis',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🌸 Mekarkan Cabang Ide (Lotus Blossom)',
+                                  methodKey: 'LotusBlossom',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🚀 Brainstorming Kilat (Classic BS)',
+                                  methodKey: 'Brainstorming',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '😈 Pikirkan Ide Terburuk (WPI)',
+                                  methodKey: 'WorstPossibleIdea',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🔠 Modifikasi Ide Lama (SCAMPER)',
+                                  methodKey: 'SCAMPER',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🔤 Butuh Kata Pemantik (Random Word)',
+                                  methodKey: 'RandomWord',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🎭 Pakai Kacamata Karakter (Role Storming)',
+                                  methodKey: 'RoleStorming',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '⭐️ Butuh Pertanyaan Kunci (Starburst)',
+                                  methodKey: 'Starbursting',
+                                  theme: theme,
+                                ),
+                                const SizedBox(height: 12),
+                                const Text(
+                                  'KONVERGEN (MENGEVALUASI IDE)',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.green),
+                                ),
+                                const SizedBox(height: 4),
+                                _buildInteractiveStateButton(
+                                  label: '⚖️ Timbang Plus/Minus (PMI)',
                                   methodKey: 'PMI',
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '🧗 Buntu / Sulit Solusi',
-                                  methodKey: 'ReverseBrainstorming',
-                                  theme: theme,
-                                ),
-                                _buildInteractiveStateButton(
-                                  label: '💡 Banyak Ide / Bingung',
+                                  label: '💡 Banyak Ide Bingung Pilih (Scoring)',
                                   methodKey: 'Scoring',
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '🔍 Ingin Uji Asumsi',
+                                  label: '🔍 Ingin Uji Asumsi Nyata (Validation)',
                                   methodKey: 'Validation',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🧗 Buntu Cari Akar Solusi (Reverse BS)',
+                                  methodKey: 'ReverseBrainstorming',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🕵️ Cari Akar Penyebab (5 Whys)',
+                                  methodKey: '5Whys',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🛠️ Bongkar Asumsi Dasar (First Principles)',
+                                  methodKey: 'FirstPrinciples',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '📊 Matriks SWOT Kuadran (SWOT)',
+                                  methodKey: 'SWOT',
+                                  theme: theme,
+                                ),
+                                const SizedBox(height: 12),
+                                const Text(
+                                  'SESI LENGKAP & EVALUASI',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.purple),
+                                ),
+                                const SizedBox(height: 4),
+                                _buildInteractiveStateButton(
+                                  label: '🎩 Analisis 6 Topi Kognitif (Six Hats)',
+                                  methodKey: 'SixThinkingHats',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🏰 Uji Visi & Celah Rencana (Disney)',
+                                  methodKey: 'DisneyStrategy',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '💎 Alur Desain Terpadu (Double Diamond)',
+                                  methodKey: 'DoubleDiamond',
+                                  theme: theme,
+                                ),
+                                _buildInteractiveStateButton(
+                                  label: '🏷️ Kelompokkan Ide Sejenis (Affinity)',
+                                  methodKey: 'AffinityMapping',
                                   theme: theme,
                                 ),
                               ],

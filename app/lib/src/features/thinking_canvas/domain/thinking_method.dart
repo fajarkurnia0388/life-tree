@@ -258,15 +258,7 @@ class ThinkingMethod {
       desc: 'Tanyakan "Kenapa" 5 kali beruntun untuk menemukan akar masalah terdalam.',
       level: 'Pemula',
       isPremium: false,
-      template: WorkspaceTemplate.sequential,
-      stepLabels: [
-        'Masalah Utama',
-        'Kenapa ini terjadi? (Level 1)',
-        'Kenapa itu terjadi? (Level 2)',
-        'Kenapa demikian? (Level 3)',
-        'Kenapa? (Level 4)',
-        'Akar Masalah (Level 5)'
-      ],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Tuliskan masalah spesifik yang sedang dihadapi di bagian paling atas kertas.',
         'Tanyakan kenapa masalah itu terjadi, tulis jawabannya (Level 1).',
@@ -313,8 +305,7 @@ class ThinkingMethod {
       desc: 'Pertanyakan semua asumsi, bongkar masalah ke fakta dasar, lalu susun solusi baru dari nol.',
       level: 'Lanjutan',
       isPremium: true,
-      template: WorkspaceTemplate.multiColumn,
-      columns: ['Asumsi Umum saat ini', 'Fakta Dasar yang tidak terbantahkan', 'Konstruksi Solusi Baru'],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Tuliskan keyakinan atau asumsi umum tentang masalah Anda saat ini.',
         'Bongkar kebenaran tersebut sampai tersisa fakta dasar yang mutlak dan tak terbantahkan.',
@@ -361,13 +352,7 @@ class ThinkingMethod {
       desc: 'Kerangka kerja desain dari memetakan masalah hingga menguji solusi.',
       level: 'Kerangka Kerja',
       isPremium: true,
-      template: WorkspaceTemplate.sequential,
-      stepLabels: [
-        '1. Discover (Riset & Petakan Masalah)',
-        '2. Define (Fokus ke Masalah Utama)',
-        '3. Develop (Brainstorm Alternatif Solusi)',
-        '4. Deliver (Uji Coba & Eksekusi)'
-      ],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Discover: Buka pikiran, kumpulkan semua keluhan atau riset.',
         'Define: Saring, pilih satu titik masalah paling krusial untuk diselesaikan.',
@@ -435,8 +420,7 @@ class ThinkingMethod {
       desc: 'Uji sinyal minat nyata atas ide Anda ke dunia luar dalam waktu singkat.',
       level: 'Kerangka Kerja',
       isPremium: true,
-      template: WorkspaceTemplate.multiColumn,
-      columns: ['Asumsi Kunci yang diuji', 'Bentuk Penawaran (Landing page / Pesan WA)', '10 Target Kontak Pertama'],
+      template: WorkspaceTemplate.freeform,
       steps: [
         'Tuliskan asumsi terbesar dari ide Anda (misal: "Orang butuh jasa kurir sayur organik").',
         'Buat bentuk penawaran sederhana (landing page dasar atau rancangan draf pesan WhatsApp).',
