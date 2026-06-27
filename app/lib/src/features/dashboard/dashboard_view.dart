@@ -816,6 +816,68 @@ class DashboardView extends ConsumerWidget {
                       ),
                     ),
                     const Divider(),
+                    if (isDevMode) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(Icons.nature_people_rounded, color: Colors.green, size: 20),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Simulasi Usia Pohon',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                Consumer(
+                                  builder: (context, ref, child) {
+                                    final currentOverride = ref.watch(devCumulativeDaysOverrideProvider);
+                                    return Text(
+                                      currentOverride != null ? '$currentOverride Hari (Virtual)' : 'Default (Data Riil)',
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.green),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            Consumer(
+                              builder: (context, ref, child) {
+                                final currentOverride = ref.watch(devCumulativeDaysOverrideProvider) ?? dashboardData?.cumulativeDays ?? 0;
+                                return Row(
+                                  children: [
+                                    Expanded(
+                                      child: Slider(
+                                        value: currentOverride.toDouble().clamp(0.0, 100.0),
+                                        min: 0,
+                                        max: 100,
+                                        divisions: 100,
+                                        label: '$currentOverride Hari',
+                                        onChanged: (val) {
+                                          ref.read(devCumulativeDaysOverrideProvider.notifier).state = val.toInt();
+                                        },
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        ref.read(devCumulativeDaysOverrideProvider.notifier).state = null;
+                                      },
+                                      child: const Text('Reset', style: TextStyle(fontSize: 12)),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(),
+                    ],
                   ],
                   ListTile(
                     leading: Icon(Icons.download_rounded, color: CalmTheme.primarySage),

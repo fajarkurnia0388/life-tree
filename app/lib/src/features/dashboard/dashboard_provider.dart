@@ -30,6 +30,8 @@ class HabitWithLog {
   HabitWithLog({required this.habit, this.log});
 }
 
+final devCumulativeDaysOverrideProvider = StateProvider<int?>((ref) => null);
+
 final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
   final db = ref.watch(dbProvider);
   
@@ -40,13 +42,20 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
   }
   final profile = profiles.first;
 
-  // 2. Get Cumulative success days (unique dates where at least one habit was completed)
+  // 2. Get Cumulative success days (with Developer Override support)
+  final overrideDays = ref.watch(devCumulativeDaysOverrideProvider);
+  int cumulativeDays = 0;
   final logs = await db.select(db.habitLogs).get();
-  final uniqueDoneDates = logs
-      .where((log) => log.status == 'Done')
-      .map((log) => log.date.toIso8601String().split('T').first)
-      .toSet();
-  final cumulativeDays = uniqueDoneDates.length;
+
+  if (overrideDays != null) {
+    cumulativeDays = overrideDays;
+  } else {
+    final uniqueDoneDates = logs
+        .where((log) => log.status == 'Done')
+        .map((log) => log.date.toIso8601String().split('T').first)
+        .toSet();
+    cumulativeDays = uniqueDoneDates.length;
+  }
 
   // 3. Determine Current Season
   // Dormant: > 14 days of no habit logging or app updates (fallback to profile updatedAt)
