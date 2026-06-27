@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,10 @@ import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'package:drift/drift.dart' as drift;
+import 'domain/thinking_method.dart';
+import 'domain/mind_map_model.dart';
+import 'widgets/mind_map_canvas_view.dart';
+import 'widgets/specialized_workspace_widgets.dart';
 
 class ThinkingCanvasLiteView extends ConsumerStatefulWidget {
   const ThinkingCanvasLiteView({super.key});
@@ -25,14 +30,155 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
   bool _addToHabits = false;
   String _habitDomain = 'Tubuh';
 
-  final List<Map<String, String>> _methods = [
-    {'key': 'MindDump', 'name': 'Mind Dump', 'desc': 'Keluarkan semua beban pikiran tanpa diedit.'},
-    {'key': 'PMI', 'name': 'PMI (Plus, Minus, Interesting)', 'desc': 'Timbang keputusan berdasarkan kelebihan, kekurangan, dan poin menarik.'},
-    {'key': 'ReverseBrainstorming', 'name': 'Reverse Brainstorming', 'desc': 'Pikirkan cara memperburuk masalah, lalu balikkan solusinya.'},
-    {'key': 'Scoring', 'name': 'Skoring Ide', 'desc': 'Nilai opsi ide berdasarkan dampak & tingkat kesulitan.'},
-    {'key': 'Validation', 'name': 'Validasi Asumsi', 'desc': 'Uji kebenaran asumsi Anda sebelum mengambil keputusan.'},
-  ];
+  // Dynamic workspace controllers
+  final Map<String, TextEditingController> _dynamicControllers = {};
+  final List<ScoringItem> _scoringItems = [];
 
+  List<MindMapNode> _mindMapNodes = [];
+  String _customWorkspaceValue = '';
+
+  void _onMethodChanged(String methodKey) {
+    // Reset visual workspace variables
+    _mindMapNodes = [];
+    _customWorkspaceValue = '';
+    _summaryController.clear();
+
+    // Clear and dispose previous dynamic controllers
+    _dynamicControllers.forEach((_, controller) => controller.dispose());
+    _dynamicControllers.clear();
+
+    for (var item in _scoringItems) {
+      item.nameController.dispose();
+    }
+    _scoringItems.clear();
+
+    final method = ThinkingMethod.allMethods.firstWhere((m) => m.key == methodKey);
+    
+    if (method.template == WorkspaceTemplate.multiColumn && method.columns != null) {
+      for (final col in method.columns!) {
+        _dynamicControllers[col] = TextEditingController();
+      }
+    } else if (method.template == WorkspaceTemplate.sequential && method.stepLabels != null) {
+      for (final step in method.stepLabels!) {
+        _dynamicControllers[step] = TextEditingController();
+      }
+    } else if (method.template == WorkspaceTemplate.scoring) {
+      _addScoringRow();
+      _addScoringRow(); // start with 2 empty rows
+    }
+
+    setState(() {
+      _selectedMethod = methodKey;
+    });
+  }
+
+  void _addScoringRow() {
+    setState(() {
+      _scoringItems.add(
+        ScoringItem(
+          nameController: TextEditingController(),
+          impact: 3,
+          ease: 3,
+        ),
+      );
+    });
+  }
+
+  void _removeScoringRow(int index) {
+    if (_scoringItems.length > 1) {
+      setState(() {
+        _scoringItems[index].nameController.dispose();
+        _scoringItems.removeAt(index);
+      });
+    }
+  }
+
+  Widget _buildMethodGuidelineCard(ThemeData theme) {
+    final method = ThinkingMethod.allMethods.firstWhere((m) => m.key == _selectedMethod);
+    final steps = method.steps;
+    final format = method.format;
+
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border(
+          left: BorderSide(
+            color: theme.colorScheme.primary,
+            width: 4,
+          ),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.lightbulb_outline_rounded, color: theme.colorScheme.primary, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                'Panduan Coretan Kertas Fisik',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...steps.asMap().entries.map((entry) {
+            final idx = entry.key + 1;
+            final step = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$idx. ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                      fontSize: 12,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      step,
+                      style: const TextStyle(fontSize: 12, height: 1.4),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+          const SizedBox(height: 8),
+          const Divider(height: 16),
+          const Text(
+            'Rekomendasi Format Kertas:',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.grey),
+          ),
+          const SizedBox(height: 4),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.onBackground.withOpacity(0.04),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: theme.colorScheme.onBackground.withOpacity(0.08)),
+            ),
+            child: Text(
+              format,
+              style: TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 11,
+                color: theme.colorScheme.onBackground.withOpacity(0.8),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   Future<void> _saveCanvasSession() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -73,12 +219,46 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
           );
     }
 
+    String finalSummary = '';
+    final method = ThinkingMethod.allMethods.firstWhere((m) => m.key == _selectedMethod);
+    if (method.template == WorkspaceTemplate.freeform) {
+      if (_selectedMethod == 'MindMapping') {
+        finalSummary = jsonEncode({
+          'mind_map': _mindMapNodes.map((n) => n.toJson()).toList(),
+        });
+      } else if (_customWorkspaceValue.isNotEmpty) {
+        finalSummary = _customWorkspaceValue;
+      } else {
+        finalSummary = _summaryController.text.trim();
+      }
+    } else if (method.template == WorkspaceTemplate.multiColumn) {
+      final data = <String, String>{};
+      _dynamicControllers.forEach((key, controller) {
+        data[key] = controller.text.trim();
+      });
+      finalSummary = jsonEncode(data);
+    } else if (method.template == WorkspaceTemplate.sequential) {
+      final data = <String, String>{};
+      _dynamicControllers.forEach((key, controller) {
+        data[key] = controller.text.trim();
+      });
+      finalSummary = jsonEncode(data);
+    } else if (method.template == WorkspaceTemplate.scoring) {
+      final data = _scoringItems.map((item) => {
+        'name': item.nameController.text.trim(),
+        'impact': item.impact,
+        'ease': item.ease,
+        'total': item.impact * item.ease,
+      }).toList();
+      finalSummary = jsonEncode({'items': data});
+    }
+
     final newSession = ThinkingCanvasSessionsCompanion.insert(
       sessionId: sessionId,
       userId: userId,
       methodKey: _selectedMethod,
       topic: drift.Value(_topicController.text.trim().isEmpty ? null : _topicController.text.trim()),
-      summaryText: drift.Value(_summaryController.text.trim().isEmpty ? null : _summaryController.text.trim()),
+      summaryText: drift.Value(finalSummary.isEmpty ? null : finalSummary),
       nextAction: drift.Value(actionText.isEmpty ? null : actionText),
       paperArtifactRef: drift.Value(_refController.text.trim().isEmpty ? null : _refController.text.trim()),
       paperSession: const drift.Value(true),
@@ -121,27 +301,363 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
       builder: (context) {
         return _ThinkingCanvasOnboardingDialog(
           onMethodSelected: (method) {
-            setState(() {
-              _selectedMethod = method;
-            });
+            _onMethodChanged(method);
           },
         );
       },
     );
   }
 
+  Future<bool> _isUserPremium() async {
+    final db = ref.read(dbProvider);
+    final profiles = await db.select(db.userProfiles).get();
+    if (profiles.isNotEmpty) {
+      final p = profiles.first;
+      return p.unlockedSkins.contains('Sakura') ||
+             p.unlockedSkins.contains('Maple') ||
+             p.unlockedSkins.contains('Bonsai');
+    }
+    return false;
+  }
+
+  void _showPremiumDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text('Fitur Premium 👑'),
+          content: const Text(
+            'Metode berpikir tingkat lanjut dan workspace interaktif ini eksklusif untuk pengguna Premium.\n\n'
+            'Aktifkan Mode Developer di menu dashboard utama untuk membuka kunci seluruh fitur premium secara gratis!'
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Tutup'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showMethodPickerSheet() async {
+    final isPremiumUser = await _isUserPremium();
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return _MethodPickerBottomSheet(
+          currentMethodKey: _selectedMethod,
+          isPremiumUser: isPremiumUser,
+          onSelected: (key) {
+            _onMethodChanged(key);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildWorkspace(ThemeData theme) {
+    final method = ThinkingMethod.allMethods.firstWhere((m) => m.key == _selectedMethod);
+    switch (method.template) {
+      case WorkspaceTemplate.freeform:
+        if (_selectedMethod == 'MindMapping') {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                '4. Kanvas Mind Map Visual',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _mindMapNodes.isEmpty
+                    ? 'Belum ada peta pikiran yang dibuat. Buat visual mind map sekarang!'
+                    : 'Peta pikiran aktif: ${_mindMapNodes.length} gelembung ide.',
+                style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MindMapCanvasView(
+                        initialNodes: _mindMapNodes,
+                        onSaved: (nodes) {
+                          setState(() {
+                            _mindMapNodes = nodes;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.palette_rounded),
+                label: const Text('Buka Editor Kanvas Visual 🎨'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ],
+          );
+        } else if (_selectedMethod == 'Freewriting') {
+          return FreewritingWorkspace(controller: _summaryController);
+        } else if (_selectedMethod == 'LotusBlossom') {
+          return LotusBlossomWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'MorphologicalAnalysis') {
+          return MorphologicalWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'Brainstorming' || _selectedMethod == 'WorstPossibleIdea') {
+          return RapidBrainstormWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'QuestionStorming' || _selectedMethod == 'Starbursting') {
+          return QuestionStormWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        }
+
+        // Fallback for default freeform (e.g. Mind Dump)
+        return TextFormField(
+          controller: _summaryController,
+          maxLines: 5,
+          decoration: InputDecoration(
+            labelText: '4. Ringkasan Hasil Berpikir',
+            hintText: method.placeholder ?? 'Tuliskan hasil berpikir Anda di sini...',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          validator: (val) {
+            if (val == null || val.trim().isEmpty) {
+              return 'Harap masukkan hasil berpikir Anda';
+            }
+            return null;
+          },
+        );
+
+      case WorkspaceTemplate.multiColumn:
+        final columns = method.columns ?? [];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              '4. Input Kolom Hasil Berpikir',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+            const SizedBox(height: 12),
+            ...columns.map((col) {
+              final controller = _dynamicControllers[col] ?? TextEditingController();
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: TextFormField(
+                  controller: controller,
+                  maxLines: 2,
+                  decoration: InputDecoration(
+                    labelText: col,
+                    hintText: 'Masukkan poin untuk kolom $col...',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  validator: (val) {
+                    if (val == null || val.trim().isEmpty) {
+                      return 'Kolom $col tidak boleh kosong';
+                    }
+                    return null;
+                  },
+                ),
+              );
+            }),
+          ],
+        );
+
+      case WorkspaceTemplate.sequential:
+        final steps = method.stepLabels ?? [];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              '4. Langkah Berurutan',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+            const SizedBox(height: 12),
+            ...steps.asMap().entries.map((entry) {
+              final idx = entry.key + 1;
+              final stepLabel = entry.value;
+              final controller = _dynamicControllers[stepLabel] ?? TextEditingController();
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: TextFormField(
+                  controller: controller,
+                  maxLines: 2,
+                  decoration: InputDecoration(
+                    labelText: 'Langkah $idx: $stepLabel',
+                    hintText: 'Tulis tanggapan langkah ini...',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  validator: (val) {
+                    if (val == null || val.trim().isEmpty) {
+                      return 'Langkah ini tidak boleh kosong';
+                    }
+                    return null;
+                  },
+                ),
+              );
+            }),
+          ],
+        );
+
+      case WorkspaceTemplate.scoring:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '4. Tabel Skoring Ide',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                TextButton.icon(
+                  onPressed: _addScoringRow,
+                  icon: const Icon(Icons.add_circle_outline_rounded, size: 18),
+                  label: const Text('Tambah Opsi', style: TextStyle(fontSize: 12)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ..._scoringItems.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              final totalScore = item.impact * item.ease;
+
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 6.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(color: theme.colorScheme.onBackground.withOpacity(0.08)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: item.nameController,
+                              decoration: InputDecoration(
+                                labelText: 'Opsi Ide ${index + 1}',
+                                hintText: 'Misal: Buka jasa kurir sayur',
+                                isDense: true,
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                              validator: (val) {
+                                if (val == null || val.trim().isEmpty) {
+                                  return 'Nama opsi ide tidak boleh kosong';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          if (_scoringItems.length > 1)
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 20),
+                              onPressed: () => _removeScoringRow(index),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Dampak: ${item.impact}/5', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                Slider(
+                                  value: item.impact.toDouble(),
+                                  min: 1,
+                                  max: 5,
+                                  divisions: 4,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      item.impact = val.toInt();
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Kemudahan: ${item.ease}/5', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                Slider(
+                                  value: item.ease.toDouble(),
+                                  min: 1,
+                                  max: 5,
+                                  divisions: 4,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      item.ease = val.toInt();
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              children: [
+                                const Text('SKOR', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold)),
+                                Text(
+                                  '$totalScore',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ],
+        );
+    }
+  }
   @override
   void dispose() {
     _topicController.dispose();
     _summaryController.dispose();
     _actionController.dispose();
     _refController.dispose();
+    _dynamicControllers.forEach((_, controller) => controller.dispose());
+    for (var item in _scoringItems) {
+      item.nameController.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final activeMethod = ThinkingMethod.allMethods.firstWhere((m) => m.key == _selectedMethod);
 
     return Scaffold(
       appBar: AppBar(
@@ -171,32 +687,56 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 style: TextStyle(fontSize: 13, color: theme.colorScheme.onBackground.withOpacity(0.7)),
               ),
               const SizedBox(height: 24),
-
+ 
               // Method Selector
-              const Text('1. Pilih Metode Berpikir', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('1. Metode Berpikir', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                value: _selectedMethod,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              InkWell(
+                onTap: _showMethodPickerSheet,
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: theme.colorScheme.onBackground.withOpacity(0.2)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  activeMethod.name,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                ),
+                                if (activeMethod.isPremium) ...[
+                                  const SizedBox(width: 6),
+                                  Icon(Icons.lock_rounded, color: Colors.amber[700], size: 14),
+                                ],
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              activeMethod.desc,
+                              style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.arrow_drop_down_rounded, color: theme.colorScheme.primary),
+                    ],
+                  ),
                 ),
-                onChanged: (val) {
-                  if (val != null) setState(() => _selectedMethod = val);
-                },
-                items: _methods.map((m) {
-                  return DropdownMenuItem<String>(
-                    value: m['key'],
-                    child: Text(m['name']!),
-                  );
-                }).toList(),
               ),
-              const SizedBox(height: 8),
-              Text(
-                _methods.firstWhere((m) => m['key'] == _selectedMethod)['desc']!,
-                style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: theme.colorScheme.onBackground.withOpacity(0.6)),
-              ),
+              _buildMethodGuidelineCard(theme),
               const SizedBox(height: 24),
-
+ 
               // Topic
               TextFormField(
                 controller: _topicController,
@@ -207,7 +747,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 ),
               ),
               const SizedBox(height: 24),
-
+ 
               // Paper Artifact Ref
               TextFormField(
                 controller: _refController,
@@ -219,25 +759,11 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 ),
               ),
               const SizedBox(height: 24),
-
-              // Summary
-              TextFormField(
-                controller: _summaryController,
-                maxLines: 4,
-                decoration: InputDecoration(
-                  labelText: '4. Ringkasan Hasil Berpikir',
-                  hintText: 'Tuliskan poin penting dari coretan kertas Anda di sini...',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                validator: (val) {
-                  if (val == null || val.trim().isEmpty) {
-                    return 'Harap masukkan ringkasan hasil berpikir Anda';
-                  }
-                  return null;
-                },
-              ),
+ 
+              // Dynamic Workspace
+              _buildWorkspace(theme),
               const SizedBox(height: 24),
-
+ 
               // Next Action
               TextFormField(
                 controller: _actionController,
@@ -254,7 +780,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 },
               ),
               const SizedBox(height: 16),
-
+ 
               // Checkbox to automatically add to habits
               Row(
                 children: [
@@ -275,7 +801,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                   ),
                 ],
               ),
-
+ 
               if (_addToHabits) ...[
                 const SizedBox(height: 12),
                 const Text('Domain Kebiasaan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
@@ -303,9 +829,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                   },
                 ),
               ],
-
+ 
               const SizedBox(height: 32),
-
+ 
               // Save Button
               ElevatedButton(
                 onPressed: _saveCanvasSession,
@@ -546,6 +1072,289 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ScoringItem {
+  final TextEditingController nameController;
+  int impact;
+  int ease;
+  ScoringItem({required this.nameController, this.impact = 3, this.ease = 3});
+}
+
+class _MethodPickerBottomSheet extends StatefulWidget {
+  final String currentMethodKey;
+  final bool isPremiumUser;
+  final ValueChanged<String> onSelected;
+
+  const _MethodPickerBottomSheet({
+    required this.currentMethodKey,
+    required this.isPremiumUser,
+    required this.onSelected,
+  });
+
+  @override
+  State<_MethodPickerBottomSheet> createState() => _MethodPickerBottomSheetState();
+}
+
+class _MethodPickerBottomSheetState extends State<_MethodPickerBottomSheet> {
+  String _searchQuery = '';
+  String _selectedCategory = 'Semua';
+
+  final List<String> _categories = ['Semua', 'Divergen', 'Konvergen', 'Sesi Lengkap'];
+
+  Color _getLevelColor(String level, ThemeData theme) {
+    switch (level) {
+      case 'Pemula':
+        return Colors.green;
+      case 'Menengah':
+        return Colors.orange;
+      case 'Lanjutan':
+        return Colors.purple;
+      case 'Kerangka Kerja':
+        return theme.colorScheme.primary;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  void _showPremiumAdDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text('Fitur Premium 👑'),
+          content: const Text(
+            'Metode berpikir tingkat lanjut dan workspace interaktif ini eksklusif untuk pengguna Premium.\n\n'
+            'Aktifkan Mode Developer di menu dashboard utama untuk membuka kunci seluruh fitur premium secara gratis!'
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Tutup'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final media = MediaQuery.of(context);
+
+    // Filter methods
+    final filtered = ThinkingMethod.allMethods.where((method) {
+      final matchesSearch = method.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          method.desc.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesCategory = _selectedCategory == 'Semua' || method.category == _selectedCategory;
+      return matchesSearch && matchesCategory;
+    }).toList();
+
+    return Container(
+      padding: EdgeInsets.only(
+        top: 16,
+        left: 16,
+        right: 16,
+        bottom: media.viewInsets.bottom + 16,
+      ),
+      height: media.size.height * 0.8,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.background,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Drag handle
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onBackground.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Pilih Metode Berpikir 🧠',
+                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close_rounded),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+
+          // Search Field
+          TextField(
+            onChanged: (val) => setState(() => _searchQuery = val),
+            decoration: InputDecoration(
+              hintText: 'Cari metode (misal: SWOT, 5 Whys)...',
+              prefixIcon: const Icon(Icons.search_rounded),
+              isDense: true,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // Category Chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _categories.map((cat) {
+                final isSelected = _selectedCategory == cat;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: FilterChip(
+                    label: Text(cat),
+                    selected: isSelected,
+                    selectedColor: theme.colorScheme.primary.withOpacity(0.15),
+                    checkmarkColor: theme.colorScheme.primary,
+                    onSelected: (val) {
+                      setState(() {
+                        _selectedCategory = cat;
+                      });
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Methods List
+          Expanded(
+            child: filtered.isEmpty
+                ? const Center(
+                    child: Text('Metode tidak ditemukan.', style: TextStyle(fontStyle: FontStyle.italic)),
+                  )
+                : ListView.builder(
+                    itemCount: filtered.length,
+                    itemBuilder: (context, index) {
+                      final m = filtered[index];
+                      final isSelected = widget.currentMethodKey == m.key;
+                      final levelColor = _getLevelColor(m.level, theme);
+
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 6.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(
+                            color: isSelected
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.onBackground.withOpacity(0.08),
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            if (m.isPremium && !widget.isPremiumUser) {
+                              _showPremiumAdDialog();
+                            } else {
+                              widget.onSelected(m.key);
+                              Navigator.pop(context);
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            m.name,
+                                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                          ),
+                                          if (m.isPremium) ...[
+                                            const SizedBox(width: 6),
+                                            Icon(Icons.lock_rounded, color: Colors.amber[700], size: 14),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: levelColor.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        m.level,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: levelColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  m.desc,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: theme.colorScheme.onBackground.withOpacity(0.7),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      m.template == WorkspaceTemplate.freeform
+                                          ? Icons.edit_note_rounded
+                                          : m.template == WorkspaceTemplate.multiColumn
+                                              ? Icons.view_column_rounded
+                                              : m.template == WorkspaceTemplate.sequential
+                                                  ? Icons.format_list_numbered_rounded
+                                                  : Icons.table_chart_rounded,
+                                      size: 14,
+                                      color: theme.colorScheme.primary.withOpacity(0.7),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      m.template == WorkspaceTemplate.freeform
+                                          ? 'Workspace: Teks Bebas'
+                                          : m.template == WorkspaceTemplate.multiColumn
+                                              ? 'Workspace: Input Kolom'
+                                              : m.template == WorkspaceTemplate.sequential
+                                                  ? 'Workspace: Langkah Berurutan'
+                                                  : 'Workspace: Tabel Skoring',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: theme.colorScheme.primary.withOpacity(0.8),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }

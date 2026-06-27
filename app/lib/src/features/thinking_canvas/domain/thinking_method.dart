@@ -1,0 +1,493 @@
+enum WorkspaceTemplate {
+  freeform,
+  multiColumn,
+  sequential,
+  scoring,
+}
+
+class ThinkingMethod {
+  final String key;
+  final String name;
+  final String category; // 'Divergen', 'Konvergen', 'Sesi Lengkap'
+  final String desc;
+  final String level; // 'Pemula', 'Menengah', 'Lanjutan', 'Kerangka Kerja'
+  final bool isPremium;
+  final WorkspaceTemplate template;
+  final List<String> steps;
+  final String format;
+  
+  // Custom configuration for Workspace Templates
+  final List<String>? columns; // Used by multiColumn template (e.g. ['Plus', 'Minus', 'Interesting'])
+  final List<String>? stepLabels; // Used by sequential template (e.g. ['Kenapa 1', 'Kenapa 2', ...])
+  final String? placeholder; // Used by freeform template
+
+  const ThinkingMethod({
+    required this.key,
+    required this.name,
+    required this.category,
+    required this.desc,
+    required this.level,
+    required this.isPremium,
+    required this.template,
+    required this.steps,
+    required this.format,
+    this.columns,
+    this.stepLabels,
+    this.placeholder,
+  });
+
+  static const List<ThinkingMethod> allMethods = [
+    ThinkingMethod(
+      key: 'MindDump',
+      name: 'Mind Dump',
+      category: 'Sesi Lengkap',
+      desc: 'Keluarkan semua beban pikiran Anda di atas kertas tanpa diedit.',
+      level: 'Pemula',
+      isPremium: false,
+      template: WorkspaceTemplate.freeform,
+      placeholder: 'Keluarkan unek-unek, tugas, atau kecemasan Anda di sini...',
+      steps: [
+        'Atur timer selama 5-10 menit.',
+        'Tuliskan SEMUA hal yang ada di kepala Anda (tugas, kecemasan, ide) di kertas tanpa diedit atau disaring.',
+        'Setelah selesai, baca kembali lalu lingkari 1-3 hal yang paling penting atau mendesak.',
+      ],
+      format: 'Coretan bebas, bullet points, atau kata-kata acak.',
+    ),
+    // --- DIVERGEN (Memancing Ide Baru) ---
+    ThinkingMethod(
+      key: 'Brainstorming',
+      name: 'Brainstorming Klasik',
+      category: 'Divergen',
+      desc: 'Tulis ide sebanyak-banyaknya secepat mungkin tanpa sensor.',
+      level: 'Pemula',
+      isPremium: false,
+      template: WorkspaceTemplate.freeform,
+      placeholder: 'Tulis ide-ide liar Anda di sini tanpa diedit. Fokus pada kuantitas...',
+      steps: [
+        'Tetapkan batas waktu yang ketat (misal 10 menit).',
+        'Tuliskan ide apa pun yang muncul di kepala tanpa dihakimi atau diedit.',
+        'Fokus pada kuantitas ide terlebih dahulu, bukan kualitas.',
+      ],
+      format: 'Daftar ide memanjang ke bawah (bullet points).',
+    ),
+    ThinkingMethod(
+      key: 'MindMapping',
+      name: 'Mind Mapping',
+      category: 'Divergen',
+      desc: 'Gambarkan cabang pemikiran dari satu topik utama secara visual.',
+      level: 'Pemula',
+      isPremium: false,
+      template: WorkspaceTemplate.freeform,
+      placeholder: 'Topik Utama -> Cabang Besar -> Sub-cabang Detail...',
+      steps: [
+        'Tuliskan satu topik utama di tengah halaman kertas Anda.',
+        'Tarik garis keluar untuk cabang utama (kategori/sub-topik besar).',
+        'Tarik ranting kecil dari setiap cabang utama untuk menuliskan ide atau detail lebih spesifik.',
+      ],
+      format: 'Topik Utama -> Cabang Besar -> Sub-cabang Detail.',
+    ),
+    ThinkingMethod(
+      key: 'Freewriting',
+      name: 'Freewriting',
+      category: 'Divergen',
+      desc: 'Tulis pikiran tanpa berhenti untuk menembus hambatan kreatif.',
+      level: 'Pemula',
+      isPremium: false,
+      template: WorkspaceTemplate.freeform,
+      placeholder: 'Tulis terus apa yang ada di pikiran Anda, jangan hapus, jangan berhenti mengetik...',
+      steps: [
+        'Atur timer selama 5-10 menit.',
+        'Mulai menulis dan jangan biarkan pulpen atau jari Anda berhenti sedetik pun.',
+        'Jika bingung mau menulis apa, tulis saja "saya bingung mau menulis apa" sampai ide baru muncul kembali.',
+      ],
+      format: 'Paragraf narasi bebas tanpa sensor tata bahasa.',
+    ),
+    ThinkingMethod(
+      key: 'SCAMPER',
+      name: 'SCAMPER',
+      category: 'Divergen',
+      desc: 'Modifikasi ide yang sudah ada lewat 7 sudut pandang kognitif.',
+      level: 'Menengah',
+      isPremium: true,
+      template: WorkspaceTemplate.sequential,
+      stepLabels: [
+        'Substitute (Ganti komponen/bahan)',
+        'Combine (Gabungkan dengan hal lain)',
+        'Adapt (Adaptasi dari konteks lain)',
+        'Modify/Magnify (Perbesar/ubah bentuk)',
+        'Put to other use (Gunakan untuk hal lain)',
+        'Eliminate (Hilangkan bagian tidak penting)',
+        'Reverse (Balikkan proses/urutan)'
+      ],
+      steps: [
+        'Pilih satu ide dasar atau produk yang ingin dikembangkan.',
+        'Tanyakan setiap pertanyaan dari akronim SCAMPER secara berurutan.',
+        'Tuliskan ide modifikasi baru di bawah masing-masing kategori.',
+      ],
+      format: 'S: Ganti | C: Gabungkan | A: Adaptasi | M: Ubah | P: Guna Lain | E: Hilangkan | R: Balikkan',
+    ),
+    ThinkingMethod(
+      key: 'ReverseBrainstorming',
+      name: 'Reverse Brainstorming',
+      category: 'Divergen',
+      desc: 'Cari cara untuk merusak atau menggagalkan masalah terlebih dahulu.',
+      level: 'Menengah',
+      isPremium: true,
+      template: WorkspaceTemplate.sequential,
+      stepLabels: [
+        'Masalah Utama',
+        'Masalah Terbalik (Ekstrem)',
+        'Cara Memperburuk Masalah',
+        'Solusi Balikan (Langkah Nyata)'
+      ],
+      steps: [
+        'Tuliskan masalah utama Anda di kertas (misal: "Bagaimana meningkatkan fokus belajar?").',
+        'Balikkan masalah tersebut menjadi ekstrem negatif (misal: "Bagaimana cara merusak fokus belajar saya?").',
+        'Brainstorm cara-cara untuk memperburuk masalah tersebut sebanyak mungkin.',
+        'Balikkan hasil brainstorm negatif tersebut menjadi solusi positif yang praktis.',
+      ],
+      format: '1. Masalah -> 2. Kebalikan Masalah -> 3. Cara Memperburuk -> 4. Solusi Balikan',
+    ),
+    ThinkingMethod(
+      key: 'RandomWord',
+      name: 'Random Word',
+      category: 'Divergen',
+      desc: 'Tabrakan ide secara paksa dengan kata acak untuk memicu lompatan kreatif.',
+      level: 'Menengah',
+      isPremium: true,
+      template: WorkspaceTemplate.sequential,
+      stepLabels: [
+        'Masalah Utama',
+        'Kata Acak Pilihan',
+        'Karakteristik Kata Acak',
+        'Ide Hubungan / Solusi Baru'
+      ],
+      steps: [
+        'Tulis masalah utama Anda di kertas.',
+        'Pilih satu kata benda acak dari kamus atau benda di sekitar Anda (misal: "Kulkas").',
+        'Daftar karakteristik dari kata acak tersebut (dingin, menyimpan makanan, berpintu, berisik).',
+        'Hubungkan karakteristik tersebut secara paksa untuk memancing solusi kreatif atas masalah utama.',
+      ],
+      format: 'Masalah + Kata Acak -> Karakteristik Benda -> Asosiasi Solusi Baru',
+    ),
+    ThinkingMethod(
+      key: 'WorstPossibleIdea',
+      name: 'Worst Possible Idea',
+      category: 'Divergen',
+      desc: 'Mulai dari ide terburuk untuk menghilangkan rasa takut gagal.',
+      level: 'Menengah',
+      isPremium: true,
+      template: WorkspaceTemplate.freeform,
+      placeholder: 'Tulis ide-ide paling bodoh, paling rugi, dan paling aneh yang terlintas...',
+      steps: [
+        'Tulis ide-ide terburuk, terbodoh, atau paling tidak masuk akal untuk masalah Anda.',
+        'Evaluasi kenapa ide tersebut sangat buruk.',
+        'Pikirkan sebaliknya: apakah ada elemen kecil dari ide buruk tersebut yang bisa dimodifikasi menjadi solusi cerdas?',
+      ],
+      format: 'Daftar Ide Terburuk -> Analisis Masalah -> Solusi Modifikasi.',
+    ),
+    ThinkingMethod(
+      key: 'RoleStorming',
+      name: 'Role Storming',
+      category: 'Divergen',
+      desc: 'Jawab masalah dari sudut pandang tokoh atau peran orang lain.',
+      level: 'Menengah',
+      isPremium: true,
+      template: WorkspaceTemplate.sequential,
+      stepLabels: [
+        'Masalah Utama',
+        'Tokoh Pilihan (Misal: Steve Jobs, Sherlock Holmes)',
+        'Cara Pandang Tokoh Tersebut',
+        'Solusi / Langkah yang Diusulkan'
+      ],
+      steps: [
+        'Pilih satu tokoh terkenal, karakter fiksi, atau profesi berbeda (misal: Detektif, Petani).',
+        'Bayangkan bagaimana tokoh tersebut akan mendekati masalah Anda.',
+        'Tuliskan ide-ide atau nasihat dari kacamata karakter tersebut.',
+      ],
+      format: 'Masalah -> Karakter -> Sudut Pandang Karakter -> Solusi Alternatif',
+    ),
+    ThinkingMethod(
+      key: 'Starbursting',
+      name: 'Starbursting',
+      category: 'Divergen',
+      desc: 'Uji satu ide dari 6 sudut pertanyaan 5W1H secara mendalam.',
+      level: 'Menengah',
+      isPremium: true,
+      template: WorkspaceTemplate.sequential,
+      stepLabels: [
+        'Siapa (Who) yang terlibat?',
+        'Apa (What) ide/produknya?',
+        'Mengapa (Why) ini dibutuhkan?',
+        'Di mana (Where) ini dijalankan?',
+        'Kapan (When) ini dieksekusi?',
+        'Bagaimana (How) cara kerjanya?'
+      ],
+      steps: [
+        'Gambarkan bintang bersudut enam di kertas dengan ide Anda di tengahnya.',
+        'Tulis pertanyaan 5W1H (Who, What, Why, Where, When, How) pada masing-masing sudut.',
+        'Fokus pada membuat daftar pertanyaan penting terlebih dahulu sebelum menjawabnya.',
+      ],
+      format: 'Tulis 6 pertanyaan kunci di sekeliling ide utama Anda.',
+    ),
+    ThinkingMethod(
+      key: 'LotusBlossom',
+      name: 'Lotus Blossom',
+      category: 'Divergen',
+      desc: 'Kembangkan 1 ide utama menjadi 8 cabang, dan kembangkan tiap cabang menjadi 8 detail.',
+      level: 'Lanjutan',
+      isPremium: true,
+      template: WorkspaceTemplate.freeform,
+      placeholder: 'Ide Pusat -> 8 Cabang (A-H) -> Masing-masing cabang berkembang menjadi 8 sub-ide...',
+      steps: [
+        'Gambarkan kotak 3x3 di kertas Anda dengan topik utama di tengah.',
+        'Tuliskan 8 ide/kategori pendukung di sekeliling kotak tengah (diberi kode A sampai H).',
+        'Buat kotak 3x3 baru untuk masing-masing kode A-H dengan meletakkannya sebagai pusat baru, lalu kembangkan kembali.',
+      ],
+      format: 'Struktur diagram matriks berlapis (Grid 3x3 berkembang menjadi 9 Grid baru).',
+    ),
+    ThinkingMethod(
+      key: 'MorphologicalAnalysis',
+      name: 'Morphological Analysis',
+      category: 'Divergen',
+      desc: 'Petakan variabel-variabel solusi ke dalam tabel kombinasi untuk menemukan ide unik.',
+      level: 'Lanjutan',
+      isPremium: true,
+      template: WorkspaceTemplate.freeform,
+      placeholder: 'Tabel Variabel: Dimensi A (Bahan) × Dimensi B (Metode) × Dimensi C (Target)...',
+      steps: [
+        'Tentukan dimensi penting dari masalah Anda (misal: Target pengguna, Media, Model bisnis).',
+        'Buat tabel kolom untuk setiap dimensi dan daftar opsinya di baris bawah.',
+        'Hubungkan opsi-opsi dari kolom berbeda secara acak untuk memicu kombinasi produk baru.',
+      ],
+      format: 'Tabel matriks multi-variabel (Kolom Dimensi × Baris Opsi pilihan).',
+    ),
+
+    // --- KONVERGEN (Menyaring & Menyusun) ---
+    ThinkingMethod(
+      key: 'AffinityMapping',
+      name: 'Affinity Mapping',
+      category: 'Konvergen',
+      desc: 'Kelompokkan tumpukan ide acak ke dalam beberapa kategori tema.',
+      level: 'Menengah',
+      isPremium: true,
+      template: WorkspaceTemplate.freeform,
+      placeholder: 'Klaster A (Nama Kategori): [Ide 1, Ide 2...]\nKlaster B (Nama Kategori): [Ide 3, Ide 4...]',
+      steps: [
+        'Tuliskan semua ide hasil brainstorming di atas kertas atau sticky notes.',
+        'Kelompokkan ide-ide yang memiliki kemiripan sifat atau tujuan ke dalam klaster kelompok.',
+        'Beri nama yang jelas untuk masing-masing klaster kelompok tersebut.',
+      ],
+      format: 'Grup Kategori -> Daftar Ide pendukung di dalamnya.',
+    ),
+    ThinkingMethod(
+      key: '5Whys',
+      name: '5 Whys',
+      category: 'Konvergen',
+      desc: 'Tanyakan "Kenapa" 5 kali beruntun untuk menemukan akar masalah terdalam.',
+      level: 'Pemula',
+      isPremium: false,
+      template: WorkspaceTemplate.sequential,
+      stepLabels: [
+        'Masalah Utama',
+        'Kenapa ini terjadi? (Level 1)',
+        'Kenapa itu terjadi? (Level 2)',
+        'Kenapa demikian? (Level 3)',
+        'Kenapa? (Level 4)',
+        'Akar Masalah (Level 5)'
+      ],
+      steps: [
+        'Tuliskan masalah spesifik yang sedang dihadapi di bagian paling atas kertas.',
+        'Tanyakan kenapa masalah itu terjadi, tulis jawabannya (Level 1).',
+        'Gunakan jawaban tersebut untuk bertanya "kenapa" lagi sampai 5 tingkat kedalaman.',
+      ],
+      format: 'Rantai sebab-akibat menurun ke bawah (Masalah -> Kenapa -> Kenapa -> Kenapa -> Kenapa -> Kenapa).',
+    ),
+    ThinkingMethod(
+      key: 'PMI',
+      name: 'PMI (Plus, Minus, Interesting)',
+      category: 'Konvergen',
+      desc: 'Timbang keputusan berdasarkan kelebihan, kekurangan, dan konsekuensi menarik.',
+      level: 'Menengah',
+      isPremium: false,
+      template: WorkspaceTemplate.multiColumn,
+      columns: ['Plus (Kelebihan)', 'Minus (Kekurangan)', 'Interesting (Menarik/Efek Samping)'],
+      steps: [
+        'Buat tabel dengan 3 kolom di kertas Anda: Plus (+), Minus (-), dan Interesting (Menarik).',
+        'Kolom Plus: Tuliskan semua dampak positif/kelebihan dari keputusan tersebut.',
+        'Kolom Minus: Tuliskan semua dampak negatif/kerugian/resiko.',
+        'Kolom Interesting: Tuliskan efek samping, peluang tak terduga, atau konsekuensi netral yang menarik.',
+      ],
+      format: 'Kolom 1: PLUS (+) | Kolom 2: MINUS (-) | Kolom 3: MENARIK (I)',
+    ),
+    ThinkingMethod(
+      key: 'SWOT',
+      name: 'Analisis SWOT',
+      category: 'Konvergen',
+      desc: 'Evaluasi ide dari sisi internal (Kekuatan & Kelemahan) dan eksternal (Peluang & Ancaman).',
+      level: 'Menengah',
+      isPremium: true,
+      template: WorkspaceTemplate.multiColumn,
+      columns: ['Strengths (Kekuatan)', 'Weaknesses (Kelemahan)', 'Opportunities (Peluang)', 'Threats (Ancaman)'],
+      steps: [
+        'Bagi kertas Anda menjadi 4 kuadran: Strengths, Weaknesses, Opportunities, Threats.',
+        'Isi kuadran atas (S & W) untuk faktor internal di dalam kendali Anda.',
+        'Isi kuadran bawah (O & T) untuk faktor eksternal di luar kendali Anda.',
+      ],
+      format: 'Kuadran 2x2: S (Kiri Atas), W (Kanan Atas), O (Kiri Bawah), T (Kanan Bawah).',
+    ),
+    ThinkingMethod(
+      key: 'FirstPrinciples',
+      name: 'First Principles',
+      category: 'Konvergen',
+      desc: 'Pertanyakan semua asumsi, bongkar masalah ke fakta dasar, lalu susun solusi baru dari nol.',
+      level: 'Lanjutan',
+      isPremium: true,
+      template: WorkspaceTemplate.multiColumn,
+      columns: ['Asumsi Umum saat ini', 'Fakta Dasar yang tidak terbantahkan', 'Konstruksi Solusi Baru'],
+      steps: [
+        'Tuliskan keyakinan atau asumsi umum tentang masalah Anda saat ini.',
+        'Bongkar kebenaran tersebut sampai tersisa fakta dasar yang mutlak dan tak terbantahkan.',
+        'Bangun solusi baru dari dasar fakta tersebut, abaikan cara lama orang lain.',
+      ],
+      format: 'Asumsi Lama -> Dekonstruksi Fakta Dasar -> Rekonstruksi Solusi Baru.',
+    ),
+
+    // --- SESI LENGKAP (Kerangka Proyek) ---
+    ThinkingMethod(
+      key: 'SixThinkingHats',
+      name: 'Six Thinking Hats',
+      category: 'Sesi Lengkap',
+      desc: 'Analisis satu topik secara objektif dari 6 kacamata berpikir yang berbeda secara bergantian.',
+      level: 'Lanjutan',
+      isPremium: true,
+      template: WorkspaceTemplate.sequential,
+      stepLabels: [
+        'Topik Bahasan',
+        'Topi Putih (Informasi & Data)',
+        'Topi Merah (Firasat & Emosi)',
+        'Topi Hitam (Risiko & Kelemahan)',
+        'Topi Kuning (Manfaat & Optimisme)',
+        'Topi Hijau (Kreativitas & Alternatif)',
+        'Topi Biru (Kesimpulan & Proses)'
+      ],
+      steps: [
+        'Tuliskan topik yang ingin dibahas.',
+        'Lalui setiap mode berpikir "Topi" secara bergantian satu per satu.',
+        'Tuliskan poin hasil analisis sesuai warna topi yang sedang dipakai.',
+      ],
+      format: '6 Bagian Terstruktur sesuai warna topi berpikir.',
+    ),
+    ThinkingMethod(
+      key: 'DisneyStrategy',
+      name: 'Disney Creative Strategy',
+      category: 'Sesi Lengkap',
+      desc: 'Gunakan 3 peran bergantian untuk mematangkan ide: Pemimpi, Realis, dan Pengkritik.',
+      level: 'Kerangka Kerja',
+      isPremium: true,
+      template: WorkspaceTemplate.sequential,
+      stepLabels: [
+        'Ide Awal',
+        '1. Dreamer (Impian Tanpa Batas)',
+        '2. Realist (Langkah Kerja Praktis)',
+        '3. Critic (Analisis Celah & Resiko)'
+      ],
+      steps: [
+        'Peran Pemimpi (Dreamer): Tulis ide seliar mungkin seolah tidak ada batas uang/waktu.',
+        'Peran Realis (Realist): Pikirkan bagaimana mengeksekusi mimpi tersebut secara praktis.',
+        'Peran Pengkritik (Critic): Cari celah, kelemahan, dan risiko terburuk dari rencana tersebut.',
+      ],
+      format: 'Tahap 1: Impian (Dreamer) -> Tahap 2: Rencana (Realist) -> Tahap 3: Kritik (Critic).',
+    ),
+    ThinkingMethod(
+      key: 'DoubleDiamond',
+      name: 'Double Diamond',
+      category: 'Sesi Lengkap',
+      desc: 'Kerangka kerja desain dari memetakan masalah hingga menguji solusi.',
+      level: 'Kerangka Kerja',
+      isPremium: true,
+      template: WorkspaceTemplate.sequential,
+      stepLabels: [
+        '1. Discover (Riset & Petakan Masalah)',
+        '2. Define (Fokus ke Masalah Utama)',
+        '3. Develop (Brainstorm Alternatif Solusi)',
+        '4. Deliver (Uji Coba & Eksekusi)'
+      ],
+      steps: [
+        'Discover: Buka pikiran, kumpulkan semua keluhan atau riset.',
+        'Define: Saring, pilih satu titik masalah paling krusial untuk diselesaikan.',
+        'Develop: Buka kembali pikiran untuk mencari banyak opsi solusi.',
+        'Deliver: Saring kembali untuk memilih satu solusi terbaik untuk langsung diuji coba.',
+      ],
+      format: 'Diamond 1 (Discover & Define) -> Diamond 2 (Develop & Deliver).',
+    ),
+    ThinkingMethod(
+      key: 'QuestionStorming',
+      name: 'Question Storming',
+      category: 'Sesi Lengkap',
+      desc: 'Curah pendapat berisi daftar pertanyaan alih-alih langsung mencari jawaban.',
+      level: 'Kerangka Kerja',
+      isPremium: true,
+      template: WorkspaceTemplate.freeform,
+      placeholder: 'Tulis minimal 15-20 pertanyaan kritis mengenai masalah Anda...',
+      steps: [
+        'Tuliskan masalah utama Anda di kertas.',
+        'Tuliskan minimal 15-20 pertanyaan kritis mengenai masalah tersebut tanpa mencoba menjawabnya.',
+        'Setelah selesai, pilih 3 pertanyaan yang paling bernilai untuk dijawab terlebih dahulu.',
+      ],
+      format: 'Daftar pertanyaan (bullet points) -> Lingkari 3 pertanyaan prioritas.',
+    ),
+    ThinkingMethod(
+      key: 'MindDumpCluster',
+      name: 'Mind Dump + Cluster + Refine',
+      category: 'Sesi Lengkap',
+      desc: 'Keluarkan beban pikiran harian, kelompokkan, lalu saring menjadi 1 aksi kecil besok.',
+      level: 'Pemula',
+      isPremium: false,
+      template: WorkspaceTemplate.sequential,
+      stepLabels: [
+        '1. Mind Dump (Beban Pikiran)',
+        '2. Cluster (Kategori Masalah)',
+        '3. Refine (1 Aksi Kecil Besok)'
+      ],
+      steps: [
+        'Mind Dump: Tulis semua yang ada di kepala Anda selama 5-7 menit.',
+        'Cluster: Kelompokkan tulisan tersebut ke kategori (misal: Kerja, Rumah, Kesehatan).',
+        'Refine: Pilih satu hal paling mendesak, tuliskan satu aksi nyata berdurasi kurang dari 10 menit untuk diselesaikan.',
+      ],
+      format: '1. Mind Dump bebas -> 2. Klasifikasi klaster -> 3. Target aksi tunggal.',
+    ),
+    ThinkingMethod(
+      key: 'Scoring',
+      name: 'Skoring Ide Sederhana',
+      category: 'Konvergen',
+      desc: 'Evaluasi opsi ide berdasarkan faktor Dampak dan Kemudahan untuk menentukan prioritas.',
+      level: 'Menengah',
+      isPremium: false,
+      template: WorkspaceTemplate.scoring,
+      steps: [
+        'Tuliskan semua alternatif ide atau keputusan di tabel.',
+        'Nilai Dampak (Impact) 1-5 (seberapa besar manfaatnya jika berhasil).',
+        'Nilai Kemudahan (Ease) 1-5 (seberapa mudah untuk dieksekusi).',
+        'Kalikan Dampak × Kemudahan. Opsi dengan skor tertinggi adalah prioritas utama.',
+      ],
+      format: 'Tabel: Opsi | Dampak (1-5) | Kemudahan (1-5) | Total (Dampak × Kemudahan)',
+    ),
+    ThinkingMethod(
+      key: 'Validation',
+      name: 'Validasi Ide 48 Jam',
+      category: 'Sesi Lengkap',
+      desc: 'Uji sinyal minat nyata atas ide Anda ke dunia luar dalam waktu singkat.',
+      level: 'Kerangka Kerja',
+      isPremium: true,
+      template: WorkspaceTemplate.multiColumn,
+      columns: ['Asumsi Kunci yang diuji', 'Bentuk Penawaran (Landing page / Pesan WA)', '10 Target Kontak Pertama'],
+      steps: [
+        'Tuliskan asumsi terbesar dari ide Anda (misal: "Orang butuh jasa kurir sayur organik").',
+        'Buat bentuk penawaran sederhana (landing page dasar atau rancangan draf pesan WhatsApp).',
+        'Hubungi 10-20 orang dalam daftar target kontak dalam waktu 48 jam untuk menguji minat nyata.',
+      ],
+      format: 'Asumsi Kunci -> Format Uji -> Log Hubungan Calon Pengguna.',
+    ),
+  ];
+}
