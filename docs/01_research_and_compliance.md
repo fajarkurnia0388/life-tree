@@ -76,38 +76,28 @@ Anak usia 3-12 tahun diwajibkan menggunakan mode *Offline-First* mutlak tanpa si
 #### Age Graduation (Kelulusan Usia)
 Tepat pada hari ulang tahun ke-18, sistem mencabut (*revoke*) akses orang tua dari akun secara otomatis. Membutuhkan `date_of_birth` atau `verified_age_token` (bukan hanya `age_band`). Diimplementasikan di Fase 2.
 
-### 2.2 Passive Crisis Safety Protocol (Protokol Keselamatan)
+### 2.2 Passive Wellness & Emergency Resource Protocol
 LifeTree BUKAN *Medical Device* atau layanan terapi.
 
 **Multi-Layer Medical Disclaimer:**
 1. **Onboarding** (wajib scroll + checkbox): *"LifeTree adalah alat refleksi diri, BUKAN pengganti konseling profesional. Jika Anda mengalami krisis, hubungi 119."*
-2. **Crisis Modal pertama** (sebelum muncul): *"Kami mendeteksi pola yang mungkin memerlukan perhatian. LifeTree tidak dapat mendiagnosis kondisi kesehatan mental."*
+2. **Wellness Prompt pertama** (sebelum muncul): *"Beberapa catatan mood-mu terlihat berat belakangan ini. LifeTree tidak dapat mendiagnosis kondisi kesehatan mental."*
 3. **Safety Card** (selalu terlihat): *"Darurat? Hubungi profesional."*
 
-`crisis_disclaimer_acknowledged` di UserProfile mencatat pemahaman pengguna. Dicatat di ConsentLog `consent_type = 'Crisis_Disclaimer'`.
+`wellness_disclaimer_acknowledged` di UserProfile mencatat pemahaman pengguna. Dicatat di ConsentLog `consent_type = 'Wellness_Disclaimer'`.
 
-**Implementasi Kepatuhan:** Sistem menggunakan **Passive Safety Protocol**:
+**Implementasi Kepatuhan:** Sistem menggunakan **Passive Wellness Support**:
 - **Safety Card (Always-On):** Tombol permanen. **Nomor primer di-hardcode** (119 PSC, 119 ext 8 SEJIWA).
 - **`Called_Hotline` → `Tapped_Hotline_CTA`:** Tracking berhenti di interaksi UI — apakah panggilan berhasil tidak bisa diketahui aplikasi.
 - **Anti-Banner-Blindness:** Visual berrotasi periodik.
 - **Out-of-App Wellness Check:** > 5 hari tidak buka → 1 push empatik (maks. 1x/14 hari, tracked via `last_wellness_push_at`). Deep-link ke Home / Journal Lite. Safety Card tetap always-on, tetapi inactivity saja tidak dianggap distress.
-- **Crisis Escalation (> 14 hari):** Modal eskalasi langsung ke hotline, maks. 1x/14 hari.
+- **Sustained Low-Mood Support (> 14 hari):** Prompt dukungan lebih langsung ke hotline/resource profesional, maks. 1x/14 hari. Ini bukan diagnosis.
 
-### 2.3 Hak Atas Data & Enkripsi (*Right to Erasure*)
-- **E2EE:** Semua data cloud dienkripsi. Server hanya menyimpan *Encrypted Ciphertext BLOB*.
-- **Zero-Knowledge untuk Konten:** Server tidak memiliki kunci dekripsi konten. Metadata sistem (device token, last sync, subscription, timestamps) tetap terlihat.
-- **Client-Side Computation:** Seluruh logika komputasi berjalan di perangkat pengguna. Optimasi: incremental query 90 hari terakhir, background computation, lifetime_done_count counter + weighted_done_score materialized value.
-- **Multi-Device Bootstrap:** (A) QR code transfer jika perangkat lama ada, (B) Recovery Contact / seed phrase jika hilang, (C) OS Keychain auto-sync sebagai default.
-- **Autentikasi Akun:** Email + password hash (bcrypt) — terpisah dari enkripsi konten.
-- **Key Rotation:** Re-encryption bertahap di client-side. Key version di metadata.
-- **Sync Conflict Resolution:** Berlapis — HabitLog: LWW aman (append-only). JournalEntry/mutable: Conflict Copy jika timestamp < 5 menit, pengguna memilih. Habit metadata: LWW + warning.
-- **Recovery Contact:** **Shamir 2-of-3** — tiga fragment, dua diperlukan: (1) OS Keychain, (2) Recovery Contact, (3) Secondary backup. Toleransi kehilangan 1 fragment.
-- **Soft Delete (Tombstone):** `deleted_at` di setiap tabel — sinkronisasi penghapusan antar perangkat.
-- **CrisisPromptLog: Local-Only** — tidak di-sync ke cloud, retention 90 hari, tidak diekspor JSON/CSV.
-- **App-Level Biometric Lock:** Autentikasi saat kembali dari background > 5 menit.
-- **Ekspor Lokal (JSON/CSV):** Pencadangan mandiri di tier gratis.
-- **Right to Erasure:** Data lokal: factory wipe terenkripsi. Data cloud: secure deletion dengan konfirmasi ganda.
-- **Cross-Border Data:** Penilaian kesetaraan perlindungan data sesuai UU PDP. Dokumentasi: data flow map, vendor register, lawful basis, retention schedule, DSAR workflow, breach response plan.
+### 2.3 Hak Atas Data & Privasi Bertahap
+- **MVP Core:** Privacy-by-minimization. Data disimpan lokal di perangkat, tanpa akun, tanpa cloud sync, tanpa iklan, dan tanpa targeted analytics. Ekspor JSON/CSV tersedia sebagai backup manual.
+- **Privacy Hardening:** Setelah Daily Orientation Loop terbukti dipakai, tambahkan SQLCipher/local encrypted backup, app-level biometric lock untuk pengguna dewasa, dan retensi lokal `WellnessPromptLog`.
+- **Privacy/E2EE Phase:** Cloud Sync, zero-knowledge E2EE, seed phrase, recovery contact, key rotation, sync conflict resolution, tombstone sync, DSAR workflow, vendor register, dan data flow map masuk fase terpisah.
+- **Right to Erasure:** MVP menyediakan hapus data lokal. Fase cloud menambahkan penghapusan server dengan konfirmasi ganda.
 
 ---
 

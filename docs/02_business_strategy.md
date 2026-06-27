@@ -12,22 +12,23 @@
 
 ## 2. Target Pasar & Strategi Peluncuran (Go-to-Market)
 
-### Fase 1 (MVP Core — 16–20 Minggu, asumsi 3–5 developer)
+### Fase 1 (MVP Core — Daily Orientation Loop, 12–16 Minggu, asumsi 3–5 developer)
 - **Target Audiens:** Dewasa muda usia 18-35 Tahun (Mahasiswa tingkat akhir, *First-Jobber*, Profesional).
 - **Karakteristik:** Digital-native, memiliki kepedulian tinggi pada *mental health*, rentan terhadap *overwhelm/burnout*.
 - **Geografi Awal:** Indonesia (Bahasa Indonesia), ekspansi ke Asia Tenggara di Fase 1.5.
+- **Scope awal:** Personal OS tetap menjadi visi, tetapi MVP hanya memvalidasi loop harian: Journal Lite, Habit Tubuh, Action of the Day, Friction Intervention, Recovery Mode, Thinking Canvas Lite, dan Safety Card.
 
 ### Fase 2 (Ekspansi Masa Depan)
 - Menguasai pasar Gen-Alpha dan Keluarga melalui perilisan *Teen Mode*, *Seedling Mode* (Anak), dan *Parental Dashboard*.
 - Bahasa Inggris & ekspansi regional.
 
 ## 3. Strategi Monetisasi (Value-Based Freemium)
-LifeTree **TIDAK** menjual data pengguna dan **TIDAK** menampilkan iklan (*Zero Targeted Ads*). Pendapatan dihasilkan dari model berlangganan yang berfokus pada "kenyamanan dan analitik":
+LifeTree **TIDAK** menjual data pengguna dan **TIDAK** menampilkan iklan (*Zero Targeted Ads*). Monetisasi tidak masuk MVP Core; paid tier dibuka setelah loop harian terbukti dipakai. Privacy/E2EE penuh ditunda karena mahal secara teknis dan harus dibangun sebagai fase terpisah.
 
 | Tier | Harga | Fitur |
 |------|-------|-------|
-| **Tier Dasar (Gratis)** | Rp 0 | Akses penuh ke seluruh orientasi dasar (Jurnal, Habit) + *Local Encrypted Backup* (1 perangkat) + Ekspor Lokal (JSON/CSV) |
-| **LifeTree Plus** | Rp 29.000/bln | E2EE Cloud Sync (real-time antar perangkat) + On-Device Insights non-AI (analisis pola hidup) + PDF Export (jurnal → e-book estetik) + Decision Journal + Life Compass |
+| **Tier Dasar (Gratis)** | Rp 0 | Daily Orientation Loop: Journal Lite, Habit Tubuh, Action of the Day, Friction Intervention, Recovery Mode, Thinking Canvas Lite, Safety Card, Ekspor Lokal (JSON/CSV), dan Dark Mode |
+| **LifeTree Plus** | Rp 29.000/bln | On-Device Insights non-AI, PDF Export (jurnal → e-book estetik), Life Compass, Decision Journal, dan kosmetik premium. Cloud Sync/E2EE tidak menjadi janji Plus sampai Privacy/E2EE Phase siap. |
 | **LifeTree Student** | Rp 19.000/bln | Sama dengan Plus, dengan verifikasi status mahasiswa (self-declaration honor system + verifikasi email `.ac.id` di Fase 1; bisa ditingkatkan ke third-party verification di kemudian hari). |
 | **Annual Plan** | Rp 249.000/thn (hemat ~29%) | Sama dengan Plus — mengunci pengguna dan meningkatkan LTV. |
 | **Micro-Transactions (Kosmetik)** | Rp 5.000–15.000/item | Skin spesies pohon (Sakura, Maple, Bonsai, dll) — murni kosmetik. Dark Mode tersedia gratis sebagai fitur aksesibilitas. |
@@ -62,11 +63,11 @@ LifeTree **TIDAK** menjual data pengguna dan **TIDAK** menampilkan iklan (*Zero 
 
 | Metode | Jadwal | Tujuan |
 |--------|--------|--------|
-| **Kuantitatif: WHO-5 + Shame-Free Return Rate** | Tiap 90 hari (otomatis via app) | Pantau tren wellbeing & retensi |
+| **Kuantitatif: Shame-Free Return Rate** | Rolling 30 hari | Pantau apakah pengguna kembali setelah absen tanpa merasa dihukum |
 | **Kualitatif: User Interview** | Bulan 2, 4, 6 pasca-launch (10–15 user per sesi) | Pahami *mengapa* pengguna kembali/berhenti; validasi filosofi Anti-Guilt |
 | **Perceived Support Score** | Tiap 30 hari (1 pertanyaan in-app) | *"Pohon saya mendukung saya bulan ini"* — skala 1–5 |
-| **A/B Testing: Onboarding Flow** | Bulan 1–2 (seed phrase vs keychain) | Validasi bahwa default OS Keychain menurunkan drop-off |
-| **A/B Testing: Automaticity Decay Rate** | Bulan 3–4 (setelah cukup data) | Variant A: decay per 15 hari. Variant B: 20 hari (default). Variant C: 30 hari. Metrik: Retention D-30, Shame-Free Return Rate, Perceived Support Score. |
+| **A/B Testing: Onboarding Flow** | Bulan 1–2 | Validasi jumlah pertanyaan onboarding dan copy anti-guilt |
+| **A/B Testing: Automaticity Decay Rate** | Setelah Iterasi 1 punya cukup data | Variant A: decay per 15 hari. Variant B: 20 hari (default). Variant C: 30 hari. Metrik: Retention D-30, Shame-Free Return Rate, Perceived Support Score. |
 
 ## 7. Internasionalisasi (i18n)
 
@@ -79,7 +80,7 @@ Fase 1 hanya Bahasa Indonesia, tapi struktur i18n disiapkan sejak awal:
 
 | Aplikasi | Streak | Anti-Guilt | Jurnal | Habit | Life Audit | E2EE | Child Safety | Harga |
 |----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|-------|
-| **LifeTree** | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (Fase 2) | Freemium Rp 29K |
+| **LifeTree** | ❌ | ✅ | ✅ | ✅ | ✅ | Future | ✅ (Fase 2) | Freemium Rp 29K |
 | **Fabulous** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ~Rp 65K/bln |
 | **Habitica** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ~Rp 65K/bln |
 | **Streaks** | ✅✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | One-time Rp 65K |
@@ -97,9 +98,9 @@ Fase 1 hanya Bahasa Indonesia, tapi struktur i18n disiapkan sejak awal:
 3. *Life Audit / Radar Keseimbangan* — integrasi 6 domain.
 4. *Friction Journaling* — kegagalan = data refleksi.
 5. *Thinking Canvas* — pilar refleksi paper-first untuk membangun kebiasaan corat-coret di kertas asli dan mengubah kebingungan menjadi aksi kecil.
-6. *Compliance* anak Indonesia (PP TUNAS).
-6. *Zero-Knowledge E2EE* dengan habit tracker terintegrasi.
+6. *Compliance* anak Indonesia (PP TUNAS) sebagai fase masa depan.
+7. *Privacy roadmap* yang dimulai dari minimisasi data lokal, lalu naik ke E2EE setelah core retention terbukti.
 
-**Notion Life OS:** Kompetitor indirect — template gratis/berbayar untuk life management. LifeTree unggul di: guided experience, native mobile, E2EE, automation built-in. Rekomendasi: fitur import dari Notion di Fase 1.5 untuk menurunkan switching cost.
+**Notion Life OS:** Kompetitor indirect — template gratis/berbayar untuk life management. LifeTree unggul di: guided experience, native mobile, automation built-in, dan privacy roadmap yang lebih ketat. Rekomendasi: fitur import dari Notion di Fase 1.5 untuk menurunkan switching cost.
 
 **Gap Pasar Indonesia:** Tidak ada pemain lokal yang memadukan jurnal + habit tracker + life audit. Aplikasi kesehatan mental Indonesia (Riliv, Kalm) fokus pada terapi/konseling — bukan *self-orientation* harian.

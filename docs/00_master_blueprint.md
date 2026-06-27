@@ -1,5 +1,5 @@
 # Whitepaper: Sistem Orientasi Diri "LifeTree" (Grow)
-**Versi 13.0 (Master Product & System Spec) – Arsitektur Sistem, Algoritma & Panduan UX**
+**Versi 14.0 (Master Product & System Spec) – Daily Orientation Loop, Privacy Roadmap, Arsitektur Sistem & Panduan UX**
 
 ## 1. Pendahuluan & Filosofi (Anti-Guilt)
 LifeTree adalah **Personal OS** untuk orientasi hidup. Dibangun di atas 3 pilar teori:
@@ -107,30 +107,23 @@ Aplikasi harus di-*coding* dengan tata bahasa empati.
 | *"Kamu belum menyelesaikan tugas hari ini!"* | *"Ada sesuatu yang bisa kamu lakukan hari ini, meski hanya 2 menit."* |
 | *"Peringatan! Streak-mu terputus."* | *"Pohonmu sedang beristirahat. Tidak apa-apa."* |
 
-## 5. Segmentasi Usia, Keamanan Data (E2EE) & Aksesibilitas
+## 5. Segmentasi Usia, Privasi Bertahap & Aksesibilitas
 - **Hukum Privasi (PP TUNAS & Permenkomdigi 9/2026):** Usia 13-17 (Teen Mode) mendapat privasi jurnal mutlak; Orang Tua di dasbor HANYA menerima tren agregat dan *Conversation Starters*. PP 17/2025 menetapkan 5 kelompok usia: 3–5, 6–9, 10–12, 13–15, 16–<18; Permenkomdigi 9/2026 mengatur tahapan implementasi dan klasifikasi risiko platform. LifeTree Fase 1 menggunakan <13/13–17; Fase 2 mengikuti granularitas ini.
 - **Usia < 13 Tahun:** Wajib *Offline-First* mutlak. **Biometrik tidak digunakan untuk akun anak** (*precautionary principle*).
 - **Age Graduation:** Tepat hari ulang tahun ke-18, revoke akses orang tua otomatis. Membutuhkan `date_of_birth`, bukan hanya `age_band`.
-- **Keamanan (Local Encrypted Storage):** Data jurnal dienkripsi *at-rest* via SQLCipher.
-- **Security Level:** Default = OS Keychain (Standard, 1-ketuk). Opsi lanjutan = Seed Phrase (Advanced).
-- **Multi-Device Bootstrap:** (A) Perangkat lama ada → QR code transfer. (B) Perangkat lama hilang → Recovery Contact (Shamir 2-of-3) / seed phrase. (C) OS Keychain → iCloud/Google sync otomatis.
-- **Autentikasi Akun:** Email + password hash (bcrypt) di server — terpisah dari enkripsi konten.
-- **Key Rotation:** Re-encryption bertahap di client-side. Key version di metadata.
-- **Sync Conflict Resolution:** Berlapis: HabitLog (LWW aman), JournalEntry/mutable (Conflict Copy jika < 5 menit), Habit metadata (LWW + warning).
-- **Recovery Contact:** **Shamir 2-of-3** — (1) OS Keychain, (2) Recovery Contact, (3) Secondary backup. Kehilangan 1 fragment masih bisa recovery.
-- **Soft Delete (Tombstone):** `deleted_at` di setiap tabel — sinkronisasi penghapusan antar perangkat.
-- **CrisisPromptLog: Local-Only** — tidak di-sync, retention 90 hari, tidak diekspor.
-- **App-Level Biometric Lock:** Autentikasi saat kembali dari background > 5 menit.
-- **Multi-Layer Medical Disclaimer:** Onboarding (scroll+checkbox), Crisis Modal pertama (acknowledge), Safety Card (always visible). `crisis_disclaimer_acknowledged` di UserProfile, dicatat di ConsentLog.
+- **MVP Core Privacy:** Data lokal di perangkat, tanpa akun, tanpa cloud sync, tanpa targeted ads. Ekspor JSON/CSV manual tetap tersedia.
+- **Privacy Hardening:** SQLCipher/local encrypted backup, app-level biometric lock, dan retensi `WellnessPromptLog` masuk setelah Daily Orientation Loop terbukti dipakai.
+- **Privacy/E2EE Phase:** Cloud Sync, zero-knowledge E2EE, seed phrase, recovery contact, key rotation, dan sync conflict resolution ditunda sebagai fase tersendiri.
+- **Multi-Layer Wellness Disclaimer:** Onboarding (scroll+checkbox), Wellness Prompt pertama (acknowledge), Safety Card (always visible). `wellness_disclaimer_acknowledged` di UserProfile, dicatat di ConsentLog.
 - **Aksesibilitas (WCAG 2.1 AA):** Screen Reader, color+icon+label, touch target 48×48dp. Palet *Calm Tech* — warna yang diasosiasikan dengan ketenangan (hijau sage, biru redup, krem).
 
-## 6. Keselamatan Pengguna (Passive crisis Protocol)
+## 6. Keselamatan Pengguna (Passive Wellness & Emergency Resource Protocol)
 LifeTree BUKAN aplikasi medis (Tercantum jelas di T&C).
-- Tidak menggunakan deteksi AI/Keyword (*False Negative/Positive* risk).
+- Tidak menggunakan AI/keyword untuk prediksi krisis mental (*False Negative/Positive* risk).
 - **Passive Safety:** Safety Card permanen. **Nomor primer di-hardcode** (119 PSC, 119 ext 8 SEJIWA).
 - **Anti-Banner-Blindness:** Visual berrotasi periodik.
 - **Out-of-App Wellness Check:** Jika > 5 hari tidak buka → 1 push empatik (maks. 1x/14 hari, tracked via `last_wellness_push_at`). Deep-link ke Home / Journal Lite. Safety Card tetap always-on, tetapi inactivity saja tidak dianggap distress.
-- **Crisis Escalation (> 14 hari `mood_score ≤ 2`):** Modal eskalasi langsung, maks. 1x/14 hari.
+- **Sustained Low-Mood Support (> 14 hari `mood_score ≤ 2`):** Prompt dukungan lebih langsung ke resource profesional, maks. 1x/14 hari. Ini bukan diagnosis.
 - **`Called_Hotline` → `Tapped_Hotline_CTA`:** Tracking hanya sampai interaksi UI — apakah panggilan berhasil tidak bisa diketahui.
 
 ## 7. Metrik Keberhasilan & Model Bisnis
@@ -138,24 +131,27 @@ LifeTree BUKAN aplikasi medis (Tercantum jelas di T&C).
 - WHO-5 Well-being Monitoring setiap 90 hari — indikator monitoring, bukan klaim kausal. UX: di Weekly Pulse (opsional), hasil sebagai tren pribadi.
 - **Day-7 Retention** ≥ 20%, **Day-30 Retention** 10–15%.
 - **Anti-Guilt Score (Internal):** (Friction Journaling + Recovery Mode) / total Missed.
-- **Value-Based Freemium:** Gratis = orientasi dasar + local backup + export. Plus Rp 29K/bln = Cloud Sync + Insights + PDF + Decision Journal + Life Compass. Student Rp 19K/bln (self-declaration + `.ac.id` email). Annual Rp 199K/thn (hemat 43%). Micro-transaksi kosmetik saja.
-- **A/B Testing:** Onboarding (bulan 1–2), Automaticity Decay Rate (bulan 3–4: variant 15/20/30 hari).
+- **Value-Based Freemium:** Gratis = Daily Orientation Loop + export. Plus Rp 29K/bln = Insights non-AI + PDF + Life Compass + Decision Journal + kosmetik premium. Student Rp 19K/bln (self-declaration + `.ac.id` email). Annual Rp 249K/thn (hemat ~29%). Cloud Sync/E2EE bukan janji Plus sampai Privacy/E2EE Phase siap.
+- **A/B Testing:** Onboarding (bulan 1–2), Automaticity Decay Rate setelah Iterasi 1 cukup data (variant 15/20/30 hari).
 
 ### Internasionalisasi (i18n)
 String UI file terpisah, format locale-aware, Anti-Guit dilokalize oleh native speaker (bukan diterjemahkan langsung).
 
 ## 8. Spesifikasi Minimum Viable Product (MVP)
 
-**Asumsi Tim:** 3–5 developer (16–20 minggu). 1–2 developer: 24–30 minggu realistis.
+**Asumsi Tim:** 3–5 developer (12–16 minggu). 1–2 developer: 18–24 minggu realistis.
 
-### MVP Core (Core Launch)
-- Onboarding Life Audit (domain Tubuh, 1 pertanyaan), OS Keychain setup (1-ketuk), Dashboard 3 elemen (Pohon + Action + Journal), Journal Lite, Thinking Canvas Lite (paper-first prompt + ringkasan), Friction Intervention (dengan Recovery Mode duration selector + `mva_duration_min` one-time override), Safety Card (hardcoded), Canopy Load + Automaticity Decay (recency-weighted), SQLCipher, Local Backup, Export, Accessibility, Tier Gratis.
+### MVP Core (Daily Orientation Loop)
+- Onboarding Life Audit (domain Tubuh, 1 pertanyaan), Dashboard 3 elemen (Pohon + Action + Journal), Journal Lite, Thinking Canvas Lite (paper-first prompt + ringkasan), Friction Intervention (dengan Recovery Mode duration selector + `mva_duration_min` one-time override), Safety Card (hardcoded), Canopy Load Basic, local-only storage tanpa akun/cloud sync, Export, Accessibility, Tier Gratis.
 
 ### Iterasi 1 (Bulan 3–4 setelah core stabil)
-- Seed Phrase opsional, Recovery Contact (Shamir 2-of-3), Radar Keseimbangan, Deep Reflection, **Thinking Canvas Full**, Anti-Banner-Blindness, Weekly Pulse + WHO-5, Out-of-App Wellness Check, LifeTree Plus & Student & Annual, Life Compass, Goal Hierarchy, Tree Vitality Blooming.
+- Radar Keseimbangan, Deep Reflection, **Thinking Canvas Full**, Anti-Banner-Blindness, Weekly Pulse + WHO-5, Out-of-App Wellness Check, Automaticity Decay, SQLCipher/local encrypted backup, LifeTree Plus & Student & Annual, Life Compass, Goal Hierarchy, Tree Vitality Blooming.
 
 ### Iterasi 2 (Fase 1.5)
 - Domain Keuangan/Hubungan/Emosi/Karir/Rekreasi, Micro-transaksi kosmetik, Decision Journal.
+
+### Privacy/E2EE Phase
+- Cloud Sync, zero-knowledge E2EE, seed phrase, recovery contact, key rotation, sync conflict resolution, dan DSAR workflow.
 
 Semua fitur untuk Anak/Remaja dan Dasbor Orang tua ditunda ke Fase 2.
 
@@ -163,7 +159,7 @@ Semua fitur untuk Anak/Remaja dan Dasbor Orang tua ditunda ke Fase 2.
 
 | Aplikasi | Streak | Anti-Guilt | Jurnal | Habit | Life Audit | E2EE | Child Safety | Harga |
 |----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|-------|
-| **LifeTree** | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (Fase 2) | Freemium Rp 29K |
+| **LifeTree** | ❌ | ✅ | ✅ | ✅ | ✅ | Future | ✅ (Fase 2) | Freemium Rp 29K |
 | **Fabulous** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ~Rp 65K/bln |
 | **Habitica** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ~Rp 65K/bln |
 | **Streaks** | ✅✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | One-time Rp 65K |
@@ -180,6 +176,6 @@ Semua fitur untuk Anak/Remaja dan Dasbor Orang tua ditunda ke Fase 2.
 4. *Friction Journaling* — kegagalan = data refleksi.
 5. *Thinking Canvas* — pilar refleksi paper-first untuk membangun kebiasaan corat-coret di kertas asli dan mengubah kebingungan menjadi aksi kecil.
 6. *Compliance* anak Indonesia (PP TUNAS).
-6. *Zero-Knowledge E2EE* dengan habit tracker terintegrasi.
+6. *Privacy roadmap* dari minimisasi data lokal menuju zero-knowledge E2EE setelah core retention terbukti.
 
-**Notion Life OS:** Kompetitor indirect. Keunggulan LifeTree: guided (bukan setup manual), native mobile, E2EE, automation built-in. Rekomendasi: fitur import dari Notion di Fase 1.5.
+**Notion Life OS:** Kompetitor indirect. Keunggulan LifeTree: guided (bukan setup manual), native mobile, automation built-in, dan privacy roadmap yang lebih ketat. Rekomendasi: fitur import dari Notion di Fase 1.5.

@@ -49,7 +49,7 @@ Saat pengguna membuka aplikasi, layar "Home" menampilkan **3 elemen** di MVP Lea
 | Tahap | Waktu | Aksi | Beban Kognitif |
 |-------|-------|------|---------------|
 | **Welcome Screen** | Hari 1 | Jelaskan filosofi Anti-Guilt. Tanya 1 pertanyaan *Life Audit* (pertanyaan #1 Tubuh). | Rendah |
-| **Setup Keamanan** | Hari 3 | **Default:** OS Keychain auto-save (1-ketuk). **Opsi lanjutan:** 12-Word Recovery Key + Recovery Contact (Shamir 2-of-3). | Rendah → Sedang |
+| **Privasi Lokal** | Hari 1 | Jelaskan bahwa MVP Core menyimpan data di perangkat, tanpa akun dan tanpa cloud sync. | Rendah |
 | **Full Audit** | Akhir Minggu 1 | Sisa pertanyaan audit diselesaikan saat *Weekly Pulse* pertama. | Sedang |
 | **Medical Disclaimer** | Hari 1 | Scroll + checkbox: *"LifeTree adalah alat refleksi diri, BUKAN pengganti konseling profesional."* | Rendah |
 
@@ -170,6 +170,8 @@ Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 LifeTree. Mo
 
 ## 6. Scope MVP — Canonical Scope Matrix
 
+MVP Core tetap membawa visi **Personal OS**, tetapi implementasinya dipangkas menjadi **Daily Orientation Loop**: Journal Lite → Action of the Day → Friction Intervention/Recovery Mode → ringkasan refleksi kecil. Fitur privacy/E2EE penuh ditunda sampai loop ini terbukti dipakai.
+
 | Fitur | MVP Lean | Iterasi 1 | Iterasi 2 | Fase 2 |
 |-------|:--------:|:---------:|:---------:|:------:|
 | Journal Lite | ✅ P0 | — | — | — |
@@ -179,7 +181,7 @@ Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 LifeTree. Mo
 | Friction Intervention | ✅ P0 | — | — | — |
 | Safety Card | ✅ P0 | — | — | — |
 | Canopy Load | ✅ P0 | — | — | — |
-| Automaticity Decay | ✅ P0 | — | — | — |
+| Automaticity Decay | ❌ | ✅ P1 | — | — |
 | Domain Tubuh | ✅ P0 | — | — | — |
 | Domain 5 lainnya | ❌ | ❌ | ✅ P1 | — |
 | Radar Keseimbangan | ❌ | ✅ P1 | — | — |
@@ -190,18 +192,18 @@ Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 LifeTree. Mo
 | Life Compass | ❌ | ✅ P1 | — | — |
 | Decision Journal | ❌ | ❌ | ✅ P2 | — |
 | Goal Hierarchy | ❌ | ✅ P1 | — | — |
-| Cloud Sync | ❌ | ✅ P1 | — | — |
+| Cloud Sync | ❌ | ❌ | ❌ | ✅ |
+| Zero-Knowledge E2EE | ❌ | ❌ | ❌ | ✅ |
 | On-Device Insights (non-AI) | ❌ | ✅ P1 | — | — |
 | On-Device Insights (AI) | ❌ | ❌ | ❌ | ✅ |
 | Micro-transaksi | ❌ | ❌ | ✅ P2 | — |
 | Teen/Seedling Mode | ❌ | ❌ | ❌ | ✅ |
 
-### MVP Core (16–20 Minggu — asumsi 3–5 developer; 1–2 developer: 24–30 minggu)
+### MVP Core (Daily Orientation Loop — 12–16 Minggu untuk 3–5 developer; 18–24 minggu untuk 1–2 developer)
 
 | Komponen | Fitur | Prioritas |
 |----------|-------|-----------|
 | Onboarding | Life Audit (domain Tubuh, 1 pertanyaan) | P0 |
-| Onboarding | OS Keychain setup (1-ketuk, default) | P0 |
 | Onboarding | Medical Disclaimer (scroll + checkbox) | P0 |
 | Dashboard | Central Command Dashboard (3 elemen: Pohon + Action + Journal) | P0 |
 | Dashboard | Tree Vitality (Seedling → Mature + Snow-Covered) | P0 |
@@ -211,11 +213,8 @@ Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 LifeTree. Mo
 | Lapis 0 | Friction Intervention (threshold per frekuensi + Recovery Mode duration selector) | P0 |
 | Lapis 0 | Safety Card (hardcoded 119 + 119 ext 8) | P0 |
 | Lapis 1 | Canopy Load System (friction + energy, soft enforcement) | P0 |
-| Lapis 1 | Automaticity Decay (60 hari, recency-weighted) | P0 |
 | Lapis 2 | Domain Tubuh saja | P0 |
-| Security | SQLCipher enkripsi lokal | P0 |
-| Security | App-level biometric lock | P0 |
-| Security | Local Encrypted Backup | P0 |
+| Privacy | Local-only storage, tanpa akun dan tanpa cloud sync | P0 |
 | Security | Dark Mode (aksesibilitas, bukan kosmetik) | P0 |
 | Security | Ekspor Lokal (JSON/CSV) | P0 |
 | Accessibility | Screen Reader + Color+Icon+Label | P0 |
@@ -225,8 +224,6 @@ Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 LifeTree. Mo
 
 | Komponen | Fitur | Prioritas |
 |----------|-------|-----------|
-| Onboarding | 12-Word Recovery Key (opsional, advanced) | P1 |
-| Onboarding | Recovery Contact setup (Shamir 2-of-3) | P1 |
 | Dashboard | Radar Keseimbangan (domain Tubuh + Coming Soon) | P1 |
 | Dashboard | Tree Vitality Blooming state | P1 |
 | Lapis 0 | Deep Reflection (opsional) | P1 |
@@ -234,9 +231,11 @@ Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 LifeTree. Mo
 | Lapis 0 | Anti-Banner-Blindness Safety Card | P1 |
 | Weekly | Weekly Pulse Check + WHO-5 (opsional) | P1 |
 | Notification | Out-of-App Wellness Check | P1 |
-| Monetisasi | LifeTree Plus (Cloud Sync, Insights non-AI, PDF Export) | P1 |
+| Lapis 1 | Automaticity Decay (recency-weighted) | P1 |
+| Privacy | SQLCipher/local encrypted backup + app-level biometric lock | P1 |
+| Monetisasi | LifeTree Plus (Insights non-AI, PDF Export, Life Compass, Decision Journal preview) | P1 |
 | Monetisasi | LifeTree Student (self-declaration + `.ac.id`) | P1 |
-| Monetisasi | Annual Plan Rp 199K/thn | P1 |
+| Monetisasi | Annual Plan Rp 249K/thn | P1 |
 | Lapis 3 | Life Compass (3 Core Values) | P1 |
 | Lapis 1 | Goal Hierarchy (2 level: Project → Habit) | P1 |
 
@@ -254,5 +253,6 @@ Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 LifeTree. Mo
 - Parental Dashboard
 - Age Graduation
 - Goal Hierarchy level Visi (5 tahun)
+- Cloud Sync, zero-knowledge E2EE, seed phrase, recovery contact, key rotation, dan sync conflict resolution
 - On-Device Insights (AI-based)
 - Bahasa Inggris & regionalisasi

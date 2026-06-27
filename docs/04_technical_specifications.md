@@ -7,72 +7,100 @@
 | Komponen | Teknologi | Alasan |
 |----------|-----------|--------|
 | **Frontend (Mobile)** | Flutter | Satu *codebase* iOS & Android, percepat *time-to-market* MVP |
-| **Local Database** | SQLite + SQLCipher | *Offline-first*, enkripsi *at-rest* di perangkat lokal. **Bundling:** Gunakan `sqlite3_flutter_libs` untuk bundling versi SQLite ≥ 3.31.0 (diperlukan untuk GENERATED columns). Device Android lama mungkin menggunakan versi SQLite yang lebih tua di system library. |
-| **Key Management** | BIP-39 (12-Word Seed Phrase) | Standar industri — **opsional, hanya untuk Advanced Security / Cloud Sync** |
-| **Auto-Save Key (DEFAULT)** | OS Native Keychain / Android Keystore | Standard Mode: random 256-bit master key dibuat lokal dan disimpan di secure storage OS. iOS dapat memakai synchronizable Keychain jika dipilih; Android dianggap device-bound by default. |
-| **Backend (Cloud Sync)** | Node.js + PostgreSQL | Menyimpan *Encrypted Ciphertext BLOB*, server *Zero-Knowledge* |
-| **Remote Config** | Firebase Remote Config | Update nomor darurat tambahan tanpa *app update* |
-| **Push Notification** | Firebase Cloud Messaging | Out-of-app wellness check |
+| **Local Database (MVP)** | SQLite via Drift atau sqflite | *Offline-first*, cepat untuk MVP, tanpa akun dan tanpa cloud sync. Hindari kompleksitas key management sampai loop utama tervalidasi. |
+| **Privacy Hardening (Iterasi 1)** | SQLCipher/local encrypted backup + app-level biometric lock | Ditambahkan setelah Daily Orientation Loop terbukti dipakai. |
+| **Backend (MVP)** | Tidak ada backend | MVP Core berjalan local-only. Ekspor JSON/CSV dilakukan manual oleh pengguna. |
+| **Privacy/E2EE Phase** | Node.js + PostgreSQL + zero-knowledge E2EE | Cloud Sync, seed phrase, recovery contact, key rotation, dan sync conflict resolution masuk fase terpisah. |
+| **Remote Config** | Ditunda | Nomor primer Safety Card di-hardcode; remote config untuk nomor tambahan masuk setelah public beta. |
+| **Push Notification** | Local notification; FCM ditunda | Reminder lokal cukup untuk MVP. Out-of-app wellness check berbasis push remote masuk Iterasi 1/Fase backend. |
 
-> **Prinsip Arsitektur:** Seluruh logika komputasi berjalan di perangkat pengguna (*client-side*). Server hanya menerima, menyimpan, dan mengembalikan ciphertext. **Battery/CPU optimization:** lifetime_done_count counter + weighted_done_score materialized value (bukan COUNT query), incremental query 90 hari terakhir, background computation (midnight/app idle), caching Action of the Day sampai end-of-day.
+> **Prinsip Arsitektur MVP:** Seluruh logika komputasi berjalan di perangkat pengguna (*client-side*). Tidak ada akun, tidak ada server, tidak ada cloud sync, dan tidak ada E2EE multi-device di MVP Core. **Battery/CPU optimization:** cache Action of the Day sampai end-of-day, query habit/log secara incremental, dan pindahkan Automaticity Decay ke Iterasi 1.
 
 > **Catatan Schema:** Skema database bersifat **konseptual**. `JSONB` (spesifik PostgreSQL) digunakan untuk deskripsi; implementasi lokal di SQLite menggunakan `TEXT` dengan JSON serialization. Terdapat *mapping layer* di aplikasi.
 
-> **Autentikasi Akun:** Email + password hash (bcrypt) di server — terpisah dari enkripsi konten. Server mengautentikasi identitas, bukan membuka konten.
+> **Autentikasi Akun:** Tidak ada akun di MVP Core. Email/password baru relevan pada fase backend.
 
-> **Multi-Device Bootstrap:** (A) Perangkat lama ada → QR code transfer (local peer-to-peer). (B) Perangkat lama hilang → Recovery Contact (Shamir 2-of-3) / recovery key. (C) iOS dapat memanfaatkan synchronizable Keychain bila diaktifkan; Android tidak mengandalkan cloud backup untuk pemulihan kunci, sehingga perlu transfer/recovery eksplisit.
+> **Multi-Device Bootstrap:** Ditunda ke Privacy/E2EE Phase. Jangan mendesain onboarding MVP seperti crypto wallet.
 
 > **Sync Conflict Resolution:** Berlapis: **HabitLog** (append-only, LWW aman), **JournalEntry/mutable** (Conflict Copy jika timestamp < 5 menit dari perangkat berbeda — kedua versi ditampilkan, pengguna memilih), **Habit metadata** (LWW + conflict warning).
 
-> **Key Rotation:** Re-encryption bertahap di client-side. Key version di metadata entri (`key_version` di DeviceRegistry).
+> **Key Rotation:** Ditunda ke Privacy/E2EE Phase.
 
-> **Soft Delete:** Setiap tabel memiliki `deleted_at TIMESTAMP NULLABLE`. Record tidak dihapus fisik — ditandai tombstone untuk sinkronisasi multi-perangkat.
+> **Soft Delete:** Setiap tabel memiliki `deleted_at TIMESTAMP NULLABLE`. Record tidak dihapus fisik; tombstone sync baru relevan pada fase cloud/multi-device.
 
-## 2. Arsitektur Keamanan
+## 2. Setup Project Flutter
+
+Project Flutter dibuat di folder `app/` agar root repo tetap menjadi documentation hub.
+
+```powershell
+cd D:\LAB\git\life-tree
+flutter doctor -v
+flutter create app --project-name life_tree --org id.lifetree --platforms android,ios
+cd app
+flutter run
+```
+
+Untuk preview desktop di Windows:
+
+```powershell
+flutter create . --platforms windows
+flutter run -d windows
+```
+
+Dependency awal MVP local-only:
+
+```powershell
+flutter pub add go_router flutter_riverpod drift sqlite3_flutter_libs path_provider path uuid intl flutter_local_notifications share_plus
+flutter pub add dev:build_runner drift_dev flutter_lints
+```
+
+Struktur folder awal:
+
+```text
+app/
+  lib/
+    main.dart
+    src/
+      app.dart
+      core/
+      data/
+      features/
+        dashboard/
+        habit/
+        journal/
+        thinking_canvas/
+        safety/
+        onboarding/
+      shared/
+```
+
+Aturan fase MVP:
+- Tidak ada Firebase/backend.
+- Tidak ada seed phrase, recovery contact, atau E2EE onboarding.
+- Database lokal cukup untuk MVP; SQLCipher dan biometric lock masuk Privacy Hardening.
+- Semua copy anti-guilt disiapkan sebagai resource terpisah agar siap i18n.
+- Verifikasi awal: `flutter analyze`, `flutter test`, dan minimal 1 run di Android emulator/perangkat fisik.
+
+## 3. Arsitektur Keamanan MVP
 
 ```
 ┌─────────────────────────────────────────────────────┐
 │                    PERANGKAT PENGGUNA                │
 │                                                      │
 │  ┌──────────┐    ┌────────────┐    ┌─────────────┐  │
-│  │ Flutter   │───►│ SQLCipher   │───►│ Seed Phrase │  │
-│  │ App       │    │ (Encrypted) │    │ (BIP-39)    │  │
-│  │           │    │             │    │  [opsional] │  │
-│  └─────┬────┘    └────────────┘    └──────┬──────┘  │
-│        │                                  │          │
-│        │         ┌────────────────┐       │          │
-│        │         │ OS Keychain    │◄──────┘          │
-│        │         │ (Auto-Save)    │                  │
-│        │         │  [DEFAULT]     │                  │
-│        │         └────────────────┘                  │
-│        │                                              │
-│        │    🔒 App-Level Biometric Lock              │
-│        │    (autentikasi saat kembali dari            │
-│        │     background > 5 menit)                   │
-└────────┼────────────────────────────────────────────┘
-         │ E2EE Cloud Sync (Tier Plus only)
-         ▼
-┌─────────────────────────────────────────────────────┐
-│                    SERVER LIFETREE                    │
+│  │ Flutter  │───►│ SQLite     │───►│ Export       │  │
+│  │ App      │    │ Local DB   │    │ JSON/CSV     │  │
+│  └──────────┘    └────────────┘    └─────────────┘  │
 │                                                      │
-│  ┌──────────┐    ┌──────────────────────────┐       │
-│  │ Node.js   │───►│ PostgreSQL                │       │
-│  │ API       │    │ (Encrypted Ciphertext BLOB)│       │
-│  └──────────┘    └──────────────────────────┘       │
-│                                                      │
-│  ⛔ Server TIDAK MEMILIKI kunci dekripsi konten      │
-│  ⛔ Data hanya bisa dibaca di perangkat pengguna     │
-│  ℹ️  Metadata sistem tetap terlihat                  │
-│  ℹ️  CrisisPromptLog TIDAK di-sync (local-only)      │
+│  Tidak ada akun, server, cloud sync, atau key setup  │
+│  pada MVP Core. Privacy hardening ditambahkan        │
+│  setelah loop utama tervalidasi.                    │
 └─────────────────────────────────────────────────────┘
 ```
 
-**Recovery Contact:** Shamir Secret Sharing **(2-of-3)** — tiga fragment dibuat, dua diperlukan:
-1. Fragment di OS Keychain pengguna
-2. Fragment dikirim ke Recovery Contact (terenkripsi)
-3. *Secondary backup fragment* — disimpan pengguna di lokasi terpisah (cetak/cloud lain)
+**Privacy/E2EE Phase (bukan MVP):** Shamir recovery, seed phrase, QR key transfer, DeviceRegistry, cloud sync, dan conflict resolution tetap menjadi desain masa depan, tetapi tidak menghambat launch Daily Orientation Loop.
 
-## 3. Core Data Models (Entity Schema Lengkap)
+## 4. Core Data Models (Entity Schema Lengkap)
 
 ### `UserProfile`
 | Kolom | Tipe | Constraint | Keterangan |
@@ -85,15 +113,15 @@
 | `week_start_day` | INTEGER | DEFAULT 1 | ISO 8601: 1=Monday ... 7=Sunday |
 | `latest_domain_scores` | JSONB | NULLABLE | Denormalisasi: `{"Tubuh":{"score":7,"updated_at":"..."}}` untuk Action of the Day |
 | `canopy_load_capacity` | INTEGER | DEFAULT 10 | Panduan (soft enforcement), bukan batas kaku |
-| `crisis_disclaimer_acknowledged` | BOOLEAN | DEFAULT FALSE | Pengguna sudah acknowledge disclaimer krisis |
+| `wellness_disclaimer_acknowledged` | BOOLEAN | DEFAULT FALSE | Pengguna sudah acknowledge disclaimer wellness/safety |
 | `last_wellness_push_at` | TIMESTAMP | NULLABLE | Frequency cap Out-of-App Wellness Check (1x/14 hari) |
-| `last_crisis_prompt_at` | TIMESTAMP | NULLABLE | Frequency cap crisis modal (1x/7 hari). **Cloud-syncable** sebagai metadata sistem — bukan konten sensitif. Mencegah frequency cap hilang setelah reinstall. |
-| `recovery_contact_email` | VARCHAR(255) | NULLABLE | Email kontak pemulihan (opsional) |
-| `recovery_contact_fragment` | TEXT | NULLABLE, ENCRYPTED | Fragment kunci terenkripsi (Shamir 2-of-3) |
-| `secondary_backup_configured` | BOOLEAN | DEFAULT FALSE | True jika user sudah menyimpan fragment/backup di luar platform. Fragment cadangan tidak disimpan server. |
-| `secondary_backup_hint` | VARCHAR(100) | NULLABLE | Opsional, lokal/terenkripsi: petunjuk lokasi backup tanpa isi fragment |
-| `security_level` | VARCHAR(20) | DEFAULT 'Standard' | 'Standard' (OS Keychain) atau 'Advanced' (Seed Phrase) |
-| `deleted_at` | TIMESTAMP | NULLABLE | Tombstone untuk soft delete |
+| `last_wellness_prompt_at` | TIMESTAMP | NULLABLE | Frequency cap wellness prompt (1x/7 hari). MVP Core menyimpan ini lokal; cloud metadata baru relevan pada fase backend. |
+| `recovery_contact_email` | VARCHAR(255) | NULLABLE | Privacy/E2EE Phase: email kontak pemulihan (opsional) |
+| `recovery_contact_fragment` | TEXT | NULLABLE, ENCRYPTED | Privacy/E2EE Phase: fragment kunci terenkripsi |
+| `secondary_backup_configured` | BOOLEAN | DEFAULT FALSE | Privacy/E2EE Phase: true jika user sudah menyimpan fragment/backup di luar platform |
+| `secondary_backup_hint` | VARCHAR(100) | NULLABLE | Privacy/E2EE Phase: petunjuk lokasi backup tanpa isi fragment |
+| `security_level` | VARCHAR(20) | DEFAULT 'Local' | 'Local' di MVP Core; 'Standard'/'Advanced' baru relevan pada Privacy/E2EE Phase |
+| `deleted_at` | TIMESTAMP | NULLABLE | Tombstone; sync multi-device baru relevan pada fase cloud |
 | `created_at` | TIMESTAMP | NOT NULL | |
 | `updated_at` | TIMESTAMP | NOT NULL | |
 
@@ -266,7 +294,7 @@
 | `student_verification_status` | VARCHAR(30) | NULLABLE | 'unverified', 'verified', 'expired' |
 | `student_verified_until` | DATE | NULLABLE | Masa berlaku verifikasi student |
 
-### `CrisisPromptLog` (**LOCAL-ONLY — tidak di-sync ke cloud**)
+### `WellnessPromptLog` (**LOCAL-ONLY — tidak di-sync ke cloud**)
 | Kolom | Tipe | Constraint | Keterangan |
 |-------|------|-----------|------------|
 | `prompt_id` | UUID | PK | |
@@ -277,7 +305,7 @@
 
 > **Privacy:** Retention 90 hari (auto-delete). Tidak diekspor JSON/CSV. Tidak di-sync ke cloud.
 
-### `DeviceRegistry`
+### `DeviceRegistry` (Privacy/E2EE Phase)
 | Kolom | Tipe | Constraint | Keterangan |
 |-------|------|-----------|------------|
 | `device_id` | UUID | PK | |
@@ -294,7 +322,7 @@
 |-------|------|-----------|------------|
 | `consent_id` | UUID | PK | |
 | `user_id` | UUID | FK → UserProfile | |
-| `consent_type` | VARCHAR(50) | NOT NULL | 'ToS', 'Privacy_Policy', 'Data_Processing', 'Child_Parental', 'Crisis_Disclaimer' |
+| `consent_type` | VARCHAR(50) | NOT NULL | 'ToS', 'Privacy_Policy', 'Data_Processing', 'Child_Parental', 'Wellness_Disclaimer' |
 | `granted_at` | TIMESTAMP | NOT NULL | |
 | `version` | VARCHAR(20) | NOT NULL | Misal: "ToS_v1.2" |
 | `revoked_at` | TIMESTAMP | NULLABLE | NULL = masih aktif |
@@ -308,7 +336,7 @@
 | `quiet_hours_start` | TIME | DEFAULT '22:00' | |
 | `quiet_hours_end` | TIME | DEFAULT '07:00' | |
 
-## 4. Relasi Antar Entitas (ER Overview)
+## 5. Relasi Antar Entitas (ER Overview)
 
 ```
 UserProfile 1───∞ LifeAudit
@@ -320,7 +348,7 @@ UserProfile 1───∞ CoreValue (max 3, app-layer validation)
 UserProfile 1───∞ DecisionJournal
 UserProfile 1───∞ GoalHierarchy
 UserProfile 1───1 Subscription
-UserProfile 1───∞ CrisisPromptLog (LOCAL-ONLY, retention 90 hari)
+UserProfile 1───∞ WellnessPromptLog (LOCAL-ONLY, retention 90 hari)
 UserProfile 1───∞ DeviceRegistry
 UserProfile 1───∞ ConsentLog
 
@@ -332,23 +360,23 @@ GoalHierarchy 1───∞ GoalHierarchy (parent_goal_id, tree structure)
 
 
 
-### 4. Database Index Specification
+### 5.1 Database Index Specification
 
 | Tabel | Index | Tujuan |
 |-------|-------|--------|
 | `HabitLog` | `(habit_id, date, status)` | Query `cumulative_done` recency-weighted: filter Done dalam 90/180 hari terakhir |
 | `HabitLog` | `(habit_id, date DESC)` | Query Missed terbaru untuk Friction Intervention threshold |
-| `JournalEntry` | `(user_id, date, mood_score)` | Crisis Detection: scan mood_score ≤ 2 dalam 3–14 hari terakhir |
+| `JournalEntry` | `(user_id, date, mood_score)` | Wellness support: scan mood_score ≤ 2 dalam 3–14 hari terakhir |
 | `ThinkingCanvasSession` | `(user_id, created_at DESC)` | Riwayat sesi refleksi dan review mingguan |
 | `ThinkingCanvasSession` | `(user_id, method_key, created_at DESC)` | Analisis pola metode yang paling sering dipakai |
 | `Habit` | `(user_id, status, domain_tag)` | Action of the Day: query habit aktif per domain |
 | `WeeklyPulse` | `(user_id, domain_tag, week_start_date DESC)` | Domain score TTL: cek kebaruan skor per domain |
 | `WellnessAssessment` | `(user_id, instrument, assessment_date DESC)` | Tren WHO-5/instrumen terstruktur |
-| `CrisisPromptLog` | `(user_id, prompted_at DESC)` | Frequency cap: cek kapan terakhir crisis modal ditampilkan |
+| `WellnessPromptLog` | `(user_id, prompted_at DESC)` | Frequency cap: cek kapan terakhir wellness prompt ditampilkan |
 | `ConsentLog` | `(user_id, consent_type)` | Cek status consent terkini per tipe |
 
 > **Catatan:** `UNIQUE(habit_id, date)` di HabitLog otomatis membuat index composite — tapi tidak mencakup `status`, sehingga index tambahan diperlukan untuk query yang memfilter status.
-## 5. Algoritma Mesin & Logic Flow
+## 6. Algoritma Mesin & Logic Flow
 
 ### A. Algoritma "Action of the Day"
 
@@ -449,20 +477,20 @@ HIPOTESIS PRODUK:
   Dikalibrasi melalui A/B testing setelah data beta cukup.
 ```
 
-### D. Algoritma "Passive Crisis Intervention"
+### D. Algoritma "Passive Wellness Support"
 
 ```
 Trigger:
   - mood_score ≤ 2 selama 3 hari berturut-turut, ATAU
   - mood_score turun > 2 poin dalam 5 hari
 
-Frequency Cap: Maks. 1x per 7 hari (modal penuh)
+Frequency Cap: Maks. 1x per 7 hari (prompt penuh)
 
-Action 1: Modal empatik + Safety Card
+Action 1: Prompt empatik + Safety Card
 Action 2: Tawarkan Recovery Mode (durasi 1/3/7 hari)
 
-Crisis Escalation (> 14 hari mood_score ≤ 2):
-  - Modal eskalasi langsung ke hotline, maks. 1x/14 hari
+Sustained Low-Mood Support (> 14 hari mood_score ≤ 2):
+  - Prompt dukungan lebih langsung ke hotline/resource profesional, maks. 1x/14 hari
   - Safety Card highlighted dengan visual berbeda
 
 Out-of-App:
@@ -473,10 +501,10 @@ Out-of-App:
 Fallback: Nomor primer di-hardcode (119, 119 ext 8 SEJIWA)
 Tracking: 'Tapped_Hotline_CTA' (bukan 'Called_Hotline')
 
-Limitasi: Crisis detection hanya seaktif data mood yang tersedia. Jika pengguna aktif membuka app tetapi tidak pernah mengisi mood, sistem tidak boleh mengasumsikan distress. Gunakan prompt mood ringan berkala dan Safety Card always-on sebagai mitigasi non-intrusif.
+Limitasi: Wellness support hanya seaktif data mood yang tersedia. Jika pengguna aktif membuka app tetapi tidak pernah mengisi mood, sistem tidak boleh mengasumsikan distress. Gunakan prompt mood ringan berkala dan Safety Card always-on sebagai mitigasi non-intrusif.
 ```
 
-## 6. State Machine (Status Habit)
+## 7. State Machine (Status Habit)
 
 ```
                     ┌──────────┐
