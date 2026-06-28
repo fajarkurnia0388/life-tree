@@ -155,7 +155,7 @@ class TreeDisplayWidget extends ConsumerWidget {
               // ── Tree (realistic PNG asset; falls back to procedural painter
               //    if the asset for this stage hasn't been added yet) ──
               Positioned(
-                bottom: height * 0.10,
+                bottom: height * 0.04,
                 left: 0,
                 right: 0,
                 child: Center(
