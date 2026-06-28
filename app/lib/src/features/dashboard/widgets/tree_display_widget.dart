@@ -152,7 +152,8 @@ class TreeDisplayWidget extends ConsumerWidget {
                 ),
               ),
 
-              // ── Tree (OrganicTreePainter — no image asset, fully transparent) ──
+              // ── Tree (realistic PNG asset; falls back to procedural painter
+              //    if the asset for this stage hasn't been added yet) ──
               Positioned(
                 bottom: height * 0.10,
                 left: 0,
@@ -161,12 +162,22 @@ class TreeDisplayWidget extends ConsumerWidget {
                   child: SizedBox(
                     width: treeSize,
                     height: treeSize,
-                    child: CustomPaint(
-                      painter: OrganicTreePainter(
-                        days: cumulativeDays.toDouble(),
-                        skinId: skinId,
-                        isRecovery: isRecovery,
-                      ),
+                    child: Image.asset(
+                      assetPath,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.bottomCenter,
+                      filterQuality: FilterQuality.medium,
+                      errorBuilder: (context, error, stackTrace) {
+                        // Asset missing → render the procedural tree instead so
+                        // the user always sees *something* sensible.
+                        return CustomPaint(
+                          painter: OrganicTreePainter(
+                            days: cumulativeDays.toDouble(),
+                            skinId: skinId,
+                            isRecovery: isRecovery,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -328,11 +339,21 @@ class TreeDisplayWidget extends ConsumerWidget {
     if (stage == TreeSkinConfig.stageRecovery) {
       return skin == 'Sakura' ? '❄️🌸' : skin == 'Maple' ? '❄️🍁' : skin == 'Bonsai' ? '❄️🪴' : '❄️🌳';
     }
-    if (stage == TreeSkinConfig.stageSeed) return '🌰';
-    if (stage == TreeSkinConfig.stageSprout) return '🌱';
-    if (stage == TreeSkinConfig.stageSapling) return '🌿';
-    if (stage == TreeSkinConfig.stageBlooming) {
-      return skin == 'Sakura' ? '🌸🌳' : skin == 'Maple' ? '🍁🌳' : skin == 'Bonsai' ? '🪴' : '🌳';
+    switch (stage) {
+      case TreeSkinConfig.stageSeed:
+        return '🌰';
+      case TreeSkinConfig.stageSprout:
+      case TreeSkinConfig.stageSeedling:
+        return '🌱';
+      case TreeSkinConfig.stageSapling:
+      case TreeSkinConfig.stageYoung:
+        return '🌿';
+      case TreeSkinConfig.stageGrowing:
+      case TreeSkinConfig.stageEstablished:
+        return skin == 'Sakura' ? '🌸🌳' : skin == 'Maple' ? '🍁🌳' : skin == 'Bonsai' ? '🪴' : '🌳';
+      case TreeSkinConfig.stageBlooming:
+      case TreeSkinConfig.stageFlourishing:
+        return skin == 'Sakura' ? '🌸🌳' : skin == 'Maple' ? '🍁🌳' : skin == 'Bonsai' ? '🪴' : '🌳';
     }
     return skin == 'Sakura' ? '🌸🌲' : skin == 'Maple' ? '🍁🌲' : skin == 'Bonsai' ? '🪴' : '🌲';
   }
@@ -746,13 +767,18 @@ class _StageBadge extends StatelessWidget {
     final theme = Theme.of(context);
     final color = isRecovery ? CalmTheme.secondaryBlue : theme.colorScheme.primary;
     final label = switch (stage) {
-      TreeSkinConfig.stageSeed     => 'Benih',
-      TreeSkinConfig.stageSprout   => 'Tunas',
-      TreeSkinConfig.stageSapling  => 'Batang Muda',
-      TreeSkinConfig.stageBlooming => 'Mekar',
-      TreeSkinConfig.stageMature   => 'Dewasa',
-      TreeSkinConfig.stageRecovery => 'Istirahat',
-      _                            => stage,
+      TreeSkinConfig.stageSeed        => 'Benih',
+      TreeSkinConfig.stageSprout      => 'Tunas',
+      TreeSkinConfig.stageSeedling    => 'Bibit',
+      TreeSkinConfig.stageSapling     => 'Batang Muda',
+      TreeSkinConfig.stageYoung       => 'Pohon Muda',
+      TreeSkinConfig.stageGrowing     => 'Tumbuh',
+      TreeSkinConfig.stageEstablished => 'Mantap',
+      TreeSkinConfig.stageBlooming    => 'Rimbun',
+      TreeSkinConfig.stageFlourishing => 'Subur',
+      TreeSkinConfig.stageMature      => 'Dewasa',
+      TreeSkinConfig.stageRecovery    => 'Istirahat',
+      _                               => stage,
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

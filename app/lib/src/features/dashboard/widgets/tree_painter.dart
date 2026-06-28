@@ -30,12 +30,23 @@ class BranchConfig {
   });
 }
 
+/// Internal record describing a place where foliage should grow.
+/// Collected during the branch pass and rendered afterwards so the whole
+/// canopy can be composed as one cohesive mass (back-to-front).
+class _FoliageNode {
+  final Offset pos;
+  final double radius;
+  final double grow;
+  _FoliageNode(this.pos, this.radius, this.grow);
+}
+
 /// A highly organic, generative tree painter.
 /// Simulates continuous growth from 0 to 100 days:
 /// - Days 0-2: Seed germinates.
 /// - Days 3-7: Sprout grows, winding up with small leaves.
 /// - Days 8-100: Custom curvy trunk, wood grain patterns, concentric knots,
-///   and a recursive branching system with tapered wavy twigs and detailed leaf clusters.
+///   a recursive branching system, and a cohesive layered canopy built from
+///   soft foliage masses rather than scattered floating leaves.
 class OrganicTreePainter extends CustomPainter {
   final double days;
   final String skinId;
@@ -94,22 +105,34 @@ class OrganicTreePainter extends CustomPainter {
     };
   }
 
+  /// Darkest tone of the active palette — used as the canopy shadow base.
+  Color get _foliageShadow => _leafColors.first;
+
+  /// A representative mid tone for the canopy body fill.
+  Color get _foliageBody => _leafColors[(_leafColors.length / 2).floor()];
+
+  /// Brightest tone — used for sun-lit highlights on top of the canopy.
+  Color get _foliageHighlight => _leafColors.last;
+
   // ─── Branch Layout ─────────────────────────────────────────────────────────
 
   static const List<BranchConfig> _primaryBranches = [
     // Lower level branches
-    BranchConfig(startT: 0.35, angle: 0.58, lengthFactor: 0.46, minDays: 10), // Right
-    BranchConfig(startT: 0.42, angle: 2.56, lengthFactor: 0.44, minDays: 14), // Left
+    BranchConfig(startT: 0.38, angle: 0.62, lengthFactor: 0.50, minDays: 10), // Right
+    BranchConfig(startT: 0.45, angle: 2.52, lengthFactor: 0.48, minDays: 14), // Left
     // Mid level branches
-    BranchConfig(startT: 0.58, angle: 0.68, lengthFactor: 0.40, minDays: 18), // Right
-    BranchConfig(startT: 0.64, angle: 2.46, lengthFactor: 0.38, minDays: 22), // Left
+    BranchConfig(startT: 0.60, angle: 0.80, lengthFactor: 0.44, minDays: 18), // Right
+    BranchConfig(startT: 0.66, angle: 2.34, lengthFactor: 0.42, minDays: 22), // Left
     // Upper level branches
-    BranchConfig(startT: 0.78, angle: 0.78, lengthFactor: 0.34, minDays: 26), // Right
-    BranchConfig(startT: 0.83, angle: 2.36, lengthFactor: 0.32, minDays: 30), // Left
+    BranchConfig(startT: 0.80, angle: 0.98, lengthFactor: 0.36, minDays: 26), // Right
+    BranchConfig(startT: 0.85, angle: 2.16, lengthFactor: 0.34, minDays: 30), // Left
     // Apex crown branches
-    BranchConfig(startT: 0.95, angle: 1.05, lengthFactor: 0.28, minDays: 35), // Right
-    BranchConfig(startT: 0.98, angle: 2.09, lengthFactor: 0.26, minDays: 40), // Left
+    BranchConfig(startT: 0.96, angle: 1.35, lengthFactor: 0.30, minDays: 35), // Right
+    BranchConfig(startT: 0.99, angle: 1.79, lengthFactor: 0.28, minDays: 40), // Left
   ];
+
+  // Accumulates every place foliage should sprout during the branch pass.
+  // (Reset on each paint so the painter stays stateless across frames.)
 
   // ─── Paint Dispatch ────────────────────────────────────────────────────────
 
@@ -347,16 +370,19 @@ class OrganicTreePainter extends CustomPainter {
 
     canvas.restore();
 
-    // 4. Draw Branches & Leaf Clusters recursively
-    // A single seeded random to make animations smooth & stable
+    // 4. Walk the branch system. Branches are drawn immediately, but foliage
+    //    spots are *collected* (not drawn) so the entire canopy can be composed
+    //    as one cohesive mass afterwards — this is the key to a natural look.
     final random = SeededRandom(skinId.hashCode + 88);
+    final foliageNodes = <_FoliageNode>[];
+    final canopyScale = size.width;
 
     for (final branch in _primaryBranches) {
       if (days < branch.minDays) continue;
 
       final trunkAttach = _getTrunkPoint(branch.startT, cx, gy, trunkH, trunkW);
       final bLength = trunkH * branch.lengthFactor;
-      final bWidth = trunkW * 0.22;
+      final bWidth = trunkW * 0.26;
 
       _drawOrganicBranch(
         canvas: canvas,
@@ -368,13 +394,34 @@ class OrganicTreePainter extends CustomPainter {
         minDays: branch.minDays,
         depth: 0,
         random: random,
-        r: size.width * 0.80,
+        canopyScale: canopyScale,
+        foliageNodes: foliageNodes,
       );
     }
+
+    // 4b. Fill the inner crown so a mature tree has a full body (no hollow
+    //     arch). These sit just above the upper trunk where the big limbs fork.
+    if (days >= 28) {
+      final crownGrow = ((days - 28) / 24).clamp(0.0, 1.0);
+      final apex = _getTrunkPoint(0.96, cx, gy, trunkH, trunkW);
+      final innerSpots = <Offset>[
+        apex.translate(0, -canopyScale * 0.04),
+        apex.translate(-canopyScale * 0.10, canopyScale * 0.02),
+        apex.translate(canopyScale * 0.10, canopyScale * 0.02),
+        apex.translate(-canopyScale * 0.05, -canopyScale * 0.10),
+        apex.translate(canopyScale * 0.05, -canopyScale * 0.09),
+      ];
+      for (final s in innerSpots) {
+        foliageNodes.add(_FoliageNode(s, canopyScale * 0.105 * crownGrow, crownGrow));
+      }
+    }
+
+    // 5. Compose the canopy from the collected nodes, back-to-front.
+    _drawCanopy(canvas, foliageNodes, random, smoothProgress);
   }
 
   /// Procedural recursive organic branch generator.
-  /// Simulates natural tapering, wavy curvature, and splits into smaller sub-branches.
+  /// Draws tapered, wavy branches and records (does not draw) foliage spots.
   void _drawOrganicBranch({
     required Canvas canvas,
     required Offset start,
@@ -385,7 +432,8 @@ class OrganicTreePainter extends CustomPainter {
     required double minDays,
     required int depth,
     required SeededRandom random,
-    required double r,
+    required double canopyScale,
+    required List<_FoliageNode> foliageNodes,
   }) {
     if (currentDays < minDays) return;
 
@@ -408,12 +456,12 @@ class OrganicTreePainter extends CustomPainter {
     for (int i = 1; i <= segments; i++) {
       final t = i / segments;
       // Wobbly curvature bend (wobbles more as it gets thinner)
-      final bend = random.range(-0.16, 0.16) * (1.0 + depth * 0.3);
+      final bend = random.range(-0.14, 0.14) * (1.0 + depth * 0.3);
       currentAngle += bend;
 
       currentPos = currentPos + Offset(math.cos(currentAngle) * stepLen, -math.sin(currentAngle) * stepLen);
       points.add(currentPos);
-      widths.add(startWidth * (1.0 - t * 0.52) * bGrow); // Tapering
+      widths.add(startWidth * (1.0 - t * 0.48) * bGrow); // Tapering
     }
 
     // Paint the tapered wobbly branch segment by segment
@@ -442,53 +490,56 @@ class OrganicTreePainter extends CustomPainter {
 
       if (currentDays >= subMinDays) {
         // Left sub-branch
-        final leftAngle = currentAngle + random.range(0.32, 0.48);
-        final leftLength = length * random.range(0.50, 0.65);
+        final leftAngle = currentAngle + random.range(0.30, 0.46);
+        final leftLength = length * random.range(0.52, 0.66);
         _drawOrganicBranch(
           canvas: canvas,
           start: endPoint,
           angle: leftAngle,
           length: leftLength,
-          startWidth: widths.last * 0.7,
+          startWidth: widths.last * 0.72,
           currentDays: currentDays,
           minDays: subMinDays,
           depth: nextDepth,
           random: random,
-          r: r,
+          canopyScale: canopyScale,
+          foliageNodes: foliageNodes,
         );
 
         // Right sub-branch
-        final rightAngle = currentAngle - random.range(0.32, 0.48);
-        final rightLength = length * random.range(0.50, 0.65);
+        final rightAngle = currentAngle - random.range(0.30, 0.46);
+        final rightLength = length * random.range(0.52, 0.66);
         _drawOrganicBranch(
           canvas: canvas,
           start: endPoint,
           angle: rightAngle,
           length: rightLength,
-          startWidth: widths.last * 0.7,
+          startWidth: widths.last * 0.72,
           currentDays: currentDays,
           minDays: subMinDays + 2.0,
           depth: nextDepth,
           random: random,
-          r: r,
+          canopyScale: canopyScale,
+          foliageNodes: foliageNodes,
         );
       }
     }
 
-    // Put leaf clusters at the tips and along the branches
+    // Record foliage spots. Outer/thinner branches carry the densest foliage.
+    // Radii are intentionally tied to branch position so clumps overlap their
+    // neighbours and read as one continuous canopy instead of floating dots.
     if (depth == 2) {
-      // Twigs get dense clusters at the tip and smaller clusters along their path
-      _drawLeafCluster(canvas, endPoint, r * 0.16 * bGrow, 18, random);
-      _drawLeafCluster(canvas, points[1], r * 0.12 * bGrow, 10, random);
+      foliageNodes.add(_FoliageNode(endPoint, canopyScale * 0.115 * bGrow, bGrow));
+      foliageNodes.add(_FoliageNode(points[2], canopyScale * 0.090 * bGrow, bGrow));
     } else if (depth == 1) {
-      // Secondary branches get leaf clusters at segment joints and the tip
-      _drawLeafCluster(canvas, endPoint, r * 0.18 * bGrow, 22, random);
-      _drawLeafCluster(canvas, points[2], r * 0.15 * bGrow, 16, random);
-      _drawLeafCluster(canvas, points[1], r * 0.11 * bGrow, 10, random);
+      foliageNodes.add(_FoliageNode(endPoint, canopyScale * 0.130 * bGrow, bGrow));
+      foliageNodes.add(_FoliageNode(points[2], canopyScale * 0.100 * bGrow, bGrow));
     } else if (depth == 0) {
-      // Primary branches get leaf clusters along their mid/outer parts
-      _drawLeafCluster(canvas, points[2], r * 0.20 * bGrow, 24, random);
-      _drawLeafCluster(canvas, points[1], r * 0.15 * bGrow, 14, random);
+      // Only seed a foliage spot at the very tip of a primary branch when it
+      // has no children yet (young tree) so the base of big limbs stays clean.
+      if (currentDays < minDays + 9) {
+        foliageNodes.add(_FoliageNode(endPoint, canopyScale * 0.110 * bGrow, bGrow));
+      }
     }
   }
 
@@ -515,49 +566,103 @@ class OrganicTreePainter extends CustomPainter {
     canvas.drawPath(rightRoot, rootPaint);
   }
 
-  // ─── LEAF CLUSTERS ("HIMPUNAN DAUN-DAUN KECIL") ──────────────────────────────
+  // ─── CANOPY (COHESIVE FOLIAGE MASS) ─────────────────────────────────────────
 
-  /// Draws a dense, beautiful cluster of tiny organic leaves at branch endpoints.
-  void _drawLeafCluster(Canvas canvas, Offset center, double maxRadius, int leafCount, SeededRandom random) {
-    if (maxRadius < 1.5) return;
+  /// Composes the whole crown in four passes so it reads as one connected,
+  /// volumetric mass rather than scattered floating leaves:
+  ///   1. A soft unifying shadow blob behind everything.
+  ///   2. Dark base clumps (the body of the canopy).
+  ///   3. Mid-tone clumps offset up-left to suggest form.
+  ///   4. A scattering of individual leaves *only near clump centres* plus
+  ///      bright highlights on the top-left (sun side) for texture.
+  void _drawCanopy(
+    Canvas canvas,
+    List<_FoliageNode> nodes,
+    SeededRandom random,
+    double progress,
+  ) {
+    if (nodes.isEmpty) return;
 
-    // Draw leaves in 3 depth layers to create natural shading & volume
-    final layers = [
-      (count: (leafCount * 0.35).toInt(), colorOpacity: 0.9, scale: 0.85, shadow: true),  // Dark back layer
-      (count: (leafCount * 0.45).toInt(), colorOpacity: 1.0, scale: 1.0, shadow: false),  // Mid base layer
-      (count: (leafCount * 0.20).toInt(), colorOpacity: 1.0, scale: 0.75, shadow: false),  // Light crown layer
-    ];
+    // ── Pass 1: unifying soft shadow that binds the clumps together ──
+    // Slightly enlarged, blurred dark shapes merge neighbouring clumps so
+    // there are no hard gaps between them.
+    final shadowPaint = Paint()
+      ..color = _foliageShadow.withOpacity(0.55)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+    for (final n in nodes) {
+      if (n.radius < 2) continue;
+      canvas.drawCircle(n.pos, n.radius * 1.18, shadowPaint);
+    }
 
-    for (int l = 0; l < layers.length; l++) {
-      final layer = layers[l];
-      for (int i = 0; i < layer.count; i++) {
-        // Distribute leaves using golden ratio/sunflower style distribution for organic feel
-        final dist = maxRadius * math.sqrt(random.nextDouble()) * layer.scale;
-        final angle = random.range(0.0, 2 * math.pi);
-        final leafPos = center + Offset(math.cos(angle) * dist, math.sin(angle) * dist * 0.8);
+    // ── Pass 2: dark base clumps (canopy body) ──
+    final bodyPaint = Paint()..color = _foliageBody;
+    for (final n in nodes) {
+      if (n.radius < 2) continue;
+      _drawClump(canvas, n.pos, n.radius, random, bodyPaint, jitter: 0.32);
+    }
 
-        final leafAngle = random.range(0.0, 2 * math.pi);
-        final leafSize = maxRadius * random.range(0.12, 0.25) * layer.scale;
+    // ── Pass 3: mid-tone form clumps for volume (slightly up-left) ──
+    final lightOffset = Offset(-1, -1.6); // direction of the light source
+    final midPaint = Paint()..color = _leafColors[1].withOpacity(0.95);
+    for (final n in nodes) {
+      if (n.radius < 3) continue;
+      final lp = n.pos + lightOffset * (n.radius * 0.12);
+      _drawClump(canvas, lp, n.radius * 0.74, random, midPaint, jitter: 0.30);
+    }
 
-        // Choose color from palette based on layer depth
-        final colorIndex = switch (l) {
-          0 => 0, // Darkest base
-          1 => random.range(1.0, 3.0).toInt(), // Mid-light tones
-          _ => _leafColors.length - 1, // Bright highlight
-        };
-        final color = _leafColors[colorIndex].withOpacity(layer.colorOpacity);
+    // ── Pass 3b: bright highlight only on the sun-lit crown (top-left) ──
+    final litPaint = Paint()..color = _foliageHighlight.withOpacity(0.85);
+    for (final n in nodes) {
+      if (n.radius < 4) continue;
+      final lp = n.pos + lightOffset * (n.radius * 0.30);
+      _drawClump(canvas, lp, n.radius * 0.42, random, litPaint, jitter: 0.28);
+    }
 
-        // Draw leaf drop shadow
-        if (layer.shadow) {
-          canvas.drawCircle(
-            leafPos + const Offset(1, 1.5),
-            leafSize * 0.4,
-            Paint()..color = Colors.black.withOpacity(0.05),
-          );
-        }
+    // ── Pass 4: individual leaf texture + bright top highlights ──
+    // Leaves are kept tightly around each clump centre (max 0.7 * radius) so
+    // none of them float away from the canopy.
+    for (final n in nodes) {
+      if (n.radius < 4) continue;
+      final leafCount = (n.radius * 0.55).round().clamp(4, 22);
+      for (int i = 0; i < leafCount; i++) {
+        // sqrt distribution keeps density toward the centre, not the rim
+        final dist = n.radius * 0.7 * math.sqrt(random.nextDouble());
+        final a = random.range(0, 2 * math.pi);
+        final pos = n.pos + Offset(math.cos(a) * dist, math.sin(a) * dist * 0.92);
 
-        _drawOrganicLeaf(canvas, leafPos, leafSize, leafAngle, color);
+        // Leaves nearer the top-left catch the light -> brighter palette index.
+        final litness = (-(math.sin(a)) - math.cos(a)) * 0.5 + 0.5; // 0..1
+        final idx = litness > 0.62
+            ? _leafColors.length - 1
+            : (1 + random.range(0, (_leafColors.length - 1).toDouble())).floor()
+                .clamp(0, _leafColors.length - 1);
+
+        final leafSize = n.radius * random.range(0.16, 0.26);
+        _drawOrganicLeaf(canvas, pos, leafSize, random.range(0, 2 * math.pi), _leafColors[idx]);
       }
+    }
+  }
+
+  /// Draws one soft, irregular foliage clump as a small set of overlapping
+  /// circles, giving a bumpy organic silhouette instead of a flat disc.
+  void _drawClump(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    SeededRandom random,
+    Paint paint, {
+    double jitter = 0.3,
+  }) {
+    if (radius < 2) return;
+    // central blob
+    canvas.drawCircle(center, radius * 0.72, paint);
+    // surrounding bumps
+    final bumps = 5 + (radius / 14).round().clamp(0, 4);
+    for (int i = 0; i < bumps; i++) {
+      final a = (i / bumps) * 2 * math.pi + random.range(-0.4, 0.4);
+      final d = radius * random.range(0.45, 0.7);
+      final bp = center + Offset(math.cos(a) * d, math.sin(a) * d * 0.9);
+      canvas.drawCircle(bp, radius * random.range(0.34, 0.5), paint);
     }
   }
 
@@ -579,7 +684,7 @@ class OrganicTreePainter extends CustomPainter {
       Offset.zero,
       Offset(size * 0.8, 0),
       Paint()
-        ..color = Colors.black.withOpacity(0.12)
+        ..color = Colors.black.withOpacity(0.10)
         ..strokeWidth = size * 0.08
         ..style = PaintingStyle.stroke,
     );
