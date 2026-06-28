@@ -615,19 +615,59 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
         child: Column(
           children: [
             // Full-width Panorama Tree Scene wrapped in RepaintBoundary for capture feature
-            RepaintBoundary(
-              key: _repaintBoundaryKey,
-              child: TreeDisplayWidget(
-                skinId: widget.skinId,
-                cumulativeDays: widget.cumulativeDays,
-                season: widget.season,
-                width: double.infinity,
-                height: 220,
-              ),
+            Stack(
+              children: [
+                RepaintBoundary(
+                  key: _repaintBoundaryKey,
+                  child: TreeDisplayWidget(
+                    skinId: widget.skinId,
+                    cumulativeDays: widget.cumulativeDays,
+                    season: widget.season,
+                    width: double.infinity,
+                    height: 220,
+                  ),
+                ),
+                // Floating minimal capture button at top-right (outside RepaintBoundary so it's not captured)
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Tooltip(
+                    message: 'Ambil Foto Pohon',
+                    child: ClipOval(
+                      child: Material(
+                        color: Colors.black.withValues(alpha: 0.12),
+                        child: InkWell(
+                          onTap: _isCapturing ? null : _captureAndShareTree,
+                          child: SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: Center(
+                              child: _isCapturing
+                                  ? const SizedBox(
+                                      width: 14,
+                                      height: 14,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.camera_alt_outlined,
+                                      size: 16,
+                                      color: Colors.white.withValues(alpha: 0.85),
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
 
-            // Info Section (Title & Share/Skin buttons)
+            // Info Section (Title & Skin button)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -649,75 +689,32 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                     ],
                   ),
                 ),
-                // Action Buttons Row (Ambil Foto & Skin Shop)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Capture/Share button
-                    InkWell(
-                      onTap: _isCapturing ? null : _captureAndShareTree,
+                // Skin Shop button
+                InkWell(
+                  onTap: widget.onSkinShopTap,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.secondary.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: theme.colorScheme.secondary.withOpacity(0.15)),
-                        ),
-                        child: Row(
-                          children: [
-                            _isCapturing
-                                ? const SizedBox(
-                                    width: 14,
-                                    height: 14,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-                                    ),
-                                  )
-                                : Icon(Icons.camera_alt_outlined, size: 14, color: theme.colorScheme.secondary),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Ambil Foto',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.secondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      border: Border.all(color: theme.colorScheme.primary.withOpacity(0.15)),
                     ),
-                    const SizedBox(width: 8),
-                    // Skin Shop button
-                    InkWell(
-                      onTap: widget.onSkinShopTap,
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: theme.colorScheme.primary.withOpacity(0.15)),
+                    child: Row(
+                      children: [
+                        Icon(Icons.palette_outlined, size: 14, color: theme.colorScheme.primary),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Skin Shop',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
+                          ),
                         ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.palette_outlined, size: 14, color: theme.colorScheme.primary),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Skin Shop',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
