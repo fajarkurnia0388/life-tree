@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:async';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -175,6 +178,80 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
               ),
             ),
           ),
+          const SizedBox(height: 12),
+          const Divider(height: 16),
+          // Timer section
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.06),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: theme.colorScheme.primary.withOpacity(0.12)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.timer_outlined, color: theme.colorScheme.primary, size: 20),
+                const SizedBox(width: 8),
+                const Text(
+                  'Timer Sesi:',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  _formatCanvasTime(_canvasSecondsRemaining),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'monospace',
+                    fontSize: 16,
+                  ),
+                ),
+                const Spacer(),
+                if (!_canvasTimerActive)
+                  DropdownButton<int>(
+                    value: _canvasSelectedMinutes,
+                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground),
+                    underline: const SizedBox(),
+                    items: [1, 2, 3, 5, 7, 10, 15].map((m) {
+                      return DropdownMenuItem(
+                        value: m,
+                        child: Text('$m mnt'),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) {
+                        _changeCanvasTimerDuration(val);
+                      }
+                    },
+                  ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(
+                    _canvasTimerActive ? Icons.pause_circle_filled_rounded : Icons.play_circle_filled_rounded,
+                    color: theme.colorScheme.primary,
+                    size: 28,
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {
+                    if (_canvasTimerActive) {
+                      _pauseCanvasTimer();
+                    } else {
+                      _startCanvasTimer();
+                    }
+                  },
+                ),
+                if (!_canvasTimerActive && _canvasSecondsRemaining != _canvasSelectedMinutes * 60) ...[
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.replay_rounded, size: 20),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: _resetCanvasTimer,
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -278,6 +355,84 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
     }
   }
 
+  Timer? _canvasTimer;
+  int _canvasSecondsRemaining = 300;
+  int _canvasSelectedMinutes = 5;
+  bool _canvasTimerActive = false;
+
+  void _startCanvasTimer() {
+    _canvasTimer?.cancel();
+    setState(() {
+      _canvasTimerActive = true;
+    });
+    _canvasTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_canvasSecondsRemaining <= 1) {
+        setState(() {
+          _canvasSecondsRemaining = 0;
+          _canvasTimerActive = false;
+        });
+        _canvasTimer?.cancel();
+        _showCanvasTimerFinishedDialog();
+      } else {
+        setState(() {
+          _canvasSecondsRemaining--;
+        });
+      }
+    });
+  }
+
+  void _pauseCanvasTimer() {
+    _canvasTimer?.cancel();
+    setState(() {
+      _canvasTimerActive = false;
+    });
+  }
+
+  void _resetCanvasTimer() {
+    _canvasTimer?.cancel();
+    setState(() {
+      _canvasTimerActive = false;
+      _canvasSecondsRemaining = _canvasSelectedMinutes * 60;
+    });
+  }
+
+  void _changeCanvasTimerDuration(int minutes) {
+    _canvasTimer?.cancel();
+    setState(() {
+      _canvasTimerActive = false;
+      _canvasSelectedMinutes = minutes;
+      _canvasSecondsRemaining = minutes * 60;
+    });
+  }
+
+  void _showCanvasTimerFinishedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Waktu Sesi Habis! ⏱️'),
+          content: const Text(
+            'Sesi coretan kertas Anda telah mencapai batas waktu.\n\n'
+            'Mari ringkas poin-poin utama Anda di lembar kerja digital di bawah.'
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Lanjut ke Digitalisasi'),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  String _formatCanvasTime(int totalSeconds) {
+    final mins = totalSeconds ~/ 60;
+    final secs = totalSeconds % 60;
+    return '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  }
+
   bool _isPremiumUserCached = false;
 
   @override
@@ -298,7 +453,43 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
     }
   }
 
+  bool _dontShowOnboardingAgain = false;
+
+  Future<File> _getSettingsFile() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return File('${dir.path}/hide_canvas_onboarding.txt');
+  }
+
+  Future<void> _loadOnboardingPreference() async {
+    try {
+      final file = await _getSettingsFile();
+      if (await file.exists()) {
+        final content = await file.readAsString();
+        _dontShowOnboardingAgain = content.trim() == 'true';
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _setHideOnboarding(bool hide) async {
+    try {
+      final file = await _getSettingsFile();
+      if (hide) {
+        await file.writeAsString('true');
+      } else {
+        if (await file.exists()) {
+          await file.delete();
+        }
+      }
+      setState(() {
+        _dontShowOnboardingAgain = hide;
+      });
+    } catch (_) {}
+  }
+
   Future<void> _checkFirstTimeUsage() async {
+    await _loadOnboardingPreference();
+    if (_dontShowOnboardingAgain) return;
+
     final db = ref.read(dbProvider);
     final sessions = await db.select(db.thinkingCanvasSessions).get();
     if (sessions.isEmpty && mounted) {
@@ -314,6 +505,10 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
         return _ThinkingCanvasOnboardingDialog(
           onMethodSelected: (method) {
             _onMethodChanged(method);
+          },
+          initialDontShowAgain: _dontShowOnboardingAgain,
+          onDontShowAgainChanged: (val) {
+            _setHideOnboarding(val);
           },
         );
       },
@@ -689,6 +884,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
   }
   @override
   void dispose() {
+    _canvasTimer?.cancel();
     _topicController.dispose();
     _summaryController.dispose();
     _actionController.dispose();
@@ -901,7 +1097,14 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
 
 class _ThinkingCanvasOnboardingDialog extends StatefulWidget {
   final ValueChanged<String> onMethodSelected;
-  const _ThinkingCanvasOnboardingDialog({required this.onMethodSelected});
+  final bool initialDontShowAgain;
+  final ValueChanged<bool> onDontShowAgainChanged;
+
+  const _ThinkingCanvasOnboardingDialog({
+    required this.onMethodSelected,
+    required this.initialDontShowAgain,
+    required this.onDontShowAgainChanged,
+  });
 
   @override
   State<_ThinkingCanvasOnboardingDialog> createState() => _ThinkingCanvasOnboardingDialogState();
@@ -911,6 +1114,13 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
   final PageController _controller = PageController();
   int _currentPage = 0;
   String _tempSelectedMethod = 'MindDump';
+  bool _dontShowAgain = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _dontShowAgain = widget.initialDontShowAgain;
+  }
 
   final List<Map<String, String>> _steps = [
     {
@@ -1193,7 +1403,31 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
                 );
               }),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: Checkbox(
+                    value: _dontShowAgain,
+                    onChanged: (val) {
+                      setState(() {
+                        _dontShowAgain = val ?? false;
+                      });
+                      widget.onDontShowAgainChanged(_dontShowAgain);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  'Jangan tampilkan panduan ini lagi',
+                  style: TextStyle(fontSize: 11),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

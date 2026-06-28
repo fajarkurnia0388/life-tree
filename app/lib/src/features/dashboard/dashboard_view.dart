@@ -859,12 +859,30 @@ class DashboardView extends ConsumerWidget {
                                         divisions: 100,
                                         label: '$currentOverride Hari',
                                         onChanged: (val) {
+                                          ref.read(devAgePlayProvider.notifier).stop();
                                           ref.read(devCumulativeDaysOverrideProvider.notifier).state = val.toInt();
                                         },
                                       ),
                                     ),
+                                    Consumer(
+                                      builder: (context, ref, child) {
+                                        final isPlaying = ref.watch(devAgePlayProvider);
+                                        return IconButton(
+                                          icon: Icon(
+                                            isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                                            color: Colors.green,
+                                            size: 24,
+                                          ),
+                                          onPressed: () {
+                                            ref.read(devAgePlayProvider.notifier).toggle();
+                                          },
+                                          tooltip: isPlaying ? 'Jeda Simulasi' : 'Putar Simulasi',
+                                        );
+                                      },
+                                    ),
                                     TextButton(
                                       onPressed: () {
+                                        ref.read(devAgePlayProvider.notifier).stop();
                                         ref.read(devCumulativeDaysOverrideProvider.notifier).state = null;
                                       },
                                       child: const Text('Reset', style: TextStyle(fontSize: 12)),
@@ -872,6 +890,112 @@ class DashboardView extends ConsumerWidget {
                                   ],
                                 );
                               },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Celestial Sky Simulation Panel
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.purple.withOpacity(0.04),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.purple.withOpacity(0.12)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(Icons.nights_stay_rounded, color: Colors.purple, size: 20),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Simulasi Waktu Langit',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                Consumer(
+                                  builder: (context, ref, child) {
+                                    final currentMode = ref.watch(devTimeOfDayOverrideProvider);
+                                    final label = switch (currentMode) {
+                                      CelestialTime.auto    => 'Auto (Waktu Riil)',
+                                      CelestialTime.morning => 'Pagi 🌅',
+                                      CelestialTime.noon    => 'Siang ☀️',
+                                      CelestialTime.sunset  => 'Sore 🌇',
+                                      CelestialTime.night   => 'Malam 🌌',
+                                    };
+                                    return Text(
+                                      label,
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.purple),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Consumer(
+                                    builder: (context, ref, child) {
+                                      final currentMode = ref.watch(devTimeOfDayOverrideProvider);
+                                      return SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: CelestialTime.values.map((time) {
+                                            final label = switch (time) {
+                                              CelestialTime.auto    => 'Auto 📱',
+                                              CelestialTime.morning => 'Pagi 🌅',
+                                              CelestialTime.noon    => 'Siang ☀️',
+                                              CelestialTime.sunset  => 'Sore 🌇',
+                                              CelestialTime.night   => 'Malam 🌌',
+                                            };
+                                            final isSelected = currentMode == time;
+                                            return Padding(
+                                              padding: const EdgeInsets.only(right: 6.0),
+                                              child: ChoiceChip(
+                                                label: Text(label, style: const TextStyle(fontSize: 11)),
+                                                selected: isSelected,
+                                                selectedColor: Colors.purple.withOpacity(0.2),
+                                                onSelected: (selected) {
+                                                  if (selected) {
+                                                    ref.read(devTimePlayProvider.notifier).stop();
+                                                    ref.read(devTimeOfDayOverrideProvider.notifier).state = time;
+                                                  }
+                                                },
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Consumer(
+                                  builder: (context, ref, child) {
+                                    final isPlaying = ref.watch(devTimePlayProvider);
+                                    return IconButton(
+                                      icon: Icon(
+                                        isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                                        color: Colors.purple,
+                                        size: 24,
+                                      ),
+                                      onPressed: () {
+                                        ref.read(devTimePlayProvider.notifier).toggle();
+                                      },
+                                      tooltip: isPlaying ? 'Jeda Simulasi Waktu' : 'Putar Simulasi Waktu',
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
                           ],
                         ),

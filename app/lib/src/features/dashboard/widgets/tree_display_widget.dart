@@ -1,63 +1,309 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/tree_skin_config.dart';
 import '../../../core/theme/theme.dart';
+import '../dashboard_provider.dart';
+import 'tree_painter.dart';
 
 /// Displays the tree illustration for a given skin and growth stage.
 /// Shows a PNG illustration asset with animated crossfade transitions between stages.
-class TreeDisplayWidget extends StatelessWidget {
+class TreeDisplayWidget extends ConsumerWidget {
   final String skinId;
   final int cumulativeDays;
   final String season;
-  final double size;
+  final double width;
+  final double height;
 
   const TreeDisplayWidget({
     super.key,
     required this.skinId,
     required this.cumulativeDays,
     required this.season,
-    this.size = 160,
+    this.width = double.infinity,
+    this.height = 220,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final stage = TreeSkinConfig.getStage(cumulativeDays, season);
     final assetPath = TreeSkinConfig.getAssetPath(skinId, stage);
     final isRecovery = season == 'Recovery';
 
+    // 1. Determine celestial time of day (Auto or Overridden)
+    final timeOverride = ref.watch(devTimeOfDayOverrideProvider);
+    final CelestialTime activeTime;
+    if (timeOverride != CelestialTime.auto) {
+      activeTime = timeOverride;
+    } else {
+      final hour = DateTime.now().hour;
+      if (hour >= 6 && hour < 11) {
+        activeTime = CelestialTime.morning;
+      } else if (hour >= 11 && hour < 15) {
+        activeTime = CelestialTime.noon;
+      } else if (hour >= 15 && hour < 18) {
+        activeTime = CelestialTime.sunset;
+      } else {
+        activeTime = CelestialTime.night;
+      }
+    }
+
+    // 2. Map sky gradient colors (top → horizon)
+    final List<Color> skyColors = switch (activeTime) {
+      CelestialTime.morning => const [Color(0xFF89CFF0), Color(0xFFFFF3E0)], // Light blue → warm yellow horizon
+      CelestialTime.noon    => const [Color(0xFF1565C0), Color(0xFF4FC3F7)], // Deep blue → light blue
+      CelestialTime.sunset  => const [Color(0xFF4A148C), Color(0xFFFF7043)], // Purple → fiery orange horizon
+      CelestialTime.night   => const [Color(0xFF0D1B2A), Color(0xFF1B2838)], // Dark navy → deep indigo
+      _                     => const [Color(0xFF1565C0), Color(0xFF4FC3F7)],
+    };
+
+    // 3. Map ground colors per time of day
+    final List<Color> groundColors = switch (activeTime) {
+      CelestialTime.morning => const [Color(0xFF4CAF50), Color(0xFF388E3C)], // Fresh morning green
+      CelestialTime.noon    => const [Color(0xFF66BB6A), Color(0xFF43A047)], // Bright noon green
+      CelestialTime.sunset  => const [Color(0xFF8D6E63), Color(0xFF6D4C41)], // Warm brown earth at dusk
+      CelestialTime.night   => const [Color(0xFF1A3327), Color(0xFF0F2319)], // Dark night earth
+      _                     => const [Color(0xFF66BB6A), Color(0xFF43A047)],
+    };
+
+    const double groundRatio = 0.22; // 22% of height is ground strip
+    final double treeSize = height * 0.80;
+
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 700),
       switchInCurve: Curves.easeInOut,
       switchOutCurve: Curves.easeInOut,
       transitionBuilder: (child, animation) {
         return FadeTransition(opacity: animation, child: child);
       },
-      child: Stack(
-        key: ValueKey('$skinId-$stage'),
-        alignment: Alignment.center,
-        children: [
-          // Tree illustration
-          Image.asset(
-            assetPath,
-            width: size,
-            height: size,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stack) {
-              // Graceful fallback if asset is missing
-              return _buildFallbackEmoji(stage, skinId, size);
-            },
-          ),
-          // Snow overlay for Recovery mode
-          if (isRecovery)
-            Positioned.fill(
-              child: IgnorePointer(
-                child: CustomPaint(
-                  painter: _SnowflakePainter(),
+      child: ClipRRect(
+        key: ValueKey('$skinId-$stage-$activeTime'),
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: Stack(
+            fit: StackFit.expand,
+            alignment: Alignment.bottomCenter,
+            children: [
+              // ── Sky background (full rectangle) ──
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.0, 0.75],
+                      colors: skyColors,
+                    ),
+                  ),
                 ),
               ),
-            ),
-        ],
+
+              // ── Night stars (drawn over entire sky) ──
+              if (activeTime == CelestialTime.night)
+                Positioned.fill(
+                  child: CustomPaint(painter: _StarsPainter()),
+                ),
+
+              // ── Sun / Moon celestial body ──
+              ..._buildCelestialBody(activeTime, width, height),
+
+              // ── Ground strip (bottom 22%) ──
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  height: height * groundRatio,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: groundColors,
+                    ),
+                  ),
+                ),
+              ),
+
+              // ── Ground edge fade: thin darker strip at the top of ground ──
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: height * groundRatio - 4,
+                child: Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withOpacity(0.0),
+                        Colors.black.withOpacity(0.22),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // ── Tree (OrganicTreePainter — no image asset, fully transparent) ──
+              Positioned(
+                bottom: height * 0.10,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: SizedBox(
+                    width: treeSize,
+                    height: treeSize,
+                    child: CustomPaint(
+                      painter: OrganicTreePainter(
+                        stage: stage,
+                        skinId: skinId,
+                        isRecovery: isRecovery,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // ── Snow overlay (Recovery mode) ──
+              if (isRecovery)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: CustomPaint(painter: _SnowflakePainter()),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  List<Widget> _buildCelestialBody(CelestialTime time, double w, double h) {
+    final double sunMoonSize = h * 0.14; // proportional to panorama height
+    switch (time) {
+      case CelestialTime.morning:
+        // Rising sun on the right, mid-low sky
+        return [
+          Positioned(
+            top: h * 0.18,
+            right: w * 0.12,
+            child: Container(
+              width: sunMoonSize,
+              height: sunMoonSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFFFCC02),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.5),
+                    blurRadius: 18,
+                    spreadRadius: 4,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ];
+
+      case CelestialTime.noon:
+        // High sun centered-right
+        return [
+          Positioned(
+            top: h * 0.06,
+            right: w * 0.18,
+            child: Container(
+              width: sunMoonSize * 1.1,
+              height: sunMoonSize * 1.1,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFFDD835),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.yellow.withOpacity(0.55),
+                    blurRadius: 22,
+                    spreadRadius: 6,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ];
+
+      case CelestialTime.sunset:
+        // Large sun touching horizon, left side
+        return [
+          Positioned(
+            bottom: h * 0.20,
+            left: w * 0.10,
+            child: Container(
+              width: sunMoonSize * 1.3,
+              height: sunMoonSize * 1.3,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFFF6F00),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.deepOrange.withOpacity(0.5),
+                    blurRadius: 24,
+                    spreadRadius: 5,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ];
+
+      case CelestialTime.night:
+        // Crescent moon — top right
+        return [
+          Positioned(
+            top: h * 0.08,
+            right: w * 0.10,
+            child: SizedBox(
+              width: sunMoonSize * 1.2,
+              height: sunMoonSize * 1.2,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // Full moon disk
+                  Container(
+                    width: sunMoonSize * 1.2,
+                    height: sunMoonSize * 1.2,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFFFFF9C4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.35),
+                          blurRadius: 16,
+                          spreadRadius: 2,
+                        )
+                      ],
+                    ),
+                  ),
+                  // Mask circle: creates crescent cutout
+                  Positioned(
+                    top: -sunMoonSize * 0.18,
+                    left: sunMoonSize * 0.30,
+                    child: Container(
+                      width: sunMoonSize * 1.2,
+                      height: sunMoonSize * 1.2,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFF0D1B2A),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ];
+
+      default:
+        return [];
+    }
   }
 
   Widget _buildFallbackEmoji(String stage, String skin, double size) {
@@ -114,74 +360,85 @@ class TreeVitalityCard extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            // Full-width Panorama Tree Scene
+            TreeDisplayWidget(
+              skinId: skinId,
+              cumulativeDays: cumulativeDays,
+              season: season,
+              width: double.infinity,
+              height: 220,
+            ),
+            const SizedBox(height: 20),
+
+            // Info Section (Title & Skin Shop)
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Tree illustration
-                TreeDisplayWidget(
-                  skinId: skinId,
-                  cumulativeDays: cumulativeDays,
-                  season: season,
-                  size: 120,
-                ),
-                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Kesehatan & Pertumbuhan Pohon',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
-                          ),
-                          // Skin Shop button
-                          InkWell(
-                            onTap: onSkinShopTap,
-                            borderRadius: BorderRadius.circular(12),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.palette_outlined, size: 14, color: theme.colorScheme.primary),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'Skin',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: theme.colorScheme.primary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(label, style: theme.textTheme.titleMedium),
-                      const SizedBox(height: 4),
                       Text(
-                        '$cumulativeDays Hari Keberhasilan Kumulatif',
+                        'Kesehatan & Pertumbuhan Pohon',
                         style: TextStyle(
-                          fontSize: 12,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 4),
-                      // Stage badge chip
-                      _StageBadge(stage: stage, isRecovery: isRecovery),
+                      Text(label, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                     ],
+                  ),
+                ),
+                // Skin Shop button
+                InkWell(
+                  onTap: onSkinShopTap,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: theme.colorScheme.primary.withOpacity(0.15)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.palette_outlined, size: 14, color: theme.colorScheme.primary),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Skin Shop',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+
+            // Stats & Badge Row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '$cumulativeDays Hari Keberhasilan Kumulatif',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                ),
+                _StageBadge(stage: stage, isRecovery: isRecovery),
+              ],
+            ),
             const SizedBox(height: 16),
+
             // Progress bar
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
@@ -251,6 +508,33 @@ class _SnowflakePainter extends CustomPainter {
     ];
     for (final pos in positions) {
       canvas.drawCircle(pos, 3, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _StarsPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.65)
+      ..style = PaintingStyle.fill;
+    
+    final starPoints = [
+      Offset(size.width * 0.16, size.height * 0.38),
+      Offset(size.width * 0.76, size.height * 0.22),
+      Offset(size.width * 0.46, size.height * 0.14),
+      Offset(size.width * 0.82, size.height * 0.44),
+      Offset(size.width * 0.32, size.height * 0.58),
+      Offset(size.width * 0.68, size.height * 0.68),
+      Offset(size.width * 0.22, size.height * 0.18),
+      Offset(size.width * 0.86, size.height * 0.16),
+    ];
+    
+    for (final pt in starPoints) {
+      canvas.drawCircle(pt, 1.2, paint);
     }
   }
 
