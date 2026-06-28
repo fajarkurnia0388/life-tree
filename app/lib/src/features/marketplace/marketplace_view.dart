@@ -485,7 +485,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                                 OutlinedButton(
                                   onPressed: () => _rateTemplate(t),
                                   style: OutlinedButton.styleFrom(
-                                    minimumSize: const Size(88, 36),
+                                    minimumSize: const Size(88, 44),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
                                   child: const Text('Beri Rating', style: TextStyle(fontSize: 12)),
@@ -496,7 +496,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: theme.colorScheme.primary,
                                     foregroundColor: theme.colorScheme.onPrimary,
-                                    minimumSize: const Size(88, 36),
+                                    minimumSize: const Size(88, 44),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
                                   child: const Text('Gunakan', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),

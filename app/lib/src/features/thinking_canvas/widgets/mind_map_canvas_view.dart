@@ -342,16 +342,21 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                               final isCurrentColor = selectedNode.colorValue == colorVal;
                               return GestureDetector(
                                 onTap: () => _changeNodeColor(selectedNode.id, colorVal),
+                                behavior: HitTestBehavior.opaque,
                                 child: Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    color: Color(colorVal),
-                                    shape: BoxShape.circle,
-                                    border: isCurrentColor
-                                        ? Border.all(color: theme.colorScheme.onSurface, width: 2)
-                                        : null,
+                                  width: 44,
+                                  height: 44,
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    width: 24,
+                                    height: 24,
+                                    decoration: BoxDecoration(
+                                      color: Color(colorVal),
+                                      shape: BoxShape.circle,
+                                      border: isCurrentColor
+                                          ? Border.all(color: theme.colorScheme.onSurface, width: 2)
+                                          : null,
+                                    ),
                                   ),
                                 ),
                               );

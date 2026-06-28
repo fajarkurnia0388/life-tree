@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -205,6 +206,8 @@ class TreeDisplayWidget extends ConsumerWidget {
                       fit: BoxFit.contain,
                       alignment: Alignment.bottomCenter,
                       filterQuality: FilterQuality.medium,
+                      color: isRecovery ? const Color(0x22B2EBF2) : null,
+                      colorBlendMode: isRecovery ? BlendMode.srcATop : null,
                       errorBuilder: (context, error, stackTrace) {
                         return CustomPaint(
                           painter: OrganicTreePainter(
@@ -222,9 +225,9 @@ class TreeDisplayWidget extends ConsumerWidget {
 
             // ── Snow overlay (Recovery mode) ──
             if (isRecovery)
-              Positioned.fill(
+              const Positioned.fill(
                 child: IgnorePointer(
-                  child: CustomPaint(painter: _SnowflakePainter()),
+                  child: SnowOverlayWidget(),
                 ),
               ),
           ],
@@ -800,29 +803,113 @@ class _StageBadge extends StatelessWidget {
   }
 }
 
-/// Subtle snowflake overlay painter for Recovery mode.
-class _SnowflakePainter extends CustomPainter {
+/// Stateful widget for animated falling snow in Recovery mode.
+class SnowOverlayWidget extends StatefulWidget {
+  const SnowOverlayWidget({super.key});
+
+  @override
+  State<SnowOverlayWidget> createState() => _SnowOverlayWidgetState();
+}
+
+class _SnowOverlayWidgetState extends State<SnowOverlayWidget> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final List<_Snowflake> _snowflakes;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..repeat();
+
+    // Initialize 35 snowflakes with random distributions
+    final random = math.Random(42);
+    _snowflakes = List.generate(35, (index) {
+      return _Snowflake(
+        xRatio: random.nextDouble(),
+        yRatio: random.nextDouble(),
+        speed: 0.05 + random.nextDouble() * 0.1,
+        swaySpeed: 0.5 + random.nextDouble() * 1.5,
+        swayAmplitude: 0.01 + random.nextDouble() * 0.02,
+        radius: 1.5 + random.nextDouble() * 2.5,
+        opacity: 0.3 + random.nextDouble() * 0.5,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: _AnimatedSnowPainter(
+            snowflakes: _snowflakes,
+            progress: _controller.value,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _Snowflake {
+  final double xRatio;
+  final double yRatio;
+  final double speed;
+  final double swaySpeed;
+  final double swayAmplitude;
+  final double radius;
+  final double opacity;
+
+  _Snowflake({
+    required this.xRatio,
+    required this.yRatio,
+    required this.speed,
+    required this.swaySpeed,
+    required this.swayAmplitude,
+    required this.radius,
+    required this.opacity,
+  });
+}
+
+class _AnimatedSnowPainter extends CustomPainter {
+  final List<_Snowflake> snowflakes;
+  final double progress;
+
+  _AnimatedSnowPainter({
+    required this.snowflakes,
+    required this.progress,
+  });
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0x557CB9E8)
-      ..style = PaintingStyle.fill;
-    
-    // Draw a few simple snowflake dots
-    final positions = [
-      Offset(size.width * 0.2, size.height * 0.15),
-      Offset(size.width * 0.75, size.height * 0.25),
-      Offset(size.width * 0.5, size.height * 0.08),
-      Offset(size.width * 0.85, size.height * 0.6),
-      Offset(size.width * 0.15, size.height * 0.7),
-    ];
-    for (final pos in positions) {
-      canvas.drawCircle(pos, 3, paint);
+    final paint = Paint()..style = PaintingStyle.fill;
+
+    for (final flake in snowflakes) {
+      // Calculate current falling y position
+      double y = (flake.yRatio + progress * flake.speed * 10) % 1.0;
+      y *= size.height;
+
+      // Calculate horizontal sway using sine wave
+      final swayAngle = progress * 2 * math.pi * flake.swaySpeed;
+      final sway = math.sin(swayAngle) * flake.swayAmplitude * size.width;
+      double x = (flake.xRatio * size.width + sway) % size.width;
+
+      paint.color = Colors.white.withValues(alpha: flake.opacity);
+      canvas.drawCircle(Offset(x, y), flake.radius, paint);
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _AnimatedSnowPainter oldDelegate) => true;
 }
 
 class _StarsPainter extends CustomPainter {

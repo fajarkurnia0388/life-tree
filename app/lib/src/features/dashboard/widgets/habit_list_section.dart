@@ -219,7 +219,7 @@ class HabitListSection extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'Dijeda',
+                        '⏸ Dijeda',
                         style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                       ),
                     )

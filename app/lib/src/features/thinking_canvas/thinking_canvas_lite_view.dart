@@ -231,7 +231,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                     size: 28,
                   ),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
                   onPressed: () {
                     if (_canvasTimerActive) {
                       _pauseCanvasTimer();
@@ -245,7 +245,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                   IconButton(
                     icon: const Icon(Icons.replay_rounded, size: 20),
                     padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
+                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
                     onPressed: _resetCanvasTimer,
                   ),
                 ],

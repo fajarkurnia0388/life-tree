@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../data/local_db/database.dart';
 import 'dashboard_provider.dart';
 import 'widgets/action_of_the_day_card.dart';
@@ -262,6 +263,102 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           child: Text('Terjadi kesalahan: $err'),
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showQuickActionsBottomSheet(context),
+        icon: const Icon(Icons.bolt_rounded),
+        label: const Text('Aksi Cepat'),
+      ),
+    );
+  }
+
+  void _showQuickActionsBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        final theme = Theme.of(context);
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Text(
+                  'Aksi Cepat ⚡',
+                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ListTile(
+                  leading: const CircleAvatar(
+                    backgroundColor: Color(0xFFE8F5E9),
+                    child: Icon(Icons.add_rounded, color: Color(0xFF2E7D32)),
+                  ),
+                  title: const Text('Tambah Kebiasaan Baru', style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: const Text('Buat kebiasaan baru di domain kehidupan Anda'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push('/add-habit');
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const CircleAvatar(
+                    backgroundColor: Color(0xFFF3E5F5),
+                    child: Icon(Icons.psychology_rounded, color: Color(0xFF7B1FA2)),
+                  ),
+                  title: const Text('Buka Thinking Canvas', style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: const Text('Coret ide & selesaikan kebuntuan berpikir'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push('/thinking-canvas');
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const CircleAvatar(
+                    backgroundColor: Color(0xFFFFF3E0),
+                    child: Icon(Icons.analytics_rounded, color: Color(0xFFE65100)),
+                  ),
+                  title: const Text('Mulai Weekly Pulse Check', style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: const Text('Evaluasi kesejahteraan emosional mingguan (WHO-5)'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push('/weekly-pulse');
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const CircleAvatar(
+                    backgroundColor: Color(0xFFFFEBEE),
+                    child: Icon(Icons.health_and_safety_rounded, color: Color(0xFFC62828)),
+                  ),
+                  title: const Text('Safety Card (Dukungan Krisis)', style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: const Text('Akses kontak darurat & panduan tenangkan diri'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push('/safety');
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

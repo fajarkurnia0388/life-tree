@@ -24,8 +24,9 @@ class ActionOfTheDayCard extends StatelessWidget {
     final theme = Theme.of(context);
     final domainColor = _getDomainColor(habit.domainTag);
     final isDark = theme.brightness == Brightness.dark;
+    final isRecovery = data.season == 'Recovery';
 
-    return Card(
+    final card = Card(
       color: domainColor.withValues(alpha: isDark ? 0.08 : 0.03),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -56,6 +57,20 @@ class ActionOfTheDayCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (isRecovery) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.blueGrey,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      '⏸ DIJEDA',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
+                ],
                 const Spacer(),
                 IconButton(
                   onPressed: () => _showWhyDialog(context, domainColor),
@@ -93,7 +108,7 @@ class ActionOfTheDayCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: onDonePressed,
+                    onPressed: isRecovery ? null : onDonePressed,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: domainColor,
                       foregroundColor: Colors.white,
@@ -105,7 +120,7 @@ class ActionOfTheDayCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 OutlinedButton(
-                  onPressed: onNotCapablePressed,
+                  onPressed: isRecovery ? null : onNotCapablePressed,
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(88, 48),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -119,6 +134,14 @@ class ActionOfTheDayCard extends StatelessWidget {
         ),
       ),
     );
+
+    if (isRecovery) {
+      return Opacity(
+        opacity: 0.55,
+        child: card,
+      );
+    }
+    return card;
   }
 
   Color _getDomainColor(String? domain) {
