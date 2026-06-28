@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,6 +23,15 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
   String _selectedAgeBand = '18-24';
   double _bodyScore = 5.0;
   bool _disclaimerAccepted = false;
+  bool _devMode = false;
+  final Map<String, double> _auditScores = {
+    'Tubuh': 5.0,
+    'Keuangan': 5.0,
+    'Hubungan': 5.0,
+    'Emosi': 5.0,
+    'Karir': 5.0,
+    'Rekreasi': 5.0,
+  };
 
   void _nextPage() {
     if (_currentPage < 3) {
@@ -56,6 +66,10 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     final userId = const Uuid().v4();
     final now = DateTime.now();
 
+    final String domainScoresJson = _devMode
+        ? jsonEncode(_auditScores.map((k, v) => MapEntry(k, v.toInt())))
+        : '{"Tubuh": ${_bodyScore.toInt()}}';
+
     // 1. Create User Profile
     final profile = UserProfilesCompanion.insert(
       userId: userId,
@@ -64,9 +78,10 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
       engagementState: const drift.Value('Active'),
       timezone: const drift.Value('Asia/Jakarta'),
       weekStartDay: const drift.Value(1),
-      latestDomainScores: drift.Value('{"Tubuh": ${_bodyScore.toInt()}}'),
+      latestDomainScores: drift.Value(domainScoresJson),
       canopyLoadCapacity: const drift.Value(10),
       wellnessDisclaimerAcknowledged: const drift.Value(true),
+      unlockedSkins: drift.Value(_devMode ? 'Default,Sakura,Maple,Bonsai' : 'Default'),
       createdAt: now,
       updatedAt: now,
     );
@@ -75,7 +90,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     final audit = LifeAuditsCompanion.insert(
       auditId: const Uuid().v4(),
       userId: userId,
-      domainScores: '{"Tubuh": ${_bodyScore.toInt()}}',
+      domainScores: domainScoresJson,
       timestamp: now,
     );
 
@@ -200,6 +215,26 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
           ),
           textAlign: TextAlign.center,
         ),
+        const SizedBox(height: 24),
+        Card(
+          elevation: 0,
+          color: theme.colorScheme.primary.withOpacity(0.05),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: theme.colorScheme.primary.withOpacity(0.12)),
+          ),
+          child: SwitchListTile(
+            title: const Text('Mode Developer', style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: const Text('Aktifkan untuk membuka semua skin pohon & mengakses seluruh 6 domain saat onboarding.'),
+            value: _devMode,
+            activeColor: theme.colorScheme.primary,
+            onChanged: (val) {
+              setState(() {
+                _devMode = val;
+              });
+            },
+          ),
+        ),
       ],
     );
   }
@@ -260,6 +295,108 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
   }
 
   Widget _buildAuditStep(ThemeData theme) {
+    if (_devMode) {
+      final domains = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
+      final domainEmojis = {
+        'Tubuh': '🏃',
+        'Keuangan': '💰',
+        'Hubungan': '🤝',
+        'Emosi': '🧠',
+        'Karir': '📚',
+        'Rekreasi': '🎮',
+      };
+      final domainDescriptions = {
+        'Tubuh': 'Kondisi fisik & energi Anda hari ini',
+        'Keuangan': 'Kestabilan & kenyamanan finansial Anda',
+        'Hubungan': 'Kualitas relasi sosial & keluarga',
+        'Emosi': 'Kedamaian batin & kontrol kecemasan',
+        'Karir': 'Perkembangan karir & rencana belajar',
+        'Rekreasi': 'Kepuasan waktu istirahat & hobi',
+      };
+
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Evaluasi Awal (Full Life Audit)',
+              style: theme.textTheme.headlineMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Mode Developer Aktif: Evaluasi seluruh 6 domain kehidupan.',
+              style: TextStyle(fontSize: 12, color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ...domains.map((domain) {
+              final score = _auditScores[domain]!;
+              final emoji = domainEmojis[domain]!;
+              final desc = domainDescriptions[domain]!;
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 6.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(color: theme.colorScheme.onBackground.withOpacity(0.08)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(emoji, style: const TextStyle(fontSize: 24)),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  domain,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                ),
+                                Text(
+                                  desc,
+                                  style: TextStyle(fontSize: 11, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            score.toInt().toString(),
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Slider(
+                        value: score,
+                        min: 1.0,
+                        max: 10.0,
+                        divisions: 9,
+                        activeColor: theme.colorScheme.primary,
+                        inactiveColor: theme.colorScheme.primary.withOpacity(0.2),
+                        onChanged: (val) {
+                          setState(() {
+                            _auditScores[domain] = val;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+      );
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

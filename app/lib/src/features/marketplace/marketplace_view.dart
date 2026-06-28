@@ -20,7 +20,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
   String _sortBy = 'Terpopuler';
   late Future<List<PublicTemplate>> _templatesFuture;
 
-  final List<String> _domains = ['Semua', 'Tubuh', 'Mental', 'Sosial', 'Jiwa'];
+  final List<String> _domains = ['Semua', 'Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
   final List<String> _sortOptions = ['Terpopuler', 'Terbaik', 'Terbaru'];
 
   @override
