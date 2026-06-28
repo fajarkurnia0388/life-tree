@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/onboarding/onboarding_view.dart';
-import '../../features/dashboard/dashboard_view.dart';
+import '../../features/navigation/main_navigation_shell.dart';
 import '../../features/journal/journal_lite_view.dart';
 import '../../features/thinking_canvas/thinking_canvas_lite_view.dart';
 import '../../features/safety/safety_card_view.dart';
@@ -41,7 +41,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/',
-        builder: (context, state) => const DashboardView(),
+        builder: (context, state) => const MainNavigationShell(),
       ),
       GoRoute(
         path: '/journal',
