@@ -8,7 +8,7 @@ class ReflectionDashboardTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final List<Map<String, dynamic>> _reflectionFeatures = [
+    final List<Map<String, dynamic>> reflectionFeatures = [
       {
         'title': 'Weekly Pulse 📈',
         'desc': 'Evaluasi berkala 2 mingguan untuk meninjau kembali keseimbangan hidup Anda di seluruh domain.',
@@ -63,9 +63,9 @@ class ReflectionDashboardTab extends StatelessWidget {
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: _reflectionFeatures.length,
+              itemCount: reflectionFeatures.length,
               itemBuilder: (context, index) {
-                final feat = _reflectionFeatures[index];
+                final feat = reflectionFeatures[index];
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

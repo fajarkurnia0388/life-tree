@@ -108,7 +108,7 @@ class _TreeSkinShopBottomSheetState extends ConsumerState<TreeSkinShopBottomShee
                   const Text('Pilih Metode Pembayaran:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    value: method,
+                    initialValue: method,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

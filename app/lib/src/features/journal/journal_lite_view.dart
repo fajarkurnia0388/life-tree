@@ -485,7 +485,7 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                 },
                 title: const Text('Refleksi Mendalam (Opsional) ✍️'),
                 subtitle: const Text('Jawab 3 pertanyaan reflektif untuk kesehatan emosional.'),
-                activeColor: theme.colorScheme.primary,
+                activeThumbColor: theme.colorScheme.primary,
                 contentPadding: EdgeInsets.zero,
               ),
               const SizedBox(height: 8),

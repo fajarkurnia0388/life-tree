@@ -239,26 +239,52 @@ class _FrictionInterventionSheetState
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: RadioListTile<String>(
-        value: value,
-        groupValue: _selectedReason,
-        onChanged: (val) => setState(() => _selectedReason = val),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(desc, style: const TextStyle(fontSize: 12)),
-        secondary: Icon(icon,
-            semanticLabel: null,
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.onSurface.withValues(alpha: 0.4)),
-        selected: isSelected,
-        activeColor: theme.colorScheme.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.onSurface.withValues(alpha: 0.08),
-            width: isSelected ? 1.5 : 1,
+      child: InkWell(
+        onTap: () => setState(() => _selectedReason = value),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+              width: isSelected ? 1.5 : 1,
+            ),
+            color: isSelected 
+                ? theme.colorScheme.primary.withValues(alpha: 0.05)
+                : Colors.transparent,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.4),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 4),
+                    Text(desc, style: const TextStyle(fontSize: 12)),
+                  ],
+                ),
+              ),
+              Icon(
+                isSelected
+                    ? Icons.radio_button_checked_rounded
+                    : Icons.radio_button_off_rounded,
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                size: 20,
+              ),
+            ],
           ),
         ),
       ),

@@ -59,9 +59,11 @@ class SettingsBottomSheet extends ConsumerWidget {
       final file = File('${tempDir.path}/lifetree_export_${DateTime.now().millisecondsSinceEpoch}.json');
       await file.writeAsString(jsonString);
 
-      await Share.shareXFiles(
-        [XFile(file.path, mimeType: 'application/json')],
-        subject: 'LifeTree Data Export',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path, mimeType: 'application/json')],
+          subject: 'LifeTree Data Export',
+        ),
       );
     } catch (e) {
       if (context.mounted) {

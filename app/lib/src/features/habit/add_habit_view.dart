@@ -53,6 +53,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     final maxCapacity = profiles.first.canopyLoadCapacity;
 
     if (nextLoad > maxCapacity) {
+      if (!mounted) return;
       final proceed = await showDialog<bool>(
         context: context,
         builder: (context) {
@@ -318,7 +319,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               const Text('Domain Kehidupan', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _domainTag,
+                initialValue: _domainTag,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

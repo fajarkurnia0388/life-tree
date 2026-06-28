@@ -3642,7 +3642,7 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                   Switch(
                     value: _isValidated,
                     onChanged: _toggleValidation,
-                    activeColor: Colors.green,
+                    activeThumbColor: Colors.green,
                     inactiveThumbColor: Colors.red,
                   ),
                 ],

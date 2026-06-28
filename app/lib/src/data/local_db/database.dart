@@ -51,7 +51,7 @@ class WeeklyPulses extends Table {
   TextColumn get pulseId => text()();
   TextColumn get userId => text()();
   TextColumn get domainTag => text()();
-  IntColumn get score => integer().check(score.isBetweenValues(1, 10))();
+  IntColumn get score => integer()();
   TextColumn get reflectionText => text().nullable()();
   DateTimeColumn get weekStartDate => dateTime()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
@@ -75,10 +75,10 @@ class Habits extends Table {
   DateTimeColumn get archivedAt => dateTime().nullable()();
   TextColumn get frequency => text().withDefault(const Constant('Daily'))();
   TextColumn get scheduledDays => text().nullable()(); // CSV: e.g. "1,3,5" (1=Monday ... 7=Sunday)
-  IntColumn get initiationFriction => integer().check(initiationFriction.isBetweenValues(1, 5)).withDefault(const Constant(3))();
-  IntColumn get originalFriction => integer().check(originalFriction.isBetweenValues(1, 5)).withDefault(const Constant(3))();
-  IntColumn get energyCost => integer().check(energyCost.isBetweenValues(1, 5)).withDefault(const Constant(3))();
-  IntColumn get impactScore => integer().check(impactScore.isBetweenValues(1, 5)).withDefault(const Constant(3))();
+  IntColumn get initiationFriction => integer().withDefault(const Constant(3))();
+  IntColumn get originalFriction => integer().withDefault(const Constant(3))();
+  IntColumn get energyCost => integer().withDefault(const Constant(3))();
+  IntColumn get impactScore => integer().withDefault(const Constant(3))();
   IntColumn get lifetimeDoneCount => integer().withDefault(const Constant(0))();
   RealColumn get weightedDoneScore => real().withDefault(const Constant(0.0))();
   RealColumn get completionRate90d => real().nullable()();
@@ -118,7 +118,7 @@ class JournalEntries extends Table {
   TextColumn get entryId => text()();
   TextColumn get userId => text()();
   DateTimeColumn get date => dateTime()();
-  IntColumn get moodScore => integer().check(moodScore.isBetweenValues(1, 5))();
+  IntColumn get moodScore => integer()();
   TextColumn get keyword => text().nullable()();
   TextColumn get textContent => text().nullable()();
   TextColumn get gratitudeText => text().nullable()();
@@ -228,7 +228,7 @@ class DecisionEntries extends Table {
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
-  AppDatabase.forTesting(QueryExecutor e) : super(e);
+  AppDatabase.forTesting(super.e);
 
   Future<int> countUniqueDoneDates() async {
     final result = await customSelect(

@@ -669,7 +669,7 @@ class _ShareTemplateBottomSheetState extends ConsumerState<_ShareTemplateBottomS
 
                         // Dropdown selection
                         DropdownButtonFormField<Habit>(
-                          value: _selectedHabit,
+                          initialValue: _selectedHabit,
                           decoration: InputDecoration(
                             labelText: 'Pilih Kebiasaan Aktif',
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

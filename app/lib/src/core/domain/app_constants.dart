@@ -1,6 +1,5 @@
-/// Centralized domain constants to avoid raw string literals.
-/// Use these instead of hardcoded strings like 'Done', 'Missed', 'Recovery', etc.
-library app_constants;
+// Centralized domain constants to avoid raw string literals.
+// Use these instead of hardcoded strings like 'Done', 'Missed', 'Recovery', etc.
 
 class HabitStatus {
   HabitStatus._();

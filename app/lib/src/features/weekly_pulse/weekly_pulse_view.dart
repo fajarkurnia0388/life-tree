@@ -237,22 +237,42 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                             Column(
                               children: _options.map((opt) {
                                 final isSelected = _answers[qIndex] == opt['value'];
-                                return RadioListTile<int>(
-                                  value: opt['value'] as int,
-                                  groupValue: _answers[qIndex],
-                                  onChanged: (val) {
+                                return InkWell(
+                                  onTap: () {
                                     setState(() {
-                                      _answers[qIndex] = val;
+                                      _answers[qIndex] = opt['value'] as int?;
                                     });
                                   },
-                                  title: Text(
-                                    opt['label'] as String,
-                                    style: const TextStyle(fontSize: 13),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                                        ),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          isSelected
+                                              ? Icons.radio_button_checked_rounded
+                                              : Icons.radio_button_off_rounded,
+                                          color: isSelected
+                                              ? theme.colorScheme.primary
+                                              : theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            opt['label'] as String,
+                                            style: const TextStyle(fontSize: 13),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  dense: true,
-                                  activeColor: theme.colorScheme.primary,
-                                  selected: isSelected,
-                                  contentPadding: EdgeInsets.zero,
                                 );
                               }).toList(),
                             ),

@@ -251,7 +251,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                 );
               },
               loading: () => const SizedBox(height: 80, child: Center(child: CircularProgressIndicator())),
-              error: (_, __) => const SizedBox(),
+              error: (_, _) => const SizedBox(),
             ),
             const SizedBox(height: 20),
 

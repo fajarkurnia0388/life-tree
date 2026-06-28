@@ -540,9 +540,11 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                         child: ElevatedButton.icon(
                           onPressed: () async {
                             Navigator.of(context).pop();
-                            await Share.shareXFiles(
-                              [XFile(tempFile.path, mimeType: 'image/png')],
-                              text: 'Lihat keindahan pohon LifeTree saya! 🌲✨ Hari ke-${widget.cumulativeDays} (${widget.skinId}). #LifeTree',
+                            await SharePlus.instance.share(
+                              ShareParams(
+                                files: [XFile(tempFile.path, mimeType: 'image/png')],
+                                text: 'Lihat keindahan pohon LifeTree saya! 🌲✨ Hari ke-${widget.cumulativeDays} (${widget.skinId}). #LifeTree',
+                              ),
                             );
                           },
                           icon: const Icon(Icons.share_rounded, size: 18),
@@ -582,15 +584,15 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                         height: 44,
                         child: TextButton(
                           onPressed: () => Navigator.of(context).pop(),
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          ),
                           child: Text(
                             'Tutup',
                             style: TextStyle(
                               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                               fontWeight: FontWeight.w600,
                             ),
-                          ),
-                          style: TextButton.styleFrom(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                           ),
                         ),
                       ),

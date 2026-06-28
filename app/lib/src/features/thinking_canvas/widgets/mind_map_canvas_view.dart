@@ -71,7 +71,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
     final size = MediaQuery.of(context).size;
     final double xVal = -400.0 + (size.width / 2);
     final double yVal = -300.0 + (size.height / 2);
-    _transformationController.value = Matrix4.identity()..translate(xVal, yVal);
+    _transformationController.value = Matrix4.identity()..translateByDouble(xVal, yVal, 0.0, 1.0);
   }
 
   void _addNewRootNode() {

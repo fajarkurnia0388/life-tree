@@ -277,7 +277,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
             title: const Text('Mode Developer', style: TextStyle(fontWeight: FontWeight.bold)),
             subtitle: const Text('Aktifkan untuk membuka semua skin pohon & mengakses seluruh 6 domain saat onboarding.'),
             value: _devMode,
-            activeColor: theme.colorScheme.primary,
+            activeThumbColor: theme.colorScheme.primary,
             onChanged: (val) {
               setState(() {
                 _devMode = val;
