@@ -25,6 +25,18 @@ final _decisionSummaryProvider = StreamProvider<Map<String, int>>((ref) {
   });
 });
 
+final _todayMoodProvider = FutureProvider.autoDispose<int?>((ref) async {
+  final db = ref.watch(dbProvider);
+  final now = DateTime.now();
+  final todayStart = DateTime(now.year, now.month, now.day);
+  final profiles = await db.select(db.userProfiles).get();
+  if (profiles.isEmpty) return null;
+  final existing = await (db.select(db.journalEntries)
+        ..where((tbl) => tbl.userId.equals(profiles.first.userId) & tbl.date.equals(todayStart)))
+      .get();
+  return existing.isEmpty ? null : existing.first.moodScore;
+});
+
 class JournalDashboardTab extends ConsumerStatefulWidget {
   const JournalDashboardTab({super.key});
 
@@ -33,7 +45,7 @@ class JournalDashboardTab extends ConsumerStatefulWidget {
 }
 
 class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
-  int? _selectedMood;
+  int? _selectedMoodOverride;
 
   final List<Map<String, dynamic>> _moods = [
     {'score': 1, 'emoji': '😢', 'label': 'Sangat Buruk'},
@@ -43,35 +55,9 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
     {'score': 5, 'emoji': '😀', 'label': 'Sangat Baik'},
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _loadTodayMood();
-  }
-
-  Future<void> _loadTodayMood() async {
-    final db = ref.read(dbProvider);
-    final now = DateTime.now();
-    final todayStart = DateTime(now.year, now.month, now.day);
-    
-    final profiles = await db.select(db.userProfiles).get();
-    if (profiles.isEmpty) return;
-    final userId = profiles.first.userId;
-
-    final existing = await (db.select(db.journalEntries)
-          ..where((tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart)))
-        .get();
-
-    if (existing.isNotEmpty && mounted) {
-      setState(() {
-        _selectedMood = existing.first.moodScore;
-      });
-    }
-  }
-
   Future<void> _saveMood(int score) async {
     setState(() {
-      _selectedMood = score;
+      _selectedMoodOverride = score;
     });
 
     final db = ref.read(dbProvider);
@@ -105,6 +91,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
           );
     }
 
+    ref.invalidate(_todayMoodProvider);
     ref.invalidate(_moodHistoryProvider);
     ref.invalidate(dashboardDataProvider);
 
@@ -135,6 +122,8 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
     final theme = Theme.of(context);
     final moodHistoryAsync = ref.watch(_moodHistoryProvider);
     final decisionSummaryAsync = ref.watch(_decisionSummaryProvider);
+    final todayMoodAsync = ref.watch(_todayMoodProvider);
+    final currentMood = _selectedMoodOverride ?? todayMoodAsync.valueOrNull;
 
     return Scaffold(
       appBar: AppBar(
@@ -145,6 +134,67 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Overdue Decision Alert Banner
+            if (decisionSummaryAsync.valueOrNull?['overdue'] != null && decisionSummaryAsync.valueOrNull!['overdue']! > 0) ...[
+              Card(
+                color: theme.colorScheme.errorContainer.withValues(alpha: 0.08),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: theme.colorScheme.error.withValues(alpha: 0.3), width: 1.5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text('⚠️', style: TextStyle(fontSize: 32, color: theme.colorScheme.error)),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Review Jurnal Keputusan!',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Beberapa keputusan sulit Anda telah melewati batas waktu. Mari luangkan waktu untuk meninjau hasilnya secara jujur.',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () => context.push('/decision-journal'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.error,
+                              foregroundColor: theme.colorScheme.onError,
+                              minimumSize: const Size(120, 36),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            child: const Text('Tinjau Sekarang',
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+
             // 1. Mood Check-in Card
             Card(
               child: Padding(
@@ -162,7 +212,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: _moods.map((m) {
                         final score = m['score'] as int;
-                        final isSelected = _selectedMood == score;
+                        final isSelected = currentMood == score;
                         return InkWell(
                           onTap: () => _saveMood(score),
                           borderRadius: BorderRadius.circular(16),
@@ -183,8 +233,9 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                                 const SizedBox(height: 4),
                                 Text(
                                   m['label'] as String,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 9,
+                                    fontSize: 11,
                                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                     color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                   ),
@@ -198,7 +249,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                     const SizedBox(height: 16),
                     OutlinedButton.icon(
                       onPressed: () => context.push('/journal').then((_) {
-                        _loadTodayMood();
+                        ref.invalidate(_todayMoodProvider);
                         ref.invalidate(_moodHistoryProvider);
                       }),
                       icon: const Icon(Icons.edit_note_rounded),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/theme/theme.dart';
 
 class ReflectionDashboardTab extends StatelessWidget {
   const ReflectionDashboardTab({super.key});
@@ -14,28 +15,28 @@ class ReflectionDashboardTab extends StatelessWidget {
         'desc': 'Evaluasi berkala 2 mingguan untuk meninjau kembali keseimbangan hidup Anda di seluruh domain.',
         'route': '/weekly-pulse',
         'icon': Icons.trending_up_rounded,
-        'color': Colors.teal,
+        'color': CalmTheme.primarySage,
       },
       {
         'title': 'Thinking Canvas 🧠',
         'desc': 'Alat bantu analisis visual terstruktur (seperti Metode Kertas Kosong) untuk mengurai kerumitan pikiran.',
         'route': '/thinking-canvas',
         'icon': Icons.insights_rounded,
-        'color': Colors.indigo,
+        'color': CalmTheme.secondaryBlue,
       },
       {
         'title': 'Safety Card 🛡️',
         'desc': 'Panduan penanganan krisis keselamatan diri, kontak bantuan darurat, dan latihan rileksasi cemas.',
         'route': '/safety',
         'icon': Icons.shield_rounded,
-        'color': Colors.redAccent,
+        'color': CalmTheme.alertMutedRed,
       },
       {
         'title': 'Habit Marketplace 🛒',
         'desc': 'Temukan dan unduh kumpulan template kebiasaan berfaedah yang dibagikan oleh komunitas.',
         'route': '/marketplace',
         'icon': Icons.storefront_rounded,
-        'color': Colors.green,
+        'color': CalmTheme.primarySage,
       },
     ];
 

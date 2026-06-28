@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/domain/app_constants.dart';
 import 'package:go_router/go_router.dart';
 import '../../../data/local_db/database.dart';
 import '../dashboard_provider.dart';
@@ -25,17 +26,7 @@ class HabitListSection extends ConsumerWidget {
   final Habit? activeActionOfTheDay;
   final bool isRecoveryActive;
 
-  Color _getDomainColor(String? domain) {
-    switch (domain) {
-      case 'Tubuh': return const Color(0xFF6B8E78);
-      case 'Keuangan': return const Color(0xFFC29B38);
-      case 'Hubungan': return const Color(0xFFC78585);
-      case 'Emosi': return const Color(0xFF8595C7);
-      case 'Karir': return const Color(0xFF6CA8B5);
-      case 'Rekreasi': return const Color(0xFFD49E6A);
-      default: return const Color(0xFF6B8E78);
-    }
-  }
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,7 +48,7 @@ class HabitListSection extends ConsumerWidget {
                 icon: const Icon(Icons.clear, size: 14),
                 label: const Text('Reset', style: TextStyle(fontSize: 12)),
                 style: TextButton.styleFrom(
-                  foregroundColor: _getDomainColor(selectedDomainFilter),
+                  foregroundColor: DomainColors.forDomain(selectedDomainFilter),
                   padding: EdgeInsets.zero,
                   minimumSize: const Size(50, 30),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -119,7 +110,7 @@ class HabitListSection extends ConsumerWidget {
     bool isAction,
   ) {
     final isDone = item.log?.status == 'Done';
-    final domainColor = _getDomainColor(item.habit.domainTag);
+    final domainColor = DomainColors.forDomain(item.habit.domainTag);
     final paused = isRecoveryActive && !isDone;
     final beban = item.habit.initiationFriction + item.habit.energyCost;
     final semanticsLabel = paused

@@ -24,7 +24,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
   String _selectedAgeBand = '18-24';
   double _bodyScore = 5.0;
   bool _disclaimerAccepted = false;
-  bool _devMode = false;
+  final bool _devMode = false;
 
   // P0-08: Disclaimer progressive disclosure gating
   static const int _readGateSeconds = 5;
@@ -266,25 +266,6 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 24),
-        Card(
-          elevation: 0,
-          color: theme.colorScheme.primary.withValues(alpha: 0.05),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.12)),
-          ),
-          child: SwitchListTile(
-            title: const Text('Mode Developer', style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: const Text('Aktifkan untuk membuka semua skin pohon & mengakses seluruh 6 domain saat onboarding.'),
-            value: _devMode,
-            activeThumbColor: theme.colorScheme.primary,
-            onChanged: (val) {
-              setState(() {
-                _devMode = val;
-              });
-            },
-          ),
-        ),
       ],
     );
   }

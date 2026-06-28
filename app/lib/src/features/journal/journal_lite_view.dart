@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../core/domain/app_constants.dart';
 
 class JournalLiteView extends ConsumerStatefulWidget {
   const JournalLiteView({super.key});
@@ -313,6 +314,14 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
         moodByDate[dayH2]! <= 2;
 
     if (hasConsecutiveLowMood) {
+      await db.into(db.wellnessPromptLogs).insert(
+            WellnessPromptLogsCompanion.insert(
+              promptId: const Uuid().v4(),
+              userId: userId,
+              triggerType: WellnessPromptTrigger.lowMood,
+              promptedAt: DateTime.now(),
+            ),
+          );
       _showLowMoodWarning();
       return;
     }

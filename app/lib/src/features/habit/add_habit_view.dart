@@ -404,41 +404,45 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
               // Initiation Friction
               _buildSliderSection(
-                title: 'Hambatan Memulai (Initiation Friction)',
+                title: '🚀 Seberapa susah memulai?',
+                helperText: 'Contoh: olahraga ke gym = susah (4-5), baca 1 halaman = mudah (1-2)',
                 value: _initiationFriction,
-                minLabel: 'Mudah sekali',
-                maxLabel: 'Sangat malas/Sulit',
+                minLabel: 'Sangat Mudah',
+                maxLabel: 'Sangat Susah',
                 onChanged: (val) => setState(() => _initiationFriction = val),
               ),
 
               // Energy Cost
               _buildSliderSection(
-                title: 'Kebutuhan Energi (Energy Cost)',
+                title: '⚡ Seberapa menguras energi?',
+                helperText: 'Contoh: lari 30 menit = banyak energi (4-5), nulis jurnal = sedikit (1-2)',
                 value: _energyCost,
-                minLabel: 'Ringan',
-                maxLabel: 'Sangat Lelah',
+                minLabel: 'Sedikit Energi',
+                maxLabel: 'Banyak Energi',
                 onChanged: (val) => setState(() => _energyCost = val),
               ),
 
               // Impact Score
               _buildSliderSection(
-                title: 'Tingkat Kepentingan (Impact Score)',
+                title: '🎯 Seberapa besar dampaknya?',
+                helperText: 'Contoh: olahraga rutin = dampak besar (5), minum vitamin = menengah (3)',
                 value: _impactScore,
-                minLabel: 'Tambahan',
-                maxLabel: 'Sangat Penting',
+                minLabel: 'Dampak Kecil',
+                maxLabel: 'Dampak Besar',
                 onChanged: (val) => setState(() => _impactScore = val),
               ),
 
               // MVA Duration Min
               _buildSliderSection(
-                title: 'Durasi Target Minimum (MVA Duration)',
+                title: '⏱️ Durasi minimum (menit)',
+                helperText: 'MVA: Minimum Viable Action — durasi terpendek agar tetap "valid dilakukan"',
                 value: _mvaDurationMin,
-                minLabel: '1 Menit',
-                maxLabel: '15 Menit',
+                minLabel: '1 menit',
+                maxLabel: '30 menit',
                 minVal: 1,
-                maxVal: 15,
-                divisions: 14,
-                unit: ' Menit',
+                maxVal: 30,
+                divisions: 29,
+                unit: ' menit',
                 onChanged: (val) => setState(() => _mvaDurationMin = val),
               ),
 
@@ -466,6 +470,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
   Widget _buildSliderSection({
     required String title,
+    required String helperText,
     required int value,
     required String minLabel,
     required String maxLabel,
@@ -481,7 +486,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          const SizedBox(height: 2),
+          Text(helperText, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
           Row(
             children: [
               Expanded(

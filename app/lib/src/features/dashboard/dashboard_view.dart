@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../core/domain/priority_helper.dart';
+import '../../core/domain/app_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/local_db/database.dart';
@@ -25,23 +27,9 @@ class DashboardView extends ConsumerStatefulWidget {
 class _DashboardViewState extends ConsumerState<DashboardView> {
   String _selectedDomainFilter = 'Semua';
 
-  Color _getDomainColor(String? domain) {
-    switch (domain) {
-      case 'Tubuh':
-        return const Color(0xFF6B8E78); // Forest Sage
-      case 'Keuangan':
-        return const Color(0xFFC29B38); // Soft Gold
-      case 'Hubungan':
-        return const Color(0xFFC78585); // Muted Rose
-      case 'Emosi':
-        return const Color(0xFF8595C7); // Periwinkle Indigo
-      case 'Karir':
-        return const Color(0xFF6CA8B5); // Calm Teal
-      case 'Rekreasi':
-        return const Color(0xFFD49E6A); // Warm Apricot
-      default:
-        return const Color(0xFF6B8E78); // Default Sage
-    }
+  String _monthName(int month) {
+    const months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    return months[month];
   }
 
   Future<void> _toggleHabit(BuildContext context, Habit habit, HabitLog? log) async {
@@ -143,7 +131,19 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('LifeTree OS'),
+        title: Builder(builder: (context) {
+          final hour = DateTime.now().hour;
+          final greeting = hour < 11 ? 'Selamat Pagi' : hour < 15 ? 'Selamat Siang' : 'Selamat Sore';
+          final now = DateTime.now();
+          final dateStr = '${now.day} ${_monthName(now.month)} ${now.year}';
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(greeting, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(dateStr, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+            ],
+          );
+        }),
       ),
       body: dataAsync.when(
         data: (data) {
@@ -169,17 +169,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             double highestPriority = -1.0;
             final uncompletedFiltered = filteredHabits.where((hwl) => hwl.log?.status != 'Done').toList();
             for (final hwl in uncompletedFiltered) {
-              final habit = hwl.habit;
-              final domain = habit.domainTag ?? 'Tubuh';
-              final domainScoreVal = domainScores[domain] ?? 5;
-              final domainScore = (domainScoreVal is num) ? domainScoreVal.toDouble() : 5.0;
-              final domainDeficit = 10.0 - domainScore;
-
-              final totalLoad = habit.initiationFriction + habit.energyCost;
-              final score = (domainDeficit * habit.impactScore) / (totalLoad > 0 ? totalLoad : 1);
+              final score = computeHabitPriorityScore(habit: hwl.habit, domainScores: domainScores);
               if (score > highestPriority) {
                 highestPriority = score;
-                activeActionOfTheDay = habit;
+                activeActionOfTheDay = hwl.habit;
               }
             }
           }
@@ -207,7 +200,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     cumulativeDays: data.cumulativeDays,
                     season: data.season,
                     onSkinShopTap: () => _showSkinShop(context, ref, data.profile),
-                    activeDomainColor: _selectedDomainFilter == 'Semua' ? null : _getDomainColor(_selectedDomainFilter),
+                    activeDomainColor: _selectedDomainFilter == 'Semua' ? null : DomainColors.forDomain(_selectedDomainFilter),
                   ),
                   const SizedBox(height: 16),
 
@@ -263,10 +256,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           child: Text('Terjadi kesalahan: $err'),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => _showQuickActionsBottomSheet(context),
-        icon: const Icon(Icons.bolt_rounded),
-        label: const Text('Aksi Cepat'),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -318,40 +310,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 const Divider(),
                 ListTile(
                   leading: const CircleAvatar(
-                    backgroundColor: Color(0xFFF3E5F5),
-                    child: Icon(Icons.psychology_rounded, color: Color(0xFF7B1FA2)),
+                    backgroundColor: Color(0xFFE3F2FD),
+                    child: Icon(Icons.book_rounded, color: Color(0xFF1E88E5)),
                   ),
-                  title: const Text('Buka Thinking Canvas', style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: const Text('Coret ide & selesaikan kebuntuan berpikir'),
+                  title: const Text('Tulis Jurnal Hari Ini', style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: const Text('Catat mood & jurnal harian Anda'),
                   onTap: () {
                     Navigator.pop(context);
-                    context.push('/thinking-canvas');
-                  },
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const CircleAvatar(
-                    backgroundColor: Color(0xFFFFF3E0),
-                    child: Icon(Icons.analytics_rounded, color: Color(0xFFE65100)),
-                  ),
-                  title: const Text('Mulai Weekly Pulse Check', style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: const Text('Evaluasi kesejahteraan emosional mingguan (WHO-5)'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push('/weekly-pulse');
-                  },
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const CircleAvatar(
-                    backgroundColor: Color(0xFFFFEBEE),
-                    child: Icon(Icons.health_and_safety_rounded, color: Color(0xFFC62828)),
-                  ),
-                  title: const Text('Safety Card (Dukungan Krisis)', style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: const Text('Akses kontak darurat & panduan tenangkan diri'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push('/safety');
+                    context.push('/journal');
                   },
                 ),
               ],

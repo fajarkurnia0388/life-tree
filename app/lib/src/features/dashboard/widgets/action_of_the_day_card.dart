@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import '../../../core/domain/app_constants.dart';
 import '../../../data/local_db/database.dart';
 import '../dashboard_provider.dart';
 
@@ -21,8 +22,8 @@ class ActionOfTheDayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final domainColor = DomainColors.forDomain(habit.domainTag);
     final theme = Theme.of(context);
-    final domainColor = _getDomainColor(habit.domainTag);
     final isDark = theme.brightness == Brightness.dark;
     final isRecovery = data.season == 'Recovery';
 
@@ -144,17 +145,7 @@ class ActionOfTheDayCard extends StatelessWidget {
     return card;
   }
 
-  Color _getDomainColor(String? domain) {
-    switch (domain) {
-      case 'Tubuh': return const Color(0xFF6B8E78);
-      case 'Keuangan': return const Color(0xFFC29B38);
-      case 'Hubungan': return const Color(0xFFC78585);
-      case 'Emosi': return const Color(0xFF8595C7);
-      case 'Karir': return const Color(0xFF6CA8B5);
-      case 'Rekreasi': return const Color(0xFFD49E6A);
-      default: return const Color(0xFF6B8E78);
-    }
-  }
+
 
   /// Parses the user's latest domain scores safely and returns the score
   /// for the given domain. Defaults to 5.0 when missing or unparseable.

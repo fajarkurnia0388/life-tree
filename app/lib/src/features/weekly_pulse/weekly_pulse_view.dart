@@ -7,6 +7,7 @@ import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../core/domain/app_constants.dart';
 
 class WeeklyPulseView extends ConsumerStatefulWidget {
   const WeeklyPulseView({super.key});
@@ -19,6 +20,9 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
   final List<int?> _answers = List.filled(5, null);
   final _reflectionController = TextEditingController();
   bool _isSaving = false;
+
+  int _currentStep = 0;
+  final PageController _pageController = PageController();
 
   final List<String> _questions = [
     'Saya merasa ceria dan bersemangat',
@@ -107,6 +111,20 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
       if (mounted) {
         // Show wellness review prompt if WHO-5 is low (< 50%)
         final isLowMood = percentage < 50;
+        if (isLowMood) {
+          final profiles = await db.select(db.userProfiles).get();
+          if (profiles.isNotEmpty) {
+            await db.into(db.wellnessPromptLogs).insert(
+                  WellnessPromptLogsCompanion.insert(
+                    promptId: const Uuid().v4(),
+                    userId: profiles.first.userId,
+                    triggerType: WellnessPromptTrigger.weeklyPulse,
+                    promptedAt: DateTime.now(),
+                  ),
+                );
+          }
+        }
+        if (!mounted) return;
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -156,12 +174,155 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
   @override
   void dispose() {
     _reflectionController.dispose();
+    _pageController.dispose();
     super.dispose();
+  }
+
+  Widget _buildQuestionCard(BuildContext context, int qIndex) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Card(
+            color: theme.colorScheme.primaryContainer.withValues(alpha: 0.1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  const Text('📋', style: TextStyle(fontSize: 24)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Jawablah sejujur mungkin berdasarkan apa yang Anda rasakan selama 2 minggu terakhir.',
+                      style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pertanyaan ${qIndex + 1} dari 5',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _questions[qIndex],
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    const Divider(height: 32),
+                    Expanded(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: _options.map((opt) {
+                          final isSelected = _answers[qIndex] == opt['value'];
+                          return Card(
+                            color: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.08) : Colors.transparent,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.15),
+                                width: isSelected ? 2 : 1,
+                              ),
+                            ),
+                            margin: const EdgeInsets.only(bottom: 12),
+                            child: ListTile(
+                              leading: Icon(
+                                isSelected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+                                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                              ),
+                              title: Text(opt['label'] as String, style: const TextStyle(fontSize: 14)),
+                              onTap: () {
+                                setState(() {
+                                  _answers[qIndex] = opt['value'] as int?;
+                                });
+                                // Auto advance after 300ms for smooth transition
+                                Future.delayed(const Duration(milliseconds: 300), () {
+                                  if (mounted && _currentStep == qIndex) {
+                                    _pageController.nextPage(
+                                      duration: const Duration(milliseconds: 250),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  }
+                                });
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReflectionCard(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Refleksi Diri (Opsional) ✍️',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Tuliskan catatan refleksi mingguan Anda, hambatan terbesar Anda, atau hal yang paling disyukuri minggu ini.',
+                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: TextField(
+                  controller: _reflectionController,
+                  maxLines: 8,
+                  decoration: InputDecoration(
+                    hintText: 'Tulis refleksi Anda di sini...',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    const totalSteps = 6;
+    final isLastStep = _currentStep == totalSteps - 1;
+    final canGoNext = _currentStep < 5 ? _answers[_currentStep] != null : true;
 
     return Scaffold(
       appBar: AppBar(
@@ -178,154 +339,82 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                 ],
               ),
             )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Heading card
-                  Card(
-                    color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
-                    elevation: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          const Text(
-                            'WHO-5 Well-Being Index 📋',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Jawablah sejujur mungkin berdasarkan apa yang Anda rasakan selama 2 minggu terakhir.',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
+          : Column(
+              children: [
+                // Progress Bar
+                LinearProgressIndicator(
+                  value: (_currentStep + 1) / totalSteps,
+                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                  valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'Langkah ${_currentStep + 1} dari $totalSteps',
+                    style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 20),
-
-                  // Questions list
-                  ...List.generate(_questions.length, (qIndex) {
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Pertanyaan ${qIndex + 1}',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              _questions[qIndex],
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                            ),
-                            const Divider(height: 24),
-                            // Options columns
-                            Column(
-                              children: _options.map((opt) {
-                                final isSelected = _answers[qIndex] == opt['value'];
-                                return InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _answers[qIndex] = opt['value'] as int?;
-                                    });
-                                  },
-                                  child: Container(
-                                    constraints: const BoxConstraints(minHeight: 44),
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                                        ),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          isSelected
-                                              ? Icons.radio_button_checked_rounded
-                                              : Icons.radio_button_off_rounded,
-                                          color: isSelected
-                                              ? theme.colorScheme.primary
-                                              : theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            opt['label'] as String,
-                                            style: const TextStyle(fontSize: 13),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ],
+                ),
+                // Stepper PageView
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: totalSteps,
+                    onPageChanged: (i) => setState(() => _currentStep = i),
+                    itemBuilder: (context, index) {
+                      if (index < 5) {
+                        return _buildQuestionCard(context, index);
+                      } else {
+                        return _buildReflectionCard(context);
+                      }
+                    },
+                  ),
+                ),
+                // Navigation buttons
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (_currentStep > 0)
+                        OutlinedButton(
+                          onPressed: () => _pageController.previousPage(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(100, 48),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          child: const Text('Kembali'),
+                        )
+                      else
+                        const SizedBox(width: 100),
+                      ElevatedButton(
+                        onPressed: canGoNext
+                            ? () {
+                                if (!isLastStep) {
+                                  _pageController.nextPage(
+                                    duration: const Duration(milliseconds: 250),
+                                    curve: Curves.easeInOut,
+                                  );
+                                } else {
+                                  _submitPulse();
+                                }
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                          minimumSize: const Size(100, 48),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
+                        child: Text(isLastStep ? 'Kirim' : 'Lanjut'),
                       ),
-                    );
-                  }),
-
-                  // Subjective Reflection textarea
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Refleksi Diri (Opsional) ✍️',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: _reflectionController,
-                            maxLines: 4,
-                            decoration: InputDecoration(
-                              hintText: 'Tuliskan catatan refleksi mingguan Anda, apa hambatan terbesar Anda, atau hal yang paling disyukuri...',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(height: 24),
-
-                  // Submit button
-                  ElevatedButton(
-                    onPressed: _submitPulse,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: theme.colorScheme.onPrimary,
-                      minimumSize: const Size(88, 52),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: const Text(
-                      'Kirim Evaluasi Mingguan',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
-              ),
+                ),
+              ],
             ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../../core/theme/theme.dart';
+import '../../core/domain/app_constants.dart';
 
 class SafetyCardView extends ConsumerWidget {
   const SafetyCardView({super.key});
@@ -24,7 +25,7 @@ class SafetyCardView extends ConsumerWidget {
           WellnessPromptLogsCompanion.insert(
             promptId: const Uuid().v4(),
             userId: userId,
-            triggerType: 'Safety_Card',
+            triggerType: WellnessPromptTrigger.safetyCard,
             promptedAt: now,
             userAction: const drift.Value('Tapped_Hotline_CTA'),
           ),
