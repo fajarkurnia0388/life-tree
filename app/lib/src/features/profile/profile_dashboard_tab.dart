@@ -544,136 +544,27 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                   Text('Developer Tools 🛠️', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.blueGrey)),
                   const SizedBox(height: 10),
                   Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Tree Age Override
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Row(
-                                children: [
-                                  Icon(Icons.nature_people_rounded, color: Colors.green, size: 20),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Simulasi Usia Pohon',
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                                  ),
-                                ],
-                              ),
-                              Consumer(
-                                builder: (context, ref, child) {
-                                  final currentOverride = ref.watch(devCumulativeDaysOverrideProvider);
-                                  return Text(
-                                    currentOverride != null ? '$currentOverride Hari (Virtual)' : 'Default (Riil: ${data.cumulativeDays})',
-                                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.green),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          Consumer(
-                            builder: (context, ref, child) {
-                              final currentOverride = ref.watch(devCumulativeDaysOverrideProvider) ?? data.cumulativeDays;
-                              return Row(
-                                children: [
-                                  Expanded(
-                                    child: Slider(
-                                      value: currentOverride.toDouble().clamp(0.0, 100.0),
-                                      min: 0,
-                                      max: 100,
-                                      divisions: 100,
-                                      label: '$currentOverride Hari',
-                                      onChanged: (val) {
-                                        ref.read(devAgePlayProvider.notifier).stop();
-                                        ref.read(devCumulativeDaysOverrideProvider.notifier).state = val.toInt();
-                                      },
-                                    ),
-                                  ),
-                                  Consumer(
-                                    builder: (context, ref, child) {
-                                      final isPlaying = ref.watch(devAgePlayProvider);
-                                      return IconButton(
-                                        icon: Icon(
-                                          isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
-                                          color: Colors.green,
-                                          size: 24,
-                                        ),
-                                        onPressed: () {
-                                          ref.read(devAgePlayProvider.notifier).toggle();
-                                        },
-                                        tooltip: isPlaying ? 'Jeda Simulasi' : 'Putar Simulasi',
-                                      );
-                                    },
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      ref.read(devAgePlayProvider.notifier).stop();
-                                      ref.read(devCumulativeDaysOverrideProvider.notifier).state = null;
-                                    },
-                                    child: const Text('Reset', style: TextStyle(fontSize: 12)),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                          const Divider(height: 24),
-
-                          // Celestial Time Override
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Row(
-                                children: [
-                                  Icon(Icons.nights_stay_rounded, color: Colors.purple, size: 20),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Simulasi Waktu Langit',
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                                  ),
-                                ],
-                              ),
-                              Consumer(
-                                builder: (context, ref, child) {
-                                  final currentMode = ref.watch(devTimeOfDayOverrideProvider);
-                                  final label = switch (currentMode) {
-                                    CelestialTime.auto    => 'Auto (Waktu Riil)',
-                                    CelestialTime.morning => 'Pagi 🌅',
-                                    CelestialTime.noon    => 'Siang ☀️',
-                                    CelestialTime.sunset  => 'Sore 🌇',
-                                    CelestialTime.night   => 'Malam 🌙',
-                                  };
-                                  return Text(
-                                    label,
-                                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.purple),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Consumer(
-                            builder: (context, ref, child) {
-                              final currentMode = ref.watch(devTimeOfDayOverrideProvider);
-                              return SegmentedButton<CelestialTime>(
-                                segments: const [
-                                  ButtonSegment(value: CelestialTime.auto, label: Text('Auto', style: TextStyle(fontSize: 10))),
-                                  ButtonSegment(value: CelestialTime.morning, label: Text('🌅', style: TextStyle(fontSize: 12))),
-                                  ButtonSegment(value: CelestialTime.noon, label: Text('☀️', style: TextStyle(fontSize: 12))),
-                                  ButtonSegment(value: CelestialTime.sunset, label: Text('🌇', style: TextStyle(fontSize: 12))),
-                                  ButtonSegment(value: CelestialTime.night, label: Text('🌙', style: TextStyle(fontSize: 12))),
-                                ],
-                                selected: {currentMode},
-                                onSelectionChanged: (val) {
-                                  ref.read(devTimeOfDayOverrideProvider.notifier).state = val.first;
-                                },
-                              );
-                            },
-                          ),
-                        ],
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      leading: const Icon(Icons.tune_rounded, color: Colors.blueGrey),
+                      title: const Text('Buka Kontrol Simulasi'),
+                      subtitle: Consumer(
+                        builder: (context, ref, child) {
+                          final ageOverride = ref.watch(devCumulativeDaysOverrideProvider);
+                          final timeOverride = ref.watch(devTimeOfDayOverrideProvider);
+                          final ageText = ageOverride != null ? '$ageOverride Hari Virtual' : 'Usia Riil';
+                          final timeText = switch (timeOverride) {
+                            CelestialTime.auto    => 'Waktu Riil',
+                            CelestialTime.morning => 'Pagi 🌅',
+                            CelestialTime.noon    => 'Siang ☀️',
+                            CelestialTime.sunset  => 'Sore 🌇',
+                            CelestialTime.night   => 'Malam 🌙',
+                          };
+                          return Text('$ageText  •  $timeText', style: const TextStyle(fontSize: 12));
+                        },
                       ),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => _showDevToolsSheet(context),
                     ),
                   ),
                 ],
@@ -684,6 +575,153 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(child: Text('Gagal memuat profil: $err')),
       ),
+    );
+  }
+
+  void _showDevToolsSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Handle bar
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const Text(
+                  'Developer Tools 🛠️',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 20),
+
+                // --- Tree Age Slider ---
+                Row(
+                  children: [
+                    const Icon(Icons.nature_people_rounded, color: Colors.green, size: 20),
+                    const SizedBox(width: 8),
+                    const Text('Simulasi Usia Pohon', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const Spacer(),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final current = ref.watch(devCumulativeDaysOverrideProvider);
+                        return Text(
+                          current != null ? '$current Hari (Virtual)' : 'Usia Riil',
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.green),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                Consumer(
+                  builder: (context, ref, child) {
+                    // Ambil dashboardData dari ref untuk cumulativeDays riil
+                    final realDays = ref.watch(dashboardDataProvider).valueOrNull?.cumulativeDays ?? 0;
+                    final current = ref.watch(devCumulativeDaysOverrideProvider) ?? realDays;
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: Slider(
+                            value: current.toDouble().clamp(0.0, 100.0),
+                            min: 0,
+                            max: 100,
+                            divisions: 100,
+                            label: '$current Hari',
+                            onChanged: (val) {
+                              ref.read(devAgePlayProvider.notifier).stop();
+                              ref.read(devCumulativeDaysOverrideProvider.notifier).state = val.toInt();
+                            },
+                          ),
+                        ),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final isPlaying = ref.watch(devAgePlayProvider);
+                            return IconButton(
+                              icon: Icon(
+                                isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                                color: Colors.green,
+                              ),
+                              onPressed: () => ref.read(devAgePlayProvider.notifier).toggle(),
+                              tooltip: isPlaying ? 'Jeda Simulasi' : 'Putar Simulasi',
+                            );
+                          },
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            ref.read(devAgePlayProvider.notifier).stop();
+                            ref.read(devCumulativeDaysOverrideProvider.notifier).state = null;
+                          },
+                          child: const Text('Reset', style: TextStyle(fontSize: 12)),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+
+                const Divider(height: 28),
+
+                // --- Celestial Time ---
+                Row(
+                  children: [
+                    const Icon(Icons.nights_stay_rounded, color: Colors.purple, size: 20),
+                    const SizedBox(width: 8),
+                    const Text('Simulasi Waktu Langit', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const Spacer(),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final mode = ref.watch(devTimeOfDayOverrideProvider);
+                        final label = switch (mode) {
+                          CelestialTime.auto    => 'Waktu Riil',
+                          CelestialTime.morning => 'Pagi 🌅',
+                          CelestialTime.noon    => 'Siang ☀️',
+                          CelestialTime.sunset  => 'Sore 🌇',
+                          CelestialTime.night   => 'Malam 🌙',
+                        };
+                        return Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.purple));
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Consumer(
+                  builder: (context, ref, child) {
+                    final currentMode = ref.watch(devTimeOfDayOverrideProvider);
+                    return SegmentedButton<CelestialTime>(
+                      segments: const [
+                        ButtonSegment(value: CelestialTime.auto,    label: Text('Auto',  style: TextStyle(fontSize: 10))),
+                        ButtonSegment(value: CelestialTime.morning,  label: Text('🌅',   style: TextStyle(fontSize: 13))),
+                        ButtonSegment(value: CelestialTime.noon,     label: Text('☀️',   style: TextStyle(fontSize: 13))),
+                        ButtonSegment(value: CelestialTime.sunset,   label: Text('🌇',   style: TextStyle(fontSize: 13))),
+                        ButtonSegment(value: CelestialTime.night,    label: Text('🌙',   style: TextStyle(fontSize: 13))),
+                      ],
+                      selected: {currentMode},
+                      onSelectionChanged: (val) {
+                        ref.read(devTimeOfDayOverrideProvider.notifier).state = val.first;
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
