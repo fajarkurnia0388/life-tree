@@ -1,558 +1,593 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-/// Generative organic tree painter — draws a living tree illustration
-/// based on growth [stage] and [skinId] using layered painting techniques.
-/// Uses handcrafted canopy blob positions for natural, non-algorithmic shapes.
+/// Seeded Random helper to generate deterministic but organic-looking distributions.
+/// Prevents the tree foliage and branches from flickering during smooth animation.
+class SeededRandom {
+  int seed;
+  SeededRandom(this.seed);
+
+  double nextDouble() {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    return seed / 0x7fffffff;
+  }
+
+  double range(double min, double max) => min + nextDouble() * (max - min);
+}
+
+/// Structural branch definition for the continuous growth model.
+class BranchConfig {
+  final double startT; // Position along parent trunk/branch (0.0 to 1.0)
+  final double angle; // Angle in radians relative to parent direction
+  final double lengthFactor; // Max length relative to parent length
+  final double minDays; // Day on which this branch starts emerging
+
+  const BranchConfig({
+    required this.startT,
+    required this.angle,
+    required this.lengthFactor,
+    required this.minDays,
+  });
+}
+
+/// A highly organic, generative tree painter.
+/// Simulates continuous growth from 0 to 100 days:
+/// - Days 0-2: Seed germinates.
+/// - Days 3-7: Sprout grows, winding up with small leaves.
+/// - Days 8-100: Custom curvy trunk, wood grain patterns, concentric knots,
+///   and a recursive branching system with tapered wavy twigs and detailed leaf clusters.
 class OrganicTreePainter extends CustomPainter {
-  final String stage;
+  final double days;
   final String skinId;
   final bool isRecovery;
 
   const OrganicTreePainter({
-    required this.stage,
+    required this.days,
     required this.skinId,
     this.isRecovery = false,
   });
 
-  // ─── Colour palette ─────────────────────────────────────────────────────────
+  // ─── Color Palettes ────────────────────────────────────────────────────────
 
-  Color get _trunkBase {
-    if (isRecovery) return const Color(0xFF9E8B7D);
-    return const Color(0xFF8B6B4F);
-  }
+  Color get _trunkBase =>
+      isRecovery ? const Color(0xFF9E8B7D) : const Color(0xFF8B6B4F);
+  Color get _trunkDark =>
+      isRecovery ? const Color(0xFF7A6458) : const Color(0xFF5D4037);
+  Color get _trunkHighlight =>
+      isRecovery ? const Color(0xFFB0A090) : const Color(0xFFBFA07A);
 
-  Color get _trunkDark {
-    if (isRecovery) return const Color(0xFF7A6458);
-    return const Color(0xFF5D4037);
-  }
-
-  Color get _trunkHighlight {
-    if (isRecovery) return const Color(0xFFB0A090);
-    return const Color(0xFFBFA07A);
-  }
-
-  Color get _foliageDark {
-    if (isRecovery) return const Color(0xFF4A7F95);
+  List<Color> get _leafColors {
+    if (isRecovery) {
+      return [
+        const Color(0xFFE0F7FA), // Ice white
+        const Color(0xFFB2EBF2), // Pale blue
+        const Color(0xFF80DEEA), // Soft cyan
+        const Color(0xFF4DD0E1), // Bright icy blue
+      ];
+    }
     return switch (skinId) {
-      'Sakura' => const Color(0xFFAD1457),
-      'Maple'  => const Color(0xFFBF360C),
-      'Bonsai' => const Color(0xFF1B5E20),
-      _        => const Color(0xFF1B5E20),
+      'Sakura' => [
+          const Color(0xFFF48FB1), // Soft pink
+          const Color(0xFFF06292), // Medium pink
+          const Color(0xFFE91E63), // Magenta
+          const Color(0xFFF8BBD0), // Light blush
+          const Color(0xFFFFF5F7), // White cherry petal
+        ],
+      'Maple' => [
+          const Color(0xFFE65100), // Deep orange
+          const Color(0xFFBF360C), // Red-orange
+          const Color(0xFFFF9800), // Bright gold
+          const Color(0xFFFFB74D), // Light warm yellow
+        ],
+      'Bonsai' => [
+          const Color(0xFF1B5E20), // Dark pine green
+          const Color(0xFF2E7D32), // Forest green
+          const Color(0xFF388E3C), // Bright green
+          const Color(0xFF1b4332), // Deep olive shadow
+        ],
+      _ => [
+          const Color(0xFF2E7D32), // Deep green
+          const Color(0xFF4CAF50), // Leaf green
+          const Color(0xFF8BC34A), // Lime green
+          const Color(0xFFC5E1A5), // Light spring green
+        ],
     };
   }
 
-  Color get _foliageMid {
-    if (isRecovery) return const Color(0xFF5A9FB0);
-    return switch (skinId) {
-      'Sakura' => const Color(0xFFE91E63),
-      'Maple'  => const Color(0xFFE65100),
-      'Bonsai' => const Color(0xFF2E7D32),
-      _        => const Color(0xFF2E7D32),
-    };
-  }
+  // ─── Branch Layout ─────────────────────────────────────────────────────────
 
-  Color get _foliageLight {
-    if (isRecovery) return const Color(0xFF81C9D4);
-    return switch (skinId) {
-      'Sakura' => const Color(0xFFF48FB1),
-      'Maple'  => const Color(0xFFFF9800),
-      'Bonsai' => const Color(0xFF66BB6A),
-      _        => const Color(0xFF66BB6A),
-    };
-  }
+  static const List<BranchConfig> _primaryBranches = [
+    // Lower level branches
+    BranchConfig(startT: 0.35, angle: 0.58, lengthFactor: 0.46, minDays: 10), // Right
+    BranchConfig(startT: 0.42, angle: 2.56, lengthFactor: 0.44, minDays: 14), // Left
+    // Mid level branches
+    BranchConfig(startT: 0.58, angle: 0.68, lengthFactor: 0.40, minDays: 18), // Right
+    BranchConfig(startT: 0.64, angle: 2.46, lengthFactor: 0.38, minDays: 22), // Left
+    // Upper level branches
+    BranchConfig(startT: 0.78, angle: 0.78, lengthFactor: 0.34, minDays: 26), // Right
+    BranchConfig(startT: 0.83, angle: 2.36, lengthFactor: 0.32, minDays: 30), // Left
+    // Apex crown branches
+    BranchConfig(startT: 0.95, angle: 1.05, lengthFactor: 0.28, minDays: 35), // Right
+    BranchConfig(startT: 0.98, angle: 2.09, lengthFactor: 0.26, minDays: 40), // Left
+  ];
 
-  Color get _foliageBright {
-    if (isRecovery) return const Color(0xFFA0DBE5);
-    return switch (skinId) {
-      'Sakura' => const Color(0xFFF8BBD0),
-      'Maple'  => const Color(0xFFFFCC80),
-      'Bonsai' => const Color(0xFFA5D6A7),
-      _        => const Color(0xFFA5D6A7),
-    };
-  }
-
-  // ─── Paint dispatch ─────────────────────────────────────────────────────────
+  // ─── Paint Dispatch ────────────────────────────────────────────────────────
 
   @override
   void paint(Canvas canvas, Size size) {
-    switch (stage) {
-      case 'seed':
-        _paintSeed(canvas, size);
-      case 'sprout':
-        _paintSprout(canvas, size);
-      case 'sapling':
-        _paintSapling(canvas, size);
-      case 'blooming':
-        _paintBlooming(canvas, size);
-      default: // mature + recovery
-        _paintMature(canvas, size);
+    if (days < 3.0) {
+      _paintSeed(canvas, size);
+    } else if (days < 8.0) {
+      _paintSprout(canvas, size);
+    } else {
+      _paintTree(canvas, size);
     }
   }
 
-  // ─── SEED ───────────────────────────────────────────────────────────────────
+  // ─── SEED ──────────────────────────────────────────────────────────────────
 
   void _paintSeed(Canvas canvas, Size size) {
     final cx = size.width / 2;
     final gy = size.height * 0.90;
     final r = size.width * 0.055;
+    final t = days.clamp(0.0, 3.0) / 3.0; // Growth interpolation
 
-    // Soil mound (rounded bump)
-    final moundPath = Path()
+    // Soil mound
+    final mound = Path()
       ..moveTo(cx - r * 4, gy + r * 0.5)
-      ..quadraticBezierTo(cx, gy - r * 1.8, cx + r * 4, gy + r * 0.5)
+      ..quadraticBezierTo(cx, gy - r * (1.2 + 0.4 * t), cx + r * 4, gy + r * 0.5)
       ..close();
-    canvas.drawPath(moundPath, Paint()..color = const Color(0xFF6D4C41));
-    // Mound highlight
-    final hlMound = Path()
-      ..moveTo(cx - r * 3, gy + r * 0.3)
-      ..quadraticBezierTo(cx, gy - r * 1.3, cx + r * 3, gy + r * 0.3)
-      ..close();
-    canvas.drawPath(hlMound, Paint()..color = const Color(0xFF8D6E63));
+    canvas.drawPath(mound, Paint()..color = const Color(0xFF6D4C41));
 
-    // Seed body (acorn shape)
-    final seedBody = Paint()..color = const Color(0xFF795548);
+    // Seed body
     canvas.drawOval(
       Rect.fromCenter(
-        center: Offset(cx, gy - r * 1.0),
-        width: r * 2.4,
-        height: r * 3.0,
+        center: Offset(cx, gy - r * (0.6 + 0.4 * t)),
+        width: r * (1.6 + 0.8 * t),
+        height: r * (2.0 + 1.0 * t),
       ),
-      seedBody,
+      Paint()..color = const Color(0xFF795548),
     );
 
-    // Seed cap (top half)
-    final capPaint = Paint()..color = const Color(0xFF5D4037);
+    // Seed cap
     canvas.drawArc(
       Rect.fromCenter(
-        center: Offset(cx, gy - r * 1.8),
-        width: r * 2.8,
-        height: r * 1.8,
+        center: Offset(cx, gy - r * (1.1 + 0.7 * t)),
+        width: r * (1.8 + 1.0 * t),
+        height: r * (1.2 + 0.6 * t),
       ),
-      math.pi, math.pi, true, capPaint,
+      math.pi,
+      math.pi,
+      true,
+      Paint()..color = const Color(0xFF5D4037),
     );
 
-    // Cap texture lines
-    final capLine = Paint()
-      ..color = const Color(0xFF4E342E)
-      ..strokeWidth = 0.6
-      ..style = PaintingStyle.stroke;
-    for (var i = -2; i <= 2; i++) {
-      canvas.drawLine(
-        Offset(cx + i * r * 0.4, gy - r * 2.4),
-        Offset(cx + i * r * 0.35, gy - r * 1.6),
-        capLine,
-      );
+    // Sprout tip emerging (only after day 1)
+    if (days > 1.0) {
+      final sproutGrow = (days - 1.0) / 2.0;
+      final spPaint = Paint()
+        ..color = const Color(0xFF8BC34A)
+        ..strokeWidth = r * 0.25 * sproutGrow
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke;
+
+      final spPath = Path()
+        ..moveTo(cx, gy - r * 1.8)
+        ..quadraticBezierTo(
+          cx + r * 0.3 * sproutGrow,
+          gy - r * (1.8 + 0.8 * sproutGrow),
+          cx - r * 0.1 * sproutGrow,
+          gy - r * (1.8 + 1.4 * sproutGrow),
+        );
+      canvas.drawPath(spPath, spPaint);
     }
-
-    // Seed highlight
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(cx - r * 0.4, gy - r * 1.2),
-        width: r * 0.7,
-        height: r * 1.0,
-      ),
-      Paint()..color = Colors.white.withOpacity(0.12),
-    );
-
-    // Tiny sprout emerging from top
-    final sproutPaint = Paint()
-      ..color = const Color(0xFF7CB342)
-      ..strokeWidth = r * 0.3
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
-    final sproutPath = Path()
-      ..moveTo(cx, gy - r * 2.5)
-      ..quadraticBezierTo(cx + r * 0.3, gy - r * 3.2, cx - r * 0.1, gy - r * 3.5);
-    canvas.drawPath(sproutPath, sproutPaint);
   }
 
-  // ─── SPROUT ─────────────────────────────────────────────────────────────────
+  // ─── SPROUT ────────────────────────────────────────────────────────────────
 
   void _paintSprout(Canvas canvas, Size size) {
     final cx = size.width / 2;
     final gy = size.height * 0.90;
-    final stemH = size.height * 0.22;
-    final stemW = size.width * 0.012;
+    final progress = (days - 3.0) / 5.0; // 0.0 to 1.0
 
-    // Tiny soil bump at base
+    final stemH = size.height * (0.12 + 0.16 * progress);
+    final stemW = size.width * (0.01 + 0.01 * progress);
+
+    // Soil base
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, gy + 2), width: stemW * 10, height: stemW * 3),
+      Rect.fromCenter(
+        center: Offset(cx, gy + 2),
+        width: stemW * 12,
+        height: stemW * 4,
+      ),
       Paint()..color = const Color(0xFF8D6E63),
     );
 
-    // Stem (slightly curved green line)
-    final stemPaint = Paint()
-      ..color = const Color(0xFF689F38)
-      ..strokeWidth = stemW * 2.5
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
+    // Organic wavy stem path
     final stemPath = Path()
       ..moveTo(cx, gy)
-      ..cubicTo(cx - stemW * 2, gy - stemH * 0.4,
-                cx + stemW * 2, gy - stemH * 0.7,
-                cx, gy - stemH);
-    canvas.drawPath(stemPath, stemPaint);
+      ..cubicTo(
+        cx - stemW * 3 * math.sin(progress * math.pi),
+        gy - stemH * 0.4,
+        cx + stemW * 4 * math.cos(progress * math.pi),
+        gy - stemH * 0.75,
+        cx,
+        gy - stemH,
+      );
 
-    // Leaf right
-    _drawLeaf(canvas, cx + stemW, gy - stemH * 0.65,
-        size.width * 0.10, size.width * 0.045, 0.4);
-    // Leaf left
-    _drawLeaf(canvas, cx - stemW, gy - stemH * 0.45,
-        size.width * 0.08, size.width * 0.035, math.pi - 0.5);
-
-    // Top leaves (small cluster)
-    _drawLeaf(canvas, cx, gy - stemH,
-        size.width * 0.09, size.width * 0.04, -0.2);
-    _drawLeaf(canvas, cx, gy - stemH,
-        size.width * 0.085, size.width * 0.038, math.pi + 0.3);
-
-    // Tiny bud at very top
-    canvas.drawCircle(
-      Offset(cx, gy - stemH - size.width * 0.02),
-      size.width * 0.015,
-      Paint()..color = _foliageBright,
+    canvas.drawPath(
+      stemPath,
+      Paint()
+        ..color = const Color(0xFF689F38)
+        ..strokeWidth = stemW * 3
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke,
     );
+
+    // Draw small leaves along the growing stem
+    final leafCount = (2 + 4 * progress).toInt();
+    for (int i = 0; i < leafCount; i++) {
+      final t = (i + 1) / (leafCount + 1);
+      final ly = gy - stemH * t;
+      final lx = cx + math.sin(t * math.pi * 2) * stemW * 2;
+      final leafSide = i.isEven ? 1.0 : -1.0;
+      final angle = leafSide * (0.3 + 0.2 * t);
+
+      _drawOrganicLeaf(
+        canvas,
+        Offset(lx, ly),
+        size.width * (0.05 + 0.04 * progress),
+        angle,
+        _leafColors[i % _leafColors.length],
+      );
+    }
   }
 
-  void _drawLeaf(Canvas canvas, double x, double y,
-      double length, double width, double angle) {
+  // ─── TREE (GROWTH & ORGANIC PATTERNS) ──────────────────────────────────────
+
+  // Cubic Bezier center curve for the winding trunk
+  Offset _getTrunkPoint(double t, double cx, double gy, double trunkH, double trunkW) {
+    final p0 = Offset(cx, gy);
+    // Wavy control points to give natural trunk curvature/bends
+    final p1 = Offset(cx - trunkW * 0.65, gy - trunkH * 0.32);
+    final p2 = Offset(cx + trunkW * 0.45, gy - trunkH * 0.68);
+    final p3 = Offset(cx - trunkW * 0.15, gy - trunkH);
+
+    final mt = 1.0 - t;
+    return p0 * (mt * mt * mt) +
+        p1 * (3 * mt * mt * t) +
+        p2 * (3 * mt * t * t) +
+        p3 * (t * t * t);
+  }
+
+  void _paintTree(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final gy = size.height * 0.90;
+
+    // Continuous dynamic scaling from day 8 to 100
+    final tProgress = ((days - 8.0) / 92.0).clamp(0.0, 1.0);
+    final smoothProgress = Curves.easeInOut.transform(tProgress);
+
+    final trunkH = size.height * (0.24 + 0.26 * smoothProgress);
+    final trunkW = size.width * (0.035 + 0.075 * smoothProgress);
+
+    // 1. Draw Root Flares
+    _drawRootFlares(canvas, cx, gy, trunkW, smoothProgress);
+
+    // 2. Build and Draw Curvy Trunk Path
+    final trunkPath = Path();
+    trunkPath.moveTo(cx - trunkW / 2, gy);
+
+    // Left boundary curve
+    for (double t = 0.02; t <= 1.0; t += 0.02) {
+      final pt = _getTrunkPoint(t, cx, gy, trunkH, trunkW);
+      final w = trunkW * (1.0 - t * 0.52); // Tapering
+      trunkPath.lineTo(pt.dx - w / 2, pt.dy);
+    }
+    // Right boundary curve
+    for (double t = 1.0; t >= 0.0; t -= 0.02) {
+      final pt = _getTrunkPoint(t, cx, gy, trunkH, trunkW);
+      final w = trunkW * (1.0 - t * 0.52);
+      trunkPath.lineTo(pt.dx + w / 2, pt.dy);
+    }
+    trunkPath.close();
+
+    // Fill trunk with gradient shading
+    final trunkPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: [_trunkDark, _trunkHighlight, _trunkBase, _trunkDark],
+        stops: const [0.0, 0.28, 0.65, 1.0],
+      ).createShader(Rect.fromLTWH(cx - trunkW / 2, gy - trunkH, trunkW, trunkH));
+
+    canvas.drawPath(trunkPath, trunkPaint);
+
+    // 3. Draw wood grain/texture patterns inside the trunk
     canvas.save();
-    canvas.translate(x, y);
-    canvas.rotate(-angle);
+    canvas.clipPath(trunkPath);
+
+    final grainPaint = Paint()
+      ..color = _trunkDark.withOpacity(0.30)
+      ..strokeWidth = 1.3
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    // Draw wavy fiber lines
+    for (double shift in [-0.3, 0.0, 0.3]) {
+      final fiberPath = Path();
+      final startPt = _getTrunkPoint(0.0, cx, gy, trunkH, trunkW);
+      fiberPath.moveTo(startPt.dx + shift * trunkW * 0.4, startPt.dy);
+
+      for (double t = 0.05; t <= 1.0; t += 0.05) {
+        final pt = _getTrunkPoint(t, cx, gy, trunkH, trunkW);
+        final w = trunkW * (1.0 - t * 0.52);
+        // Add a wobble pattern
+        final wobble = math.sin(t * math.pi * 5.0) * (trunkW * 0.03);
+        fiberPath.lineTo(pt.dx + shift * w * 0.4 + wobble, pt.dy);
+      }
+      canvas.drawPath(fiberPath, grainPaint);
+    }
+
+    // Concentric knot rings (only for older trees)
+    if (days >= 20.0) {
+      final knotPt1 = _getTrunkPoint(0.32, cx, gy, trunkH, trunkW);
+      canvas.drawOval(
+        Rect.fromCenter(center: knotPt1, width: trunkW * 0.32, height: trunkW * 0.16),
+        Paint()
+          ..color = _trunkDark.withOpacity(0.4)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.0,
+      );
+      canvas.drawOval(
+        Rect.fromCenter(center: knotPt1, width: trunkW * 0.16, height: trunkW * 0.08),
+        Paint()..color = _trunkDark.withOpacity(0.45),
+      );
+    }
+
+    canvas.restore();
+
+    // 4. Draw Branches & Leaf Clusters recursively
+    // A single seeded random to make animations smooth & stable
+    final random = SeededRandom(skinId.hashCode + 88);
+
+    for (final branch in _primaryBranches) {
+      if (days < branch.minDays) continue;
+
+      final trunkAttach = _getTrunkPoint(branch.startT, cx, gy, trunkH, trunkW);
+      final bLength = trunkH * branch.lengthFactor;
+      final bWidth = trunkW * 0.22;
+
+      _drawOrganicBranch(
+        canvas: canvas,
+        start: trunkAttach,
+        angle: branch.angle,
+        length: bLength,
+        startWidth: bWidth,
+        currentDays: days,
+        minDays: branch.minDays,
+        depth: 0,
+        random: random,
+        r: size.width * 0.80,
+      );
+    }
+  }
+
+  /// Procedural recursive organic branch generator.
+  /// Simulates natural tapering, wavy curvature, and splits into smaller sub-branches.
+  void _drawOrganicBranch({
+    required Canvas canvas,
+    required Offset start,
+    required double angle,
+    required double length,
+    required double startWidth,
+    required double currentDays,
+    required double minDays,
+    required int depth,
+    required SeededRandom random,
+    required double r,
+  }) {
+    if (currentDays < minDays) return;
+
+    // Calculate growth factor for this branch
+    final age = currentDays - minDays;
+    final bProgress = (age / 12.0).clamp(0.0, 1.0);
+    final bGrow = Curves.easeOut.transform(bProgress);
+
+    final actualLength = length * bGrow;
+
+    // Divide the branch into 3 segments to draw organic curvature/bends
+    const segments = 3;
+    var currentPos = start;
+    var currentAngle = angle;
+    final points = <Offset>[currentPos];
+    final widths = <double>[startWidth];
+
+    final stepLen = actualLength / segments;
+
+    for (int i = 1; i <= segments; i++) {
+      final t = i / segments;
+      // Wobbly curvature bend (wobbles more as it gets thinner)
+      final bend = random.range(-0.16, 0.16) * (1.0 + depth * 0.3);
+      currentAngle += bend;
+
+      currentPos = currentPos + Offset(math.cos(currentAngle) * stepLen, -math.sin(currentAngle) * stepLen);
+      points.add(currentPos);
+      widths.add(startWidth * (1.0 - t * 0.52) * bGrow); // Tapering
+    }
+
+    // Paint the tapered wobbly branch segment by segment
+    for (int i = 0; i < segments; i++) {
+      final p1 = points[i];
+      final p2 = points[i + 1];
+      final avgW = (widths[i] + widths[i + 1]) / 2;
+
+      canvas.drawLine(
+        p1,
+        p2,
+        Paint()
+          ..color = _trunkBase
+          ..strokeWidth = avgW
+          ..strokeCap = StrokeCap.round
+          ..style = PaintingStyle.stroke,
+      );
+    }
+
+    final endPoint = points.last;
+
+    // Recursive secondary and tertiary branching
+    if (depth < 2) {
+      final nextDepth = depth + 1;
+      final subMinDays = minDays + 5 + depth * 4;
+
+      if (currentDays >= subMinDays) {
+        // Left sub-branch
+        final leftAngle = currentAngle + random.range(0.32, 0.48);
+        final leftLength = length * random.range(0.50, 0.65);
+        _drawOrganicBranch(
+          canvas: canvas,
+          start: endPoint,
+          angle: leftAngle,
+          length: leftLength,
+          startWidth: widths.last * 0.7,
+          currentDays: currentDays,
+          minDays: subMinDays,
+          depth: nextDepth,
+          random: random,
+          r: r,
+        );
+
+        // Right sub-branch
+        final rightAngle = currentAngle - random.range(0.32, 0.48);
+        final rightLength = length * random.range(0.50, 0.65);
+        _drawOrganicBranch(
+          canvas: canvas,
+          start: endPoint,
+          angle: rightAngle,
+          length: rightLength,
+          startWidth: widths.last * 0.7,
+          currentDays: currentDays,
+          minDays: subMinDays + 2.0,
+          depth: nextDepth,
+          random: random,
+          r: r,
+        );
+      }
+    }
+
+    // Put leaf clusters at the tips and along the branches
+    if (depth == 2) {
+      // Twigs get dense clusters at the tip and smaller clusters along their path
+      _drawLeafCluster(canvas, endPoint, r * 0.16 * bGrow, 18, random);
+      _drawLeafCluster(canvas, points[1], r * 0.12 * bGrow, 10, random);
+    } else if (depth == 1) {
+      // Secondary branches get leaf clusters at segment joints and the tip
+      _drawLeafCluster(canvas, endPoint, r * 0.18 * bGrow, 22, random);
+      _drawLeafCluster(canvas, points[2], r * 0.15 * bGrow, 16, random);
+      _drawLeafCluster(canvas, points[1], r * 0.11 * bGrow, 10, random);
+    } else if (depth == 0) {
+      // Primary branches get leaf clusters along their mid/outer parts
+      _drawLeafCluster(canvas, points[2], r * 0.20 * bGrow, 24, random);
+      _drawLeafCluster(canvas, points[1], r * 0.15 * bGrow, 14, random);
+    }
+  }
+
+  // ─── ROOT FLARES ───────────────────────────────────────────────────────────
+
+  void _drawRootFlares(Canvas canvas, double cx, double gy, double trunkW, double progress) {
+    final rootPaint = Paint()..color = _trunkDark.withOpacity(0.58);
+    final maxSpread = trunkW * (1.2 + 0.8 * progress);
+
+    // Left Root
+    final leftRoot = Path()
+      ..moveTo(cx - trunkW * 0.4, gy)
+      ..quadraticBezierTo(cx - maxSpread, gy - trunkW * 0.2, cx - maxSpread * 1.5, gy + trunkW * 0.15)
+      ..quadraticBezierTo(cx - maxSpread * 0.8, gy + trunkW * 0.22, cx - trunkW * 0.2, gy + trunkW * 0.05)
+      ..close();
+    canvas.drawPath(leftRoot, rootPaint);
+
+    // Right Root
+    final rightRoot = Path()
+      ..moveTo(cx + trunkW * 0.4, gy)
+      ..quadraticBezierTo(cx + maxSpread, gy - trunkW * 0.18, cx + maxSpread * 1.4, gy + trunkW * 0.18)
+      ..quadraticBezierTo(cx + maxSpread * 0.7, gy + trunkW * 0.22, cx + trunkW * 0.2, gy + trunkW * 0.05)
+      ..close();
+    canvas.drawPath(rightRoot, rootPaint);
+  }
+
+  // ─── LEAF CLUSTERS ("HIMPUNAN DAUN-DAUN KECIL") ──────────────────────────────
+
+  /// Draws a dense, beautiful cluster of tiny organic leaves at branch endpoints.
+  void _drawLeafCluster(Canvas canvas, Offset center, double maxRadius, int leafCount, SeededRandom random) {
+    if (maxRadius < 1.5) return;
+
+    // Draw leaves in 3 depth layers to create natural shading & volume
+    final layers = [
+      (count: (leafCount * 0.35).toInt(), colorOpacity: 0.9, scale: 0.85, shadow: true),  // Dark back layer
+      (count: (leafCount * 0.45).toInt(), colorOpacity: 1.0, scale: 1.0, shadow: false),  // Mid base layer
+      (count: (leafCount * 0.20).toInt(), colorOpacity: 1.0, scale: 0.75, shadow: false),  // Light crown layer
+    ];
+
+    for (int l = 0; l < layers.length; l++) {
+      final layer = layers[l];
+      for (int i = 0; i < layer.count; i++) {
+        // Distribute leaves using golden ratio/sunflower style distribution for organic feel
+        final dist = maxRadius * math.sqrt(random.nextDouble()) * layer.scale;
+        final angle = random.range(0.0, 2 * math.pi);
+        final leafPos = center + Offset(math.cos(angle) * dist, math.sin(angle) * dist * 0.8);
+
+        final leafAngle = random.range(0.0, 2 * math.pi);
+        final leafSize = maxRadius * random.range(0.12, 0.25) * layer.scale;
+
+        // Choose color from palette based on layer depth
+        final colorIndex = switch (l) {
+          0 => 0, // Darkest base
+          1 => random.range(1.0, 3.0).toInt(), // Mid-light tones
+          _ => _leafColors.length - 1, // Bright highlight
+        };
+        final color = _leafColors[colorIndex].withOpacity(layer.colorOpacity);
+
+        // Draw leaf drop shadow
+        if (layer.shadow) {
+          canvas.drawCircle(
+            leafPos + const Offset(1, 1.5),
+            leafSize * 0.4,
+            Paint()..color = Colors.black.withOpacity(0.05),
+          );
+        }
+
+        _drawOrganicLeaf(canvas, leafPos, leafSize, leafAngle, color);
+      }
+    }
+  }
+
+  void _drawOrganicLeaf(Canvas canvas, Offset pos, double size, double angle, Color color) {
+    canvas.save();
+    canvas.translate(pos.dx, pos.dy);
+    canvas.rotate(angle);
 
     final leafPath = Path()
       ..moveTo(0, 0)
-      ..quadraticBezierTo(length * 0.4, -width, length, 0)
-      ..quadraticBezierTo(length * 0.4, width, 0, 0);
+      ..quadraticBezierTo(size * 0.5, -size * 0.38, size, 0)
+      ..quadraticBezierTo(size * 0.5, size * 0.38, 0, 0)
+      ..close();
 
-    canvas.drawPath(leafPath, Paint()..color = _foliageMid);
-    // Light half
-    final lightPath = Path()
-      ..moveTo(0, 0)
-      ..quadraticBezierTo(length * 0.4, -width * 0.9, length, 0)
-      ..lineTo(0, 0);
-    canvas.drawPath(lightPath, Paint()..color = _foliageLight.withOpacity(0.5));
-    // Vein
+    canvas.drawPath(leafPath, Paint()..color = color);
+
+    // Leaf center vein
     canvas.drawLine(
-      const Offset(2, 0), Offset(length * 0.85, 0),
+      Offset.zero,
+      Offset(size * 0.8, 0),
       Paint()
-        ..color = _foliageDark.withOpacity(0.35)
-        ..strokeWidth = 0.5
+        ..color = Colors.black.withOpacity(0.12)
+        ..strokeWidth = size * 0.08
         ..style = PaintingStyle.stroke,
     );
 
     canvas.restore();
   }
 
-  // ─── SAPLING ────────────────────────────────────────────────────────────────
-
-  void _paintSapling(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final gy = size.height * 0.90;
-    final trunkH = size.height * 0.32;
-    final trunkW = size.width * 0.05;
-    final canopyR = size.width * 0.20;
-    final canopyCY = gy - trunkH + canopyR * 0.15;
-
-    // Trunk
-    _drawTrunk(canvas, cx, gy, trunkH, trunkW);
-
-    // Small branches
-    _drawBranch(canvas, cx, gy - trunkH * 0.50, trunkH * 0.16,
-        math.pi / 4, trunkW * 0.50);
-    _drawBranch(canvas, cx, gy - trunkH * 0.50, trunkH * 0.14,
-        math.pi - math.pi / 4, trunkW * 0.50);
-
-    // Modest canopy
-    _drawCanopy(canvas, cx, canopyCY, canopyR, complexity: 1);
-  }
-
-  // ─── BLOOMING ───────────────────────────────────────────────────────────────
-
-  void _paintBlooming(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final gy = size.height * 0.90;
-    final trunkH = size.height * 0.38;
-    final trunkW = size.width * 0.065;
-    final canopyR = size.width * 0.30;
-    final canopyCY = gy - trunkH + canopyR * 0.18;
-
-    _drawTrunk(canvas, cx, gy, trunkH, trunkW);
-
-    // Branches
-    _drawBranch(canvas, cx, gy - trunkH * 0.45, trunkH * 0.22,
-        math.pi / 4, trunkW * 0.55);
-    _drawBranch(canvas, cx, gy - trunkH * 0.45, trunkH * 0.20,
-        math.pi - math.pi / 4, trunkW * 0.55);
-    _drawBranch(canvas, cx, gy - trunkH * 0.65, trunkH * 0.16,
-        math.pi / 3.5, trunkW * 0.40);
-    _drawBranch(canvas, cx, gy - trunkH * 0.65, trunkH * 0.14,
-        math.pi - math.pi / 3.5, trunkW * 0.40);
-
-    // Fuller canopy
-    _drawCanopy(canvas, cx, canopyCY, canopyR, complexity: 2);
-  }
-
-  // ─── MATURE ─────────────────────────────────────────────────────────────────
-
-  void _paintMature(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final gy = size.height * 0.90;
-    final trunkH = size.height * 0.44;
-    final trunkW = size.width * 0.09;
-    final canopyR = size.width * 0.40;
-    final canopyCY = gy - trunkH + canopyR * 0.22;
-
-    // Root flare (drawn first, behind trunk)
-    _drawRootFlare(canvas, cx, gy, trunkW);
-
-    // Trunk
-    _drawTrunk(canvas, cx, gy, trunkH, trunkW);
-
-    // Major branches (drawn before canopy so canopy covers upper parts)
-    _drawBranch(canvas, cx, gy - trunkH * 0.38, trunkH * 0.28,
-        math.pi / 3.8, trunkW * 0.55);
-    _drawBranch(canvas, cx, gy - trunkH * 0.38, trunkH * 0.26,
-        math.pi - math.pi / 3.8, trunkW * 0.55);
-    _drawBranch(canvas, cx, gy - trunkH * 0.58, trunkH * 0.20,
-        math.pi / 3.2, trunkW * 0.40);
-    _drawBranch(canvas, cx, gy - trunkH * 0.58, trunkH * 0.18,
-        math.pi - math.pi / 3.2, trunkW * 0.40);
-    _drawBranch(canvas, cx, gy - trunkH * 0.75, trunkH * 0.14,
-        math.pi / 3, trunkW * 0.30);
-
-    // Grand canopy
-    _drawCanopy(canvas, cx, canopyCY, canopyR, complexity: 3);
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Drawing helpers
-  // ═══════════════════════════════════════════════════════════════════════════
-
-  /// Draws a tapered trunk with bark-like gradient and texture lines.
-  void _drawTrunk(Canvas canvas, double cx, double gy, double h, double w) {
-    final topW = w * 0.50; // trunk narrows at top
-
-    final path = Path()
-      ..moveTo(cx - w / 2, gy) // base left
-      ..cubicTo(
-        cx - w * 0.46, gy - h * 0.35,
-        cx - topW * 0.6, gy - h * 0.70,
-        cx - topW / 2,  gy - h,
-      )
-      ..lineTo(cx + topW / 2, gy - h) // top right
-      ..cubicTo(
-        cx + topW * 0.6, gy - h * 0.70,
-        cx + w * 0.46,   gy - h * 0.35,
-        cx + w / 2,      gy,
-      )
-      ..close();
-
-    // 3-stop gradient for rounded trunk shading
-    final trunkPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: [_trunkDark, _trunkHighlight, _trunkBase, _trunkDark],
-        stops: const [0.0, 0.30, 0.70, 1.0],
-      ).createShader(Rect.fromLTWH(cx - w / 2, gy - h, w, h));
-
-    canvas.drawPath(path, trunkPaint);
-
-    // Bark texture — alternating horizontal lines
-    final barkPaint = Paint()
-      ..color = _trunkDark.withOpacity(0.22)
-      ..strokeWidth = 0.8
-      ..style = PaintingStyle.stroke;
-    for (int i = 1; i <= 7; i++) {
-      final y = gy - h * (i / 8.5);
-      final xShift = (i.isEven ? -1 : 1) * w * 0.04;
-      // Interpolate width from base (wider) to top (narrower)
-      final t = i / 8.5;
-      final halfW = w / 2 * (1.0 - t) + topW / 2 * t;
-      canvas.drawLine(
-        Offset(cx - halfW * 0.6 + xShift, y),
-        Offset(cx + halfW * 0.4 + xShift, y - h * 0.015),
-        barkPaint,
-      );
-    }
-
-    // Subtle knot (hole) on larger trunks
-    if (w > 10) {
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: Offset(cx + w * 0.08, gy - h * 0.30),
-          width: w * 0.18,
-          height: w * 0.12,
-        ),
-        Paint()..color = _trunkDark.withOpacity(0.30),
-      );
-    }
-  }
-
-  /// Draws visible surface root flare at the trunk base.
-  void _drawRootFlare(Canvas canvas, double cx, double gy, double trunkW) {
-    final paint = Paint()..color = _trunkDark.withOpacity(0.55);
-
-    // Left root
-    final left = Path()
-      ..moveTo(cx - trunkW * 0.45, gy)
-      ..quadraticBezierTo(
-        cx - trunkW * 1.6, gy - trunkW * 0.25,
-        cx - trunkW * 2.2, gy + trunkW * 0.12,
-      )
-      ..quadraticBezierTo(
-        cx - trunkW * 1.4, gy + trunkW * 0.20,
-        cx - trunkW * 0.35, gy + trunkW * 0.05,
-      )
-      ..close();
-    canvas.drawPath(left, paint);
-
-    // Right root
-    final right = Path()
-      ..moveTo(cx + trunkW * 0.45, gy)
-      ..quadraticBezierTo(
-        cx + trunkW * 1.4, gy - trunkW * 0.18,
-        cx + trunkW * 1.9, gy + trunkW * 0.15,
-      )
-      ..quadraticBezierTo(
-        cx + trunkW * 1.1, gy + trunkW * 0.20,
-        cx + trunkW * 0.35, gy + trunkW * 0.05,
-      )
-      ..close();
-    canvas.drawPath(right, paint);
-
-    // Small center root
-    final center = Path()
-      ..moveTo(cx + trunkW * 0.15, gy)
-      ..quadraticBezierTo(
-        cx + trunkW * 0.7, gy - trunkW * 0.08,
-        cx + trunkW * 1.0, gy + trunkW * 0.18,
-      )
-      ..quadraticBezierTo(
-        cx + trunkW * 0.5, gy + trunkW * 0.15,
-        cx + trunkW * 0.10, gy + trunkW * 0.03,
-      )
-      ..close();
-    canvas.drawPath(center, paint);
-  }
-
-  /// Draws a curved branch extending from the trunk.
-  void _drawBranch(Canvas canvas, double cx, double baseY, double length,
-      double angle, double width) {
-    final endX = cx + math.cos(angle) * length;
-    final endY = baseY - math.sin(angle) * length;
-    final paint = Paint()
-      ..color = _trunkBase
-      ..strokeWidth = width
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
-    final path = Path()
-      ..moveTo(cx, baseY)
-      ..quadraticBezierTo(
-        cx + math.cos(angle) * length * 0.55,
-        baseY - math.sin(angle) * length * 0.55 - length * 0.05,
-        endX,
-        endY,
-      );
-    canvas.drawPath(path, paint);
-  }
-
-  /// Draws the tree canopy using multiple layers of overlapping blobs.
-  /// [complexity] controls density: 1=sparse (sapling), 2=medium, 3=full.
-  void _drawCanopy(Canvas canvas, double cx, double cy, double r,
-      {required int complexity}) {
-    // ── Drop shadow ──
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(cx + 3, cy + r * 0.55),
-        width: r * 2.0,
-        height: r * 0.5,
-      ),
-      Paint()
-        ..color = Colors.black.withOpacity(0.06)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
-    );
-
-    // ── Layer 1: Dark back blobs (shadows / depth) ──
-    final darkP = Paint()..color = _foliageDark;
-    // Handcrafted positions: (dx, dy, blobRadius) — normalized to canopyR
-    const darkBlobs = [
-      (-0.35, 0.15, 0.50),
-      ( 0.38, 0.10, 0.48),
-      ( 0.00,-0.05, 0.52),
-      (-0.45,-0.12, 0.38),
-      ( 0.42,-0.18, 0.36),
-    ];
-    for (final b in darkBlobs) {
-      canvas.drawCircle(Offset(cx + b.$1 * r, cy + b.$2 * r), b.$3 * r, darkP);
-    }
-
-    // ── Layer 2: Mid-tone blobs ──
-    final midP = Paint()..color = _foliageMid;
-    const midBlobs = [
-      (-0.18, 0.08, 0.48),
-      ( 0.22, 0.02, 0.46),
-      ( 0.00,-0.15, 0.44),
-      (-0.35,-0.08, 0.38),
-      ( 0.35,-0.12, 0.36),
-      (-0.10, 0.20, 0.34),
-      ( 0.15, 0.18, 0.32),
-    ];
-    for (final b in midBlobs) {
-      canvas.drawCircle(Offset(cx + b.$1 * r, cy + b.$2 * r), b.$3 * r, midP);
-    }
-
-    // ── Layer 3: Light highlight blobs (upper portion) ──
-    final lightP = Paint()..color = _foliageLight;
-    const lightBlobs = [
-      (-0.12,-0.18, 0.42),
-      ( 0.15,-0.25, 0.36),
-      (-0.30,-0.15, 0.32),
-      ( 0.05,-0.08, 0.38),
-    ];
-    for (final b in lightBlobs) {
-      canvas.drawCircle(Offset(cx + b.$1 * r, cy + b.$2 * r), b.$3 * r, lightP);
-    }
-
-    // ── Layer 4: Bright accent highlights (for complexity ≥ 2) ──
-    if (complexity >= 2) {
-      final brightP = Paint()..color = _foliageBright;
-      canvas.drawCircle(Offset(cx - r * 0.08, cy - r * 0.30), r * 0.28, brightP);
-      canvas.drawCircle(Offset(cx + r * 0.18, cy - r * 0.34), r * 0.22, brightP);
-      canvas.drawCircle(Offset(cx - r * 0.25, cy - r * 0.22), r * 0.20, brightP);
-    }
-
-    // ── Extra density for complexity 3 (mature) ──
-    if (complexity >= 3) {
-      // Additional mid blobs for fullness
-      canvas.drawCircle(
-        Offset(cx - r * 0.48, cy + r * 0.02), r * 0.30,
-        Paint()..color = _foliageMid,
-      );
-      canvas.drawCircle(
-        Offset(cx + r * 0.50, cy - r * 0.02), r * 0.28,
-        Paint()..color = _foliageMid,
-      );
-      // Top highlight crown
-      canvas.drawCircle(
-        Offset(cx, cy - r * 0.38), r * 0.24,
-        Paint()..color = _foliageBright.withOpacity(0.7),
-      );
-      // Bottom edge detail
-      canvas.drawCircle(
-        Offset(cx - r * 0.22, cy + r * 0.28), r * 0.26,
-        Paint()..color = _foliageDark.withOpacity(0.5),
-      );
-      canvas.drawCircle(
-        Offset(cx + r * 0.20, cy + r * 0.26), r * 0.24,
-        Paint()..color = _foliageDark.withOpacity(0.5),
-      );
-    }
-  }
-
   @override
   bool shouldRepaint(OrganicTreePainter old) =>
-      old.stage != stage || old.skinId != skinId || old.isRecovery != isRecovery;
+      old.days != days || old.skinId != skinId || old.isRecovery != isRecovery;
 }
