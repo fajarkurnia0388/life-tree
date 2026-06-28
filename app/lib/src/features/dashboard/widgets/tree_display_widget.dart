@@ -74,111 +74,130 @@ class TreeDisplayWidget extends ConsumerWidget {
       _                     => const [Color(0xFF66BB6A), Color(0xFF43A047)],
     };
 
-    const double groundRatio = 0.22; // 22% of height is ground strip
+    const double groundRatio = 0.22;
     final double treeSize = height * 0.80;
+    const Duration skyTransition = Duration(milliseconds: 600);
 
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 700),
-      switchInCurve: Curves.easeInOut,
-      switchOutCurve: Curves.easeInOut,
-      transitionBuilder: (child, animation) {
-        return FadeTransition(opacity: animation, child: child);
-      },
-      child: ClipRRect(
-        key: ValueKey('$skinId-$stage-$activeTime'),
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
-        child: SizedBox(
-          width: width,
-          height: height,
-          child: Stack(
-            fit: StackFit.expand,
-            alignment: Alignment.bottomCenter,
-            children: [
-              // ── Sky background (full rectangle) ──
+    // ── Wrap everything in a rounded clip ──
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(Radius.circular(16)),
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: Stack(
+          fit: StackFit.expand,
+          alignment: Alignment.bottomCenter,
+          children: [
+
+            // ── Sky background — AnimatedContainer interpolates colors smoothly ──
+            Positioned.fill(
+              child: AnimatedContainer(
+                duration: skyTransition,
+                curve: Curves.easeInOut,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: const [0.0, 0.75],
+                    colors: skyColors,
+                  ),
+                ),
+              ),
+            ),
+
+            // ── Dynamic Domain Aura ──
+            if (activeDomainColor != null)
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.0, 0.75],
-                      colors: skyColors,
-                    ),
-                  ),
-                ),
-              ),
-
-              // ── Dynamic Domain Aura (glow behind the tree) ──
-              if (activeDomainColor != null)
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: const Alignment(0, 0.2),
-                        radius: 0.65,
-                        colors: [
-                          activeDomainColor!.withOpacity(0.32),
-                          activeDomainColor!.withOpacity(0.0),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-              // ── Night stars (drawn over entire sky) ──
-              if (activeTime == CelestialTime.night)
-                Positioned.fill(
-                  child: CustomPaint(painter: _StarsPainter()),
-                ),
-
-              // ── Sun / Moon celestial body ──
-              ..._buildCelestialBody(activeTime, width, height),
-
-              // ── Ground strip (bottom 22%) ──
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  height: height * groundRatio,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: groundColors,
-                    ),
-                  ),
-                ),
-              ),
-
-              // ── Ground edge fade: thin darker strip at the top of ground ──
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: height * groundRatio - 4,
-                child: Container(
-                  height: 8,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                    gradient: RadialGradient(
+                      center: const Alignment(0, 0.2),
+                      radius: 0.65,
                       colors: [
-                        Colors.black.withOpacity(0.0),
-                        Colors.black.withOpacity(0.22),
+                        activeDomainColor!.withOpacity(0.32),
+                        activeDomainColor!.withOpacity(0.0),
                       ],
                     ),
                   ),
                 ),
               ),
 
-              // ── Tree (realistic PNG asset; falls back to procedural painter
-              //    if the asset for this stage hasn't been added yet) ──
-              Positioned(
-                bottom: height * 0.04,
-                left: 0,
-                right: 0,
-                child: Center(
+            // ── Night stars ──
+            if (activeTime == CelestialTime.night)
+              Positioned.fill(
+                child: AnimatedOpacity(
+                  duration: skyTransition,
+                  opacity: activeTime == CelestialTime.night ? 1.0 : 0.0,
+                  child: CustomPaint(painter: _StarsPainter()),
+                ),
+              ),
+
+            // ── Sun / Moon celestial body — AnimatedSwitcher for position changes ──
+            AnimatedSwitcher(
+              duration: skyTransition,
+              transitionBuilder: (child, animation) =>
+                  FadeTransition(opacity: animation, child: child),
+              child: KeyedSubtree(
+                key: ValueKey(activeTime),
+                child: Stack(
+                  children: _buildCelestialBody(activeTime, width, height),
+                ),
+              ),
+            ),
+
+            // ── Ground strip — AnimatedContainer for smooth color lerp ──
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: AnimatedContainer(
+                duration: skyTransition,
+                curve: Curves.easeInOut,
+                height: height * groundRatio,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: groundColors,
+                  ),
+                ),
+              ),
+            ),
+
+            // ── Ground edge shadow ──
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: height * groundRatio - 4,
+              child: Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.0),
+                      Colors.black.withOpacity(0.22),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // ── Tree — AnimatedSwitcher only triggers on stage/skin change, NOT on time change ──
+            Positioned(
+              bottom: height * 0.04,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 700),
+                  switchInCurve: Curves.easeInOut,
+                  switchOutCurve: Curves.easeInOut,
+                  transitionBuilder: (child, animation) =>
+                      FadeTransition(opacity: animation, child: child),
                   child: SizedBox(
+                    key: ValueKey('tree-$skinId-$stage'),
                     width: treeSize,
                     height: treeSize,
                     child: Image.asset(
@@ -187,8 +206,6 @@ class TreeDisplayWidget extends ConsumerWidget {
                       alignment: Alignment.bottomCenter,
                       filterQuality: FilterQuality.medium,
                       errorBuilder: (context, error, stackTrace) {
-                        // Asset missing → render the procedural tree instead so
-                        // the user always sees *something* sensible.
                         return CustomPaint(
                           painter: OrganicTreePainter(
                             days: cumulativeDays.toDouble(),
@@ -201,20 +218,21 @@ class TreeDisplayWidget extends ConsumerWidget {
                   ),
                 ),
               ),
+            ),
 
-              // ── Snow overlay (Recovery mode) ──
-              if (isRecovery)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: CustomPaint(painter: _SnowflakePainter()),
-                  ),
+            // ── Snow overlay (Recovery mode) ──
+            if (isRecovery)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: CustomPaint(painter: _SnowflakePainter()),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );
   }
+
 
   List<Widget> _buildCelestialBody(CelestialTime time, double w, double h) {
     final double sunMoonSize = h * 0.14; // proportional to panorama height

@@ -56,7 +56,7 @@ class DevAgePlayNotifier extends StateNotifier<bool> {
   void start() {
     state = true;
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(milliseconds: 150), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 800), (timer) {
       final current = _ref.read(devCumulativeDaysOverrideProvider) ?? 0;
       if (current >= 100) {
         _ref.read(devCumulativeDaysOverrideProvider.notifier).state = 0;

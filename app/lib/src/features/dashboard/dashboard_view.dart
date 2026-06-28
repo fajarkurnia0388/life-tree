@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -168,6 +169,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   ),
                   const SizedBox(height: 16),
                   
+                  // Dev Toolbar (only in Dev Mode)
+                  if (data.profile.isDeveloperMode) ...[
+                    _buildDevToolbar(context, data),
+                    const SizedBox(height: 16),
+                  ],
+
                   // Radar Chart Keseimbangan
                   _buildRadarChartCard(data),
                   const SizedBox(height: 16),
@@ -236,6 +243,231 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   }
 
 
+
+  Widget _buildDevToolbar(BuildContext context, DashboardData data) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final ageOverride = ref.watch(devCumulativeDaysOverrideProvider);
+        final timeOverride = ref.watch(devTimeOfDayOverrideProvider);
+        final isAgePlaying = ref.watch(devAgePlayProvider);
+        final isTimePlaying = ref.watch(devTimePlayProvider);
+        final currentAge = ageOverride ?? data.cumulativeDays;
+
+        return Card(
+          color: Colors.blueGrey.withOpacity(0.06),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.blueGrey.withOpacity(0.2), width: 1),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header
+                Row(
+                  children: [
+                    const Icon(Icons.tune_rounded, size: 15, color: Colors.blueGrey),
+                    const SizedBox(width: 6),
+                    const Text(
+                      'DEV TOOLS 🛠️',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    const Spacer(),
+                    if (ageOverride != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '$ageOverride Hari Virtual',
+                          style: const TextStyle(fontSize: 10, color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                  ],
+                ),
+
+                const SizedBox(height: 6),
+                const Divider(height: 1),
+                const SizedBox(height: 8),
+
+                // ── Tree Age Section ──
+                Row(
+                  children: [
+                    const Icon(Icons.nature_people_rounded, size: 14, color: Colors.green),
+                    const SizedBox(width: 4),
+                    const Text('Usia Pohon', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const Spacer(),
+                    // Play/Pause age simulation
+                    GestureDetector(
+                      onTap: () => ref.read(devAgePlayProvider.notifier).toggle(),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: isAgePlaying
+                              ? Colors.green.withOpacity(0.15)
+                              : Colors.grey.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isAgePlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                              size: 14,
+                              color: isAgePlaying ? Colors.green : Colors.grey,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              isAgePlaying ? 'Jeda' : 'Putar',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: isAgePlaying ? Colors.green : Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    // Reset button
+                    if (ageOverride != null)
+                      GestureDetector(
+                        onTap: () {
+                          ref.read(devAgePlayProvider.notifier).stop();
+                          ref.read(devCumulativeDaysOverrideProvider.notifier).state = null;
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            'Reset',
+                            style: TextStyle(fontSize: 10, color: Colors.red, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+
+                // Age slider — di sini TIDAK ada ScrollView parent → bebas gesture!
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 3,
+                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+                    activeTrackColor: Colors.green,
+                    thumbColor: Colors.green,
+                    inactiveTrackColor: Colors.green.withOpacity(0.2),
+                  ),
+                  child: Slider(
+                    value: currentAge.toDouble().clamp(0.0, 100.0),
+                    min: 0,
+                    max: 100,
+                    divisions: 100,
+                    label: '$currentAge Hari',
+                    onChanged: (val) {
+                      ref.read(devAgePlayProvider.notifier).stop();
+                      ref.read(devCumulativeDaysOverrideProvider.notifier).state = val.toInt();
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+                const Divider(height: 1),
+                const SizedBox(height: 8),
+
+                // ── Sky Time Section ──
+                Row(
+                  children: [
+                    const Icon(Icons.nights_stay_rounded, size: 14, color: Colors.purple),
+                    const SizedBox(width: 4),
+                    const Text('Waktu Langit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const Spacer(),
+                    // Play/Pause time simulation
+                    GestureDetector(
+                      onTap: () => ref.read(devTimePlayProvider.notifier).toggle(),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: isTimePlaying
+                              ? Colors.purple.withOpacity(0.15)
+                              : Colors.grey.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isTimePlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                              size: 14,
+                              color: isTimePlaying ? Colors.purple : Colors.grey,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              isTimePlaying ? 'Jeda' : 'Siklus Auto',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: isTimePlaying ? Colors.purple : Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                // Time chips
+                Wrap(
+                  spacing: 6,
+                  children: [
+                    _timeChip(ref, 'Auto', null, timeOverride),
+                    _timeChip(ref, '🌅 Pagi', CelestialTime.morning, timeOverride),
+                    _timeChip(ref, '☀️ Siang', CelestialTime.noon, timeOverride),
+                    _timeChip(ref, '🌇 Sore', CelestialTime.sunset, timeOverride),
+                    _timeChip(ref, '🌙 Malam', CelestialTime.night, timeOverride),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _timeChip(WidgetRef ref, String label, CelestialTime? time, CelestialTime currentOverride) {
+    final resolvedTime = time ?? CelestialTime.auto;
+    final isSelected = currentOverride == resolvedTime;
+    return FilterChip(
+      label: Text(label, style: TextStyle(fontSize: 11, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+      selected: isSelected,
+      onSelected: (_) {
+        ref.read(devTimePlayProvider.notifier).stop();
+        ref.read(devTimeOfDayOverrideProvider.notifier).state = resolvedTime;
+      },
+      selectedColor: Colors.purple.withOpacity(0.2),
+      checkmarkColor: Colors.purple,
+      showCheckmark: false,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      visualDensity: VisualDensity.compact,
+    );
+  }
 
   void _showSkinShop(BuildContext context, WidgetRef ref, UserProfile profile) {
     showModalBottomSheet(
