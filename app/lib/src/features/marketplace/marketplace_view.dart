@@ -372,7 +372,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary.withOpacity(0.1),
+                                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -396,7 +396,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                                       ' (${t.ratingsCount})',
                                       style: TextStyle(
                                         fontSize: 11,
-                                        color: theme.colorScheme.onSurface.withOpacity(0.5),
+                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                                       ),
                                     ),
                                   ],
@@ -413,7 +413,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                               'Oleh: ${t.creatorPenName}',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
@@ -421,7 +421,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                             Text(
                               t.description,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.8),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -433,28 +433,28 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                                     Icon(
                                       Icons.timer_outlined,
                                       size: 14,
-                                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
                                       'MVA: ${t.mvaDuration}m',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                       ),
                                     ),
                                     const SizedBox(width: 16),
                                     Icon(
                                       Icons.fitness_center_rounded,
                                       size: 14,
-                                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
                                       'Beban: ${t.friction + t.energy} Poin',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                       ),
                                     ),
                                   ],
@@ -464,14 +464,14 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                                     Icon(
                                       Icons.download_rounded,
                                       size: 14,
-                                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
                                       '${t.downloadsCount}',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                       ),
                                     ),
                                   ],
@@ -648,7 +648,7 @@ class _ShareTemplateBottomSheetState extends ConsumerState<_ShareTemplateBottomS
                             width: 40,
                             height: 4,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.onSurface.withOpacity(0.2),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -662,7 +662,7 @@ class _ShareTemplateBottomSheetState extends ConsumerState<_ShareTemplateBottomS
                         const SizedBox(height: 4),
                         Text(
                           'Bantu orang lain membangun rutinitas sehat berdasarkan pengalaman Anda.',
-                          style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                          style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 24),

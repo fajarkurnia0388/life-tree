@@ -211,7 +211,7 @@ class _TreeSkinShopBottomSheetState extends ConsumerState<TreeSkinShopBottomShee
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: theme.colorScheme.onSurface.withOpacity(0.2),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -225,7 +225,7 @@ class _TreeSkinShopBottomSheetState extends ConsumerState<TreeSkinShopBottomShee
           const SizedBox(height: 4),
           Text(
             'Visualisasikan konsistensi Anda dengan gaya pohon unik.',
-            style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+            style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -281,7 +281,7 @@ class _TreeSkinShopBottomSheetState extends ConsumerState<TreeSkinShopBottomShee
                           'Preview: ${s['preview']}',
                           style: TextStyle(
                             fontSize: 10,
-                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                         ),
                       ],

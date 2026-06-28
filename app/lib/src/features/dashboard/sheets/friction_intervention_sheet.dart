@@ -162,12 +162,26 @@ class _FrictionInterventionSheetState
                         final isSelected = _recoveryDays == days;
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: ChoiceChip(
-                            label: Text('$days Hari'),
+                          child: Semantics(
+                            button: true,
                             selected: isSelected,
-                            onSelected: (selected) {
-                              if (selected) setState(() => _recoveryDays = days);
-                            },
+                            label: 'Mode istirahat $days hari',
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(minHeight: 44),
+                              child: ChoiceChip(
+                                label: Text('$days Hari'),
+                                selected: isSelected,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.padded,
+                                labelPadding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 6.0),
+                                onSelected: (selected) {
+                                  if (selected) {
+                                    setState(() => _recoveryDays = days);
+                                  }
+                                },
+                              ),
+                            ),
                           ),
                         );
                       }).toList(),
@@ -232,6 +246,7 @@ class _FrictionInterventionSheetState
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(desc, style: const TextStyle(fontSize: 12)),
         secondary: Icon(icon,
+            semanticLabel: null,
             color: isSelected
                 ? theme.colorScheme.primary
                 : theme.colorScheme.onSurface.withValues(alpha: 0.4)),

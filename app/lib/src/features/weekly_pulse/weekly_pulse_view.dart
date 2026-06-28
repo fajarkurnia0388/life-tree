@@ -185,7 +185,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                 children: [
                   // Heading card
                   Card(
-                    color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                    color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                     elevation: 0,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -200,7 +200,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                             'Jawablah sejujur mungkin berdasarkan apa yang Anda rasakan selama 2 minggu terakhir.',
                             style: TextStyle(
                               fontSize: 12,
-                              color: theme.colorScheme.onSurface.withOpacity(0.7),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                             ),
                             textAlign: TextAlign.center,
                           ),

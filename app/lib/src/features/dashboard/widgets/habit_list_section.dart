@@ -1,0 +1,247 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../data/local_db/database.dart';
+import '../dashboard_provider.dart';
+
+/// Widget untuk menampilkan daftar kebiasaan hari ini
+class HabitListSection extends ConsumerWidget {
+  const HabitListSection({
+    super.key,
+    required this.habitsWithLogs,
+    required this.selectedDomainFilter,
+    required this.onDomainReset,
+    required this.onHabitToggle,
+    required this.onFrictionIntervention,
+    required this.activeActionOfTheDay,
+    this.isRecoveryActive = false,
+  });
+
+  final List<HabitWithLog> habitsWithLogs;
+  final String selectedDomainFilter;
+  final VoidCallback onDomainReset;
+  final Function(BuildContext, Habit, HabitLog?) onHabitToggle;
+  final Function(BuildContext, Habit) onFrictionIntervention;
+  final Habit? activeActionOfTheDay;
+  final bool isRecoveryActive;
+
+  Color _getDomainColor(String? domain) {
+    switch (domain) {
+      case 'Tubuh': return const Color(0xFF6B8E78);
+      case 'Keuangan': return const Color(0xFFC29B38);
+      case 'Hubungan': return const Color(0xFFC78585);
+      case 'Emosi': return const Color(0xFF8595C7);
+      case 'Karir': return const Color(0xFF6CA8B5);
+      case 'Rekreasi': return const Color(0xFFD49E6A);
+      default: return const Color(0xFF6B8E78);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Jadwal Kebiasaan Hari Ini',
+              style: theme.textTheme.titleLarge,
+            ),
+            if (selectedDomainFilter != 'Semua')
+              TextButton.icon(
+                onPressed: onDomainReset,
+                icon: const Icon(Icons.clear, size: 14),
+                label: const Text('Reset', style: TextStyle(fontSize: 12)),
+                style: TextButton.styleFrom(
+                  foregroundColor: _getDomainColor(selectedDomainFilter),
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(50, 30),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        if (habitsWithLogs.isEmpty)
+          _buildEmptyDomainHabitsCard(theme, context, selectedDomainFilter)
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: habitsWithLogs.length,
+            itemBuilder: (context, index) {
+              final item = habitsWithLogs[index];
+              final isAction = activeActionOfTheDay?.habitId == item.habit.habitId;
+              return _buildHabitItemTile(context, ref, theme, item, isAction);
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyDomainHabitsCard(ThemeData theme, BuildContext context, String selectedDomain) {
+    return Card(
+      child: InkWell(
+        onTap: () => context.push('/add-habit'),
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
+          child: Column(
+            children: [
+              Icon(Icons.add_circle_outline_rounded, size: 40, color: theme.colorScheme.primary),
+              const SizedBox(height: 12),
+              const Text(
+                'Belum ada kebiasaan aktif',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Ketuk untuk membuat kebiasaan pertamamu di domain $selectedDomain.',
+                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHabitItemTile(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeData theme,
+    HabitWithLog item,
+    bool isAction,
+  ) {
+    final isDone = item.log?.status == 'Done';
+    final domainColor = _getDomainColor(item.habit.domainTag);
+    final paused = isRecoveryActive && !isDone;
+    final beban = item.habit.initiationFriction + item.habit.energyCost;
+    final semanticsLabel = paused
+        ? 'Kebiasaan ${item.habit.title}, dijeda untuk mode istirahat'
+        : 'Kebiasaan ${item.habit.title}, ${isDone ? 'selesai' : 'belum selesai'}, beban $beban poin';
+
+    return Semantics(
+      label: semanticsLabel,
+      button: !paused,
+      child: Opacity(
+        opacity: paused ? 0.55 : 1.0,
+        child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 6.0),
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: isDone ? domainColor : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+              width: isDone ? 2 : 1,
+            ),
+          ),
+          child: InkWell(
+            onTap: (isDone || paused) ? null : () => onHabitToggle(context, item.habit, item.log),
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    margin: const EdgeInsets.only(right: 12),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isDone ? domainColor : Colors.transparent,
+                    ),
+                    child: Center(
+                      child: isDone
+                          ? const Icon(Icons.check, size: 18, color: Colors.white)
+                          : Icon(
+                              paused ? Icons.ac_unit_rounded : Icons.circle_outlined,
+                              size: 18,
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                            ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.habit.title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: isAction ? FontWeight.bold : FontWeight.normal,
+                            decoration: isDone ? TextDecoration.lineThrough : TextDecoration.none,
+                            color: isDone ? theme.colorScheme.onSurface.withValues(alpha: 0.4) : theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: domainColor.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                item.habit.domainTag ?? 'Tubuh',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: domainColor,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Beban: ${beban}pt',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (paused)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      constraints: const BoxConstraints(minHeight: 44),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Dijeda',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                      ),
+                    )
+                  else if (!isDone && item.log == null)
+                    OutlinedButton(
+                      onPressed: () => onFrictionIntervention(context, item.habit),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(64, 44),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+                      ),
+                      child: Text(
+                        'Tidak Sanggup',
+                        style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

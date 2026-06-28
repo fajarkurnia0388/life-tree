@@ -23,12 +23,168 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
   int _selectedMood = 3; // Default 3 (Biasa Saja)
   bool _showDeepReflection = false;
 
+  // P2-04: Mood historical context (last 7 days)
+  int? _yesterdayMood;
+  double? _avg7DayMood;
+  // 7 ints (oldest -> newest = today), 0 means no entry that day.
+  List<int> _last7DayMoods = const [];
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadExistingEntry();
+      _loadMoodContext();
     });
+  }
+
+  /// P2-04: Query the last 7 days of this user's journal entries and compute
+  /// yesterday's mood, the 7-day average, and a per-day series for the sparkline.
+  Future<void> _loadMoodContext() async {
+    final db = ref.read(dbProvider);
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final yesterdayStart = todayStart.subtract(const Duration(days: 1));
+    // Window covers the last 7 calendar days, inclusive of today.
+    final windowStart = todayStart.subtract(const Duration(days: 6));
+
+    final profiles = await db.select(db.userProfiles).get();
+    if (profiles.isEmpty) return;
+    final userId = profiles.first.userId;
+
+    final entries = await (db.select(db.journalEntries)
+          ..where((tbl) =>
+              tbl.userId.equals(userId) &
+              tbl.deletedAt.isNull() &
+              tbl.date.isBiggerOrEqualValue(windowStart)))
+        .get();
+
+    // Map normalized day -> moodScore for quick lookup.
+    final moodByDate = <DateTime, int>{};
+    for (final e in entries) {
+      final d = DateTime(e.date.year, e.date.month, e.date.day);
+      moodByDate[d] = e.moodScore;
+    }
+
+    // Build the 7-day series from oldest (windowStart) to newest (today).
+    final series = <int>[];
+    for (int i = 0; i < 7; i++) {
+      final day = windowStart.add(Duration(days: i));
+      series.add(moodByDate[day] ?? 0);
+    }
+
+    final recorded = series.where((s) => s > 0).toList();
+    final avg = recorded.isEmpty
+        ? null
+        : recorded.reduce((a, b) => a + b) / recorded.length;
+
+    if (mounted) {
+      setState(() {
+        _yesterdayMood = moodByDate[yesterdayStart];
+        _avg7DayMood = avg;
+        _last7DayMoods = series;
+      });
+    }
+  }
+
+  String _emojiForScore(int score) {
+    final match = _moods.firstWhere(
+      (m) => m['score'] == score,
+      orElse: () => _moods[2],
+    );
+    return match['emoji'] as String;
+  }
+
+  /// P2-04: Context line + sparkline summarizing the last 7 days of mood.
+  Widget _buildMoodContext(ThemeData theme) {
+    final hasData = _last7DayMoods.any((s) => s > 0);
+
+    if (!hasData) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          'Belum ada data mood minggu ini.',
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
+        ),
+      );
+    }
+
+    final parts = <String>[];
+    if (_yesterdayMood != null) {
+      parts.add('Kemarin: ${_emojiForScore(_yesterdayMood!)} ($_yesterdayMood)');
+    }
+    if (_avg7DayMood != null) {
+      parts.add('Rata-rata 7 hari: ${_avg7DayMood!.toStringAsFixed(1)}');
+    }
+    final contextLine = parts.join(' · ');
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (contextLine.isNotEmpty)
+            Text(
+              contextLine,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          const SizedBox(height: 8),
+          _buildSparkline(theme),
+        ],
+      ),
+    );
+  }
+
+  /// P2-04: Lightweight inline sparkline (mini bars) of the last 7 days.
+  Widget _buildSparkline(ThemeData theme) {
+    final primary = theme.colorScheme.primary;
+    return Semantics(
+      label: 'Tren mood 7 hari terakhir: '
+          '${_last7DayMoods.map((s) => s == 0 ? 'tidak ada data' : '$s').join(', ')}',
+      child: SizedBox(
+        height: 32,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: _last7DayMoods.map((score) {
+            // Score 1-5 maps to a proportional height; 0 = no data (faint stub).
+            final ratio = score == 0 ? 0.0 : score / 5.0;
+            final barHeight = 4 + (ratio * 24); // 4..28 logical px
+            return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Container(
+                  height: barHeight,
+                  decoration: BoxDecoration(
+                    color: score == 0
+                        ? primary.withValues(alpha: 0.15)
+                        : primary.withValues(alpha: 0.35 + ratio * 0.45),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
   }
 
   Future<void> _loadExistingEntry() async {
@@ -237,46 +393,61 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
               ),
               const SizedBox(height: 24),
 
+              // P2-04: Mood historical context + sparkline
+              _buildMoodContext(theme),
+              const SizedBox(height: 16),
+
               // Mood Emojis
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: _moods.map((mood) {
                   final score = mood['score'] as int;
                   final isSelected = _selectedMood == score;
-                  return InkWell(
-                    onTap: () {
-                      setState(() {
-                        _selectedMood = score;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(16),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isSelected ? theme.colorScheme.primary.withOpacity(0.12) : Colors.transparent,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-                          width: 1.5,
+                  return Semantics(
+                    button: true,
+                    selected: isSelected,
+                    label: 'Mood: ${mood['label']}',
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          _selectedMood = score;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minWidth: 44,
+                          minHeight: 44,
                         ),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            mood['emoji'] as String,
-                            style: const TextStyle(fontSize: 40),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            mood['label'] as String,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.6),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.12) : Colors.transparent,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+                              width: 1.5,
                             ),
                           ),
-                        ],
+                          child: Column(
+                            children: [
+                              Text(
+                                mood['emoji'] as String,
+                                style: const TextStyle(fontSize: 40),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                mood['label'] as String,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   );

@@ -24,6 +24,17 @@ class RadarChartWidget extends StatelessWidget {
     'Rekreasi'
   ];
 
+  /// Pembulatan skor untuk tampilan ringkas (0-10).
+  int _scoreOf(String domain) =>
+      (scores[domain] ?? 0.0).clamp(0.0, 10.0).round();
+
+  /// Membangun label pembaca layar yang menyebutkan tiap domain dan skornya
+  /// dalam urutan kanonik.
+  String _buildSemanticsLabel() {
+    final parts = _domains.map((d) => '$d ${_scoreOf(d)} dari 10').join(', ');
+    return 'Radar keseimbangan: $parts.';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -42,51 +53,131 @@ class RadarChartWidget extends StatelessWidget {
               'Ketuk nama domain pada radar untuk memfokuskan dasbor. Domain non-aktif diberi tanda (Soon).',
               style: TextStyle(
                 fontSize: 11,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              height: 260,
-              width: 260,
-              child: GestureDetector(
-                onTapUp: (details) {
-                  if (onDomainSelected == null) return;
-                  const center = Offset(130, 130);
-                  const maxRadius = 110.0;
-                  const labelRadius = maxRadius + 14.0;
+            Semantics(
+              label: _buildSemanticsLabel(),
+              image: true,
+              child: SizedBox(
+                height: 260,
+                width: 260,
+                child: GestureDetector(
+                  onTapUp: (details) {
+                    if (onDomainSelected == null) return;
+                    const center = Offset(130, 130);
+                    const maxRadius = 110.0;
+                    const labelRadius = maxRadius + 14.0;
 
-                  for (int i = 0; i < 6; i++) {
-                    final angle = (i * 60) * math.pi / 180 - math.pi / 2;
-                    final labelCenter = Offset(
-                      center.dx + labelRadius * math.cos(angle),
-                      center.dy + labelRadius * math.sin(angle),
-                    );
-                    final tapPos = details.localPosition;
-                    final distance = (tapPos - labelCenter).distance;
-                    if (distance < 30.0) { // Click target sensitivity radius
-                      final clickedDomain = _domains[i];
-                      onDomainSelected!(clickedDomain);
-                      break;
+                    for (int i = 0; i < 6; i++) {
+                      final angle = (i * 60) * math.pi / 180 - math.pi / 2;
+                      final labelCenter = Offset(
+                        center.dx + labelRadius * math.cos(angle),
+                        center.dy + labelRadius * math.sin(angle),
+                      );
+                      final tapPos = details.localPosition;
+                      final distance = (tapPos - labelCenter).distance;
+                      if (distance < 30.0) { // Click target sensitivity radius
+                        final clickedDomain = _domains[i];
+                        onDomainSelected!(clickedDomain);
+                        break;
+                      }
                     }
-                  }
-                },
-                child: CustomPaint(
-                  painter: _RadarChartPainter(
-                    scores: scores,
-                    activeDomains: activeDomains,
-                    selectedDomain: selectedDomain,
-                    primaryColor: theme.colorScheme.primary,
-                    onBackgroundColor: theme.colorScheme.onSurface,
-                    cardColor: theme.cardTheme.color ?? theme.colorScheme.surface,
+                  },
+                  child: CustomPaint(
+                    painter: _RadarChartPainter(
+                      scores: scores,
+                      activeDomains: activeDomains,
+                      selectedDomain: selectedDomain,
+                      primaryColor: theme.colorScheme.primary,
+                      onBackgroundColor: theme.colorScheme.onSurface,
+                      cardColor: theme.cardTheme.color ?? theme.colorScheme.surface,
+                    ),
                   ),
                 ),
               ),
             ),
+            const SizedBox(height: 16),
+            _buildDataTable(context, theme),
           ],
         ),
       ),
+    );
+  }
+
+  /// Tabel data ringkas (Domain | Skor) sebagai fallback yang dapat dibaca
+  /// pengguna dengan teknologi bantu maupun pengguna awas.
+  Widget _buildDataTable(BuildContext context, ThemeData theme) {
+    final onSurface = theme.colorScheme.onSurface;
+    final headerStyle = TextStyle(
+      fontSize: 11,
+      fontWeight: FontWeight.w600,
+      color: onSurface.withValues(alpha: 0.7),
+    );
+    final cellStyle = TextStyle(
+      fontSize: 11,
+      color: onSurface.withValues(alpha: 0.6),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Row(
+            children: [
+              Expanded(child: Text('Domain', style: headerStyle)),
+              Text('Skor', style: headerStyle),
+            ],
+          ),
+        ),
+        Divider(
+          height: 1,
+          color: onSurface.withValues(alpha: 0.12),
+        ),
+        ..._domains.map((domain) {
+          final isActive = activeDomains.contains(domain);
+          final isTappable = onDomainSelected != null;
+          final row = Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    isActive ? domain : '$domain (Soon)',
+                    style: cellStyle.copyWith(
+                      fontWeight: domain == selectedDomain
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ),
+                Text('${_scoreOf(domain)}/10', style: cellStyle),
+              ],
+            ),
+          );
+
+          if (!isTappable) return row;
+
+          // Area ketuk >= 44px tinggi dengan label tombol untuk pembaca layar.
+          return Semantics(
+            button: true,
+            label: 'Fokus domain $domain',
+            child: InkWell(
+              onTap: () => onDomainSelected!(domain),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 44),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: row,
+                ),
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 }
@@ -124,17 +215,17 @@ class _RadarChartPainter extends CustomPainter {
 
     // Paints
     final gridPaint = Paint()
-      ..color = onBackgroundColor.withOpacity(0.08)
+      ..color = onBackgroundColor.withValues(alpha: 0.08)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
     final axisPaint = Paint()
-      ..color = onBackgroundColor.withOpacity(0.12)
+      ..color = onBackgroundColor.withValues(alpha: 0.12)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
     final dataPaint = Paint()
-      ..color = primaryColor.withOpacity(0.2)
+      ..color = primaryColor.withValues(alpha: 0.2)
       ..style = PaintingStyle.fill;
 
     final borderPaint = Paint()
@@ -200,7 +291,7 @@ class _RadarChartPainter extends CustomPainter {
           fontWeight: isSelected ? FontWeight.bold : (isSoon ? FontWeight.normal : FontWeight.w600),
           color: isSelected
               ? primaryColor
-              : (isSoon ? onBackgroundColor.withOpacity(0.35) : onBackgroundColor.withOpacity(0.85)),
+              : (isSoon ? onBackgroundColor.withValues(alpha: 0.35) : onBackgroundColor.withValues(alpha: 0.85)),
         ),
       );
       textPainter.layout();

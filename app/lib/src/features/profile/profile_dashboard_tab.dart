@@ -387,7 +387,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
             const SizedBox(height: 8),
             Text(
               'Tiga nilai inti hidup Anda yang menuntun arah kebiasaan dan keseimbangan harian:',
-              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
             const SizedBox(height: 16),
             if (values.isEmpty)
@@ -404,9 +404,9 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                 children: values.map((v) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.08),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.15)),
+                        border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.15)),
                       ),
                       child: Text(
                         v,
@@ -454,7 +454,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                     leading: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.12),
+                        color: Colors.green.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.local_florist_rounded, color: Colors.green),

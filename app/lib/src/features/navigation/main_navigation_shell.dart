@@ -41,7 +41,7 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
         type: BottomNavigationBarType.fixed,
         backgroundColor: theme.colorScheme.surface,
         selectedItemColor: theme.colorScheme.primary,
-        unselectedItemColor: theme.colorScheme.onSurface.withOpacity(0.4),
+        unselectedItemColor: theme.colorScheme.onSurface.withValues(alpha: 0.4),
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
         unselectedLabelStyle: const TextStyle(fontSize: 12),
         items: const [

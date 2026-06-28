@@ -56,7 +56,7 @@ class ReflectionDashboardTab extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Luangkan waktu sejenak untuk meninjau pola pikiran, kebiasaan, dan kondisi mental Anda.',
-              style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+              style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -74,7 +74,7 @@ class ReflectionDashboardTab extends StatelessWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: (feat['color'] as Color).withOpacity(0.12),
+                        color: (feat['color'] as Color).withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(feat['icon'] as IconData, color: feat['color'] as Color, size: 28),
@@ -87,7 +87,7 @@ class ReflectionDashboardTab extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 6.0),
                       child: Text(
                         feat['desc'] as String,
-                        style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                        style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                       ),
                     ),
                     trailing: const Icon(Icons.chevron_right),

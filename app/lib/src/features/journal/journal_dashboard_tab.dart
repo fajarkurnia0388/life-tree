@@ -170,7 +170,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                             duration: const Duration(milliseconds: 200),
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: isSelected ? theme.colorScheme.primary.withOpacity(0.12) : Colors.transparent,
+                              color: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.12) : Colors.transparent,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: isSelected ? theme.colorScheme.primary : Colors.transparent,
@@ -186,7 +186,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                                   style: TextStyle(
                                     fontSize: 9,
                                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.6),
+                                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                   ),
                                 ),
                               ],
@@ -226,7 +226,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                     leading: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.amber.withOpacity(0.12),
+                        color: Colors.amber.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.balance_rounded, color: Colors.amber),
@@ -240,7 +240,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                             : '$pending keputusan aktif terdaftar.',
                         style: TextStyle(
                           fontSize: 12,
-                          color: overdue > 0 ? theme.colorScheme.error : theme.colorScheme.onSurface.withOpacity(0.6),
+                          color: overdue > 0 ? theme.colorScheme.error : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           fontWeight: overdue > 0 ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
@@ -268,7 +268,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                       child: Text(
                         'Belum ada riwayat jurnal. Mulai catat mood pertama Anda hari ini! 🌱',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                        style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                       ),
                     ),
                   );
@@ -290,7 +290,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                         title: Text(item.keyword ?? moodItem['label'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(
                           item.entryType == 'Deep' ? 'Refleksi Mendalam • $dateStr' : 'Lite Check-in • $dateStr',
-                          style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                          style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                         ),
                         trailing: item.entryType == 'Deep'
                             ? Icon(Icons.arrow_right_alt_rounded, color: theme.colorScheme.primary)

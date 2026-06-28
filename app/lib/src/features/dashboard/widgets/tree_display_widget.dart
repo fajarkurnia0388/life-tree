@@ -114,8 +114,8 @@ class TreeDisplayWidget extends ConsumerWidget {
                       center: const Alignment(0, 0.2),
                       radius: 0.65,
                       colors: [
-                        activeDomainColor!.withOpacity(0.32),
-                        activeDomainColor!.withOpacity(0.0),
+                        activeDomainColor!.withValues(alpha: 0.32),
+                        activeDomainColor!.withValues(alpha: 0.0),
                       ],
                     ),
                   ),
@@ -176,8 +176,8 @@ class TreeDisplayWidget extends ConsumerWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withOpacity(0.0),
-                      Colors.black.withOpacity(0.22),
+                      Colors.black.withValues(alpha: 0.0),
+                      Colors.black.withValues(alpha: 0.22),
                     ],
                   ),
                 ),
@@ -251,7 +251,7 @@ class TreeDisplayWidget extends ConsumerWidget {
                 color: const Color(0xFFFFCC02),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.orange.withOpacity(0.5),
+                    color: Colors.orange.withValues(alpha: 0.5),
                     blurRadius: 18,
                     spreadRadius: 4,
                   )
@@ -275,7 +275,7 @@ class TreeDisplayWidget extends ConsumerWidget {
                 color: const Color(0xFFFDD835),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.yellow.withOpacity(0.55),
+                    color: Colors.yellow.withValues(alpha: 0.55),
                     blurRadius: 22,
                     spreadRadius: 6,
                   )
@@ -299,7 +299,7 @@ class TreeDisplayWidget extends ConsumerWidget {
                 color: const Color(0xFFFF6F00),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.deepOrange.withOpacity(0.5),
+                    color: Colors.deepOrange.withValues(alpha: 0.5),
                     blurRadius: 24,
                     spreadRadius: 5,
                   )
@@ -330,7 +330,7 @@ class TreeDisplayWidget extends ConsumerWidget {
                       color: const Color(0xFFFFF9C4),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.white.withOpacity(0.35),
+                          color: Colors.white.withValues(alpha: 0.35),
                           blurRadius: 16,
                           spreadRadius: 2,
                         )
@@ -359,40 +359,6 @@ class TreeDisplayWidget extends ConsumerWidget {
       default:
         return [];
     }
-  }
-
-  Widget _buildFallbackEmoji(String stage, String skin, double size) {
-    final emoji = _fallbackEmoji(stage, skin);
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Center(
-        child: Text(emoji, style: TextStyle(fontSize: size * 0.5)),
-      ),
-    );
-  }
-
-  String _fallbackEmoji(String stage, String skin) {
-    if (stage == TreeSkinConfig.stageRecovery) {
-      return skin == 'Sakura' ? '❄️🌸' : skin == 'Maple' ? '❄️🍁' : skin == 'Bonsai' ? '❄️🪴' : '❄️🌳';
-    }
-    switch (stage) {
-      case TreeSkinConfig.stageSeed:
-        return '🌰';
-      case TreeSkinConfig.stageSprout:
-      case TreeSkinConfig.stageSeedling:
-        return '🌱';
-      case TreeSkinConfig.stageSapling:
-      case TreeSkinConfig.stageYoung:
-        return '🌿';
-      case TreeSkinConfig.stageGrowing:
-      case TreeSkinConfig.stageEstablished:
-        return skin == 'Sakura' ? '🌸🌳' : skin == 'Maple' ? '🍁🌳' : skin == 'Bonsai' ? '🪴' : '🌳';
-      case TreeSkinConfig.stageBlooming:
-      case TreeSkinConfig.stageFlourishing:
-        return skin == 'Sakura' ? '🌸🌳' : skin == 'Maple' ? '🍁🌳' : skin == 'Bonsai' ? '🪴' : '🌳';
-    }
-    return skin == 'Sakura' ? '🌸🌲' : skin == 'Maple' ? '🍁🌲' : skin == 'Bonsai' ? '🪴' : '🌲';
   }
 }
 
@@ -514,7 +480,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                 // Header
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  color: theme.colorScheme.primary.withOpacity(0.08),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.08),
                   child: Row(
                     children: [
                       Icon(Icons.camera_alt_rounded, color: theme.colorScheme.primary),
@@ -554,7 +520,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                         Text(
                           'Tersimpan di: Downloads/$fileName',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -595,7 +561,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                           height: 48,
                           child: OutlinedButton.icon(
                             onPressed: () async {
-                              final uri = Uri.file(downloadsDir!.path);
+                              final uri = Uri.file(downloadsDir.path);
                               if (await canLaunchUrl(uri)) {
                                 await launchUrl(uri);
                               }
@@ -604,7 +570,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                             label: const Text('Buka Folder Downloads'),
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                              side: BorderSide(color: theme.colorScheme.primary.withOpacity(0.2)),
+                              side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
                             ),
                           ),
                         ),
@@ -619,7 +585,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                           child: Text(
                             'Tutup',
                             style: TextStyle(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -736,9 +702,9 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.08),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: theme.colorScheme.primary.withOpacity(0.15)),
+                      border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.15)),
                     ),
                     child: Row(
                       children: [
@@ -861,7 +827,7 @@ class _StarsPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.65)
+      ..color = Colors.white.withValues(alpha: 0.65)
       ..style = PaintingStyle.fill;
     
     final starPoints = [

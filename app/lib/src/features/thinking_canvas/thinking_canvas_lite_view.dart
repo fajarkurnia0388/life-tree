@@ -105,7 +105,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.15),
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
         border: Border(
           left: BorderSide(
@@ -165,16 +165,16 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.onSurface.withOpacity(0.04),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.08)),
+              border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.08)),
             ),
             child: Text(
               format,
               style: TextStyle(
                 fontFamily: 'monospace',
                 fontSize: 11,
-                color: theme.colorScheme.onSurface.withOpacity(0.8),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               ),
             ),
           ),
@@ -184,9 +184,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.06),
+              color: theme.colorScheme.primary.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: theme.colorScheme.primary.withOpacity(0.12)),
+              border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.12)),
             ),
             child: Row(
               children: [
@@ -586,7 +586,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 _mindMapNodes.isEmpty
                     ? 'Belum ada peta pikiran yang dibuat. Buat visual mind map sekarang!'
                     : 'Peta pikiran aktif: ${_mindMapNodes.length} gelembung ide.',
-                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
@@ -775,7 +775,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 margin: const EdgeInsets.symmetric(vertical: 6.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.08)),
+                  side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.08)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -854,7 +854,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.1),
+                              color: theme.colorScheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Column(
@@ -926,7 +926,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
               const SizedBox(height: 8),
               Text(
                 'Prinsip LifeTree: Paper-First. Tulislah coretan Anda di buku atau kertas asli terlebih dahulu untuk mengurangi screen fatigue.',
-                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
               ),
               const SizedBox(height: 24),
  
@@ -939,7 +939,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
-                    border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.2)),
+                    border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -964,7 +964,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                             const SizedBox(height: 4),
                             Text(
                               activeMethod.desc,
-                              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -1158,9 +1158,9 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
         },
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(double.infinity, 44),
-          backgroundColor: isSelected ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
+          backgroundColor: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.1) : Colors.transparent,
           side: BorderSide(
-            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.12),
+            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.12),
             width: isSelected ? 2 : 1,
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -1202,7 +1202,7 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 16),
@@ -1398,7 +1398,7 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
                     shape: BoxShape.circle,
                     color: _currentPage == index
                         ? theme.colorScheme.primary
-                        : theme.colorScheme.primary.withOpacity(0.2),
+                        : theme.colorScheme.primary.withValues(alpha: 0.2),
                   ),
                 );
               }),
@@ -1493,9 +1493,46 @@ class _MethodPickerBottomSheet extends StatefulWidget {
 
 class _MethodPickerBottomSheetState extends State<_MethodPickerBottomSheet> {
   String _searchQuery = '';
-  String _selectedCategory = 'Semua';
 
-  final List<String> _categories = ['Semua', 'Divergen', 'Konvergen', 'Sesi Lengkap'];
+  // P2-03: Group the 24 thinking methods into intuitive task-based buckets.
+  // Keyed by the real method `key` values from ThinkingMethod.allMethods.
+  // The order of this list determines the order of section headers.
+  static const List<MapEntry<String, List<String>>> _categoryGroups = [
+    MapEntry('Quick Dump', [
+      'MindDump',
+      'Freewriting',
+      'MindDumpCluster',
+    ]),
+    MapEntry('Kreatif', [
+      'Brainstorming',
+      'MindMapping',
+      'SCAMPER',
+      'RandomWord',
+      'WorstPossibleIdea',
+      'RoleStorming',
+      'Starbursting',
+      'LotusBlossom',
+      'MorphologicalAnalysis',
+      'QuestionStorming',
+    ]),
+    MapEntry('Analitis', [
+      '5Whys',
+      'SWOT',
+      'AffinityMapping',
+      'ReverseBrainstorming',
+    ]),
+    MapEntry('Keputusan', [
+      'Scoring',
+      'Validation',
+      'FirstPrinciples',
+      'PMI',
+    ]),
+    MapEntry('Lainnya', [
+      'SixThinkingHats',
+      'DisneyStrategy',
+      'DoubleDiamond',
+    ]),
+  ];
 
   Color _getLevelColor(String level, ThemeData theme) {
     switch (level) {
@@ -1534,18 +1571,202 @@ class _MethodPickerBottomSheetState extends State<_MethodPickerBottomSheet> {
     );
   }
 
+  /// P2-03 + P0-07 + P2-05: a single tappable method card.
+  /// Wrapped in Semantics(button:true) with a descriptive label, and uses a
+  /// minimum height of 44 logical px to satisfy WCAG touch-target sizing.
+  Widget _buildMethodCard(ThinkingMethod m, ThemeData theme) {
+    final isSelected = widget.currentMethodKey == m.key;
+    final levelColor = _getLevelColor(m.level, theme);
+
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: 'Metode: ${m.name}',
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 6.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: InkWell(
+          onTap: () {
+            if (m.isPremium && !widget.isPremiumUser) {
+              _showPremiumAdDialog();
+            } else {
+              widget.onSelected(m.key);
+              Navigator.pop(context);
+            }
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                m.name,
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ),
+                            if (m.isPremium) ...[
+                              const SizedBox(width: 6),
+                              Icon(Icons.lock_rounded, color: Colors.amber[700], size: 14),
+                            ],
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: levelColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          m.level,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: levelColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    m.desc,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        m.template == WorkspaceTemplate.freeform
+                            ? Icons.edit_note_rounded
+                            : m.template == WorkspaceTemplate.multiColumn
+                                ? Icons.view_column_rounded
+                                : m.template == WorkspaceTemplate.sequential
+                                    ? Icons.format_list_numbered_rounded
+                                    : Icons.table_chart_rounded,
+                        size: 14,
+                        color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        m.template == WorkspaceTemplate.freeform
+                            ? 'Workspace: Teks Bebas'
+                            : m.template == WorkspaceTemplate.multiColumn
+                                ? 'Workspace: Input Kolom'
+                                : m.template == WorkspaceTemplate.sequential
+                                    ? 'Workspace: Langkah Berurutan'
+                                    : 'Workspace: Tabel Skoring',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: theme.colorScheme.primary.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// P2-03: a category section header shown above its group of methods.
+  Widget _buildSectionHeader(String label, int count, ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 4, left: 4),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '($count)',
+            style: TextStyle(
+              fontSize: 12,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final media = MediaQuery.of(context);
 
-    // Filter methods
-    final filtered = ThinkingMethod.allMethods.where((method) {
-      final matchesSearch = method.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          method.desc.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesCategory = _selectedCategory == 'Semua' || method.category == _selectedCategory;
-      return matchesSearch && matchesCategory;
+    final query = _searchQuery.trim().toLowerCase();
+
+    // P2-03: build grouped, searchable sections. Each entry preserves the
+    // category bucket order and contains only methods that match the search.
+    final methodsByKey = {for (final m in ThinkingMethod.allMethods) m.key: m};
+    final visibleGroups = <MapEntry<String, List<ThinkingMethod>>>[];
+    final seenKeys = <String>{};
+
+    for (final group in _categoryGroups) {
+      final methods = <ThinkingMethod>[];
+      for (final key in group.value) {
+        final m = methodsByKey[key];
+        if (m == null) continue;
+        seenKeys.add(key);
+        final matchesSearch = query.isEmpty ||
+            m.name.toLowerCase().contains(query) ||
+            m.desc.toLowerCase().contains(query);
+        if (matchesSearch) methods.add(m);
+      }
+      if (methods.isNotEmpty) visibleGroups.add(MapEntry(group.key, methods));
+    }
+
+    // Safety net: any method not present in _categoryGroups lands in 'Lainnya'
+    // so no method silently disappears from the picker.
+    final unmapped = ThinkingMethod.allMethods.where((m) {
+      if (seenKeys.contains(m.key)) return false;
+      final matchesSearch = query.isEmpty ||
+          m.name.toLowerCase().contains(query) ||
+          m.desc.toLowerCase().contains(query);
+      return matchesSearch;
     }).toList();
+    if (unmapped.isNotEmpty) {
+      final existing = visibleGroups.indexWhere((g) => g.key == 'Lainnya');
+      if (existing >= 0) {
+        visibleGroups[existing] = MapEntry('Lainnya', [
+          ...visibleGroups[existing].value,
+          ...unmapped,
+        ]);
+      } else {
+        visibleGroups.add(MapEntry('Lainnya', unmapped));
+      }
+    }
+
+    final hasResults = visibleGroups.isNotEmpty;
 
     return Container(
       padding: EdgeInsets.only(
@@ -1568,7 +1789,7 @@ class _MethodPickerBottomSheetState extends State<_MethodPickerBottomSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: theme.colorScheme.onSurface.withOpacity(0.2),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -1601,149 +1822,21 @@ class _MethodPickerBottomSheetState extends State<_MethodPickerBottomSheet> {
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 4),
 
-          // Category Chips
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: _categories.map((cat) {
-                final isSelected = _selectedCategory == cat;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: FilterChip(
-                    label: Text(cat),
-                    selected: isSelected,
-                    selectedColor: theme.colorScheme.primary.withOpacity(0.15),
-                    checkmarkColor: theme.colorScheme.primary,
-                    onSelected: (val) {
-                      setState(() {
-                        _selectedCategory = cat;
-                      });
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // Methods List
+          // P2-03: Categorized, searchable method list with section headers.
           Expanded(
-            child: filtered.isEmpty
+            child: !hasResults
                 ? const Center(
                     child: Text('Metode tidak ditemukan.', style: TextStyle(fontStyle: FontStyle.italic)),
                   )
-                : ListView.builder(
-                    itemCount: filtered.length,
-                    itemBuilder: (context, index) {
-                      final m = filtered[index];
-                      final isSelected = widget.currentMethodKey == m.key;
-                      final levelColor = _getLevelColor(m.level, theme);
-
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 6.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          side: BorderSide(
-                            color: isSelected
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.08),
-                            width: isSelected ? 2 : 1,
-                          ),
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            if (m.isPremium && !widget.isPremiumUser) {
-                              _showPremiumAdDialog();
-                            } else {
-                              widget.onSelected(m.key);
-                              Navigator.pop(context);
-                            }
-                          },
-                          borderRadius: BorderRadius.circular(16),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            m.name,
-                                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                          ),
-                                          if (m.isPremium) ...[
-                                            const SizedBox(width: 6),
-                                            Icon(Icons.lock_rounded, color: Colors.amber[700], size: 14),
-                                          ],
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: levelColor.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        m.level,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          color: levelColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  m.desc,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: theme.colorScheme.onSurface.withOpacity(0.7),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      m.template == WorkspaceTemplate.freeform
-                                          ? Icons.edit_note_rounded
-                                          : m.template == WorkspaceTemplate.multiColumn
-                                              ? Icons.view_column_rounded
-                                              : m.template == WorkspaceTemplate.sequential
-                                                  ? Icons.format_list_numbered_rounded
-                                                  : Icons.table_chart_rounded,
-                                      size: 14,
-                                      color: theme.colorScheme.primary.withOpacity(0.7),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      m.template == WorkspaceTemplate.freeform
-                                          ? 'Workspace: Teks Bebas'
-                                          : m.template == WorkspaceTemplate.multiColumn
-                                              ? 'Workspace: Input Kolom'
-                                              : m.template == WorkspaceTemplate.sequential
-                                                  ? 'Workspace: Langkah Berurutan'
-                                                  : 'Workspace: Tabel Skoring',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: theme.colorScheme.primary.withOpacity(0.8),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                : ListView(
+                    children: [
+                      for (final group in visibleGroups) ...[
+                        _buildSectionHeader(group.key, group.value.length, theme),
+                        for (final m in group.value) _buildMethodCard(m, theme),
+                      ],
+                    ],
                   ),
           ),
         ],

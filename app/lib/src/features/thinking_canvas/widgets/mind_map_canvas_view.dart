@@ -248,7 +248,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                     // Grid background
                     Positioned.fill(
                       child: CustomPaint(
-                        painter: _GridBackgroundPainter(theme.colorScheme.onSurface.withOpacity(0.04)),
+                        painter: _GridBackgroundPainter(theme.colorScheme.onSurface.withValues(alpha: 0.04)),
                       ),
                     ),
 
@@ -388,14 +388,14 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: nodeColor.withOpacity(0.4),
+            color: nodeColor.withValues(alpha: 0.4),
             blurRadius: isSelected ? 12 : 6,
             spreadRadius: isSelected ? 2 : 0,
             offset: const Offset(0, 3),
           ),
         ],
         border: Border.all(
-          color: isSelected ? theme.colorScheme.primary : Colors.white.withOpacity(0.5),
+          color: isSelected ? theme.colorScheme.primary : Colors.white.withValues(alpha: 0.5),
           width: isSelected ? 3 : 1.5,
         ),
       ),
@@ -468,7 +468,7 @@ class _MindMapLinesPainter extends CustomPainter {
           end.dx, end.dy,
         );
 
-      paint.color = Color(node.colorValue).withOpacity(0.5);
+      paint.color = Color(node.colorValue).withValues(alpha: 0.5);
       canvas.drawPath(path, paint);
     }
   }

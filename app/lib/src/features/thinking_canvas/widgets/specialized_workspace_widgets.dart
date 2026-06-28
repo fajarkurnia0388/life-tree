@@ -171,7 +171,7 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
                     child: CircularProgressIndicator(
                       value: progress,
                       strokeWidth: 3,
-                      backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                      backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -214,10 +214,10 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.redAccent.withOpacity(0.5), width: 2),
+                          border: Border.all(color: Colors.redAccent.withValues(alpha: 0.5), width: 2),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.red.withOpacity(_pulseAnimation.value),
+                              color: Colors.red.withValues(alpha: _pulseAnimation.value),
                               blurRadius: 16,
                               spreadRadius: 4,
                             ),
@@ -225,7 +225,7 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
                         ),
                         child: Center(
                           child: Card(
-                            color: Colors.red.withOpacity(0.9),
+                            color: Colors.red.withValues(alpha: 0.9),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                             child: const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -375,9 +375,9 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
         Container(
           height: 290,
           decoration: BoxDecoration(
-            color: theme.colorScheme.onSurface.withOpacity(0.02),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.02),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.06)),
+            border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.06)),
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -408,7 +408,7 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                       painter: _LotusStemsPainter(
                         center: Offset(cx, cy),
                         offsets: nodeOffsets,
-                        themeColor: theme.colorScheme.primary.withOpacity(0.3),
+                        themeColor: theme.colorScheme.primary.withValues(alpha: 0.3),
                       ),
                     ),
                   ),
@@ -449,18 +449,18 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                             color: isCenter
                                 ? theme.colorScheme.primary
                                 : (text.isNotEmpty
-                                    ? theme.colorScheme.primaryContainer.withOpacity(0.85)
-                                    : theme.colorScheme.onSurface.withOpacity(0.04)),
+                                    ? theme.colorScheme.primaryContainer.withValues(alpha: 0.85)
+                                    : theme.colorScheme.onSurface.withValues(alpha: 0.04)),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
                                 color: (isCenter ? theme.colorScheme.primary : theme.colorScheme.onSurface)
-                                    .withOpacity(0.12),
+                                    .withValues(alpha: 0.12),
                                 blurRadius: 6,
                               )
                             ],
                             border: Border.all(
-                              color: isCenter ? Colors.white : theme.colorScheme.primary.withOpacity(0.3),
+                              color: isCenter ? Colors.white : theme.colorScheme.primary.withValues(alpha: 0.3),
                               width: isCenter ? 2 : 1,
                             ),
                           ),
@@ -481,7 +481,7 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                                       ? theme.colorScheme.onPrimary
                                       : (text.isNotEmpty
                                           ? theme.colorScheme.onPrimaryContainer
-                                          : theme.colorScheme.onSurface.withOpacity(0.6)),
+                                          : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                                 ),
                               ),
                             ),
@@ -849,7 +849,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
-                          color: theme.colorScheme.onSurface.withOpacity(0.08),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
                         ),
                       ),
                       child: ListTile(
@@ -861,7 +861,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withOpacity(0.1),
+                                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -887,7 +887,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                                 return Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.onSurface.withOpacity(0.04),
+                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
@@ -977,9 +977,9 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
         Container(
           height: 160,
           decoration: BoxDecoration(
-            color: theme.colorScheme.onSurface.withOpacity(0.04),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.08), width: 1.5),
+            border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.08), width: 1.5),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
           child: Row(
@@ -1014,7 +1014,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                           boxShadow: const [
                             BoxShadow(color: Colors.black45, blurRadius: 4, offset: Offset(0, 2)),
                           ],
-                          border: Border.all(color: theme.colorScheme.primary.withOpacity(0.4), width: 1.5),
+                          border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.4), width: 1.5),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
@@ -1058,10 +1058,10 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                                   child: Container(
                                     height: 32,
                                     decoration: BoxDecoration(
-                                      color: theme.colorScheme.primary.withOpacity(0.15),
+                                      color: theme.colorScheme.primary.withValues(alpha: 0.15),
                                       border: Border.symmetric(
                                         horizontal: BorderSide(
-                                          color: theme.colorScheme.primary.withOpacity(0.7),
+                                          color: theme.colorScheme.primary.withValues(alpha: 0.7),
                                           width: 1.5,
                                         ),
                                       ),
@@ -1262,16 +1262,16 @@ class _RapidBrainstormWorkspaceState extends State<RapidBrainstormWorkspace> {
                     alignment: Alignment.center,
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.12),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: theme.colorScheme.primary.withOpacity(0.08),
+                          color: theme.colorScheme.primary.withValues(alpha: 0.08),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         )
                       ],
-                      border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3)),
+                      border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1411,7 +1411,7 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
                 side: BorderSide(
-                  color: isStarred ? Colors.amber : theme.colorScheme.onSurface.withOpacity(0.08),
+                  color: isStarred ? Colors.amber : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                   width: isStarred ? 2 : 1,
                 ),
               ),
@@ -1523,9 +1523,9 @@ class _RandomWordWorkspaceState extends State<RandomWordWorkspace> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withOpacity(0.06),
+            color: theme.colorScheme.primary.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2)),
+            border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
           ),
           child: Column(
             children: [
@@ -1829,7 +1829,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                             side: BorderSide(
                               color: isCurrentlyActive
                                   ? theme.colorScheme.primary
-                                  : theme.colorScheme.onSurface.withOpacity(0.08),
+                                  : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                               width: isCurrentlyActive ? 2 : 1,
                             ),
                           ),
@@ -1838,7 +1838,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: pkg.isPremium ? Colors.amber.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
+                                color: pkg.isPremium ? Colors.amber.withValues(alpha: 0.1) : Colors.blue.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Center(
@@ -1978,10 +1978,10 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                   margin: const EdgeInsets.only(right: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.04),
+                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.08),
+                      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                     ),
                   ),
                   child: Row(
@@ -2009,9 +2009,9 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withOpacity(0.05),
+            color: theme.colorScheme.primary.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.colorScheme.primary.withOpacity(0.1)),
+            border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.1)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2188,7 +2188,7 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
                   color: h['color'] as Color,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isSelected ? theme.colorScheme.primary : (h['borderColor'] as Color).withOpacity(0.5),
+                    color: isSelected ? theme.colorScheme.primary : (h['borderColor'] as Color).withValues(alpha: 0.5),
                     width: isSelected ? 3 : 1.5,
                   ),
                   boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 3)],
@@ -2211,9 +2211,9 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: (activeHat['color'] as Color).withOpacity(0.12),
+            color: (activeHat['color'] as Color).withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: (activeHat['borderColor'] as Color).withOpacity(0.3)),
+            border: Border.all(color: (activeHat['borderColor'] as Color).withValues(alpha: 0.3)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2344,10 +2344,10 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
                   margin: const EdgeInsets.symmetric(horizontal: 2.0),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
-                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.04),
+                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.08),
+                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                     ),
                   ),
                   child: Text(
@@ -2485,7 +2485,7 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(
-                color: isExpanded ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.08),
+                color: isExpanded ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                 width: isExpanded ? 1.5 : 1,
               ),
             ),
@@ -2498,7 +2498,7 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: isExpanded ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.05),
+                      color: isExpanded ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.05),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -2630,9 +2630,9 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
   Widget _buildSwotBox(String label, TextEditingController controller, Color accentColor, ThemeData theme) {
     return Container(
       decoration: BoxDecoration(
-        color: accentColor.withOpacity(0.04),
+        color: accentColor.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: accentColor.withOpacity(0.3), width: 1.5),
+        border: Border.all(color: accentColor.withValues(alpha: 0.3), width: 1.5),
       ),
       padding: const EdgeInsets.all(10),
       child: Column(
@@ -2758,10 +2758,10 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
-                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.04),
+                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.04),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.08),
+                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                   ),
                 ),
                 child: Center(
@@ -2784,9 +2784,9 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withOpacity(0.06),
+            color: theme.colorScheme.primary.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.colorScheme.primary.withOpacity(0.12)),
+            border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.12)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2906,9 +2906,9 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: theme.colorScheme.onSurface.withOpacity(0.02),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.06)),
+              border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.06)),
             ),
             child: const Column(
               children: [
@@ -3072,9 +3072,9 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: theme.colorScheme.onSurface.withOpacity(0.02),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.06)),
+              border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.06)),
             ),
             child: const Column(
               children: [
@@ -3200,7 +3200,7 @@ class _FiveWhysWorkspaceState extends State<FiveWhysWorkspace> {
                     width: 24,
                     height: 24,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1 + (index * 0.1)),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1 + (index * 0.1)),
                       shape: BoxShape.circle,
                       border: Border.all(color: theme.colorScheme.primary, width: 1.5),
                     ),
@@ -3219,7 +3219,7 @@ class _FiveWhysWorkspaceState extends State<FiveWhysWorkspace> {
                     Container(
                       width: 2,
                       height: 40,
-                      color: theme.colorScheme.primary.withOpacity(0.3),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.3),
                     ),
                 ],
               ),
@@ -3309,10 +3309,10 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isLast ? theme.colorScheme.primary.withOpacity(0.04) : theme.colorScheme.onSurface.withOpacity(0.02),
+              color: isLast ? theme.colorScheme.primary.withValues(alpha: 0.04) : theme.colorScheme.onSurface.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isLast ? theme.colorScheme.primary.withOpacity(0.2) : theme.colorScheme.onSurface.withOpacity(0.08),
+                color: isLast ? theme.colorScheme.primary.withValues(alpha: 0.2) : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                 width: isLast ? 1.5 : 1,
               ),
             ),
@@ -3324,7 +3324,7 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: isLast ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: isLast ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -3436,10 +3436,10 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
                   margin: const EdgeInsets.symmetric(horizontal: 1.5),
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.04),
+                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.08),
+                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                     ),
                   ),
                   child: Text(
@@ -3462,9 +3462,9 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withOpacity(0.05),
+            color: theme.colorScheme.primary.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.colorScheme.primary.withOpacity(0.12)),
+            border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.12)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -3596,8 +3596,6 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -3623,9 +3621,9 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: _isValidated ? Colors.green.withOpacity(0.06) : Colors.red.withOpacity(0.06),
+            color: _isValidated ? Colors.green.withValues(alpha: 0.06) : Colors.red.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: _isValidated ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3)),
+            border: Border.all(color: _isValidated ? Colors.green.withValues(alpha: 0.3) : Colors.red.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -3683,7 +3681,7 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                   ...List.generate(_supports.length, (index) {
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 2),
-                      color: Colors.green.withOpacity(0.03),
+                      color: Colors.green.withValues(alpha: 0.03),
                       child: ListTile(
                         title: Text(_supports[index], style: const TextStyle(fontSize: 10)),
                         trailing: GestureDetector(
@@ -3725,7 +3723,7 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                   ...List.generate(_opposes.length, (index) {
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 2),
-                      color: Colors.red.withOpacity(0.03),
+                      color: Colors.red.withValues(alpha: 0.03),
                       child: ListTile(
                         title: Text(_opposes[index], style: const TextStyle(fontSize: 10)),
                         trailing: GestureDetector(

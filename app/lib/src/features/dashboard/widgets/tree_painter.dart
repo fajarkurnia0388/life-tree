@@ -331,7 +331,7 @@ class OrganicTreePainter extends CustomPainter {
     canvas.clipPath(trunkPath);
 
     final grainPaint = Paint()
-      ..color = _trunkDark.withOpacity(0.30)
+      ..color = _trunkDark.withValues(alpha: 0.30)
       ..strokeWidth = 1.3
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -358,13 +358,13 @@ class OrganicTreePainter extends CustomPainter {
       canvas.drawOval(
         Rect.fromCenter(center: knotPt1, width: trunkW * 0.32, height: trunkW * 0.16),
         Paint()
-          ..color = _trunkDark.withOpacity(0.4)
+          ..color = _trunkDark.withValues(alpha: 0.4)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.0,
       );
       canvas.drawOval(
         Rect.fromCenter(center: knotPt1, width: trunkW * 0.16, height: trunkW * 0.08),
-        Paint()..color = _trunkDark.withOpacity(0.45),
+        Paint()..color = _trunkDark.withValues(alpha: 0.45),
       );
     }
 
@@ -546,7 +546,7 @@ class OrganicTreePainter extends CustomPainter {
   // ─── ROOT FLARES ───────────────────────────────────────────────────────────
 
   void _drawRootFlares(Canvas canvas, double cx, double gy, double trunkW, double progress) {
-    final rootPaint = Paint()..color = _trunkDark.withOpacity(0.58);
+    final rootPaint = Paint()..color = _trunkDark.withValues(alpha: 0.58);
     final maxSpread = trunkW * (1.2 + 0.8 * progress);
 
     // Left Root
@@ -587,7 +587,7 @@ class OrganicTreePainter extends CustomPainter {
     // Slightly enlarged, blurred dark shapes merge neighbouring clumps so
     // there are no hard gaps between them.
     final shadowPaint = Paint()
-      ..color = _foliageShadow.withOpacity(0.55)
+      ..color = _foliageShadow.withValues(alpha: 0.55)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
     for (final n in nodes) {
       if (n.radius < 2) continue;
@@ -603,7 +603,7 @@ class OrganicTreePainter extends CustomPainter {
 
     // ── Pass 3: mid-tone form clumps for volume (slightly up-left) ──
     final lightOffset = Offset(-1, -1.6); // direction of the light source
-    final midPaint = Paint()..color = _leafColors[1].withOpacity(0.95);
+    final midPaint = Paint()..color = _leafColors[1].withValues(alpha: 0.95);
     for (final n in nodes) {
       if (n.radius < 3) continue;
       final lp = n.pos + lightOffset * (n.radius * 0.12);
@@ -611,7 +611,7 @@ class OrganicTreePainter extends CustomPainter {
     }
 
     // ── Pass 3b: bright highlight only on the sun-lit crown (top-left) ──
-    final litPaint = Paint()..color = _foliageHighlight.withOpacity(0.85);
+    final litPaint = Paint()..color = _foliageHighlight.withValues(alpha: 0.85);
     for (final n in nodes) {
       if (n.radius < 4) continue;
       final lp = n.pos + lightOffset * (n.radius * 0.30);
@@ -684,7 +684,7 @@ class OrganicTreePainter extends CustomPainter {
       Offset.zero,
       Offset(size * 0.8, 0),
       Paint()
-        ..color = Colors.black.withOpacity(0.10)
+        ..color = Colors.black.withValues(alpha: 0.10)
         ..strokeWidth = size * 0.08
         ..style = PaintingStyle.stroke,
     );

@@ -172,7 +172,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               const SizedBox(height: 8),
               Text(
                 'LifeTree membantu Anda membangun kebiasaan secara perlahan tanpa memicu rasa bersalah.',
-                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
               ),
               const SizedBox(height: 24),
 
@@ -232,11 +232,11 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                                     margin: const EdgeInsets.only(right: 12),
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: theme.colorScheme.primary.withOpacity(0.04),
+                                      color: theme.colorScheme.primary.withValues(alpha: 0.04),
                                       border: Border.all(
                                         color: isSelected
                                             ? theme.colorScheme.primary
-                                            : theme.colorScheme.onSurface.withOpacity(0.08),
+                                            : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                                         width: isSelected ? 2 : 1,
                                       ),
                                       borderRadius: BorderRadius.circular(12),
@@ -255,7 +255,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                                           t.description,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                                          style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                                         ),
                                         const Spacer(),
                                         Row(
@@ -508,8 +508,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(minLabel, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withOpacity(0.6))),
-                Text(maxLabel, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                Text(minLabel, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                Text(maxLabel, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
               ],
             ),
           ),
