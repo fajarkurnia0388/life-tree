@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
+import '../../../core/domain/app_constants.dart';
 
 class HabitLogService {
   final AppDatabase _db;
@@ -21,14 +22,15 @@ class HabitLogService {
 
     if (existing.isNotEmpty) {
       final log = existing.first;
-      if (log.status != 'Done') {
+      if (log.status != HabitStatus.done) {
         // Update to Done
         await (_db.update(_db.habitLogs)..where((tbl) => tbl.logId.equals(log.logId)))
             .write(HabitLogsCompanion(
-              status: const drift.Value('Done'),
+              status: const drift.Value(HabitStatus.done),
               durationTargetMin: drift.Value(habit.mvaDurationMin),
               durationActualMin: drift.Value(habit.mvaDurationMin),
               frictionReasonSelected: const drift.Value(null),
+              deletedAt: const drift.Value(null), // Clean deletedAt if it was soft-deleted earlier today
             ));
 
         // Increment done count
@@ -44,7 +46,7 @@ class HabitLogService {
               logId: logId,
               habitId: habit.habitId,
               date: todayStart,
-              status: 'Done',
+              status: HabitStatus.done,
               durationTargetMin: drift.Value(habit.mvaDurationMin),
               durationActualMin: drift.Value(habit.mvaDurationMin),
             ),
@@ -61,8 +63,10 @@ class HabitLogService {
     required Habit habit,
     required HabitLog log,
   }) async {
-    // Delete log
-    await (_db.delete(_db.habitLogs)..where((tbl) => tbl.logId.equals(log.logId))).go();
+    final now = DateTime.now();
+    // Soft delete log instead of hard delete (FIX-15)
+    await (_db.update(_db.habitLogs)..where((tbl) => tbl.logId.equals(log.logId)))
+        .write(HabitLogsCompanion(deletedAt: drift.Value(now)));
     
     // Decrement done count
     final newCount = (habit.lifetimeDoneCount - 1).clamp(0, 99999);
@@ -83,14 +87,15 @@ class HabitLogService {
 
     if (existing.isNotEmpty) {
       final log = existing.first;
-      final wasDone = log.status == 'Done';
+      final wasDone = log.status == HabitStatus.done;
       
       await (_db.update(_db.habitLogs)..where((tbl) => tbl.logId.equals(log.logId)))
           .write(HabitLogsCompanion(
-            status: const drift.Value('Missed'),
+            status: const drift.Value(HabitStatus.missed),
             frictionReasonSelected: drift.Value(reason),
             durationTargetMin: const drift.Value(null),
             durationActualMin: const drift.Value(null),
+            deletedAt: const drift.Value(null),
           ));
 
       if (wasDone) {
@@ -106,7 +111,7 @@ class HabitLogService {
               logId: logId,
               habitId: habit.habitId,
               date: todayStart,
-              status: 'Missed',
+              status: HabitStatus.missed,
               frictionReasonSelected: drift.Value(reason),
             ),
           );

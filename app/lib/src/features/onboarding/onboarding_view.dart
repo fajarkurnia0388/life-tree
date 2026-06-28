@@ -82,6 +82,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
       canopyLoadCapacity: const drift.Value(10),
       wellnessDisclaimerAcknowledged: const drift.Value(true),
       unlockedSkins: drift.Value(_devMode ? 'Default,Sakura,Maple,Bonsai' : 'Default'),
+      isDeveloperMode: drift.Value(_devMode),
       createdAt: now,
       updatedAt: now,
     );
@@ -103,9 +104,11 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
       version: 'Wellness_v1.0',
     );
 
-    await db.into(db.userProfiles).insert(profile);
-    await db.into(db.lifeAudits).insert(audit);
-    await db.into(db.consentLogs).insert(consent);
+    await db.transaction(() async {
+      await db.into(db.userProfiles).insert(profile);
+      await db.into(db.lifeAudits).insert(audit);
+      await db.into(db.consentLogs).insert(consent);
+    });
 
     // Refresh onboarding state provider and navigate
     ref.invalidate(onboardingCompletedProvider);
@@ -168,7 +171,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                       style: TextButton.styleFrom(
                         minimumSize: const Size(88, 48), // WCAG touch target
                       ),
-                      child: Text('Kembali', style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.6))),
+                      child: Text('Kembali', style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6))),
                     )
                   else
                     const SizedBox(width: 88),
@@ -211,7 +214,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
         Text(
           'Sebuah Personal OS untuk membantumu berorientasi diri secara damai tanpa rasa bersalah (Anti-Guilt).',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onBackground.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
           ),
           textAlign: TextAlign.center,
         ),
@@ -254,7 +257,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
         Text(
           'Kami menyesuaikan lingkungan dukungan berdasarkan rentang usia Anda.',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onBackground.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
           ),
           textAlign: TextAlign.center,
         ),
@@ -272,7 +275,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 54), // WCAG touch target
                 side: BorderSide(
-                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.12),
+                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.12),
                   width: isSelected ? 2 : 1,
                 ),
                 backgroundColor: isSelected ? theme.colorScheme.primary.withOpacity(0.08) : Colors.transparent,
@@ -283,7 +286,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
               child: Text(
                 band,
                 style: TextStyle(
-                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground,
+                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
@@ -338,7 +341,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                 margin: const EdgeInsets.symmetric(vertical: 6.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: theme.colorScheme.onBackground.withOpacity(0.08)),
+                  side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.08)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -359,7 +362,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                                 ),
                                 Text(
                                   desc,
-                                  style: TextStyle(fontSize: 11, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+                                  style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withOpacity(0.6)),
                                 ),
                               ],
                             ),
@@ -434,7 +437,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
         Text(
           '1 = Sangat lelah/Sakit, 10 = Bugar/Sangat berenergi',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onBackground.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
           ),
         ),
         const SizedBox(height: 24),
@@ -478,9 +481,9 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.onBackground.withOpacity(0.04),
+              color: theme.colorScheme.onSurface.withOpacity(0.04),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: theme.colorScheme.onBackground.withOpacity(0.1)),
+              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.1)),
             ),
             child: SingleChildScrollView(
               child: Text(

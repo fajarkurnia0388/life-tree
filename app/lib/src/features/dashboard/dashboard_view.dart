@@ -15,6 +15,11 @@ import 'widgets/quick_actions_panel.dart';
 import 'widgets/dashboard_alerts.dart';
 import 'sheets/friction_intervention_sheet.dart';
 import 'widgets/tree_display_widget.dart';
+import 'widgets/skin_shop_bottom_sheet.dart';
+import '../../core/domain/priority_helper.dart';
+import 'package:share_plus/share_plus.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
@@ -129,9 +134,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       ),
       body: dataAsync.when(
         data: (data) {
-          final isDevMode = data.profile.unlockedSkins.contains('Sakura') &&
-              data.profile.unlockedSkins.contains('Maple') &&
-              data.profile.unlockedSkins.contains('Bonsai');
+          final isDevMode = data.profile.isDeveloperMode;
 
           // Filter habits today based on the selected focus domain
           final filteredHabits = _selectedDomainFilter == 'Semua'
@@ -292,7 +295,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return _TreeSkinShopBottomSheet(
+        return TreeSkinShopBottomSheet(
           profile: profile,
           onSuccess: () {
             ref.invalidate(dashboardDataProvider);
@@ -337,9 +340,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       }
     }
 
-    final isDevMode = data.profile.unlockedSkins.contains('Sakura') &&
-        data.profile.unlockedSkins.contains('Maple') &&
-        data.profile.unlockedSkins.contains('Bonsai');
+    final isDevMode = data.profile.isDeveloperMode;
 
     final activeDomains = <String>{'Tubuh'};
     if (isDevMode) {
@@ -463,7 +464,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 const SizedBox(width: 8),
                 Text(
                   'Beban: ${habit.initiationFriction + habit.energyCost} Poin',
-                  style: TextStyle(fontSize: 13, color: theme.colorScheme.onBackground.withOpacity(0.7)),
+                  style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withOpacity(0.7)),
                 ),
               ],
             ),
@@ -517,7 +518,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             Text(
               'Gunakan waktu hari ini untuk beristirahat atau tambahkan kebiasaan baru.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
             ),
           ],
         ),
@@ -543,7 +544,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               const SizedBox(height: 4),
               Text(
                 'Ketuk untuk membuat kebiasaan pertamamu di domain Tubuh.',
-                style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -572,7 +573,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         side: BorderSide(
           color: isAction
               ? domainColor.withOpacity(0.6)
-              : theme.colorScheme.onBackground.withOpacity(0.08),
+              : theme.colorScheme.onSurface.withOpacity(0.08),
           width: isAction ? 1.5 : 1,
         ),
       ),
@@ -591,7 +592,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             style: TextStyle(
               fontWeight: isAction ? FontWeight.bold : FontWeight.normal,
               decoration: isDone ? TextDecoration.lineThrough : null,
-              color: isDone ? theme.colorScheme.onBackground.withOpacity(0.6) : theme.colorScheme.onBackground,
+              color: isDone ? theme.colorScheme.onSurface.withOpacity(0.6) : theme.colorScheme.onSurface,
             ),
           ),
           subtitle: Column(
@@ -681,7 +682,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.8), height: 1.4),
+              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.8), height: 1.4),
             ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
@@ -704,9 +705,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final isDevMode = data.profile.unlockedSkins.contains('Sakura') &&
-        data.profile.unlockedSkins.contains('Maple') &&
-        data.profile.unlockedSkins.contains('Bonsai');
+    final isDevMode = data.profile.isDeveloperMode;
 
     final activeDomains = <String>{'Tubuh'};
     if (isDevMode) {
@@ -772,7 +771,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             const SizedBox(height: 4),
             Text(
               'Detail kemajuan nilai dan tingkat keaktifan domain kehidupan.',
-              style: TextStyle(fontSize: 11, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+              style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withOpacity(0.6)),
             ),
             const SizedBox(height: 16),
             ...domains.map((domain) {
@@ -808,7 +807,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                           domain,
                           style: TextStyle(
                             fontWeight: isFiltered ? FontWeight.bold : FontWeight.w600,
-                            color: isActive ? theme.colorScheme.onBackground : theme.colorScheme.onBackground.withOpacity(0.4),
+                            color: isActive ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withOpacity(0.4),
                           ),
                         ),
                         if (isFocus) ...[
@@ -831,7 +830,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: isFiltered ? FontWeight.bold : FontWeight.normal,
-                            color: isActive ? color : theme.colorScheme.onBackground.withOpacity(0.3),
+                            color: isActive ? color : theme.colorScheme.onSurface.withOpacity(0.3),
                           ),
                         ),
                       ],
@@ -861,13 +860,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   void _toggleDeveloperMode(BuildContext context, WidgetRef ref, UserProfile profile, bool enable) async {
     final db = ref.read(dbProvider);
     try {
-      final updatedUnlocked = enable ? 'Default,Sakura,Maple,Bonsai' : 'Default';
-      final updatedSelected = enable ? profile.selectedSkin : 'Default';
-
       await (db.update(db.userProfiles)..where((tbl) => tbl.userId.equals(profile.userId)))
           .write(UserProfilesCompanion(
-        unlockedSkins: drift.Value(updatedUnlocked),
-        selectedSkin: drift.Value(updatedSelected),
+        isDeveloperMode: drift.Value(enable),
       ));
 
       ref.invalidate(dashboardDataProvider);
@@ -876,8 +871,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(enable
-                ? 'Mode Developer Aktif: Semua skin premium terbuka!'
-                : 'Mode Developer Nonaktif: Skin premium terkunci kembali.'),
+                ? 'Mode Developer Aktif: Fitur simulasi dan semua skin terbuka!'
+                : 'Mode Developer Nonaktif: Fitur simulasi ditutup.'),
             backgroundColor: Colors.blue,
           ),
         );
@@ -1070,7 +1065,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onBackground.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
             ...values.map((v) => Container(
@@ -1097,10 +1092,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   void _showExportMenu(BuildContext context, WidgetRef ref) {
     final dashboardData = ref.read(dashboardDataProvider).valueOrNull;
     final profile = dashboardData?.profile;
-    final isDevMode = profile != null &&
-        profile.unlockedSkins.contains('Sakura') &&
-        profile.unlockedSkins.contains('Maple') &&
-        profile.unlockedSkins.contains('Bonsai');
+    final isDevMode = profile != null && profile.isDeveloperMode;
 
     showModalBottomSheet(
       context: context,
@@ -1511,36 +1503,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
       final jsonString = const JsonEncoder.withIndent('  ').convert(data);
       
-      // Since share_plus is added, we can use it, or just show a text dialog containing JSON
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Data Berhasil Diekspor'),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Salin konten JSON di bawah untuk cadangan manual Anda:'),
-                    const SizedBox(height: 12),
-                    SelectableText(
-                      jsonString,
-                      style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Tutup'),
-                ),
-              ],
-            );
-          },
-        );
-      }
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/lifetree_export_${DateTime.now().millisecondsSinceEpoch}.json');
+      await file.writeAsString(jsonString);
+
+      await Share.shareXFiles(
+        [XFile(file.path, mimeType: 'application/json')],
+        subject: 'LifeTree Data Export',
+      );
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1548,558 +1518,5 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         );
       }
     }
-  }
-}
-
-// ---------------------------------------------------------
-// Friction Intervention Sheet Component
-// ---------------------------------------------------------
-class _FrictionInterventionSheet extends ConsumerStatefulWidget {
-  final Habit habit;
-  const _FrictionInterventionSheet({required this.habit});
-
-  @override
-  ConsumerState<_FrictionInterventionSheet> createState() => _FrictionInterventionSheetState();
-}
-
-class _FrictionInterventionSheetState extends ConsumerState<_FrictionInterventionSheet> {
-  String? _selectedReason; // 'Kurang_Waktu', 'Kelelahan', 'Lupa'
-  int _recoveryDays = 3;
-
-  Future<void> _submitIntervention() async {
-    if (_selectedReason == null) return;
-
-    final service = ref.read(habitLogServiceProvider);
-    final db = ref.read(dbProvider);
-    final now = DateTime.now();
-
-    // Safe upsert Missed log via HabitLogService (no duplicate conflict)
-    await service.markMissedWithReason(
-      habit: widget.habit,
-      date: now,
-      reason: _selectedReason!,
-    );
-
-    // Apply specific intervention logic based on user choice
-    if (_selectedReason == 'Kelelahan') {
-      // Enter Recovery Mode
-      final profiles = await db.select(db.userProfiles).get();
-      if (profiles.isNotEmpty) {
-        await (db.update(db.userProfiles)..where((tbl) => tbl.userId.equals(profiles.first.userId)))
-            .write(UserProfilesCompanion(
-              supportMode: const drift.Value('Recovery'),
-              updatedAt: drift.Value(now),
-            ));
-      }
-    }
-
-    if (mounted) {
-      Navigator.pop(context);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.background,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: EdgeInsets.only(
-        top: 20,
-        left: 24,
-        right: 24,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Header
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.onBackground.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Ada apa hari ini?',
-            style: theme.textTheme.headlineMedium,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Jangan merasa bersalah. Menghadapi rintangan adalah bagian dari proses pembentukan kebiasaan.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, color: theme.colorScheme.onBackground.withOpacity(0.7)),
-          ),
-          const SizedBox(height: 24),
-
-          // Reason Options
-          _buildReasonTile(
-            value: 'Kurang_Waktu',
-            icon: Icons.timer_outlined,
-            title: 'Kurang Waktu',
-            desc: 'Saya hanya punya sedikit waktu hari ini.',
-          ),
-          _buildReasonTile(
-            value: 'Kelelahan',
-            icon: Icons.battery_alert_rounded,
-            title: 'Kelelahan / Sakit',
-            desc: 'Energi saya benar-benar terkuras hari ini.',
-          ),
-          _buildReasonTile(
-            value: 'Lupa',
-            icon: Icons.notifications_off_outlined,
-            title: 'Lupa / Kurang Fokus',
-            desc: 'Saya terlewat karena tidak ingat jadwalnya.',
-          ),
-          const SizedBox(height: 16),
-
-          // Conditional details based on selected reason
-          if (_selectedReason == 'Kurang_Waktu')
-            Card(
-              color: theme.colorScheme.primary.withOpacity(0.05),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Text('💡 Tips Ringan', style: TextStyle(fontWeight: FontWeight.bold, color: CalmTheme.primarySage)),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Bagaimana jika kita kurangi target besok ke versi ringkas (${widget.habit.mvaDurationMin} menit) saja?',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          if (_selectedReason == 'Kelelahan')
-            Card(
-              color: CalmTheme.secondaryBlue.withOpacity(0.05),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Text('❄️ Masuk Mode Istirahat', style: TextStyle(fontWeight: FontWeight.bold, color: CalmTheme.secondaryBlue)),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Pohon Anda akan diselimuti salju dan notifikasi akan dijeda sementara.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [3, 5, 7].map((days) {
-                        final isSelected = _recoveryDays == days;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: ChoiceChip(
-                            label: Text('$days Hari'),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              if (selected) setState(() => _recoveryDays = days);
-                            },
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          if (_selectedReason == 'Lupa')
-            Card(
-              color: Colors.amber.withOpacity(0.05),
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Text('🔗 Routine Stacking', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber)),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Coba kaitkan kebiasaan ini tepat setelah aktivitas harian yang pasti Anda lakukan (misal: setelah minum kopi pagi).',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-          const SizedBox(height: 24),
-
-          // Action button
-          ElevatedButton(
-            onPressed: _selectedReason != null ? _submitIntervention : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.primary,
-              foregroundColor: theme.colorScheme.onPrimary,
-              minimumSize: const Size(88, 52), // WCAG touch target
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            child: const Text('Simpan & Refleksikan'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReasonTile({
-    required String value,
-    required IconData icon,
-    required String title,
-    required String desc,
-  }) {
-    final isSelected = _selectedReason == value;
-    final theme = Theme.of(context);
-    
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: RadioListTile<String>(
-        value: value,
-        groupValue: _selectedReason,
-        onChanged: (val) {
-          setState(() {
-            _selectedReason = val;
-          });
-        },
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(desc, style: const TextStyle(fontSize: 12)),
-        secondary: Icon(icon, color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.4)),
-        selected: isSelected,
-        activeColor: theme.colorScheme.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.08),
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _TreeSkinShopBottomSheet extends ConsumerStatefulWidget {
-  final UserProfile profile;
-  final VoidCallback onSuccess;
-  const _TreeSkinShopBottomSheet({required this.profile, required this.onSuccess});
-
-  @override
-  ConsumerState<_TreeSkinShopBottomSheet> createState() => _TreeSkinShopBottomSheetState();
-}
-
-class _TreeSkinShopBottomSheetState extends ConsumerState<_TreeSkinShopBottomSheet> {
-  bool _isProcessing = false;
-
-  final List<Map<String, dynamic>> _skins = [
-    {
-      'id': 'Default',
-      'name': 'Oak Klasik 🌱',
-      'description': 'Penampilan default bernuansa hijau sage yang menenangkan.',
-      'price': 0,
-      'preview': '🌱 🌿 🌳 🌲',
-    },
-    {
-      'id': 'Sakura',
-      'name': 'Sakura Jepang 🌸',
-      'description': 'Pohon sakura dengan kelopak bunga merah muda yang mekar indah.',
-      'price': 15000,
-      'preview': '🌸🌱 🌸🌿 🌸🌳 🌸🌲',
-    },
-    {
-      'id': 'Maple',
-      'name': 'Golden Maple 🍁',
-      'description': 'Penampilan musim gugur dengan warna emas kemerahan yang hangat.',
-      'price': 15000,
-      'preview': '🍁🌱 🍁🌿 🍁🌳 🍁🌲',
-    },
-    {
-      'id': 'Bonsai',
-      'name': 'Bonsai Zen 🪴',
-      'description': 'Tanaman kerdil tradisional untuk melatih kedisiplinan dan ketenangan.',
-      'price': 25000,
-      'preview': '🪴🌱 🪴🌿 🪴🌳 🪴🌲',
-    },
-  ];
-
-  Future<void> _selectSkin(String skinId) async {
-    final db = ref.read(dbProvider);
-    try {
-      await (db.update(db.userProfiles)..where((tbl) => tbl.userId.equals(widget.profile.userId)))
-          .write(UserProfilesCompanion(selectedSkin: drift.Value(skinId)));
-      widget.onSuccess();
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Tampilan pohon berhasil diubah ke skin ini!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menerapkan skin: $e'), backgroundColor: Colors.red),
-        );
-      }
-    }
-  }
-
-  Future<void> _buySkin(Map<String, dynamic> skin) async {
-    final db = ref.read(dbProvider);
-    final skinId = skin['id'] as String;
-    final priceStr = 'Rp ${(skin['price'] as int).toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")}';
-
-    final proceedPayment = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        String method = 'Google Play';
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              title: const Text('Simulasi Transaksi Premium'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'Anda akan membeli skin premium:\n"${skin['name']}"',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Harga: $priceStr',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text('Pilih Metode Pembayaran:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: method,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: 'Google Play', child: Text('GPay / Google Play Store')),
-                      DropdownMenuItem(value: 'Transfer Bank', child: Text('Transfer Bank (Virtual Account)')),
-                      DropdownMenuItem(value: 'e-Wallet', child: Text('e-Wallet (QRIS)')),
-                    ],
-                    onChanged: (val) {
-                      if (val != null) {
-                        setDialogState(() {
-                          method = val;
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Batal'),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                  child: const Text('Bayar Sekarang'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-
-    if (proceedPayment == true) {
-      setState(() {
-        _isProcessing = true;
-      });
-
-      // Simulate payment delay
-      await Future.delayed(const Duration(milliseconds: 600));
-
-      try {
-        final updatedUnlocked = '${widget.profile.unlockedSkins},$skinId';
-        await (db.update(db.userProfiles)..where((tbl) => tbl.userId.equals(widget.profile.userId)))
-            .write(UserProfilesCompanion(
-          unlockedSkins: drift.Value(updatedUnlocked),
-          selectedSkin: drift.Value(skinId),
-        ));
-
-        widget.onSuccess();
-
-        if (mounted) {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Pembelian berhasil! Skin "${skin['name']}" telah diaktifkan.'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Gagal memproses pembelian: $e'), backgroundColor: Colors.red),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isProcessing = false;
-          });
-        }
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final unlockedList = widget.profile.unlockedSkins.split(',');
-
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.onBackground.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Toko Skin Pohon 🎨',
-            style: theme.textTheme.headlineMedium,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Visualisasikan konsistensi Anda dengan gaya pohon unik.',
-            style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.6)),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          if (_isProcessing)
-            const SizedBox(
-              height: 250,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text('Memproses transaksi pembayaran...'),
-                  ],
-                ),
-              ),
-            )
-          else
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _skins.length,
-              itemBuilder: (context, index) {
-                final s = _skins[index];
-                final isUnlocked = unlockedList.contains(s['id']);
-                final isSelected = widget.profile.selectedSkin == s['id'];
-
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    leading: Text(
-                      (s['preview'] as String).split(' ').last,
-                      style: const TextStyle(fontSize: 32),
-                    ),
-                    title: Text(
-                      s['name'],
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(s['description'], style: const TextStyle(fontSize: 11)),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Preview: ${s['preview']}',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: theme.colorScheme.onBackground.withOpacity(0.5),
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: isSelected
-                        ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
-                        : isUnlocked
-                            ? OutlinedButton(
-                                onPressed: () => _selectSkin(s['id']),
-                                style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                ),
-                                child: const Text('Pakai', style: TextStyle(fontSize: 12)),
-                              )
-                            : ElevatedButton(
-                                onPressed: () => _buySkin(s),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: theme.colorScheme.primary,
-                                  foregroundColor: theme.colorScheme.onPrimary,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                ),
-                                child: Text(
-                                  s['price'] == 0 ? 'Gratis' : 'Rp ${(s['price'] as int).toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")}',
-                                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                  ),
-                );
-              },
-            ),
-        ],
-      ),
-    );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../providers/db_provider.dart';
 
 class CalmTheme {
@@ -28,10 +29,8 @@ class CalmTheme {
         primary: primarySage,
         primaryContainer: primaryContainer,
         secondary: secondaryBlue,
-        background: backgroundCream,
         surface: surfaceWhite,
         onPrimary: Colors.white,
-        onBackground: textDarkSage,
         onSurface: textDarkSage,
         onPrimaryContainer: textDarkSage,
         error: alertMutedRed,
@@ -45,19 +44,21 @@ class CalmTheme {
           side: const BorderSide(color: Color(0xFFE6E2DC), width: 1),
         ),
       ),
-      textTheme: const TextTheme(
-        headlineLarge: TextStyle(fontFamily: 'Inter', fontSize: 32, fontWeight: FontWeight.bold, color: textDarkSage),
-        headlineMedium: TextStyle(fontFamily: 'Inter', fontSize: 24, fontWeight: FontWeight.w600, color: textDarkSage),
-        titleLarge: TextStyle(fontFamily: 'Inter', fontSize: 20, fontWeight: FontWeight.w600, color: textDarkSage),
-        bodyLarge: TextStyle(fontFamily: 'Inter', fontSize: 16, color: textDarkSage),
-        bodyMedium: TextStyle(fontFamily: 'Inter', fontSize: 14, color: textDarkSage),
-        labelLarge: TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+      textTheme: GoogleFonts.interTextTheme(
+        const TextTheme(
+          headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: textDarkSage),
+          headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: textDarkSage),
+          titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: textDarkSage),
+          bodyLarge: TextStyle(fontSize: 16, color: textDarkSage),
+          bodyMedium: TextStyle(fontSize: 14, color: textDarkSage),
+          labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+        ),
       ),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: backgroundCream,
         elevation: 0,
-        iconTheme: IconThemeData(color: textDarkSage),
-        titleTextStyle: TextStyle(fontFamily: 'Inter', fontSize: 20, fontWeight: FontWeight.bold, color: textDarkSage),
+        iconTheme: const IconThemeData(color: textDarkSage),
+        titleTextStyle: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: textDarkSage),
       ),
       buttonTheme: const ButtonThemeData(
         minWidth: 88,
@@ -74,10 +75,8 @@ class CalmTheme {
         primary: primarySageDark,
         primaryContainer: primaryContainerDark,
         secondary: secondaryBlueDark,
-        background: backgroundDark,
         surface: surfaceDark,
         onPrimary: backgroundDark,
-        onBackground: textLightSage,
         onSurface: textLightSage,
         onPrimaryContainer: textLightSage,
         error: alertMutedRed,
@@ -91,19 +90,21 @@ class CalmTheme {
           side: const BorderSide(color: Color(0xFF2C3E34), width: 1),
         ),
       ),
-      textTheme: const TextTheme(
-        headlineLarge: TextStyle(fontFamily: 'Inter', fontSize: 32, fontWeight: FontWeight.bold, color: textLightSage),
-        headlineMedium: TextStyle(fontFamily: 'Inter', fontSize: 24, fontWeight: FontWeight.w600, color: textLightSage),
-        titleLarge: TextStyle(fontFamily: 'Inter', fontSize: 20, fontWeight: FontWeight.w600, color: textLightSage),
-        bodyLarge: TextStyle(fontFamily: 'Inter', fontSize: 16, color: textLightSage),
-        bodyMedium: TextStyle(fontFamily: 'Inter', fontSize: 14, color: textLightSage),
-        labelLarge: TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w500, color: backgroundDark),
+      textTheme: GoogleFonts.interTextTheme(
+        const TextTheme(
+          headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: textLightSage),
+          headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: textLightSage),
+          titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: textLightSage),
+          bodyLarge: TextStyle(fontSize: 16, color: textLightSage),
+          bodyMedium: TextStyle(fontSize: 14, color: textLightSage),
+          labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: backgroundDark),
+        ),
       ),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: backgroundDark,
         elevation: 0,
-        iconTheme: IconThemeData(color: textLightSage),
-        titleTextStyle: TextStyle(fontFamily: 'Inter', fontSize: 20, fontWeight: FontWeight.bold, color: textLightSage),
+        iconTheme: const IconThemeData(color: textLightSage),
+        titleTextStyle: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: textLightSage),
       ),
       buttonTheme: const ButtonThemeData(
         minWidth: 88,

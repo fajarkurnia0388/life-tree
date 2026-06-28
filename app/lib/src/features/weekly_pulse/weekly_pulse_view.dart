@@ -200,7 +200,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                             'Jawablah sejujur mungkin berdasarkan apa yang Anda rasakan selama 2 minggu terakhir.',
                             style: TextStyle(
                               fontSize: 12,
-                              color: theme.colorScheme.onBackground.withOpacity(0.7),
+                              color: theme.colorScheme.onSurface.withOpacity(0.7),
                             ),
                             textAlign: TextAlign.center,
                           ),

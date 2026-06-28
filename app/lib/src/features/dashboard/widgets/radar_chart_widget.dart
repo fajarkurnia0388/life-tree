@@ -42,7 +42,7 @@ class RadarChartWidget extends StatelessWidget {
               'Ketuk nama domain pada radar untuk memfokuskan dasbor. Domain non-aktif diberi tanda (Soon).',
               style: TextStyle(
                 fontSize: 11,
-                color: theme.colorScheme.onBackground.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
               textAlign: TextAlign.center,
             ),
@@ -78,7 +78,7 @@ class RadarChartWidget extends StatelessWidget {
                     activeDomains: activeDomains,
                     selectedDomain: selectedDomain,
                     primaryColor: theme.colorScheme.primary,
-                    onBackgroundColor: theme.colorScheme.onBackground,
+                    onBackgroundColor: theme.colorScheme.onSurface,
                     cardColor: theme.cardTheme.color ?? theme.colorScheme.surface,
                   ),
                 ),

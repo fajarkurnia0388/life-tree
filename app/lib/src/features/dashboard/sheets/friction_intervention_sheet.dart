@@ -43,6 +43,7 @@ class _FrictionInterventionSheetState
               ..where((tbl) => tbl.userId.equals(profiles.first.userId)))
             .write(UserProfilesCompanion(
               supportMode: const drift.Value('Recovery'),
+              recoveryEndDate: drift.Value(now.add(Duration(days: _recoveryDays))),
               updatedAt: drift.Value(now),
             ));
       }

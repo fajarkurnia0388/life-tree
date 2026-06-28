@@ -273,7 +273,7 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.6),
+                              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.6),
                             ),
                           ),
                         ],

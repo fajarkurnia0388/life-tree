@@ -1,17 +1,46 @@
-# life_tree
+# LifeTree Application
 
-A new Flutter project.
+LifeTree is a dynamic habit tracker built with Flutter, focusing on life balance and mental health, visually represented by a customizable growth tree.
 
-## Getting Started
+## Fitur Utama
+- **Radar Chart Keseimbangan Hidup:** Visualisasi skor domain kehidupan (Tubuh, Pikiran, Sosial, Karier, dll.).
+- **Pohon Vitalitas Dinamis:** Pohon tumbuh dan berganti musim/warna sesuai dengan kemajuan kebiasaan harian Anda.
+- **Onboarding Terstruktur:** Menuntun pengguna menetapkan prioritas dan preferensi keselamatan sejak awal.
+- **Toko Skin Pohon:** Kustomisasi visual pohon dengan variasi Oak, Sakura, Maple, dan Bonsai.
+- **Ekspor Data:** Pencadangan data pengguna secara aman ke dalam berkas JSON menggunakan sistem native sharing.
 
-This project is a starting point for a Flutter application.
+## Setup & Pengembangan
 
-A few resources to get you started if this is your first Flutter project:
+### Prasyarat
+- Flutter SDK (versi `3.32.x` atau lebih baru)
+- Dart SDK
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+### Langkah Awal
+1. Ambil dependensi Flutter:
+   ```bash
+   flutter pub get
+   ```
+2. Jalankan build_runner untuk menghasilkan kode database (Drift):
+   ```bash
+   dart run build_runner build --delete-conflicting-outputs
+   ```
+3. Jalankan aplikasi:
+   ```bash
+   flutter run
+   ```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Pengujian / Testing
+Jalankan perintah berikut untuk mengeksekusi semua unit dan widget test:
+```bash
+flutter test
+```
+Untuk menjalankan analisis kode statis:
+```bash
+flutter analyze
+```
+
+## Arsitektur & Teknologi
+- **State Management:** Riverpod (`flutter_riverpod`)
+- **Database Lokal:** Drift SQLite (`drift`)
+- **Penyimpanan Berkas:** Path Provider (`path_provider`)
+- **Pemicu Sharing:** Share Plus (`share_plus`)

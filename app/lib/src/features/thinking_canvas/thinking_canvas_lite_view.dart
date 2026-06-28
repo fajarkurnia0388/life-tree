@@ -165,16 +165,16 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.onBackground.withOpacity(0.04),
+              color: theme.colorScheme.onSurface.withOpacity(0.04),
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: theme.colorScheme.onBackground.withOpacity(0.08)),
+              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.08)),
             ),
             child: Text(
               format,
               style: TextStyle(
                 fontFamily: 'monospace',
                 fontSize: 11,
-                color: theme.colorScheme.onBackground.withOpacity(0.8),
+                color: theme.colorScheme.onSurface.withOpacity(0.8),
               ),
             ),
           ),
@@ -209,7 +209,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 if (!_canvasTimerActive)
                   DropdownButton<int>(
                     value: _canvasSelectedMinutes,
-                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground),
+                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface),
                     underline: const SizedBox(),
                     items: [1, 2, 3, 5, 7, 10, 15].map((m) {
                       return DropdownMenuItem(
@@ -586,7 +586,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 _mindMapNodes.isEmpty
                     ? 'Belum ada peta pikiran yang dibuat. Buat visual mind map sekarang!'
                     : 'Peta pikiran aktif: ${_mindMapNodes.length} gelembung ide.',
-                style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
@@ -775,7 +775,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 margin: const EdgeInsets.symmetric(vertical: 6.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: theme.colorScheme.onBackground.withOpacity(0.08)),
+                  side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.08)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -926,7 +926,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
               const SizedBox(height: 8),
               Text(
                 'Prinsip LifeTree: Paper-First. Tulislah coretan Anda di buku atau kertas asli terlebih dahulu untuk mengurangi screen fatigue.',
-                style: TextStyle(fontSize: 13, color: theme.colorScheme.onBackground.withOpacity(0.7)),
+                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withOpacity(0.7)),
               ),
               const SizedBox(height: 24),
  
@@ -939,7 +939,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
-                    border: Border.all(color: theme.colorScheme.onBackground.withOpacity(0.2)),
+                    border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.2)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -964,7 +964,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                             const SizedBox(height: 4),
                             Text(
                               activeMethod.desc,
-                              style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+                              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -1160,7 +1160,7 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
           minimumSize: const Size(double.infinity, 44),
           backgroundColor: isSelected ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
           side: BorderSide(
-            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.12),
+            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.12),
             width: isSelected ? 2 : 1,
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -1170,7 +1170,7 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground,
+              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               fontSize: 12,
             ),
@@ -1202,7 +1202,7 @@ class _ThinkingCanvasOnboardingDialogState extends State<_ThinkingCanvasOnboardi
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
-                color: theme.colorScheme.onBackground.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
             const SizedBox(height: 16),
@@ -1556,7 +1556,7 @@ class _MethodPickerBottomSheetState extends State<_MethodPickerBottomSheet> {
       ),
       height: media.size.height * 0.8,
       decoration: BoxDecoration(
-        color: theme.colorScheme.background,
+        color: theme.colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -1568,7 +1568,7 @@ class _MethodPickerBottomSheetState extends State<_MethodPickerBottomSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: theme.colorScheme.onBackground.withOpacity(0.2),
+                color: theme.colorScheme.onSurface.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -1648,7 +1648,7 @@ class _MethodPickerBottomSheetState extends State<_MethodPickerBottomSheet> {
                           side: BorderSide(
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onBackground.withOpacity(0.08),
+                                : theme.colorScheme.onSurface.withOpacity(0.08),
                             width: isSelected ? 2 : 1,
                           ),
                         ),
@@ -1705,7 +1705,7 @@ class _MethodPickerBottomSheetState extends State<_MethodPickerBottomSheet> {
                                   m.desc,
                                   style: TextStyle(
                                     fontSize: 13,
-                                    color: theme.colorScheme.onBackground.withOpacity(0.7),
+                                    color: theme.colorScheme.onSurface.withOpacity(0.7),
                                   ),
                                 ),
                                 const SizedBox(height: 8),

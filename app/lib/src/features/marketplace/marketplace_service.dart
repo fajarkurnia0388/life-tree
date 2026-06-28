@@ -326,6 +326,9 @@ class MockMarketplaceService implements MarketplaceService {
   }
 }
 
+// TODO: MockMarketplaceService hanya menyimpan data di memori (volatile).
+// Implementasikan RemoteMarketplaceService menggunakan Supabase/Firebase
+// atau LocalMarketplaceService menggunakan drift untuk persisten data.
 final marketplaceServiceProvider = Provider<MarketplaceService>((ref) {
-  return MockMarketplaceService();
+  return MockMarketplaceService(); // MOCK ONLY — not production-ready
 });

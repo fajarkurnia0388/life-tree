@@ -58,7 +58,7 @@ class SafetyCardView extends ConsumerWidget {
             Text(
               'Jika Anda merasa sangat kewalahan, berada dalam kondisi krisis emosional, atau membutuhkan pertolongan darurat, ketuk kontak di bawah ini untuk terhubung dengan layanan bantuan profesional.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: theme.colorScheme.onBackground.withOpacity(0.7)),
+              style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withOpacity(0.7)),
             ),
             const SizedBox(height: 32),
 
@@ -135,10 +135,10 @@ class SafetyCardView extends ConsumerWidget {
 
             // Disclaimer card
             Card(
-              color: theme.colorScheme.onBackground.withOpacity(0.03),
+              color: theme.colorScheme.onSurface.withOpacity(0.03),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: theme.colorScheme.onBackground.withOpacity(0.08), width: 1),
+                side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.08), width: 1),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -147,18 +147,18 @@ class SafetyCardView extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.lock_outline_rounded, size: 16, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+                        Icon(Icons.lock_outline_rounded, size: 16, color: theme.colorScheme.onSurface.withOpacity(0.6)),
                         const SizedBox(width: 6),
                         Text(
                           'Data Tersimpan Lokal di Perangkat Anda',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.8)),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.8)),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'LifeTree menyimpan semua data secara offline pada memori internal perangkat Anda — tidak ada yang diunggah ke internet atau dibagikan ke pihak ketiga. Enkripsi database (SQLCipher) direncanakan pada fase berikutnya.',
-                      style: TextStyle(fontSize: 11, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+                      style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withOpacity(0.6)),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -196,7 +196,7 @@ class SafetyCardView extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               description,
-              style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(

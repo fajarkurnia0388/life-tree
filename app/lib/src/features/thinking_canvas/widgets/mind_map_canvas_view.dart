@@ -199,7 +199,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
         : null;
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: const Text('Visual Mind Map Editor'),
         actions: [
@@ -248,7 +248,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                     // Grid background
                     Positioned.fill(
                       child: CustomPaint(
-                        painter: _GridBackgroundPainter(theme.colorScheme.onBackground.withOpacity(0.04)),
+                        painter: _GridBackgroundPainter(theme.colorScheme.onSurface.withOpacity(0.04)),
                       ),
                     ),
 
@@ -350,7 +350,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                                     color: Color(colorVal),
                                     shape: BoxShape.circle,
                                     border: isCurrentColor
-                                        ? Border.all(color: theme.colorScheme.onBackground, width: 2)
+                                        ? Border.all(color: theme.colorScheme.onSurface, width: 2)
                                         : null,
                                   ),
                                 ),

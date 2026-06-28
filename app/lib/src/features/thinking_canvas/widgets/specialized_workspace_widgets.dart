@@ -375,9 +375,9 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
         Container(
           height: 290,
           decoration: BoxDecoration(
-            color: theme.colorScheme.onBackground.withOpacity(0.02),
+            color: theme.colorScheme.onSurface.withOpacity(0.02),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.colorScheme.onBackground.withOpacity(0.06)),
+            border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.06)),
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -450,11 +450,11 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                                 ? theme.colorScheme.primary
                                 : (text.isNotEmpty
                                     ? theme.colorScheme.primaryContainer.withOpacity(0.85)
-                                    : theme.colorScheme.onBackground.withOpacity(0.04)),
+                                    : theme.colorScheme.onSurface.withOpacity(0.04)),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: (isCenter ? theme.colorScheme.primary : theme.colorScheme.onBackground)
+                                color: (isCenter ? theme.colorScheme.primary : theme.colorScheme.onSurface)
                                     .withOpacity(0.12),
                                 blurRadius: 6,
                               )
@@ -481,7 +481,7 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                                       ? theme.colorScheme.onPrimary
                                       : (text.isNotEmpty
                                           ? theme.colorScheme.onPrimaryContainer
-                                          : theme.colorScheme.onBackground.withOpacity(0.6)),
+                                          : theme.colorScheme.onSurface.withOpacity(0.6)),
                                 ),
                               ),
                             ),
@@ -849,7 +849,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
-                          color: theme.colorScheme.onBackground.withOpacity(0.08),
+                          color: theme.colorScheme.onSurface.withOpacity(0.08),
                         ),
                       ),
                       child: ListTile(
@@ -887,7 +887,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                                 return Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.onBackground.withOpacity(0.04),
+                                    color: theme.colorScheme.onSurface.withOpacity(0.04),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
@@ -977,9 +977,9 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
         Container(
           height: 160,
           decoration: BoxDecoration(
-            color: theme.colorScheme.onBackground.withOpacity(0.04),
+            color: theme.colorScheme.onSurface.withOpacity(0.04),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.colorScheme.onBackground.withOpacity(0.08), width: 1.5),
+            border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.08), width: 1.5),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
           child: Row(
@@ -1411,7 +1411,7 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
                 side: BorderSide(
-                  color: isStarred ? Colors.amber : theme.colorScheme.onBackground.withOpacity(0.08),
+                  color: isStarred ? Colors.amber : theme.colorScheme.onSurface.withOpacity(0.08),
                   width: isStarred ? 2 : 1,
                 ),
               ),
@@ -1777,7 +1777,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
     final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -1829,7 +1829,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                             side: BorderSide(
                               color: isCurrentlyActive
                                   ? theme.colorScheme.primary
-                                  : theme.colorScheme.onBackground.withOpacity(0.08),
+                                  : theme.colorScheme.onSurface.withOpacity(0.08),
                               width: isCurrentlyActive ? 2 : 1,
                             ),
                           ),
@@ -1894,7 +1894,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: theme.colorScheme.background,
+          backgroundColor: theme.colorScheme.surface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Row(
             children: [
@@ -1978,10 +1978,10 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                   margin: const EdgeInsets.only(right: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.04),
+                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.04),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.08),
+                      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.08),
                     ),
                   ),
                   child: Row(
@@ -1993,7 +1993,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onBackground,
+                          color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -2344,10 +2344,10 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
                   margin: const EdgeInsets.symmetric(horizontal: 2.0),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
-                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.04),
+                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.04),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.08),
+                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.08),
                     ),
                   ),
                   child: Text(
@@ -2356,7 +2356,7 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: isActive ? theme.colorScheme.onPrimary : theme.colorScheme.onBackground,
+                      color: isActive ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -2485,7 +2485,7 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(
-                color: isExpanded ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.08),
+                color: isExpanded ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.08),
                 width: isExpanded ? 1.5 : 1,
               ),
             ),
@@ -2498,7 +2498,7 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: isExpanded ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.05),
+                      color: isExpanded ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.05),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -2507,7 +2507,7 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: isExpanded ? theme.colorScheme.onPrimary : theme.colorScheme.onBackground,
+                          color: isExpanded ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -2758,10 +2758,10 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
-                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.04),
+                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.04),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.08),
+                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.08),
                   ),
                 ),
                 child: Center(
@@ -2770,7 +2770,7 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onBackground,
+                      color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -2906,9 +2906,9 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: theme.colorScheme.onBackground.withOpacity(0.02),
+              color: theme.colorScheme.onSurface.withOpacity(0.02),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: theme.colorScheme.onBackground.withOpacity(0.06)),
+              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.06)),
             ),
             child: const Column(
               children: [
@@ -3072,9 +3072,9 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: theme.colorScheme.onBackground.withOpacity(0.02),
+              color: theme.colorScheme.onSurface.withOpacity(0.02),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: theme.colorScheme.onBackground.withOpacity(0.06)),
+              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.06)),
             ),
             child: const Column(
               children: [
@@ -3109,7 +3109,7 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
                       ),
                       DropdownButton<String>(
                         value: activeGroup,
-                        style: TextStyle(fontSize: 10, color: theme.colorScheme.onBackground, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold),
                         underline: const SizedBox(),
                         items: _groups.map((g) {
                           return DropdownMenuItem(
@@ -3309,10 +3309,10 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isLast ? theme.colorScheme.primary.withOpacity(0.04) : theme.colorScheme.onBackground.withOpacity(0.02),
+              color: isLast ? theme.colorScheme.primary.withOpacity(0.04) : theme.colorScheme.onSurface.withOpacity(0.02),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isLast ? theme.colorScheme.primary.withOpacity(0.2) : theme.colorScheme.onBackground.withOpacity(0.08),
+                color: isLast ? theme.colorScheme.primary.withOpacity(0.2) : theme.colorScheme.onSurface.withOpacity(0.08),
                 width: isLast ? 1.5 : 1,
               ),
             ),
@@ -3324,7 +3324,7 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: isLast ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.7),
+                    color: isLast ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.7),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -3436,10 +3436,10 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
                   margin: const EdgeInsets.symmetric(horizontal: 1.5),
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.04),
+                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.04),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onBackground.withOpacity(0.08),
+                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.08),
                     ),
                   ),
                   child: Text(
@@ -3448,7 +3448,7 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
                     style: TextStyle(
                       fontSize: 9,
                       fontWeight: FontWeight.bold,
-                      color: isActive ? theme.colorScheme.onPrimary : theme.colorScheme.onBackground,
+                      color: isActive ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
                     ),
                   ),
                 ),

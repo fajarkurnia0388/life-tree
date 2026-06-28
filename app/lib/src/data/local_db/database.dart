@@ -27,6 +27,8 @@ class UserProfiles extends Table {
   DateTimeColumn get deletedAt => dateTime().nullable()();
   TextColumn get themeMode => text().withDefault(const Constant('System'))();
   TextColumn get coreValues => text().nullable()();
+  BoolColumn get isDeveloperMode => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get recoveryEndDate => dateTime().nullable()();
 
   @override
   Set<Column> get primaryKey => {userId};
@@ -183,7 +185,7 @@ class ReminderPreferences extends Table {
 class WellnessPromptLogs extends Table {
   TextColumn get promptId => text()();
   TextColumn get userId => text()();
-  TextColumn get triggerType => text()(); // 'Mood_3day', 'Mood_Drop', 'Escalation_14day'
+  TextColumn get triggerType => text()(); // Valid values: WellnessPromptTrigger.lowMood, .safetyCard, .weeklyPulse
   DateTimeColumn get promptedAt => dateTime()();
   TextColumn get userAction => text().nullable()(); // 'Dismissed', 'Opened_Safety_Card', 'Recovery_Mode', 'Tapped_Hotline_CTA'
 
@@ -228,8 +230,17 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
   AppDatabase.forTesting(QueryExecutor e) : super(e);
 
+  Future<int> countUniqueDoneDates() async {
+    final result = await customSelect(
+      "SELECT COUNT(DISTINCT date(date / 1000, 'unixepoch')) AS cnt "
+      "FROM habit_logs WHERE status = 'Done' AND deleted_at IS NULL",
+      readsFrom: {habitLogs},
+    ).getSingle();
+    return result.read<int>('cnt');
+  }
+
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -266,6 +277,17 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(userProfiles, userProfiles.coreValues);
             await m.addColumn(habits, habits.goalTag);
             await m.addColumn(decisionEntries, decisionEntries.reviewPeriodDays);
+          }
+          if (from < 6) {
+            await m.addColumn(userProfiles, userProfiles.isDeveloperMode);
+            await m.addColumn(userProfiles, userProfiles.recoveryEndDate);
+            // Create performance indexes for upgraded users (FIX-14)
+            await customStatement('CREATE INDEX IF NOT EXISTS idx_habit_log_perf ON habit_logs (habit_id, date, status);');
+            await customStatement('CREATE INDEX IF NOT EXISTS idx_habit_log_desc ON habit_logs (habit_id, date DESC);');
+            await customStatement('CREATE INDEX IF NOT EXISTS idx_journal_entry_wellness ON journal_entries (user_id, date, mood_score);');
+            await customStatement('CREATE INDEX IF NOT EXISTS idx_habit_active ON habits (user_id, status, domain_tag);');
+            await customStatement('CREATE INDEX IF NOT EXISTS idx_weekly_pulse_ttl ON weekly_pulses (user_id, domain_tag, week_start_date DESC);');
+            await customStatement('CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);');
           }
         },
       );

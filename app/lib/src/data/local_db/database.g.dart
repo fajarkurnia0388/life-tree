@@ -228,6 +228,33 @@ class $UserProfilesTable extends UserProfiles
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _isDeveloperModeMeta = const VerificationMeta(
+    'isDeveloperMode',
+  );
+  @override
+  late final GeneratedColumn<bool> isDeveloperMode = GeneratedColumn<bool>(
+    'is_developer_mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_developer_mode" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _recoveryEndDateMeta = const VerificationMeta(
+    'recoveryEndDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> recoveryEndDate =
+      GeneratedColumn<DateTime>(
+        'recovery_end_date',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     userId,
@@ -249,6 +276,8 @@ class $UserProfilesTable extends UserProfiles
     deletedAt,
     themeMode,
     coreValues,
+    isDeveloperMode,
+    recoveryEndDate,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -417,6 +446,24 @@ class $UserProfilesTable extends UserProfiles
         coreValues.isAcceptableOrUnknown(data['core_values']!, _coreValuesMeta),
       );
     }
+    if (data.containsKey('is_developer_mode')) {
+      context.handle(
+        _isDeveloperModeMeta,
+        isDeveloperMode.isAcceptableOrUnknown(
+          data['is_developer_mode']!,
+          _isDeveloperModeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('recovery_end_date')) {
+      context.handle(
+        _recoveryEndDateMeta,
+        recoveryEndDate.isAcceptableOrUnknown(
+          data['recovery_end_date']!,
+          _recoveryEndDateMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -502,6 +549,14 @@ class $UserProfilesTable extends UserProfiles
         DriftSqlType.string,
         data['${effectivePrefix}core_values'],
       ),
+      isDeveloperMode: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_developer_mode'],
+      )!,
+      recoveryEndDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}recovery_end_date'],
+      ),
     );
   }
 
@@ -531,6 +586,8 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
   final DateTime? deletedAt;
   final String themeMode;
   final String? coreValues;
+  final bool isDeveloperMode;
+  final DateTime? recoveryEndDate;
   const UserProfile({
     required this.userId,
     required this.ageBand,
@@ -551,6 +608,8 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
     this.deletedAt,
     required this.themeMode,
     this.coreValues,
+    required this.isDeveloperMode,
+    this.recoveryEndDate,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -586,6 +645,10 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
     if (!nullToAbsent || coreValues != null) {
       map['core_values'] = Variable<String>(coreValues);
     }
+    map['is_developer_mode'] = Variable<bool>(isDeveloperMode);
+    if (!nullToAbsent || recoveryEndDate != null) {
+      map['recovery_end_date'] = Variable<DateTime>(recoveryEndDate);
+    }
     return map;
   }
 
@@ -620,6 +683,10 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
       coreValues: coreValues == null && nullToAbsent
           ? const Value.absent()
           : Value(coreValues),
+      isDeveloperMode: Value(isDeveloperMode),
+      recoveryEndDate: recoveryEndDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recoveryEndDate),
     );
   }
 
@@ -656,6 +723,8 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
       themeMode: serializer.fromJson<String>(json['themeMode']),
       coreValues: serializer.fromJson<String?>(json['coreValues']),
+      isDeveloperMode: serializer.fromJson<bool>(json['isDeveloperMode']),
+      recoveryEndDate: serializer.fromJson<DateTime?>(json['recoveryEndDate']),
     );
   }
   @override
@@ -685,6 +754,8 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
       'themeMode': serializer.toJson<String>(themeMode),
       'coreValues': serializer.toJson<String?>(coreValues),
+      'isDeveloperMode': serializer.toJson<bool>(isDeveloperMode),
+      'recoveryEndDate': serializer.toJson<DateTime?>(recoveryEndDate),
     };
   }
 
@@ -708,6 +779,8 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
     Value<DateTime?> deletedAt = const Value.absent(),
     String? themeMode,
     Value<String?> coreValues = const Value.absent(),
+    bool? isDeveloperMode,
+    Value<DateTime?> recoveryEndDate = const Value.absent(),
   }) => UserProfile(
     userId: userId ?? this.userId,
     ageBand: ageBand ?? this.ageBand,
@@ -735,6 +808,10 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
     themeMode: themeMode ?? this.themeMode,
     coreValues: coreValues.present ? coreValues.value : this.coreValues,
+    isDeveloperMode: isDeveloperMode ?? this.isDeveloperMode,
+    recoveryEndDate: recoveryEndDate.present
+        ? recoveryEndDate.value
+        : this.recoveryEndDate,
   );
   UserProfile copyWithCompanion(UserProfilesCompanion data) {
     return UserProfile(
@@ -782,6 +859,12 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
       coreValues: data.coreValues.present
           ? data.coreValues.value
           : this.coreValues,
+      isDeveloperMode: data.isDeveloperMode.present
+          ? data.isDeveloperMode.value
+          : this.isDeveloperMode,
+      recoveryEndDate: data.recoveryEndDate.present
+          ? data.recoveryEndDate.value
+          : this.recoveryEndDate,
     );
   }
 
@@ -808,13 +891,15 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('themeMode: $themeMode, ')
-          ..write('coreValues: $coreValues')
+          ..write('coreValues: $coreValues, ')
+          ..write('isDeveloperMode: $isDeveloperMode, ')
+          ..write('recoveryEndDate: $recoveryEndDate')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     userId,
     ageBand,
     supportMode,
@@ -834,7 +919,9 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
     deletedAt,
     themeMode,
     coreValues,
-  );
+    isDeveloperMode,
+    recoveryEndDate,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -858,7 +945,9 @@ class UserProfile extends DataClass implements Insertable<UserProfile> {
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
           other.themeMode == this.themeMode &&
-          other.coreValues == this.coreValues);
+          other.coreValues == this.coreValues &&
+          other.isDeveloperMode == this.isDeveloperMode &&
+          other.recoveryEndDate == this.recoveryEndDate);
 }
 
 class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
@@ -881,6 +970,8 @@ class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
   final Value<DateTime?> deletedAt;
   final Value<String> themeMode;
   final Value<String?> coreValues;
+  final Value<bool> isDeveloperMode;
+  final Value<DateTime?> recoveryEndDate;
   final Value<int> rowid;
   const UserProfilesCompanion({
     this.userId = const Value.absent(),
@@ -902,6 +993,8 @@ class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
     this.deletedAt = const Value.absent(),
     this.themeMode = const Value.absent(),
     this.coreValues = const Value.absent(),
+    this.isDeveloperMode = const Value.absent(),
+    this.recoveryEndDate = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserProfilesCompanion.insert({
@@ -924,6 +1017,8 @@ class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
     this.deletedAt = const Value.absent(),
     this.themeMode = const Value.absent(),
     this.coreValues = const Value.absent(),
+    this.isDeveloperMode = const Value.absent(),
+    this.recoveryEndDate = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : userId = Value(userId),
        ageBand = Value(ageBand),
@@ -949,6 +1044,8 @@ class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
     Expression<DateTime>? deletedAt,
     Expression<String>? themeMode,
     Expression<String>? coreValues,
+    Expression<bool>? isDeveloperMode,
+    Expression<DateTime>? recoveryEndDate,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -976,6 +1073,8 @@ class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (themeMode != null) 'theme_mode': themeMode,
       if (coreValues != null) 'core_values': coreValues,
+      if (isDeveloperMode != null) 'is_developer_mode': isDeveloperMode,
+      if (recoveryEndDate != null) 'recovery_end_date': recoveryEndDate,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1000,6 +1099,8 @@ class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
     Value<DateTime?>? deletedAt,
     Value<String>? themeMode,
     Value<String?>? coreValues,
+    Value<bool>? isDeveloperMode,
+    Value<DateTime?>? recoveryEndDate,
     Value<int>? rowid,
   }) {
     return UserProfilesCompanion(
@@ -1023,6 +1124,8 @@ class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
       deletedAt: deletedAt ?? this.deletedAt,
       themeMode: themeMode ?? this.themeMode,
       coreValues: coreValues ?? this.coreValues,
+      isDeveloperMode: isDeveloperMode ?? this.isDeveloperMode,
+      recoveryEndDate: recoveryEndDate ?? this.recoveryEndDate,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1093,6 +1196,12 @@ class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
     if (coreValues.present) {
       map['core_values'] = Variable<String>(coreValues.value);
     }
+    if (isDeveloperMode.present) {
+      map['is_developer_mode'] = Variable<bool>(isDeveloperMode.value);
+    }
+    if (recoveryEndDate.present) {
+      map['recovery_end_date'] = Variable<DateTime>(recoveryEndDate.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1123,6 +1232,8 @@ class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
           ..write('deletedAt: $deletedAt, ')
           ..write('themeMode: $themeMode, ')
           ..write('coreValues: $coreValues, ')
+          ..write('isDeveloperMode: $isDeveloperMode, ')
+          ..write('recoveryEndDate: $recoveryEndDate, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -7260,6 +7371,8 @@ typedef $$UserProfilesTableCreateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<String> themeMode,
       Value<String?> coreValues,
+      Value<bool> isDeveloperMode,
+      Value<DateTime?> recoveryEndDate,
       Value<int> rowid,
     });
 typedef $$UserProfilesTableUpdateCompanionBuilder =
@@ -7283,6 +7396,8 @@ typedef $$UserProfilesTableUpdateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<String> themeMode,
       Value<String?> coreValues,
+      Value<bool> isDeveloperMode,
+      Value<DateTime?> recoveryEndDate,
       Value<int> rowid,
     });
 
@@ -7387,6 +7502,16 @@ class $$UserProfilesTableFilterComposer
 
   ColumnFilters<String> get coreValues => $composableBuilder(
     column: $table.coreValues,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDeveloperMode => $composableBuilder(
+    column: $table.isDeveloperMode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get recoveryEndDate => $composableBuilder(
+    column: $table.recoveryEndDate,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -7495,6 +7620,16 @@ class $$UserProfilesTableOrderingComposer
     column: $table.coreValues,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isDeveloperMode => $composableBuilder(
+    column: $table.isDeveloperMode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get recoveryEndDate => $composableBuilder(
+    column: $table.recoveryEndDate,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserProfilesTableAnnotationComposer
@@ -7587,6 +7722,16 @@ class $$UserProfilesTableAnnotationComposer
     column: $table.coreValues,
     builder: (column) => column,
   );
+
+  GeneratedColumn<bool> get isDeveloperMode => $composableBuilder(
+    column: $table.isDeveloperMode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get recoveryEndDate => $composableBuilder(
+    column: $table.recoveryEndDate,
+    builder: (column) => column,
+  );
 }
 
 class $$UserProfilesTableTableManager
@@ -7640,6 +7785,8 @@ class $$UserProfilesTableTableManager
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<String> themeMode = const Value.absent(),
                 Value<String?> coreValues = const Value.absent(),
+                Value<bool> isDeveloperMode = const Value.absent(),
+                Value<DateTime?> recoveryEndDate = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserProfilesCompanion(
                 userId: userId,
@@ -7661,6 +7808,8 @@ class $$UserProfilesTableTableManager
                 deletedAt: deletedAt,
                 themeMode: themeMode,
                 coreValues: coreValues,
+                isDeveloperMode: isDeveloperMode,
+                recoveryEndDate: recoveryEndDate,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -7685,6 +7834,8 @@ class $$UserProfilesTableTableManager
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<String> themeMode = const Value.absent(),
                 Value<String?> coreValues = const Value.absent(),
+                Value<bool> isDeveloperMode = const Value.absent(),
+                Value<DateTime?> recoveryEndDate = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserProfilesCompanion.insert(
                 userId: userId,
@@ -7706,6 +7857,8 @@ class $$UserProfilesTableTableManager
                 deletedAt: deletedAt,
                 themeMode: themeMode,
                 coreValues: coreValues,
+                isDeveloperMode: isDeveloperMode,
+                recoveryEndDate: recoveryEndDate,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
