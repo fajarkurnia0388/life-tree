@@ -12,6 +12,7 @@ import '../dashboard/dashboard_provider.dart';
 import '../dashboard/widgets/skin_shop_bottom_sheet.dart';
 import '../onboarding/onboarding_view.dart';
 import 'package:go_router/go_router.dart';
+import 'widgets/life_compass_section.dart';
 
 class ProfileDashboardTab extends ConsumerStatefulWidget {
   const ProfileDashboardTab({super.key});
@@ -352,82 +353,6 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
     }
   }
 
-
-  Widget _buildLifeCompassSection(BuildContext context, UserProfile profile) {
-    final theme = Theme.of(context);
-    List<String> values = [];
-    try {
-      final jsonStr = profile.coreValues;
-      if (jsonStr != null && jsonStr.isNotEmpty) {
-        values = List<String>.from(jsonDecode(jsonStr));
-      }
-    } catch (_) {}
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Row(
-                  children: [
-                    Icon(Icons.explore_rounded, color: Colors.teal),
-                    SizedBox(width: 8),
-                    Text('Kompas Hidup 🧭', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  ],
-                ),
-                IconButton(
-                  onPressed: () => _showCoreValuesDialog(context, profile),
-                  icon: const Icon(Icons.edit_rounded, size: 20),
-                  tooltip: 'Ubah Kompas Hidup',
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Tiga nilai inti hidup Anda yang menuntun arah kebiasaan dan keseimbangan harian:',
-              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-            ),
-            const SizedBox(height: 16),
-            if (values.isEmpty)
-              Center(
-                child: TextButton.icon(
-                  onPressed: () => _showCoreValuesDialog(context, profile),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Tentukan Nilai Inti'),
-                ),
-              )
-            else
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                alignment: WrapAlignment.center,
-                children: values.map((v) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.15)),
-                      ),
-                      child: Text(
-                        v,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                    )).toList(),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -447,11 +372,12 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // 1. Life Compass Widget
-                _buildLifeCompassSection(context, profile),
+                LifeCompassSection(
+                  profile: profile,
+                  onEdit: () => _showCoreValuesDialog(context, profile),
+                ),
                 const SizedBox(height: 16),
 
-                // 2. Tree Skin Shop Card
                 Card(
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -471,14 +397,12 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                 ),
                 const SizedBox(height: 16),
 
-                // 3. App Settings Section Title
                 Text('Pengaturan Sistem', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
 
                 Card(
                   child: Column(
                     children: [
-                      // Theme Switcher
                       ListTile(
                         leading: const Icon(Icons.brightness_medium_rounded, color: Colors.amber),
                         title: const Text('Mode Tema Aplikasi'),
@@ -500,7 +424,6 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                       ),
                       const Divider(height: 1),
 
-                      // Export Data JSON
                       ListTile(
                         leading: const Icon(Icons.share_rounded, color: Colors.blue),
                         title: const Text('Ekspor Data Lokal'),
@@ -516,7 +439,6 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                       ),
                       const Divider(height: 1),
 
-                      // Reset Application
                       ListTile(
                         leading: const Icon(Icons.delete_forever_rounded, color: Colors.redAccent),
                         title: const Text('Reset Aplikasi', style: TextStyle(color: Colors.redAccent)),
@@ -525,7 +447,6 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                       ),
                       const Divider(height: 1),
 
-                       // Developer Mode Toggle
                       ListTile(
                         leading: Icon(
                           isDevMode ? Icons.developer_mode_rounded : Icons.developer_mode_outlined,

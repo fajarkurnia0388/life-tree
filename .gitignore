@@ -1,3 +1,39 @@
 .claude
 .kiro
 evaluasi/
+life_tree_codebase.pdf
+scripts/export_lib_to_pdf.py
+
+# IDE / Editor configuration
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# OS / System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Diagnostics / Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment / Secret config files
+.env
+.env.local
+.env.*.local
+
+# Compiled native binaries
+*.dll
+*.exe
+*.so
+*.dylib

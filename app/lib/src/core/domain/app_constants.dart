@@ -64,13 +64,13 @@ class DomainColors {
   DomainColors._();
   static Color forDomain(String? domain) {
     switch (domain) {
-      case 'Tubuh':    return const Color(0xFF6B8E78);
+      case 'Tubuh':    return const Color(0xFF7C9A72);
       case 'Keuangan': return const Color(0xFFC29B38);
       case 'Hubungan': return const Color(0xFFC78585);
       case 'Emosi':    return const Color(0xFF8595C7);
       case 'Karir':    return const Color(0xFF6CA8B5);
       case 'Rekreasi': return const Color(0xFFD49E6A);
-      default:         return const Color(0xFF6B8E78);
+      default:         return const Color(0xFF7C9A72);
     }
   }
 }

@@ -11,13 +11,13 @@ Laporan ini menyajikan status pencapaian pengembangan aplikasi **LifeTree** (Per
 ---
 
 ## 1. Ringkasan Status Proyek
-*   **Tanggal Pembaruan:** 27 Juni 2026
+*   **Tanggal Pembaruan:** 29 Juni 2026
 *   **Target Platform:** Windows Desktop, Android, iOS (Cross-Platform)
 *   **Penyimpanan Data:** Offline-First (SQLite Local Database via Drift Generator)
-*   **Versi Skema Database Saat Ini:** `5` (Mendukung target goals, kustomisasi review period, dan kompas hidup)
+*   **Versi Skema Database Saat Ini:** `7` (Mendukung target goals, kustomisasi review period, kompas hidup, dan marketplace template lokal)
 *   **Status Analisis & Tes:**
-    *   `flutter analyze` → **Lolos 100%** (Bersih dari error, warning minor deprecated API)
-    *   `flutter test` → **13/13 Tests Passed** (Unit test: HabitLogService, Low Mood Consecutive, Dashboard Priority)
+    *   `flutter analyze` → **Lolos 100%** (Bersih dari error, warning, lints)
+    *   `flutter test` → **28/28 Tests Passed** (Unit test: HabitLogService, Low Mood Consecutive, Dashboard Priority, LocalMarketplaceService)
 
 ---
 
@@ -65,7 +65,7 @@ Laporan ini menyajikan status pencapaian pengembangan aplikasi **LifeTree** (Per
 
 | Fitur | Status | Maturity | Catatan |
 |---|---|---|---|
-| Habit Template Marketplace | 🔶 PROTOTYPE | 🟠 Prototype | Data mock in-memory, bukan marketplace produksi publik |
+| Habit Template Marketplace | ✅ SELESAI | 🟢 Production-Ready | Persistensi SQLite lokal via LocalMarketplaceService (tervalidasi unit test) |
 | Tree Skin Shop | 🔶 PROTOTYPE | 🟠 Prototype | Simulasi payment (GPay/VA/QRIS), bukan integrasi payment nyata |
 | Developer Mode Toggle | ✅ SELESAI | 🟡 Implemented | Debug-only — untuk bypass skin payment saat testing |
 
@@ -99,22 +99,22 @@ Laporan ini menyajikan status pencapaian pengembangan aplikasi **LifeTree** (Per
 
 ## 4. Peta Folder & Berkas Utama Aplikasi
 
-Berikut adalah lokasi berkas penting hasil implementasi pada direktori [app/lib/src/](file:///d:/LAB/git/life-tree/app/lib/src/):
+Berikut adalah lokasi berkas penting hasil implementasi pada direktori [app/lib/src/](../app/lib/src/):
 
 *   **Database & Skema:**
-    *   [database.dart](file:///d:/LAB/git/life-tree/app/lib/src/data/local_db/database.dart) → Definisi tabel SQLite Drift, migrasi skema `onUpgrade` (Versi 1-5), dan indeks optimasi kueri.
+    *   [database.dart](../app/lib/src/data/local_db/database.dart) → Definisi tabel SQLite Drift, migrasi skema `onUpgrade` (Versi 1-5), dan indeks optimasi kueri.
 *   **Navigasi & Tema:**
-    *   [app.dart](file:///d:/LAB/git/life-tree/app/lib/src/app.dart) → Inisialisasi aplikasi, tema, dan debug-shield `ExcludeSemantics`.
-    *   [router.dart](file:///d:/LAB/git/life-tree/app/lib/src/core/routing/router.dart) → Rute GoRouter dan pengecekan onboarding.
-    *   [theme.dart](file:///d:/LAB/git/life-tree/app/lib/src/core/theme/theme.dart) → Desain sistem Calm Tech (Light & Dark Theme).
+    *   [app.dart](../app/lib/src/app.dart) → Inisialisasi aplikasi, tema, dan debug-shield `ExcludeSemantics`.
+    *   [router.dart](../app/lib/src/core/routing/router.dart) → Rute GoRouter dan pengecekan onboarding.
+    *   [theme.dart](../app/lib/src/core/theme/theme.dart) → Desain sistem Calm Tech (Light & Dark Theme).
 *   **Services (Baru):**
-    *   [habit_log_service.dart](file:///d:/LAB/git/life-tree/app/lib/src/features/habit/services/habit_log_service.dart) → Service upsert-safe untuk toggle done/missed habit log.
+    *   [habit_log_service.dart](../app/lib/src/features/habit/services/habit_log_service.dart) → Service upsert-safe untuk toggle done/missed habit log.
 *   **Fitur Views & Providers:**
-    *   [dashboard_view.dart](file:///d:/LAB/git/life-tree/app/lib/src/features/dashboard/dashboard_view.dart) → Visual dasbor utama, menu pengaturan data, dan widget Life Compass.
-    *   [dashboard_provider.dart](file:///d:/LAB/git/life-tree/app/lib/src/features/dashboard/dashboard_provider.dart) → Kalkulator "Action of the Day", data musim, scheduling, dan status jatuh tempo keputusan.
-    *   [add_habit_view.dart](file:///d:/LAB/git/life-tree/app/lib/src/features/habit/add_habit_view.dart) → Dropdown domain kebiasaan, MVA slider, template micro-habits, dan Goal tag input.
-    *   [journal_lite_view.dart](file:///d:/LAB/git/life-tree/app/lib/src/features/journal/journal_lite_view.dart) → Jurnal harian, low-mood check 3 hari berturut-turut, dan form ekspansi Refleksi Mendalam.
-    *   [decision_journal_view.dart](file:///d:/LAB/git/life-tree/app/lib/src/features/decision_journal/decision_journal_view.dart) → Riwayat keputusan, kustomisasi review period, dan refleksi bias.
-    *   [marketplace_view.dart](file:///d:/LAB/git/life-tree/app/lib/src/features/marketplace/marketplace_view.dart) → Halaman pencarian, pengunduhan, pengunggahan, dan rating template kebiasaan **(Prototype)**.
-    *   [weekly_pulse_view.dart](file:///d:/LAB/git/life-tree/app/lib/src/features/weekly_pulse/weekly_pulse_view.dart) → Lembar evaluasi mingguan WHO-5 index.
-    *   [safety_card_view.dart](file:///d:/LAB/git/life-tree/app/lib/src/features/safety/safety_card_view.dart) → Papan kontak darurat kesehatan mental terotasi warna dengan dialer asli.
+    *   [dashboard_view.dart](../app/lib/src/features/dashboard/dashboard_view.dart) → Visual dasbor utama, menu pengaturan data, dan widget Life Compass.
+    *   [dashboard_provider.dart](../app/lib/src/features/dashboard/dashboard_provider.dart) → Kalkulator "Action of the Day", data musim, scheduling, dan status jatuh tempo keputusan.
+    *   [add_habit_view.dart](../app/lib/src/features/habit/add_habit_view.dart) → Dropdown domain kebiasaan, MVA slider, template micro-habits, dan Goal tag input.
+    *   [journal_lite_view.dart](../app/lib/src/features/journal/journal_lite_view.dart) → Jurnal harian, low-mood check 3 hari berturut-turut, dan form ekspansi Refleksi Mendalam.
+    *   [decision_journal_view.dart](../app/lib/src/features/decision_journal/decision_journal_view.dart) → Riwayat keputusan, kustomisasi review period, dan refleksi bias.
+    *   [marketplace_view.dart](../app/lib/src/features/marketplace/marketplace_view.dart) → Halaman pencarian, pengunduhan, pengunggahan, dan rating template kebiasaan **(Prototype)**.
+    *   [weekly_pulse_view.dart](../app/lib/src/features/weekly_pulse/weekly_pulse_view.dart) → Lembar evaluasi mingguan WHO-5 index.
+    *   [safety_card_view.dart](../app/lib/src/features/safety/safety_card_view.dart) → Papan kontak darurat kesehatan mental terotasi warna dengan dialer asli.

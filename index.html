@@ -7,7 +7,7 @@
 <meta name="description" content="LifeTree — Personal OS berbasis pohon untuk orientasi diri. Anti-guilt, bebas streak, berbasis ilmu perilaku.">
 <meta property="og:title" content="LifeTree — Personal OS untuk Orientasi Diri">
 <meta property="og:description" content="LifeTree mengubah kegagalan menjadi data refleksi — tanpa rasa bersalah, tanpa streak punishment. Dibangun di atas sains perilaku.">
-<meta property="og:image" content="https://fajarkurnia0388.github.io/life-tree/assets/trees/default/mature.png">
+<meta property="og:image" content="https://fajarkurnia0388.github.io/life-tree/og-image.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
@@ -959,7 +959,7 @@ footer {
         <div class="pricing-period">Selamanya gratis</div>
         <ul class="pricing-features">
           <li>Jurnal, Habit, Radar Kehidupan</li>
-          <li>Local Encrypted Backup (1 perangkat)</li>
+          <li>Local Encrypted Backup (1 perangkat) (Rencana)</li>
           <li>Ekspor Lokal (JSON/CSV)</li>
           <li>Dark Mode (aksesibilitas)</li>
           <li>Friction Intervention & Safety Card</li>
@@ -971,11 +971,11 @@ footer {
         <div class="pricing-price">Rp 29.000<span style="font-size:0.9rem;font-weight:400;">/bln</span></div>
         <div class="pricing-period">atau Rp 249.000/thn (hemat ~29%)</div>
         <ul class="pricing-features">
-          <li>E2EE Cloud Sync antar perangkat</li>
+          <li>E2EE Cloud Sync antar perangkat (Rencana)</li>
           <li>On-Device Insights (non-AI)</li>
           <li>PDF Export (jurnal → e-book)</li>
           <li>Decision Journal & Life Compass</li>
-          <li>Recovery Contact (Shamir 2-of-3)</li>
+          <li>Recovery Contact (Shamir 2-of-3) (Rencana)</li>
         </ul>
         <button class="pricing-btn pricing-btn-primary">Berlangganan</button>
       </div>
@@ -1167,6 +1167,7 @@ footer {
 </div>
 
 <script>
+(function() {
 // ===== NAV SCROLL =====
 window.addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
@@ -1248,7 +1249,7 @@ const thinkingMethods = {
   brainstorm: {
     title:'Brainstorming Klasik', duration:'10–20 menit', type:'Divergen', output:'20–30 ide mentah',
     desc:'Untuk membuka kemungkinan saat belum punya ide atau arah yang jelas.',
-    steps:['Tulis pertanyaan utama di buku/kertas asli.','Targetkan 20–30 ide tanpa menilai.','Baru setelah selesai, lanjutkan ke Affinity Mapping atau Skoring Ide.'],
+    steps:['Tulis pertanyaan utama di buku/kertas asli.','Targetkan 20–30 ide tanpa menilai.','Baru setelah selesai, lanjutkan to Affinity Mapping atau Skoring Ide.'],
     integration:'Paper-first: ide dibuka di kertas; LifeTree menyimpan kandidat yang bisa menjadi habit/proyek untuk domain terlemah.'
   },
   score: {
@@ -1286,10 +1287,20 @@ function selectThinkingMethod(key, el) {
   document.getElementById('methodDuration').textContent = m.duration;
   document.getElementById('methodType').textContent = m.type;
   document.getElementById('methodOutput').textContent = m.output;
-  document.getElementById('methodSteps').innerHTML = m.steps.map(x => '<li>'+x+'</li>').join('');
+  
+  // Safe list item creation to avoid XSS (no innerHTML)
+  const stepsContainer = document.getElementById('methodSteps');
+  stepsContainer.textContent = '';
+  m.steps.forEach(stepText => {
+    const li = document.createElement('li');
+    li.textContent = stepText;
+    stepsContainer.appendChild(li);
+  });
+
   document.getElementById('methodLifeTree').textContent = m.integration;
   showToast('🧠 Metode dipilih: ' + m.title);
 }
+
 let lastActiveElement = null;
 
 function showThinkingModal() {
@@ -1300,11 +1311,13 @@ function showThinkingModal() {
     if (topicInput) topicInput.focus();
   }, 100);
 }
+
 function closeThinkingModal() {
   document.getElementById('thinkingModal').classList.remove('show');
   showToast('🧠 Ringkasan sesi kertas tersimpan (simulasi)');
   if (lastActiveElement) lastActiveElement.focus();
 }
+
 function saveThinkingCanvas() {
   const action = document.getElementById('canvasAction').value.trim();
   showToast(action ? '🌱 Aksi kecil dari sesi kertas disimpan: ' + action : '🧠 Ringkasan sesi kertas disimpan (simulasi)');
@@ -1319,11 +1332,13 @@ function showJournalModal() {
     if (firstMood) firstMood.focus();
   }, 100);
 }
+
 function closeJournalModal() {
   document.getElementById('journalModal').classList.remove('show');
   showToast('📝 Journal entry tersimpan (simulasi)');
   if (lastActiveElement) lastActiveElement.focus();
 }
+
 let selectedMood = null;
 function pickMood(btn, score) {
   selectedMood = score;
@@ -1336,12 +1351,32 @@ function selectFriction(el, type) {
   document.querySelectorAll('.step-opt').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
   const result = document.getElementById('frictionResult');
-  const responses = {
-    time: '<h4>⏱ Versi Ringan</h4><p>"Mau potong durasi jadi <strong>2 menit</strong> saja besok?" — Sistem menawarkan one-time override ke <code>mva_duration_min</code> menit. Durasi aktual dicatat di HabitLog.</p>',
-    energy: '<h4>😮‍💨 Recovery Mode</h4><p>"Tidak apa-apa untuk istirahat." — Semua notifikasi di-pause. Pohon bersalju lembut (Snow-Covered). Journaling tetap aktif. Pilih durasi: 1/3/7 hari.</p>',
-    forgot: '<h4>🤔 Routine Stacking</h4><p>"Mau tumpuk habit ini ke rutinitas yang sudah ada?" — Saran berbasis Implementation Intention (Gollwitzer, 1999) dan Habit Loop (Duhigg, 2012).</p>'
-  };
-  result.innerHTML = responses[type];
+  result.textContent = '';
+
+  const h4 = document.createElement('h4');
+  const p = document.createElement('p');
+  
+  if (type === 'time') {
+    h4.textContent = '⏱ Versi Ringan';
+    p.textContent = '"Mau potong durasi jadi ';
+    const strong = document.createElement('strong');
+    strong.textContent = '2 menit';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(' saja besok?" — Sistem menawarkan one-time override ke '));
+    const code = document.createElement('code');
+    code.textContent = 'mva_duration_min';
+    p.appendChild(code);
+    p.appendChild(document.createTextNode(' menit. Durasi aktual dicatat di HabitLog.'));
+  } else if (type === 'energy') {
+    h4.textContent = '😮‍💨 Recovery Mode';
+    p.textContent = '"Tidak apa-apa untuk istirahat." — Semua notifikasi di-pause. Pohon bersalju lembut (Snow-Covered). Journaling tetap aktif. Pilih durasi: 1/3/7 hari.';
+  } else if (type === 'forgot') {
+    h4.textContent = '🤔 Routine Stacking';
+    p.textContent = '"Mau tumpuk habit ini ke rutinitas yang sudah ada?" — Saran berbasis Implementation Intention (Gollwitzer, 1999) dan Habit Loop (Duhigg, 2012).';
+  }
+  
+  result.appendChild(h4);
+  result.appendChild(p);
 }
 
 // ===== LIFE AUDIT =====
@@ -1350,6 +1385,7 @@ function updateAudit(n) {
   document.getElementById('auditVal'+n).textContent = val;
   updateWeakest();
 }
+
 function updateWeakest() {
   const domains = [
     {name:'🏃 Tubuh', score:parseInt(document.getElementById('audit1').value)},
@@ -1383,7 +1419,6 @@ function toggleNavMenu(btn) {
 }
 
 // ===== ACCESSIBILITY HANDLERS =====
-// Handle global escape key to close modals
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     const journalModal = document.getElementById('journalModal');
@@ -1397,7 +1432,6 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// Handle keydown Enter/Space for role="button" elements
 document.addEventListener('keydown', (e) => {
   if (e.target && e.target.getAttribute('role') === 'button') {
     if (e.key === ' ' || e.key === 'Enter') {
@@ -1410,6 +1444,22 @@ document.addEventListener('keydown', (e) => {
 // ===== INIT =====
 updateWeakest();
 setHeroState('mature');
+
+// ===== EXPOSE TO GLOBAL WINDOW NAMESPACE =====
+window.setHeroState = setHeroState;
+window.cycleTreeState = cycleTreeState;
+window.markDone = markDone;
+window.selectThinkingMethod = selectThinkingMethod;
+window.showThinkingModal = showThinkingModal;
+window.closeThinkingModal = closeThinkingModal;
+window.saveThinkingCanvas = saveThinkingCanvas;
+window.showJournalModal = showJournalModal;
+window.closeJournalModal = closeJournalModal;
+window.pickMood = pickMood;
+window.selectFriction = selectFriction;
+window.updateAudit = updateAudit;
+window.toggleNavMenu = toggleNavMenu;
+})();
 </script>
 </body>
 </html>
