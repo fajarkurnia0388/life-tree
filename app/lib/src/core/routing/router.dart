@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/onboarding/onboarding_view.dart';
@@ -11,12 +12,21 @@ import '../../features/weekly_pulse/weekly_pulse_view.dart';
 import '../../features/decision_journal/decision_journal_view.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final onboardingCompleted = ref.watch(onboardingCompletedProvider);
+  final refreshListenable = ValueNotifier<AsyncValue<bool>>(const AsyncLoading());
+  
+  ref.listen<AsyncValue<bool>>(
+    onboardingCompletedProvider,
+    (previous, next) {
+      refreshListenable.value = next;
+    },
+    fireImmediately: true,
+  );
 
   return GoRouter(
     initialLocation: '/',
+    refreshListenable: refreshListenable,
     redirect: (context, state) {
-      // If the onboarding status is still loading, wait
+      final onboardingCompleted = refreshListenable.value;
       final value = onboardingCompleted.valueOrNull;
       if (value == null) return null;
 

@@ -213,6 +213,26 @@ class DecisionEntries extends Table {
   Set<Column> get primaryKey => {decisionId};
 }
 
+@DataClassName('MarketplaceTemplate')
+class MarketplaceTemplates extends Table {
+  TextColumn get templateId => text()();
+  TextColumn get title => text()();
+  TextColumn get description => text()();
+  TextColumn get domainTag => text()();
+  IntColumn get friction => integer()();
+  IntColumn get energy => integer()();
+  IntColumn get impact => integer()();
+  IntColumn get mvaDuration => integer()();
+  TextColumn get creatorPenName => text()();
+  IntColumn get ratingsSum => integer()();
+  IntColumn get ratingsCount => integer()();
+  IntColumn get downloadsCount => integer()();
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {templateId};
+}
+
 @DriftDatabase(tables: [
   UserProfiles,
   LifeAudits,
@@ -224,7 +244,8 @@ class DecisionEntries extends Table {
   ConsentLogs,
   ReminderPreferences,
   WellnessPromptLogs,
-  DecisionEntries
+  DecisionEntries,
+  MarketplaceTemplates
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -240,7 +261,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -288,6 +309,9 @@ class AppDatabase extends _$AppDatabase {
             await customStatement('CREATE INDEX IF NOT EXISTS idx_habit_active ON habits (user_id, status, domain_tag);');
             await customStatement('CREATE INDEX IF NOT EXISTS idx_weekly_pulse_ttl ON weekly_pulses (user_id, domain_tag, week_start_date DESC);');
             await customStatement('CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);');
+          }
+          if (from < 7) {
+            await m.createTable(marketplaceTemplates);
           }
         },
       );

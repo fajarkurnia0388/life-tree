@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LifeTree — Personal OS untuk Orientasi Diri</title>
+<meta name="description" content="LifeTree — Personal OS berbasis pohon untuk orientasi diri. Anti-guilt, bebas streak, berbasis ilmu perilaku.">
+<meta property="og:title" content="LifeTree — Personal OS untuk Orientasi Diri">
+<meta property="og:description" content="LifeTree mengubah kegagalan menjadi data refleksi — tanpa rasa bersalah, tanpa streak punishment. Dibangun di atas sains perilaku.">
+<meta property="og:image" content="https://fajarkurnia0388.github.io/life-tree/assets/trees/default/mature.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
 <style>
 :root {
   --sage: #7C9A72;
@@ -86,7 +93,7 @@ nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
   font-size:clamp(2.2rem,5vw,3.5rem); font-weight:800; line-height:1.1;
   color:var(--forest); letter-spacing:-0.03em; margin-bottom:20px;
 }
-.hero-text h1 em { font-style:normal; color:var(--sage); }
+.hero-text h1 em { font-style:normal; color:var(--sage-dark); }
 .hero-text p {
   font-size:1.15rem; color:var(--text-muted); max-width:480px; margin-bottom:32px;
   line-height:1.7;
@@ -200,7 +207,7 @@ section { padding: 80px 24px; }
   transition:var(--transition);
 }
 .screen-action-card:hover { box-shadow:0 2px 12px rgba(0,0,0,0.06); }
-.screen-action-label { font-size:0.72rem; color:var(--sage); font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
+.screen-action-label { font-size:0.72rem; color:var(--forest-light); font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
 .screen-action-title { font-size:1.05rem; font-weight:700; color:var(--forest); margin-bottom:4px; }
 .screen-action-meta { font-size:0.78rem; color:var(--text-muted); }
 .screen-journal-btn {
@@ -275,7 +282,7 @@ section { padding: 80px 24px; }
 .step-opt {
   padding:6px 14px; border-radius:8px; font-size:0.78rem; font-weight:600;
   cursor:pointer; transition:var(--transition); border:1px solid rgba(0,0,0,0.08);
-  background:var(--white);
+  background:var(--white); font-family:inherit; color:inherit;
 }
 .step-opt:hover { border-color:var(--sage); color:var(--sage-dark); }
 .step-opt.selected { background:var(--sage); color:var(--white); border-color:var(--sage); }
@@ -327,7 +334,7 @@ section { padding: 80px 24px; }
   background:var(--sage); color:var(--white); font-size:0.72rem; font-weight:700;
   padding:4px 14px; border-radius:12px;
 }
-.pricing-tier { font-size:0.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--sage); margin-bottom:8px; }
+.pricing-tier { font-size:0.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--forest-light); margin-bottom:8px; }
 .pricing-price { font-size:2rem; font-weight:800; color:var(--forest); margin-bottom:4px; }
 .pricing-period { font-size:0.82rem; color:var(--text-muted); margin-bottom:20px; }
 .pricing-features { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
@@ -344,6 +351,10 @@ section { padding: 80px 24px; }
 
 /* ===== COMPETITIVE ===== */
 .competitive { background:var(--white); overflow-x:auto; }
+.scroll-hint { display:none; }
+@media (max-width:768px) {
+  .scroll-hint { display:block !important; }
+}
 .comp-table {
   width:100%; border-collapse:collapse; font-size:0.82rem; margin-top:8px;
   min-width:700px;
@@ -446,6 +457,13 @@ footer {
   .states-grid { grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); }
   .features-grid { grid-template-columns:1fr; }
 }
+@media (max-width:400px) {
+  .hero-tree-container { width:240px; height:280px; }
+  .hero-buttons { flex-direction:column; align-items:stretch; }
+  .btn { justify-content:center; }
+  .section-inner { padding:40px 16px; }
+  .states-grid { grid-template-columns:1fr 1fr; gap:12px; }
+}
 
 /* ===== ANIMATIONS ===== */
 @keyframes float { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-8px); } }
@@ -469,7 +487,7 @@ footer {
     </svg>
     <span>LifeTree</span>
   </a>
-  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+  <button class="nav-toggle" onclick="toggleNavMenu(this)" aria-label="Menu" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
   <div class="nav-links">
@@ -564,7 +582,7 @@ footer {
           <li>Empathy-driven: "Pohonmu sedang beristirahat."</li>
           <li>Canopy Load mencegah overload — soft enforcement</li>
           <li>6 domain kehidupan terintegrasi (Life Audit)</li>
-          <li>Zero-Knowledge E2EE — server tidak bisa baca konten</li>
+          <li>Lokal-Pertama (Privasi Penuh) — Data tersimpan lokal, tanpa server</li>
         </ul>
       </div>
     </div>
@@ -582,7 +600,7 @@ footer {
         <div class="phone-notch"></div>
         <div class="screen-content">
           <!-- Tree Area -->
-          <div class="screen-tree-area" id="screenTreeArea" onclick="cycleTreeState()">
+          <div class="screen-tree-area" id="screenTreeArea" onclick="cycleTreeState()" role="button" tabindex="0" aria-label="Simulasikan pertumbuhan pohon">
             <div class="screen-season" id="seasonBadge">🌱 Growth</div>
             <svg class="screen-tree-svg" viewBox="0 0 120 160" id="screenTree">
               <ellipse cx="60" cy="152" rx="45" ry="6" fill="rgba(124,154,114,0.2)"/>
@@ -605,14 +623,14 @@ footer {
             </svg>
           </div>
           <!-- Action of the Day -->
-          <div class="screen-action-card" id="actionCard" onclick="markDone()">
+          <div class="screen-action-card" id="actionCard" onclick="markDone()" role="button" tabindex="0" aria-label="Tandai habit hari ini sebagai selesai">
             <div class="screen-action-label">📋 Action of the Day</div>
             <div class="screen-action-title" id="actionTitle">Olahraga 30 menit</div>
             <div class="screen-action-meta" id="actionMeta">🏃 Tubuh · Load: 8/10 · Impact: ★★★★★</div>
           </div>
           <!-- Journal -->
-          <div class="screen-journal-btn" onclick="showJournalModal()">📝 Quick Journaling — Ketuk untuk mulai</div>
-          <div class="screen-journal-btn" onclick="showThinkingModal()" style="margin-top:10px;background:rgba(124,154,114,0.08);border-color:var(--sage);color:var(--sage-dark);">🧠 Thinking Canvas — Mulai sesi kertas</div>
+          <div class="screen-journal-btn" onclick="showJournalModal()" role="button" tabindex="0">📝 Quick Journaling — Ketuk untuk mulai</div>
+          <div class="screen-journal-btn" onclick="showThinkingModal()" style="margin-top:10px;background:rgba(124,154,114,0.08);border-color:var(--sage);color:var(--sage-dark);" role="button" tabindex="0">🧠 Thinking Canvas — Mulai sesi kertas</div>
           <!-- Tab Bar -->
           <div class="screen-tab-bar">
             <div class="screen-tab active">
@@ -646,7 +664,7 @@ footer {
     <h2 class="section-title">Pohon Tumbuh, Tidak Pernah Mengecil</h2>
     <p class="section-desc">Hard Rule Anti-Guilt: pohon hanya bisa tumbuh atau "istirahat" — tidak pernah mundur. Klik state untuk melihat visualisasi.</p>
     <div class="states-grid">
-      <div class="state-card active" onclick="setHeroState('seedling')">
+      <div class="state-card active" onclick="setHeroState('seedling')" role="button" tabindex="0">
         <svg viewBox="0 0 80 100">
           <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.2)"/>
           <rect x="38" y="75" width="4" height="20" rx="2" fill="#8B6F47"/>
@@ -657,7 +675,7 @@ footer {
         <h4>Seedling</h4>
         <p>0–7 hari</p>
       </div>
-      <div class="state-card" onclick="setHeroState('sapling')">
+      <div class="state-card" onclick="setHeroState('sapling')" role="button" tabindex="0">
         <svg viewBox="0 0 80 100">
           <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.2)"/>
           <rect x="37" y="60" width="6" height="35" rx="3" fill="#8B6F47"/>
@@ -668,7 +686,7 @@ footer {
         <h4>Sapling</h4>
         <p>8–30 hari</p>
       </div>
-      <div class="state-card" onclick="setHeroState('young')">
+      <div class="state-card" onclick="setHeroState('young')" role="button" tabindex="0">
         <svg viewBox="0 0 80 100">
           <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.2)"/>
           <rect x="36" y="50" width="8" height="45" rx="4" fill="#8B6F47"/>
@@ -681,7 +699,7 @@ footer {
         <h4>Young Tree</h4>
         <p>31–60 hari</p>
       </div>
-      <div class="state-card" onclick="setHeroState('mature')">
+      <div class="state-card" onclick="setHeroState('mature')" role="button" tabindex="0">
         <svg viewBox="0 0 80 100">
           <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.2)"/>
           <rect x="35" y="45" width="10" height="50" rx="5" fill="#8B6F47"/>
@@ -697,7 +715,7 @@ footer {
         <h4>Mature Tree</h4>
         <p>&gt; 60 hari</p>
       </div>
-      <div class="state-card" onclick="setHeroState('blooming')">
+      <div class="state-card" onclick="setHeroState('blooming')" role="button" tabindex="0">
         <svg viewBox="0 0 80 100">
           <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.2)"/>
           <rect x="35" y="45" width="10" height="50" rx="5" fill="#8B6F47"/>
@@ -713,7 +731,7 @@ footer {
         <h4>Blooming ✿</h4>
         <p>Otomatis (Decay)</p>
       </div>
-      <div class="state-card" onclick="setHeroState('snow')">
+      <div class="state-card" onclick="setHeroState('snow')" role="button" tabindex="0">
         <svg viewBox="0 0 80 100">
           <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.15)"/>
           <rect x="35" y="45" width="10" height="50" rx="5" fill="#8B6F47"/>
@@ -758,8 +776,8 @@ footer {
       </div>
       <div class="feature-card">
         <div class="feature-icon" style="background:rgba(232,180,184,0.2);">🛡️</div>
-        <h3>Zero-Knowledge E2EE</h3>
-        <p>Server hanya menyimpan ciphertext. Konten hanya bisa dibuka di perangkat Anda. Default: OS Keychain (1 ketuk). Opsi: X25519 + AES-256-GCM + seed phrase untuk advanced.</p>
+        <h3>Keamanan Lokal & Enkripsi <span class="badge" style="background:var(--amber);color:var(--white);font-size:10px;padding:2px 6px;border-radius:4px;vertical-align:middle;margin-left:6px;">Roadmap</span></h3>
+        <p>Database saat ini tersimpan 100% lokal di perangkat Anda (offline-first, tanpa akun server). Fitur enkripsi database (SQLCipher) sedang dikembangkan untuk rilis fase berikutnya.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon" style="background:rgba(124,154,114,0.12);">🔍</div>
@@ -847,37 +865,37 @@ footer {
       <div class="audit-card" style="border:2px solid var(--sage-light);">
         <div class="audit-domain"><span>🏃</span><h4>Tubuh</h4><span style="margin-left:auto;font-size:0.68rem;background:var(--sage);color:#fff;padding:2px 8px;border-radius:8px;">MVP</span></div>
         <div class="audit-question">"Secara keseluruhan, seberapa puas kamu dengan kesehatan dan kebugaran fisikmu?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit1" oninput="updateAudit(1)">
+        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit1" oninput="updateAudit(1)" aria-label="Tingkat kepuasan domain Tubuh">
         <div class="audit-value" id="auditVal1">5</div>
       </div>
       <div class="audit-card">
         <div class="audit-domain"><span>💰</span><h4>Keuangan</h4></div>
         <div class="audit-question">"Seberapa stabil dan aman kondisi keuanganmu saat ini?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit2" oninput="updateAudit(2)">
+        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit2" oninput="updateAudit(2)" aria-label="Tingkat kepuasan domain Keuangan">
         <div class="audit-value" id="auditVal2">5</div>
       </div>
       <div class="audit-card">
         <div class="audit-domain"><span>🤝</span><h4>Hubungan</h4></div>
         <div class="audit-question">"Seberapa puas kamu dengan kualitas hubunganmu dengan orang-orang terdekat?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit3" oninput="updateAudit(3)">
+        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit3" oninput="updateAudit(3)" aria-label="Tingkat kepuasan domain Hubungan">
         <div class="audit-value" id="auditVal3">5</div>
       </div>
       <div class="audit-card">
         <div class="audit-domain"><span>💭</span><h4>Emosi</h4></div>
         <div class="audit-question">"Seberapa sering kamu merasa emosional seimbang dan tenang?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit4" oninput="updateAudit(4)">
+        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit4" oninput="updateAudit(4)" aria-label="Tingkat kepuasan domain Emosi">
         <div class="audit-value" id="auditVal4">5</div>
       </div>
       <div class="audit-card">
         <div class="audit-domain"><span>📚</span><h4>Karir/Belajar</h4></div>
         <div class="audit-question">"Seberapa puas kamu dengan perkembangan karir atau belajarmu?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit5" oninput="updateAudit(5)">
+        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit5" oninput="updateAudit(5)" aria-label="Tingkat kepuasan domain Karir dan Belajar">
         <div class="audit-value" id="auditVal5">5</div>
       </div>
       <div class="audit-card">
         <div class="audit-domain"><span>🎮</span><h4>Rekreasi</h4></div>
         <div class="audit-question">"Seberapa sering kamu punya waktu untuk kegiatan yang menyenangkan?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit6" oninput="updateAudit(6)">
+        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit6" oninput="updateAudit(6)" aria-label="Tingkat kepuasan domain Rekreasi">
         <div class="audit-value" id="auditVal6">5</div>
       </div>
     </div>
@@ -911,9 +929,9 @@ footer {
           <h4>Pop-up Empatik</h4>
           <p>"Hari ini sepertinya berat. Apa hambatan terbesarmu?"</p>
           <div class="step-options" id="frictionOptions">
-            <div class="step-opt" onclick="selectFriction(this,'time')">⏱ Kurang Waktu</div>
-            <div class="step-opt" onclick="selectFriction(this,'energy')">😮‍💨 Kelelahan</div>
-            <div class="step-opt" onclick="selectFriction(this,'forgot')">🤔 Lupa</div>
+            <button class="step-opt" onclick="selectFriction(this,'time')">⏱ Kurang Waktu</button>
+            <button class="step-opt" onclick="selectFriction(this,'energy')">😮‍💨 Kelelahan</button>
+            <button class="step-opt" onclick="selectFriction(this,'forgot')">🤔 Lupa</button>
           </div>
         </div>
       </div>
@@ -983,6 +1001,7 @@ footer {
     <div class="section-label">📊 Analisis Kompetitif</div>
     <h2 class="section-title">Mengapa LifeTree Berbeda?</h2>
     <p class="section-desc">Satu-satunya yang menghapus streak punishment dari arsitektur.</p>
+    <div class="scroll-hint" style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-bottom:12px;background:rgba(0,0,0,0.03);padding:6px;border-radius:6px;">← Geser tabel ke kanan untuk melihat semua kolom →</div>
     <table class="comp-table">
       <thead>
         <tr>
@@ -1005,7 +1024,7 @@ footer {
           <td class="comp-check">✓</td>
           <td class="comp-check">✓</td>
           <td class="comp-check">✓</td>
-          <td class="comp-check">✓</td>
+          <td class="comp-partial">✓ (Rencana)</td>
           <td class="comp-check">✓ (Fase 2)</td>
           <td>Freemium Rp 29K</td>
         </tr>
@@ -1107,12 +1126,12 @@ footer {
 </footer>
 
 <!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- JOURNAL MODAL -->
 <div class="modal-overlay" id="journalModal" onclick="if(event.target===this)closeJournalModal()">
-  <div class="modal-box">
-    <h3>📝 Quick Journaling</h3>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="journalModalTitle">
+    <h3 id="journalModalTitle">📝 Quick Journaling</h3>
     <p>Pilih mood Anda hari ini:</p>
     <div style="display:flex;justify-content:center;gap:12px;margin-bottom:20px;" id="moodPicker">
       <button style="font-size:2rem;background:none;border:none;cursor:pointer;padding:8px;border-radius:12px;transition:var(--transition);" onclick="pickMood(this,1)" title="Sangat Buruk">😟</button>
@@ -1129,15 +1148,15 @@ footer {
 
 <!-- THINKING CANVAS MODAL -->
 <div class="modal-overlay" id="thinkingModal" onclick="if(event.target===this)closeThinkingModal()">
-  <div class="modal-box modal-wide">
-    <h3>🧠 Thinking Canvas</h3>
+  <div class="modal-box modal-wide" role="dialog" aria-modal="true" aria-labelledby="thinkingModalTitle">
+    <h3 id="thinkingModalTitle">🧠 Thinking Canvas</h3>
     <p>Pilih metode, ambil buku/kertas asli, lalu corat-coret 5–30 menit. LifeTree cukup menyimpan ringkasan dan satu aksi kecil. Ini simulasi fitur — data belum benar-benar disimpan.</p>
     <div class="thinking-workspace" style="margin-top:0;">
-      <label>Topik</label>
+      <label for="modalTopic">Topik</label>
       <input id="modalTopic" value="Apa yang sedang saya coba jelaskan ke diri sendiri?">
-      <label>Ringkasan hasil corat-coret di kertas</label>
+      <label for="modalDump">Ringkasan hasil corat-coret di kertas</label>
       <textarea id="modalDump" rows="5" placeholder="Temuan utama saya setelah menulis di kertas adalah..."></textarea>
-      <label>Aksi kecil / asumsi yang perlu diuji</label>
+      <label for="modalAction">Aksi kecil / asumsi yang perlu diuji</label>
       <input id="modalAction" placeholder="Besok saya akan...">
       <div class="canvas-actions">
         <button class="modal-close" onclick="closeThinkingModal()">Simpan ringkasan</button>
@@ -1271,10 +1290,20 @@ function selectThinkingMethod(key, el) {
   document.getElementById('methodLifeTree').textContent = m.integration;
   showToast('🧠 Metode dipilih: ' + m.title);
 }
-function showThinkingModal() { document.getElementById('thinkingModal').classList.add('show'); }
+let lastActiveElement = null;
+
+function showThinkingModal() {
+  lastActiveElement = document.activeElement;
+  document.getElementById('thinkingModal').classList.add('show');
+  setTimeout(() => {
+    const topicInput = document.getElementById('modalTopic');
+    if (topicInput) topicInput.focus();
+  }, 100);
+}
 function closeThinkingModal() {
   document.getElementById('thinkingModal').classList.remove('show');
   showToast('🧠 Ringkasan sesi kertas tersimpan (simulasi)');
+  if (lastActiveElement) lastActiveElement.focus();
 }
 function saveThinkingCanvas() {
   const action = document.getElementById('canvasAction').value.trim();
@@ -1282,10 +1311,18 @@ function saveThinkingCanvas() {
 }
 
 // ===== JOURNAL MODAL =====
-function showJournalModal() { document.getElementById('journalModal').classList.add('show'); }
+function showJournalModal() {
+  lastActiveElement = document.activeElement;
+  document.getElementById('journalModal').classList.add('show');
+  setTimeout(() => {
+    const firstMood = document.querySelector('#moodPicker button');
+    if (firstMood) firstMood.focus();
+  }, 100);
+}
 function closeJournalModal() {
   document.getElementById('journalModal').classList.remove('show');
   showToast('📝 Journal entry tersimpan (simulasi)');
+  if (lastActiveElement) lastActiveElement.focus();
 }
 let selectedMood = null;
 function pickMood(btn, score) {
@@ -1337,6 +1374,38 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
+
+// ===== NAVIGATION MENU TOGGLE =====
+function toggleNavMenu(btn) {
+  const navLinks = document.querySelector('.nav-links');
+  const isOpen = navLinks.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+
+// ===== ACCESSIBILITY HANDLERS =====
+// Handle global escape key to close modals
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const journalModal = document.getElementById('journalModal');
+    const thinkingModal = document.getElementById('thinkingModal');
+    if (journalModal.classList.contains('show')) {
+      closeJournalModal();
+    }
+    if (thinkingModal.classList.contains('show')) {
+      closeThinkingModal();
+    }
+  }
+});
+
+// Handle keydown Enter/Space for role="button" elements
+document.addEventListener('keydown', (e) => {
+  if (e.target && e.target.getAttribute('role') === 'button') {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      e.target.click();
+    }
+  }
+});
 
 // ===== INIT =====
 updateWeakest();

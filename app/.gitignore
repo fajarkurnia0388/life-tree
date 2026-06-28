@@ -46,3 +46,6 @@ app.*.map.json
 
 # Drift generated files
 **/*.g.dart
+
+# Native binaries
+*.dll
