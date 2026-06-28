@@ -16,8 +16,39 @@ import 'widgets/dashboard_alerts.dart';
 import 'sheets/friction_intervention_sheet.dart';
 import 'widgets/tree_display_widget.dart';
 
-class DashboardView extends ConsumerWidget {
+class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
+
+  @override
+  ConsumerState<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends ConsumerState<DashboardView> {
+  String _selectedDomainFilter = 'Semua';
+
+  Color _getDomainColor(String? domain) {
+    switch (domain) {
+      case 'Tubuh':
+        return const Color(0xFF6B8E78); // Forest Sage
+      case 'Keuangan':
+        return const Color(0xFFC29B38); // Soft Gold
+      case 'Hubungan':
+        return const Color(0xFFC78585); // Muted Rose
+      case 'Emosi':
+        return const Color(0xFF8595C7); // Periwinkle Indigo
+      case 'Karir':
+        return const Color(0xFF6CA8B5); // Calm Teal
+      case 'Rekreasi':
+        return const Color(0xFFD49E6A); // Warm Apricot
+      default:
+        return const Color(0xFF6B8E78); // Default Sage
+    }
+  }
+
+  Color _getDomainBgColor(String? domain, bool isDark) {
+    final baseColor = _getDomainColor(domain);
+    return baseColor.withOpacity(isDark ? 0.08 : 0.04);
+  }
 
   String _getDomainEmoji(String domain) {
     switch (domain) {
@@ -31,7 +62,7 @@ class DashboardView extends ConsumerWidget {
     }
   }
 
-  Future<void> _toggleHabit(BuildContext context, WidgetRef ref, Habit habit, HabitLog? log) async {
+  Future<void> _toggleHabit(BuildContext context, Habit habit, HabitLog? log) async {
     final service = ref.read(habitLogServiceProvider);
     final now = DateTime.now();
 
@@ -57,7 +88,7 @@ class DashboardView extends ConsumerWidget {
   }
 
   // Opens the Friction Intervention sheet when user taps "Tidak Sanggup"
-  void _showFrictionIntervention(BuildContext context, WidgetRef ref, Habit habit) {
+  void _showFrictionIntervention(BuildContext context, Habit habit) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -71,7 +102,7 @@ class DashboardView extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dataAsync = ref.watch(dashboardDataProvider);
 
@@ -98,6 +129,46 @@ class DashboardView extends ConsumerWidget {
       ),
       body: dataAsync.when(
         data: (data) {
+          final isDevMode = data.profile.unlockedSkins.contains('Sakura') &&
+              data.profile.unlockedSkins.contains('Maple') &&
+              data.profile.unlockedSkins.contains('Bonsai');
+
+          // Filter habits today based on the selected focus domain
+          final filteredHabits = _selectedDomainFilter == 'Semua'
+              ? data.habitsToday
+              : data.habitsToday.where((hwl) => hwl.habit.domainTag == _selectedDomainFilter).toList();
+
+          // Calculate dynamic Action of the Day inside the filtered view
+          Habit? activeActionOfTheDay;
+          if (_selectedDomainFilter == 'Semua') {
+            activeActionOfTheDay = data.actionOfTheDay;
+          } else {
+            Map<String, dynamic> domainScores = {};
+            if (data.profile.latestDomainScores != null) {
+              try {
+                domainScores = jsonDecode(data.profile.latestDomainScores!);
+              } catch (_) {}
+            }
+            double highestPriority = -1.0;
+            final uncompletedFiltered = filteredHabits.where((hwl) => hwl.log?.status != 'Done').toList();
+            for (final hwl in uncompletedFiltered) {
+              final habit = hwl.habit;
+              final domain = habit.domainTag ?? 'Tubuh';
+              final domainScoreVal = domainScores[domain] ?? 5;
+              final domainScore = (domainScoreVal is num) ? domainScoreVal.toDouble() : 5.0;
+              final domainDeficit = 10.0 - domainScore;
+
+              final totalLoad = habit.initiationFriction + habit.energyCost;
+              final score = (domainDeficit * habit.impactScore) / (totalLoad > 0 ? totalLoad : 1);
+              if (score > highestPriority) {
+                highestPriority = score;
+                activeActionOfTheDay = habit;
+              }
+            }
+          }
+
+          final activeColor = _selectedDomainFilter == 'Semua' ? theme.colorScheme.primary : _getDomainColor(_selectedDomainFilter);
+
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(dashboardDataProvider);
@@ -122,6 +193,7 @@ class DashboardView extends ConsumerWidget {
                     cumulativeDays: data.cumulativeDays,
                     season: data.season,
                     onSkinShopTap: () => _showSkinShop(context, ref, data.profile),
+                    activeDomainColor: _selectedDomainFilter == 'Semua' ? null : _getDomainColor(_selectedDomainFilter),
                   ),
                   const SizedBox(height: 16),
                   
@@ -129,11 +201,12 @@ class DashboardView extends ConsumerWidget {
                   _buildRadarChartCard(data),
                   const SizedBox(height: 16),
 
+                  // Status Detail Domain Card
+                  _buildDomainScoresCard(context, data),
+                  const SizedBox(height: 16),
+
                   // Weekly Pulse Banner (Sunday or Developer Mode)
-                  if (DateTime.now().weekday == DateTime.sunday ||
-                      (data.profile.unlockedSkins.contains('Sakura') &&
-                       data.profile.unlockedSkins.contains('Maple') &&
-                       data.profile.unlockedSkins.contains('Bonsai'))) ...[
+                  if (DateTime.now().weekday == DateTime.sunday || isDevMode) ...[
                     WeeklyPulseBanner(isSunday: DateTime.now().weekday == DateTime.sunday),
                     const SizedBox(height: 16),
                   ],
@@ -148,28 +221,49 @@ class DashboardView extends ConsumerWidget {
                   // 3. Action of the Day / Celebration State
                   if (data.allDone)
                     _buildCelebrationCard(theme)
-                  else if (data.actionOfTheDay != null)
-                    _buildActionOfTheDayCard(context, ref, theme, data.actionOfTheDay!, data)
+                  else if (activeActionOfTheDay != null)
+                    _buildActionOfTheDayCard(context, ref, theme, activeActionOfTheDay, data)
                   else
                     _buildNoActionsCard(theme),
                   const SizedBox(height: 24),
 
                   // 4. Other habits list
-                  Text(
-                    'Jadwal Kebiasaan Hari Ini',
-                    style: theme.textTheme.titleLarge,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Jadwal Kebiasaan Hari Ini',
+                        style: theme.textTheme.titleLarge,
+                      ),
+                      if (_selectedDomainFilter != 'Semua')
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _selectedDomainFilter = 'Semua';
+                            });
+                          },
+                          icon: const Icon(Icons.clear, size: 14),
+                          label: const Text('Reset', style: TextStyle(fontSize: 12)),
+                          style: TextButton.styleFrom(
+                            foregroundColor: activeColor,
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(50, 30),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 10),
-                  if (data.habitsToday.isEmpty)
-                    _buildEmptyHabitsCard(theme, context)
+                  if (filteredHabits.isEmpty)
+                    _buildEmptyDomainHabitsCard(theme, context, _selectedDomainFilter)
                   else
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: data.habitsToday.length,
+                      itemCount: filteredHabits.length,
                       itemBuilder: (context, index) {
-                        final item = data.habitsToday[index];
-                        final isAction = data.actionOfTheDay?.habitId == item.habit.habitId;
+                        final item = filteredHabits[index];
+                        final isAction = activeActionOfTheDay?.habitId == item.habit.habitId;
                         return _buildHabitItemTile(context, ref, theme, item, isAction);
                       },
                     ),
@@ -243,7 +337,38 @@ class DashboardView extends ConsumerWidget {
       }
     }
 
-    return RadarChartWidget(scores: scores);
+    final isDevMode = data.profile.unlockedSkins.contains('Sakura') &&
+        data.profile.unlockedSkins.contains('Maple') &&
+        data.profile.unlockedSkins.contains('Bonsai');
+
+    final activeDomains = <String>{'Tubuh'};
+    if (isDevMode) {
+      activeDomains.addAll(['Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi']);
+    } else {
+      try {
+        final jsonStr = data.profile.latestDomainScores;
+        if (jsonStr != null && jsonStr.isNotEmpty) {
+          final Map<String, dynamic> parsed = jsonDecode(jsonStr);
+          activeDomains.addAll(parsed.keys);
+        }
+      } catch (_) {}
+      for (final hwl in data.habitsToday) {
+        if (hwl.habit.domainTag != null) {
+          activeDomains.add(hwl.habit.domainTag!);
+        }
+      }
+    }
+
+    return RadarChartWidget(
+      scores: scores,
+      activeDomains: activeDomains,
+      selectedDomain: _selectedDomainFilter == 'Semua' ? null : _selectedDomainFilter,
+      onDomainSelected: (domain) {
+        setState(() {
+          _selectedDomainFilter = (_selectedDomainFilter == domain) ? 'Semua' : domain;
+        });
+      },
+    );
   }
 
 
@@ -286,34 +411,39 @@ class DashboardView extends ConsumerWidget {
     DashboardData data,
   ) {
     final hwl = data.habitsToday.firstWhere((item) => item.habit.habitId == habit.habitId);
+    final domainColor = _getDomainColor(habit.domainTag);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Card(
-      color: theme.colorScheme.primary.withOpacity(0.03),
+      color: domainColor.withOpacity(isDark ? 0.08 : 0.03),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.primary, width: 2),
+        side: BorderSide(color: domainColor, width: 2),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.star_rounded, color: Colors.white, size: 16),
-                  SizedBox(width: 6),
-                  Text(
-                    'ACTION OF THE DAY',
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 1),
-                  ),
-                ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: domainColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.star_rounded, color: Colors.white, size: 16),
+                    SizedBox(width: 6),
+                    Text(
+                      'ACTION OF THE DAY',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 1),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -342,10 +472,10 @@ class DashboardView extends ConsumerWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () => _toggleHabit(context, ref, habit, hwl.log),
+                    onPressed: () => _toggleHabit(context, habit, hwl.log),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: theme.colorScheme.onPrimary,
+                      backgroundColor: domainColor,
+                      foregroundColor: Colors.white,
                       minimumSize: const Size(88, 48), // WCAG touch target
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
@@ -354,7 +484,7 @@ class DashboardView extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 OutlinedButton(
-                  onPressed: () => _showFrictionIntervention(context, ref, habit),
+                  onPressed: () => _showFrictionIntervention(context, habit),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(88, 48), // WCAG touch target
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -431,59 +561,297 @@ class DashboardView extends ConsumerWidget {
     bool isAction,
   ) {
     final isDone = item.log?.status == 'Done';
+    final domainColor = _getDomainColor(item.habit.domainTag);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6.0),
+      clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
           color: isAction
-              ? theme.colorScheme.primary.withOpacity(0.5)
+              ? domainColor.withOpacity(0.6)
               : theme.colorScheme.onBackground.withOpacity(0.08),
           width: isAction ? 1.5 : 1,
         ),
       ),
-      child: CheckboxListTile(
-        title: Text(
-          item.habit.title,
-          style: TextStyle(
-            fontWeight: isAction ? FontWeight.bold : FontWeight.normal,
-            decoration: isDone ? TextDecoration.lineThrough : null,
-            color: isDone ? theme.colorScheme.onBackground.withOpacity(0.6) : theme.colorScheme.onBackground,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDone 
+              ? (isDark ? Colors.transparent : Colors.grey[50]) 
+              : domainColor.withOpacity(isDark ? 0.04 : 0.02),
+          border: Border(
+            left: BorderSide(color: domainColor, width: 4),
           ),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 4),
-            Text(
-              'Domain: ${item.habit.domainTag} | Beban: ${item.habit.initiationFriction + item.habit.energyCost} | ${item.habit.frequency}',
-              style: const TextStyle(fontSize: 10),
+        child: CheckboxListTile(
+          title: Text(
+            item.habit.title,
+            style: TextStyle(
+              fontWeight: isAction ? FontWeight.bold : FontWeight.normal,
+              decoration: isDone ? TextDecoration.lineThrough : null,
+              color: isDone ? theme.colorScheme.onBackground.withOpacity(0.6) : theme.colorScheme.onBackground,
             ),
-            if (item.habit.goalTag != null && item.habit.goalTag!.isNotEmpty) ...[
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  '🎯 Target: ${item.habit.goalTag}',
-                  style: TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: domainColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      '${_getDomainEmoji(item.habit.domainTag ?? 'Tubuh')} ${item.habit.domainTag}',
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: domainColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Beban: ${item.habit.initiationFriction + item.habit.energyCost} | ${item.habit.frequency}',
+                    style: const TextStyle(fontSize: 10),
+                  ),
+                ],
+              ),
+              if (item.habit.goalTag != null && item.habit.goalTag!.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '🎯 Target: ${item.habit.goalTag}',
+                    style: TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
+          ),
+          value: isDone,
+          activeColor: domainColor,
+          onChanged: (_) => _toggleHabit(context, item.habit, item.log),
+          controlAffinity: ListTileControlAffinity.leading,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyDomainHabitsCard(ThemeData theme, BuildContext context, String domain) {
+    if (domain == 'Semua') {
+      return _buildEmptyHabitsCard(theme, context);
+    }
+    final emoji = _getDomainEmoji(domain);
+    final message = switch (domain) {
+      'Keuangan' => 'Tidak ada kebiasaan finansial terjadwal hari ini. Tetap catat pengeluaran secara mandiri! 💰',
+      'Hubungan' => 'Hari ini kosong dari agenda sosial. Sempatkan menyapa orang terdekat! 🤝',
+      'Emosi' => 'Tidak ada latihan emosi terjadwal. Luangkan 1 menit untuk bernapas lega! 🧠',
+      'Karir' => 'Fokus belajar hari ini selesai. Istirahatkan pikiran Anda untuk menyerap materi! 📚',
+      'Rekreasi' => 'Tidak ada jadwal santai hari ini. Berikan jeda sejenak untuk hobi Anda! 🎮',
+      _ => 'Tidak ada kebiasaan terjadwal untuk domain $domain hari ini. 🍃',
+    };
+
+    return Card(
+      color: _getDomainColor(domain).withOpacity(0.02),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: _getDomainColor(domain).withOpacity(0.1), width: 1),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+        child: Column(
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 32)),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12, color: theme.colorScheme.onBackground.withOpacity(0.8), height: 1.4),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => context.push('/add-habit'),
+              icon: const Icon(Icons.add, size: 16),
+              label: Text('Tambah Kebiasaan $domain'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: _getDomainColor(domain),
+                side: BorderSide(color: _getDomainColor(domain)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            ),
           ],
         ),
-        value: isDone,
-        activeColor: theme.colorScheme.primary,
-        onChanged: (_) => _toggleHabit(context, ref, item.habit, item.log),
-        controlAffinity: ListTileControlAffinity.leading,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      ),
+    );
+  }
+
+  Widget _buildDomainScoresCard(BuildContext context, DashboardData data) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final isDevMode = data.profile.unlockedSkins.contains('Sakura') &&
+        data.profile.unlockedSkins.contains('Maple') &&
+        data.profile.unlockedSkins.contains('Bonsai');
+
+    final activeDomains = <String>{'Tubuh'};
+    if (isDevMode) {
+      activeDomains.addAll(['Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi']);
+    } else {
+      try {
+        final jsonStr = data.profile.latestDomainScores;
+        if (jsonStr != null && jsonStr.isNotEmpty) {
+          final Map<String, dynamic> parsed = jsonDecode(jsonStr);
+          activeDomains.addAll(parsed.keys);
+        }
+      } catch (_) {}
+      for (final hwl in data.habitsToday) {
+        if (hwl.habit.domainTag != null) {
+          activeDomains.add(hwl.habit.domainTag!);
+        }
+      }
+    }
+
+    Map<String, double> scores = {
+      'Tubuh': 5.0,
+      'Keuangan': 3.0,
+      'Hubungan': 3.0,
+      'Emosi': 3.0,
+      'Karir': 3.0,
+      'Rekreasi': 3.0,
+    };
+    try {
+      final jsonStr = data.profile.latestDomainScores;
+      if (jsonStr != null && jsonStr.isNotEmpty) {
+        final Map<String, dynamic> parsed = jsonDecode(jsonStr);
+        parsed.forEach((key, value) {
+          final numVal = value as num;
+          if (scores.containsKey(key)) {
+            scores[key] = numVal.toDouble();
+          }
+        });
+      }
+    } catch (_) {}
+
+    final List<String> domains = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
+    final domainEmojis = {
+      'Tubuh': '🏃',
+      'Keuangan': '💰',
+      'Hubungan': '🤝',
+      'Emosi': '🧠',
+      'Karir': '📚',
+      'Rekreasi': '🎮',
+    };
+
+    final focusDomain = data.actionOfTheDay?.domainTag;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Status Detail Domain 📊',
+              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Detail kemajuan nilai dan tingkat keaktifan domain kehidupan.',
+              style: TextStyle(fontSize: 11, color: theme.colorScheme.onBackground.withOpacity(0.6)),
+            ),
+            const SizedBox(height: 16),
+            ...domains.map((domain) {
+              final isActive = activeDomains.contains(domain);
+              final score = scores[domain] ?? 3.0;
+              final emoji = domainEmojis[domain]!;
+              final color = _getDomainColor(domain);
+              final isFiltered = _selectedDomainFilter == domain;
+              final isFocus = focusDomain == domain;
+
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.symmetric(vertical: 6.0),
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: isFiltered 
+                      ? color.withOpacity(isDark ? 0.12 : 0.06) 
+                      : (isDark ? const Color(0xFF222C26) : const Color(0xFFFBFBFB)),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isFiltered ? color : Colors.transparent,
+                    width: isFiltered ? 1.5 : 1,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Text(emoji, style: const TextStyle(fontSize: 16)),
+                        const SizedBox(width: 8),
+                        Text(
+                          domain,
+                          style: TextStyle(
+                            fontWeight: isFiltered ? FontWeight.bold : FontWeight.w600,
+                            color: isActive ? theme.colorScheme.onBackground : theme.colorScheme.onBackground.withOpacity(0.4),
+                          ),
+                        ),
+                        if (isFocus) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: color.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              '🎯 FOKUS',
+                              style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: color),
+                            ),
+                          ),
+                        ],
+                        const Spacer(),
+                        Text(
+                          isActive ? '${score.toStringAsFixed(1)} / 10' : 'Non-aktif (Soon)',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: isFiltered ? FontWeight.bold : FontWeight.normal,
+                            color: isActive ? color : theme.colorScheme.onBackground.withOpacity(0.3),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: isActive ? (score / 10.0) : 0.0,
+                        backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+                        color: isActive ? color : Colors.grey[400],
+                        minHeight: 6,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
       ),
     );
   }

@@ -20,6 +20,7 @@ class TreeDisplayWidget extends ConsumerWidget {
   final String season;
   final double width;
   final double height;
+  final Color? activeDomainColor;
 
   const TreeDisplayWidget({
     super.key,
@@ -28,6 +29,7 @@ class TreeDisplayWidget extends ConsumerWidget {
     required this.season,
     this.width = double.infinity,
     this.height = 220,
+    this.activeDomainColor,
   });
 
   @override
@@ -105,6 +107,23 @@ class TreeDisplayWidget extends ConsumerWidget {
                   ),
                 ),
               ),
+
+              // ── Dynamic Domain Aura (glow behind the tree) ──
+              if (activeDomainColor != null)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: const Alignment(0, 0.2),
+                        radius: 0.65,
+                        colors: [
+                          activeDomainColor!.withOpacity(0.32),
+                          activeDomainColor!.withOpacity(0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
 
               // ── Night stars (drawn over entire sky) ──
               if (activeTime == CelestialTime.night)
@@ -365,6 +384,7 @@ class TreeVitalityCard extends StatefulWidget {
   final int cumulativeDays;
   final String season;
   final VoidCallback onSkinShopTap;
+  final Color? activeDomainColor;
 
   const TreeVitalityCard({
     super.key,
@@ -372,6 +392,7 @@ class TreeVitalityCard extends StatefulWidget {
     required this.cumulativeDays,
     required this.season,
     required this.onSkinShopTap,
+    this.activeDomainColor,
   });
 
   @override
@@ -625,6 +646,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                     season: widget.season,
                     width: double.infinity,
                     height: 220,
+                    activeDomainColor: widget.activeDomainColor,
                   ),
                 ),
                 // Floating minimal capture button at top-right (outside RepaintBoundary so it's not captured)
