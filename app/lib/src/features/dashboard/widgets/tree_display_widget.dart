@@ -12,7 +12,7 @@ import '../../../core/domain/tree_skin_config.dart';
 import '../../../core/theme/theme.dart';
 import 'growth_map/growth_map_widget.dart';
 
-/// Displays the conceptual tree view for a given skin and growth stage.
+/// Displays the conceptual tree view for a given skin and growth state.
 /// Renders the growth state through a conceptual map rather than static image assets.
 class TreeDisplayWidget extends StatelessWidget {
   final String skinId;
@@ -95,7 +95,7 @@ class TreeDisplayWidget extends StatelessWidget {
   }
 }
 
-/// A card widget wrapping the tree display with progress bar and stage label.
+/// A card widget wrapping the tree display with progress bar and status label.
 class TreeVitalityCard extends StatefulWidget {
   final String skinId;
   final int cumulativeDays;
@@ -558,7 +558,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
   }
 }
 
-/// Small pill badge showing the current growth stage name.
+/// Small pill badge showing the current growth status.
 class _StageBadge extends StatelessWidget {
   final String stage;
   final bool isRecovery;

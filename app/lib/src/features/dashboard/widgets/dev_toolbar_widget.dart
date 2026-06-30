@@ -81,7 +81,7 @@ class DevToolbarWidget extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     const Text(
-                      'Tahap Pertumbuhan',
+                      'Pertumbuhan',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

@@ -22,7 +22,7 @@ class RadarChartWidget extends StatelessWidget {
     'Hubungan',
     'Emosi',
     'Karir',
-    'Rekreasi'
+    'Rekreasi',
   ];
 
   /// Pembulatan skor untuk tampilan ringkas (0-10).
@@ -51,16 +51,16 @@ class RadarChartWidget extends StatelessWidget {
       color: isSelected
           ? Colors.white
           : (isActive
-              ? domainColor
-              : theme.colorScheme.onSurface.withValues(alpha: 0.35)),
+                ? domainColor
+                : theme.colorScheme.onSurface.withValues(alpha: 0.35)),
     );
 
     return Material(
       color: isSelected
           ? domainColor
           : (isActive
-              ? domainColor.withValues(alpha: isDark ? 0.12 : 0.06)
-              : theme.colorScheme.onSurface.withValues(alpha: 0.03)),
+                ? domainColor.withValues(alpha: isDark ? 0.12 : 0.06)
+                : theme.colorScheme.onSurface.withValues(alpha: 0.03)),
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         onTap: (isActive && onDomainSelected != null)
@@ -74,8 +74,8 @@ class RadarChartWidget extends StatelessWidget {
               color: isSelected
                   ? domainColor
                   : (isActive
-                      ? domainColor.withValues(alpha: 0.35)
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.08)),
+                        ? domainColor.withValues(alpha: 0.35)
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.08)),
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected
@@ -84,7 +84,7 @@ class RadarChartWidget extends StatelessWidget {
                       color: domainColor.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
-                    )
+                    ),
                   ]
                 : null,
           ),
@@ -105,7 +105,9 @@ class RadarChartWidget extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
           title: const Text('Interaksi domain'),
           content: const Text(
             'Ketuk kartu nama domain untuk melihat kutipan, tips wawasan, atau menyaring dasbor.',
@@ -136,12 +138,17 @@ class RadarChartWidget extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Radar Keseimbangan Hidup 🎡',
-                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 IconButton(
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                  constraints: const BoxConstraints(
+                    minWidth: 24,
+                    minHeight: 24,
+                  ),
                   tooltip: 'Tentang interaksi domain',
                   onPressed: () => _showHelpDialog(context, theme),
                   icon: Container(
@@ -151,7 +158,9 @@ class RadarChartWidget extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: theme.colorScheme.primary.withValues(alpha: 0.12),
                       border: Border.all(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.35),
+                        color: theme.colorScheme.primary.withValues(
+                          alpha: 0.35,
+                        ),
                         width: 1,
                       ),
                     ),
@@ -186,7 +195,9 @@ class RadarChartWidget extends StatelessWidget {
                             scores: scores,
                             primaryColor: theme.colorScheme.primary,
                             onBackgroundColor: theme.colorScheme.onSurface,
-                            cardColor: theme.cardTheme.color ?? theme.colorScheme.surface,
+                            cardColor:
+                                theme.cardTheme.color ??
+                                theme.colorScheme.surface,
                           ),
                         ),
                       ),
@@ -210,7 +221,14 @@ class RadarChartWidget extends StatelessWidget {
                         child: SizedBox(
                           width: 110,
                           height: 44,
-                          child: _buildClickableLabel(context, theme, domain, isActive, isSelected, color),
+                          child: _buildClickableLabel(
+                            context,
+                            theme,
+                            domain,
+                            isActive,
+                            isSelected,
+                            color,
+                          ),
                         ),
                       );
                     }),
@@ -252,10 +270,7 @@ class RadarChartWidget extends StatelessWidget {
             ],
           ),
         ),
-        Divider(
-          height: 1,
-          color: onSurface.withValues(alpha: 0.12),
-        ),
+        Divider(height: 1, color: onSurface.withValues(alpha: 0.12)),
         ..._domains.map((domain) {
           final isActive = activeDomains.contains(domain);
           final isTappable = onDomainSelected != null;
@@ -288,10 +303,7 @@ class RadarChartWidget extends StatelessWidget {
               onTap: () => onDomainSelected!(domain),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: 44),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: row,
-                ),
+                child: Align(alignment: Alignment.centerLeft, child: row),
               ),
             ),
           );
@@ -313,7 +325,7 @@ class _RadarChartPainter extends CustomPainter {
     'Hubungan',
     'Emosi',
     'Karir',
-    'Rekreasi'
+    'Rekreasi',
   ];
 
   _RadarChartPainter({
