@@ -80,8 +80,8 @@ class GrowthMapLayout {
         final positionLabel = index == 0
             ? 'atas'
             : index == 1
-            ? 'kiri'
-            : 'kanan';
+                ? 'kiri'
+                : 'kanan';
         positionedNodes.add(
           LeafNode(
             id: 'selected-add-$positionLabel-$selectedDomain',

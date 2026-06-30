@@ -106,27 +106,8 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                 ? [activeDomain]
                 : domainOrder;
 
-            for (final domain in relevantDomains) {
-              final domainLeaves = extendedLeaves.where(
-                (l) => l.domainTag == domain,
-              );
-              final shouldAddPlaceholder =
-                  activeDomain == null && domainLeaves.isEmpty;
-              if (shouldAddPlaceholder) {
-                extendedLeaves.add(
-                  LeafNode(
-                    id: 'placeholder-$domain',
-                    label: 'Tambah Kebiasaan',
-                    domainTag: domain,
-                    isDone: false,
-                    initial: '+',
-                    originalHabit: null,
-                    semanticLabel:
-                        'Dahan $domain belum memiliki kebiasaan hari ini. Ketuk untuk menambah.',
-                  ),
-                );
-              }
-            }
+            // Do not display placeholder "+" nodes in the full domain view.
+            // Keep only real habit nodes for a cleaner growth map.
 
             // Calculate Coordinates
             final positionedNodes = GrowthMapLayout.calculate(
