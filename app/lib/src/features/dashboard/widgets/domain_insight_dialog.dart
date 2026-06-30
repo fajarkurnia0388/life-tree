@@ -14,7 +14,8 @@ class DomainInsightDialog extends StatefulWidget {
     this.onFocusApplied,
   });
 
-  static void show(BuildContext context, {
+  static void show(
+    BuildContext context, {
     required String domain,
     required double score,
     VoidCallback? onFocusApplied,
@@ -42,7 +43,8 @@ class DomainInsightDialog extends StatefulWidget {
   State<DomainInsightDialog> createState() => _DomainInsightDialogState();
 }
 
-class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerProviderStateMixin {
+class _DomainInsightDialogState extends State<DomainInsightDialog>
+    with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late AnimationController _fillController;
   late Animation<double> _scaleAnimation;
@@ -60,13 +62,15 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
       duration: const Duration(milliseconds: 1200),
     )..repeat();
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 2.2).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 2.2,
+    ).animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeOut));
 
-    _pulseOpacity = Tween<double>(begin: 0.6, end: 0.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeOut),
-    );
+    _pulseOpacity = Tween<double>(
+      begin: 0.6,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeOut));
 
     // Energy filling progress
     _fillController = AnimationController(
@@ -93,13 +97,20 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
   // Get assets/content per domain
   IconData _getIcon() {
     switch (widget.domain) {
-      case 'Tubuh': return Icons.favorite_rounded;
-      case 'Keuangan': return Icons.account_balance_wallet_rounded;
-      case 'Hubungan': return Icons.people_alt_rounded;
-      case 'Emosi': return Icons.sentiment_satisfied_alt_rounded;
-      case 'Karir': return Icons.work_rounded;
-      case 'Rekreasi': return Icons.sports_esports_rounded;
-      default: return Icons.star_rounded;
+      case 'Tubuh':
+        return Icons.favorite_rounded;
+      case 'Keuangan':
+        return Icons.account_balance_wallet_rounded;
+      case 'Hubungan':
+        return Icons.people_alt_rounded;
+      case 'Emosi':
+        return Icons.sentiment_satisfied_alt_rounded;
+      case 'Karir':
+        return Icons.work_rounded;
+      case 'Rekreasi':
+        return Icons.sports_esports_rounded;
+      default:
+        return Icons.star_rounded;
     }
   }
 
@@ -124,13 +135,20 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
 
   String _getQuoteAuthor() {
     switch (widget.domain) {
-      case 'Tubuh': return 'Jim Rohn';
-      case 'Keuangan': return 'Warren Buffett';
-      case 'Hubungan': return 'John Gottman';
-      case 'Emosi': return 'Jon Kabat-Zinn';
-      case 'Karir': return 'Steve Jobs';
-      case 'Rekreasi': return 'Ovid';
-      default: return 'LifeTree';
+      case 'Tubuh':
+        return 'Jim Rohn';
+      case 'Keuangan':
+        return 'Warren Buffett';
+      case 'Hubungan':
+        return 'John Gottman';
+      case 'Emosi':
+        return 'Jon Kabat-Zinn';
+      case 'Karir':
+        return 'Steve Jobs';
+      case 'Rekreasi':
+        return 'Ovid';
+      default:
+        return 'LifeTree';
     }
   }
 
@@ -272,15 +290,13 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
                           height: loaderSize,
                           child: CircularProgressIndicator(
                             value: _fillController.value,
-                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                             strokeWidth: 4.5,
                           ),
                         ),
-                        Icon(
-                          _getIcon(),
-                          size: 36,
-                          color: Colors.white,
-                        ),
+                        Icon(_getIcon(), size: 36, color: Colors.white),
                       ],
                     ),
                   );
@@ -303,14 +319,22 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
     );
   }
 
-  Widget _buildInsightCard(BuildContext context, ThemeData theme, bool isDark, Color domainColor) {
+  Widget _buildInsightCard(
+    BuildContext context,
+    ThemeData theme,
+    bool isDark,
+    Color domainColor,
+  ) {
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(maxWidth: 420),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E2622) : Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: domainColor.withValues(alpha: 0.25), width: 1.5),
+        border: Border.all(
+          color: domainColor.withValues(alpha: 0.25),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
             color: domainColor.withValues(alpha: isDark ? 0.2 : 0.08),
@@ -328,7 +352,9 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
               color: domainColor.withValues(alpha: 0.08),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
             ),
             child: Row(
               children: [
@@ -353,14 +379,19 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
                         'Tingkat Penjajaran Energi',
                         style: TextStyle(
                           fontSize: 11,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: domainColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
@@ -377,7 +408,7 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
               ],
             ),
           ),
-          
+
           Flexible(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20.0),
@@ -389,9 +420,15 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.03),
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.03,
+                      ),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.05)),
+                      border: Border.all(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.05,
+                        ),
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -417,9 +454,9 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // Tips Header
                   Text(
                     '💡 Tips & Nasihat Praktis',
@@ -429,38 +466,44 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // Tips list
-                  ..._getTips().map((tip) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: Icon(Icons.circle, size: 6, color: domainColor),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            tip,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              height: 1.4,
+                  ..._getTips().map(
+                    (tip) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.5),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Icon(
+                              Icons.circle,
+                              size: 6,
+                              color: domainColor,
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              tip,
+                              style: const TextStyle(fontSize: 13, height: 1.4),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  )),
-                  
+                  ),
+
                   const SizedBox(height: 16),
                   const Divider(),
                   const SizedBox(height: 12),
-                  
+
                   // Micro insight / news
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: CalmTheme.primarySage.withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(12),
@@ -469,7 +512,9 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
                       _getInsight(),
                       style: TextStyle(
                         fontSize: 12,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.8,
+                        ),
                         height: 1.35,
                       ),
                     ),
@@ -478,7 +523,7 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
               ),
             ),
           ),
-          
+
           // Action Buttons
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
