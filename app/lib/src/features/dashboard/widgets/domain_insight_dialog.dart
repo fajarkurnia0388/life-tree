@@ -221,6 +221,8 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
   }
 
   Widget _buildEnergyLoader(Color domainColor) {
+    const double loaderSize = 92.0;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -232,8 +234,8 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
               animation: _pulseController,
               builder: (context, child) {
                 return Container(
-                  width: 90 * _scaleAnimation.value,
-                  height: 90 * _scaleAnimation.value,
+                  width: loaderSize * _scaleAnimation.value,
+                  height: loaderSize * _scaleAnimation.value,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: domainColor.withValues(alpha: _pulseOpacity.value),
@@ -243,8 +245,8 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
             ),
             // Glowing core
             Container(
-              width: 90,
-              height: 90,
+              width: loaderSize,
+              height: loaderSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: domainColor,
@@ -259,20 +261,28 @@ class _DomainInsightDialogState extends State<DomainInsightDialog> with TickerPr
               child: AnimatedBuilder(
                 animation: _fillController,
                 builder: (context, child) {
-                  return Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        value: _fillController.value,
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                        strokeWidth: 4.5,
-                      ),
-                      Icon(
-                        _getIcon(),
-                        size: 36,
-                        color: Colors.white,
-                      ),
-                    ],
+                  return SizedBox(
+                    width: loaderSize,
+                    height: loaderSize,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: loaderSize,
+                          height: loaderSize,
+                          child: CircularProgressIndicator(
+                            value: _fillController.value,
+                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                            strokeWidth: 4.5,
+                          ),
+                        ),
+                        Icon(
+                          _getIcon(),
+                          size: 36,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
