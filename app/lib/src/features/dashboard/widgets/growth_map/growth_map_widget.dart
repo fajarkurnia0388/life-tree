@@ -110,7 +110,9 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
               final domainLeaves = extendedLeaves.where(
                 (l) => l.domainTag == domain,
               );
-              if (domainLeaves.isEmpty) {
+              final shouldAddPlaceholder = activeDomain == null &&
+                  domainLeaves.isEmpty;
+              if (shouldAddPlaceholder) {
                 extendedLeaves.add(
                   LeafNode(
                     id: 'placeholder-$domain',

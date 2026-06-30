@@ -68,6 +68,35 @@ class GrowthMapLayout {
       branchPositions[branch.id] = branchPos;
       positionedNodes.add(branch.copyWith(position: branchPos));
 
+      // Add fixed quick-add “+” nodes around the selected domain icon.
+      const double addIconOffset = 62.0;
+      final addIconPositions = [
+        Offset(branchPos.dx, branchPos.dy - addIconOffset),
+        Offset(branchPos.dx - addIconOffset * 1.2, branchPos.dy),
+        Offset(branchPos.dx + addIconOffset * 1.2, branchPos.dy),
+      ];
+      for (var index = 0; index < addIconPositions.length; index++) {
+        final position = addIconPositions[index];
+        final positionLabel = index == 0
+            ? 'atas'
+            : index == 1
+                ? 'kiri'
+                : 'kanan';
+        positionedNodes.add(
+          LeafNode(
+            id: 'selected-add-$positionLabel-$selectedDomain',
+            label: 'Tambah Kebiasaan',
+            position: position,
+            semanticLabel:
+                'Tambah kebiasaan baru untuk domain $selectedDomain di $positionLabel.',
+            domainTag: selectedDomain,
+            isDone: false,
+            initial: '+',
+            originalHabit: null,
+          ),
+        );
+      }
+
       final subNodes = subNodesByDomain[branch.id] ?? [];
       final k = subNodes.length;
       const double horizontalGap = 38.0;
