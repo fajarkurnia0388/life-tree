@@ -1,3 +1,4 @@
+import 'app_constants.dart';
 /// Maps (skinId, stage) pairs to asset paths.
 /// Also defines growth stage thresholds.
 ///
@@ -53,7 +54,7 @@ class TreeSkinConfig {
 
   /// Determine the growth stage based on cumulative days and season.
   static String getStage(int cumulativeDays, String season) {
-    if (season == 'Recovery') return stageRecovery;
+    if (season == Season.recovery) return stageRecovery;
     for (final stage in orderedStages) {
       final upper = _stageUpperBound[stage];
       if (upper == null) return stage; // mature (no upper bound)
@@ -64,7 +65,7 @@ class TreeSkinConfig {
 
   /// Human-readable stage label for UI display.
   static String getStageLabel(int cumulativeDays, String season) {
-    if (season == 'Recovery') return 'Pohon Istirahat Bersalju ❄️';
+    if (season == Season.recovery) return 'Pohon Istirahat Bersalju ❄️';
     final stage = getStage(cumulativeDays, season);
     return switch (stage) {
       stageSeed => 'Benih — Awal Perjalanan 🌰',
@@ -156,7 +157,7 @@ class TreeSkinConfig {
   /// Progress bar value (0.0 to 1.0) of overall growth from seed → mature.
   /// Smoothly interpolated across the whole 0–90 day journey.
   static double getProgress(int cumulativeDays, String season) {
-    if (season == 'Recovery') return 1.0;
+    if (season == Season.recovery) return 1.0;
     if (cumulativeDays <= 0) return 0.0;
     if (cumulativeDays >= 90) return 1.0;
     return (cumulativeDays / 90.0).clamp(0.0, 1.0);
@@ -164,7 +165,7 @@ class TreeSkinConfig {
 
   /// Progress bar color per stage.
   static const Map<String, int> stageColors = {
-    'Recovery': 0xFF7CB9E8, // sky blue (recovery)
+    Season.recovery: 0xFF7CB9E8, // sky blue (recovery)
     stageSeed: 0xFFA8C5A0,
     stageSprout: 0xFF8FBF82,
     stageSeedling: 0xFF7BAC75,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../../core/domain/app_constants.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
@@ -36,13 +37,13 @@ class _FrictionInterventionSheetState
     );
 
     // Apply specific intervention logic based on user choice
-    if (_selectedReason == 'Kelelahan') {
+    if (_selectedReason == FrictionReason.kelelahan) {
       final profiles = await db.select(db.userProfiles).get();
       if (profiles.isNotEmpty) {
         await (db.update(db.userProfiles)
               ..where((tbl) => tbl.userId.equals(profiles.first.userId)))
             .write(UserProfilesCompanion(
-              supportMode: const drift.Value('Recovery'),
+              supportMode: const drift.Value(SupportMode.recovery),
               recoveryEndDate: drift.Value(now.add(Duration(days: _recoveryDays))),
               updatedAt: drift.Value(now),
             ));
@@ -99,25 +100,25 @@ class _FrictionInterventionSheetState
           ),
           const SizedBox(height: 24),
           _buildReasonTile(
-            value: 'Kurang_Waktu',
+            value: FrictionReason.kurangWaktu,
             icon: Icons.timer_outlined,
             title: 'Kurang Waktu',
             desc: 'Saya hanya punya sedikit waktu hari ini.',
           ),
           _buildReasonTile(
-            value: 'Kelelahan',
+            value: FrictionReason.kelelahan,
             icon: Icons.battery_alert_rounded,
             title: 'Kelelahan / Sakit',
             desc: 'Energi saya benar-benar terkuras hari ini.',
           ),
           _buildReasonTile(
-            value: 'Lupa',
+            value: FrictionReason.lupa,
             icon: Icons.notifications_off_outlined,
             title: 'Lupa / Kurang Fokus',
             desc: 'Saya terlewat karena tidak ingat jadwalnya.',
           ),
           const SizedBox(height: 16),
-          if (_selectedReason == 'Kurang_Waktu')
+          if (_selectedReason == FrictionReason.kurangWaktu)
             Card(
               color: theme.colorScheme.primary.withValues(alpha: 0.05),
               child: Padding(
@@ -138,7 +139,7 @@ class _FrictionInterventionSheetState
                 ),
               ),
             ),
-          if (_selectedReason == 'Kelelahan')
+          if (_selectedReason == FrictionReason.kelelahan)
             Card(
               color: CalmTheme.secondaryBlue.withValues(alpha: 0.05),
               child: Padding(

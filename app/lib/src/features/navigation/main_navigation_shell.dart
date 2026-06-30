@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../dashboard/dashboard_view.dart';
 import '../journal/journal_dashboard_tab.dart';
 import '../reflection/reflection_dashboard_tab.dart';
+import '../marketplace/marketplace_view.dart';
 import '../profile/profile_dashboard_tab.dart';
 
 class MainNavigationShell extends ConsumerStatefulWidget {
@@ -19,6 +20,7 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
     DashboardView(),
     JournalDashboardTab(),
     ReflectionDashboardTab(),
+    MarketplaceView(),
     ProfileDashboardTab(),
   ];
 
@@ -51,6 +53,11 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
             icon: Icon(Icons.psychology_outlined),
             selectedIcon: Icon(Icons.psychology),
             label: 'Refleksi',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.storefront_outlined),
+            selectedIcon: Icon(Icons.storefront),
+            label: 'Marketplace',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),

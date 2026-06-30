@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../../core/domain/app_constants.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
 import '../marketplace_service.dart';
@@ -29,8 +30,19 @@ class _ShareTemplateBottomSheetState extends ConsumerState<ShareTemplateBottomSh
 
   Future<void> _loadLocalHabits() async {
     final db = ref.read(dbProvider);
+    final profiles = await db.select(db.userProfiles).get();
+    if (profiles.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      return;
+    }
+    final userId = profiles.first.userId;
+
     final list = await (db.select(db.habits)
-          ..where((tbl) => tbl.status.equals('Active') & tbl.deletedAt.isNull()))
+          ..where((tbl) => tbl.userId.equals(userId) & tbl.status.equals(HabitStatus.active) & tbl.deletedAt.isNull()))
         .get();
     if (mounted) {
       setState(() {

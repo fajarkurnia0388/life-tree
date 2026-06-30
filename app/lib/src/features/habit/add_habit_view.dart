@@ -3,13 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'widgets/habit_templates.dart';
 
 class AddHabitView extends ConsumerStatefulWidget {
-  const AddHabitView({super.key});
+  final String? habitId;
+  const AddHabitView({super.key, this.habitId});
 
   @override
   ConsumerState<AddHabitView> createState() => _AddHabitViewState();
@@ -30,6 +32,89 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
   final List<int> _selectedDays = [1, 2, 3, 4, 5, 6, 7];
 
+  bool _isEditing = false;
+  Habit? _existingHabit;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.habitId != null) {
+      _loadHabitForEdit();
+    }
+  }
+
+  Future<void> _loadHabitForEdit() async {
+    final db = ref.read(dbProvider);
+    final habit = await (db.select(db.habits)
+          ..where((tbl) => tbl.habitId.equals(widget.habitId!)))
+        .getSingleOrNull();
+    if (habit != null && mounted) {
+      setState(() {
+        _isEditing = true;
+        _existingHabit = habit;
+        _titleController.text = habit.title;
+        _goalTagController.text = habit.goalTag ?? '';
+        _initiationFriction = habit.initiationFriction;
+        _energyCost = habit.energyCost;
+        _impactScore = habit.impactScore;
+        _mvaDurationMin = habit.mvaDurationMin;
+        _frequency = habit.frequency;
+        _domainTag = habit.domainTag ?? 'Tubuh';
+        _showTemplates = false; // Hide templates in edit mode
+        
+        if (habit.scheduledDays != null) {
+          _selectedDays.clear();
+          _selectedDays.addAll(
+            habit.scheduledDays!
+                .split(',')
+                .map((e) => int.tryParse(e.trim()))
+                .whereType<int>(),
+          );
+        }
+      });
+    }
+  }
+
+  Future<void> _deleteHabit() async {
+    if (_existingHabit == null) return;
+    
+    final proceed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Hapus Kebiasaan'),
+          content: const Text('Apakah Anda yakin ingin menghapus kebiasaan ini? Tindakan ini tidak dapat dibatalkan.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+    
+    if (proceed != true) return;
+    
+    final db = ref.read(dbProvider);
+    final now = DateTime.now();
+    
+    await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(_existingHabit!.habitId)))
+        .write(HabitsCompanion(
+          deletedAt: drift.Value(now),
+        ));
+        
+    ref.invalidate(dashboardDataProvider);
+    
+    if (mounted) {
+      context.pop();
+    }
+  }
+
   Future<void> _saveHabit() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -40,14 +125,18 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     if (profiles.isEmpty) return;
     final userId = profiles.first.userId;
 
-    final habitId = const Uuid().v4();
-    
     final activeHabits = await (db.select(db.habits)
-          ..where((tbl) => tbl.status.equals('Active') & tbl.deletedAt.isNull()))
+          ..where((tbl) => tbl.userId.equals(userId) & tbl.status.equals(HabitStatus.active) & tbl.deletedAt.isNull()))
         .get();
     
     final currentLoad = activeHabits.fold<int>(0, (sum, h) => sum + h.initiationFriction + h.energyCost);
-    final nextLoad = currentLoad + _initiationFriction + _energyCost;
+    int nextLoad = currentLoad;
+    if (_isEditing && _existingHabit != null) {
+      nextLoad = currentLoad - (_existingHabit!.initiationFriction + _existingHabit!.energyCost) + _initiationFriction + _energyCost;
+    } else {
+      nextLoad = currentLoad + _initiationFriction + _energyCost;
+    }
+    
     final maxCapacity = profiles.first.canopyLoadCapacity;
 
     if (nextLoad > maxCapacity) {
@@ -59,7 +148,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             title: const Text('Beban Canopy Terlampaui'),
             content: Text(
               'Total beban kapasitas harian Anda adalah $maxCapacity poin. '
-              'Menambahkan habit ini akan meningkatkan beban menjadi $nextLoad poin. '
+              'Menambahkan/mengubah habit ini akan meningkatkan beban menjadi $nextLoad poin. '
               '\n\nLifeTree menyarankan untuk menjaga beban di bawah batas agar tidak kelelahan. Tetap lanjutkan?'
             ),
             actions: [
@@ -84,29 +173,45 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             ? '1'
             : _selectedDays.join(',');
 
-    final newHabit = HabitsCompanion.insert(
-      habitId: habitId,
-      userId: userId,
-      domainTag: drift.Value(_domainTag),
-      title: _titleController.text.trim(),
-      status: const drift.Value('Active'),
-      frequency: drift.Value(_frequency),
-      scheduledDays: drift.Value(scheduledDaysStr),
-      initiationFriction: drift.Value(_initiationFriction),
-      originalFriction: drift.Value(_initiationFriction),
-      energyCost: drift.Value(_energyCost),
-      impactScore: drift.Value(_impactScore),
-      mvaDurationMin: drift.Value(_mvaDurationMin),
-      createdAt: now,
-      goalTag: drift.Value(_goalTagController.text.trim().isEmpty ? null : _goalTagController.text.trim()),
-    );
+    if (_isEditing && _existingHabit != null) {
+      await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(widget.habitId!)))
+          .write(HabitsCompanion(
+            domainTag: drift.Value(_domainTag),
+            title: drift.Value(_titleController.text.trim()),
+            frequency: drift.Value(_frequency),
+            scheduledDays: drift.Value(scheduledDaysStr),
+            initiationFriction: drift.Value(_initiationFriction),
+            energyCost: drift.Value(_energyCost),
+            impactScore: drift.Value(_impactScore),
+            mvaDurationMin: drift.Value(_mvaDurationMin),
+            goalTag: drift.Value(_goalTagController.text.trim().isEmpty ? null : _goalTagController.text.trim()),
+          ));
+    } else {
+      final habitId = const Uuid().v4();
+      final newHabit = HabitsCompanion.insert(
+        habitId: habitId,
+        userId: userId,
+        domainTag: drift.Value(_domainTag),
+        title: _titleController.text.trim(),
+        status: const drift.Value(HabitStatus.active),
+        frequency: drift.Value(_frequency),
+        scheduledDays: drift.Value(scheduledDaysStr),
+        initiationFriction: drift.Value(_initiationFriction),
+        originalFriction: drift.Value(_initiationFriction),
+        energyCost: drift.Value(_energyCost),
+        impactScore: drift.Value(_impactScore),
+        mvaDurationMin: drift.Value(_mvaDurationMin),
+        createdAt: now,
+        goalTag: drift.Value(_goalTagController.text.trim().isEmpty ? null : _goalTagController.text.trim()),
+      );
 
-    final reminder = ReminderPreferencesCompanion.insert(
-      habitId: habitId,
-    );
+      final reminder = ReminderPreferencesCompanion.insert(
+        habitId: habitId,
+      );
 
-    await db.into(db.habits).insert(newHabit);
-    await db.into(db.reminderPreferences).insert(reminder);
+      await db.into(db.habits).insert(newHabit);
+      await db.into(db.reminderPreferences).insert(reminder);
+    }
 
     ref.invalidate(dashboardDataProvider);
     
@@ -147,7 +252,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kebiasaan Baru'),
+        title: Text(_isEditing ? 'Edit Kebiasaan' : 'Kebiasaan Baru'),
         actions: [
           IconButton(
             icon: const Icon(Icons.storefront_outlined),
@@ -164,7 +269,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Buat Kebiasaan Baru 🌱',
+                _isEditing ? 'Edit Kebiasaan ✏️' : 'Buat Kebiasaan Baru 🌱',
                 style: theme.textTheme.headlineMedium,
               ),
               const SizedBox(height: 8),
@@ -436,8 +541,23 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text('Simpan Kebiasaan', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                child: Text(_isEditing ? 'Perbarui Kebiasaan' : 'Simpan Kebiasaan', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
+              if (_isEditing) ...[
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: _deleteHabit,
+                  icon: const Icon(Icons.delete_outline, color: Colors.red),
+                  label: const Text('Hapus Kebiasaan', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(88, 52),
+                    side: const BorderSide(color: Colors.red),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

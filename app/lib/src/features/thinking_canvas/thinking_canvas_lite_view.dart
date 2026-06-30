@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
+import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
@@ -283,7 +284,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
               userId: userId,
               domainTag: drift.Value(_habitDomain),
               title: actionText,
-              status: const drift.Value('Active'),
+              status: const drift.Value(HabitStatus.active),
               frequency: const drift.Value('Daily'),
               initiationFriction: const drift.Value(2), // low friction default for next action steps
               originalFriction: const drift.Value(2),

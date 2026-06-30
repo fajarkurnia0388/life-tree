@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/domain/app_constants.dart';
 import '../../../core/domain/tree_skin_config.dart';
 import '../../../core/theme/theme.dart';
 import '../dashboard_provider.dart';
@@ -37,7 +38,7 @@ class TreeDisplayWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final stage = TreeSkinConfig.getStage(cumulativeDays, season);
     final assetPath = TreeSkinConfig.getAssetPath(skinId, stage);
-    final isRecovery = season == 'Recovery';
+    final isRecovery = season == Season.recovery;
 
     // 1. Determine celestial time of day (Auto or Overridden)
     final timeOverride = ref.watch(devTimeOfDayOverrideProvider);
@@ -616,7 +617,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
     final stage = TreeSkinConfig.getStage(widget.cumulativeDays, widget.season);
     final label = TreeSkinConfig.getStageLabel(widget.cumulativeDays, widget.season);
     final progress = TreeSkinConfig.getProgress(widget.cumulativeDays, widget.season);
-    final isRecovery = widget.season == 'Recovery';
+    final isRecovery = widget.season == Season.recovery;
     final progressColor = isRecovery ? CalmTheme.secondaryBlue : theme.colorScheme.primary;
 
     return Card(

@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import '../../core/domain/app_constants.dart';
 
 part 'database.g.dart';
 
@@ -10,8 +11,8 @@ part 'database.g.dart';
 class UserProfiles extends Table {
   TextColumn get userId => text()();
   TextColumn get ageBand => text()();
-  TextColumn get supportMode => text().withDefault(const Constant('Normal'))();
-  TextColumn get engagementState => text().withDefault(const Constant('Active'))();
+  TextColumn get supportMode => text().withDefault(const Constant(SupportMode.normal))();
+  TextColumn get engagementState => text().withDefault(const Constant(HabitStatus.active))();
   TextColumn get timezone => text().withDefault(const Constant('Asia/Jakarta'))();
   IntColumn get weekStartDay => integer().withDefault(const Constant(1))();
   TextColumn get latestDomainScores => text().nullable()(); // JSON string
@@ -71,7 +72,7 @@ class Habits extends Table {
   TextColumn get userId => text()();
   TextColumn get domainTag => text().nullable()();
   TextColumn get title => text().withLength(max: 100)();
-  TextColumn get status => text().withDefault(const Constant('Active'))();
+  TextColumn get status => text().withDefault(const Constant(HabitStatus.active))();
   DateTimeColumn get archivedAt => dateTime().nullable()();
   TextColumn get frequency => text().withDefault(const Constant('Daily'))();
   TextColumn get scheduledDays => text().nullable()(); // CSV: e.g. "1,3,5" (1=Monday ... 7=Sunday)
@@ -251,11 +252,14 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
   AppDatabase.forTesting(super.e);
 
-  Future<int> countUniqueDoneDates() async {
+  Future<int> countUniqueDoneDates(String userId) async {
     final result = await customSelect(
-      "SELECT COUNT(DISTINCT date(date / 1000, 'unixepoch')) AS cnt "
-      "FROM habit_logs WHERE status = 'Done' AND deleted_at IS NULL",
-      readsFrom: {habitLogs},
+      "SELECT COUNT(DISTINCT date(hl.date / 1000, 'unixepoch')) AS cnt "
+      "FROM habit_logs hl "
+      "INNER JOIN habits h ON hl.habit_id = h.habit_id "
+      "WHERE hl.status = '${HabitStatus.done}' AND hl.deleted_at IS NULL AND h.user_id = ? AND h.deleted_at IS NULL",
+      variables: [Variable<String>(userId)],
+      readsFrom: {habitLogs, habits},
     ).getSingle();
     return result.read<int>('cnt');
   }

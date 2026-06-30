@@ -106,6 +106,22 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
             );
       }
 
+      // Sync WHO-5 score to 'Emosi' domain in userProfiles.latestDomainScores
+      final currentProfile = profiles.first;
+      Map<String, dynamic> domainScores = {};
+      if (currentProfile.latestDomainScores != null) {
+        try {
+          domainScores = jsonDecode(currentProfile.latestDomainScores!);
+        } catch (_) {}
+      }
+      domainScores['Emosi'] = mappedScore.toDouble();
+      await (db.update(db.userProfiles)
+            ..where((tbl) => tbl.userId.equals(userId)))
+          .write(UserProfilesCompanion(
+            latestDomainScores: drift.Value(jsonEncode(domainScores)),
+            updatedAt: drift.Value(now),
+          ));
+
       ref.invalidate(dashboardDataProvider);
 
       if (mounted) {

@@ -67,7 +67,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/add-habit',
-        builder: (context, state) => const AddHabitView(),
+        builder: (context, state) {
+          final habitId = state.uri.queryParameters['habitId'];
+          return AddHabitView(habitId: habitId);
+        },
       ),
       GoRoute(
         path: '/marketplace',

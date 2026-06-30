@@ -37,7 +37,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final now = DateTime.now();
 
     try {
-      if (log != null && log.status == 'Done') {
+      if (log != null && log.status == HabitStatus.done) {
         // Uncheck habit via service (safe delete + decrement)
         await service.markUnchecked(habit: habit, log: log);
       } else {
@@ -153,7 +153,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               : data.habitsToday.where((hwl) => hwl.habit.domainTag == _selectedDomainFilter).toList();
 
           // Whether recovery (rest) mode is currently active.
-          final isRecoveryActive = data.season == 'Recovery';
+          final isRecoveryActive = data.season == Season.recovery;
 
           // Calculate dynamic Action of the Day inside the filtered view
           Habit? activeActionOfTheDay;
@@ -167,7 +167,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               } catch (_) {}
             }
             double highestPriority = -1.0;
-            final uncompletedFiltered = filteredHabits.where((hwl) => hwl.log?.status != 'Done').toList();
+            final uncompletedFiltered = filteredHabits.where((hwl) => hwl.log?.status != HabitStatus.done).toList();
             for (final hwl in uncompletedFiltered) {
               final score = computeHabitPriorityScore(habit: hwl.habit, domainScores: domainScores);
               if (score > highestPriority) {

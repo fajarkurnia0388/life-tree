@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
@@ -75,7 +76,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
         userId: userId,
         domainTag: drift.Value(t.domainTag),
         title: t.title,
-        status: const drift.Value('Active'),
+        status: const drift.Value(HabitStatus.active),
         frequency: const drift.Value('Daily'),
         initiationFriction: drift.Value(t.friction),
         originalFriction: drift.Value(t.friction),

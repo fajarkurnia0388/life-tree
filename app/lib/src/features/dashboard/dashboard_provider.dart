@@ -150,7 +150,7 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
   if (overrideDays != null) {
     cumulativeDays = overrideDays;
   } else {
-    cumulativeDays = await db.countUniqueDoneDates();
+    cumulativeDays = await db.countUniqueDoneDates(profile.userId);
   }
 
   // 3. Determine Current Season

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
@@ -114,8 +115,8 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     final profile = UserProfilesCompanion.insert(
       userId: userId,
       ageBand: _selectedAgeBand,
-      supportMode: const drift.Value('Normal'),
-      engagementState: const drift.Value('Active'),
+      supportMode: const drift.Value(SupportMode.normal),
+      engagementState: const drift.Value(HabitStatus.active),
       timezone: const drift.Value('Asia/Jakarta'),
       weekStartDay: const drift.Value(1),
       latestDomainScores: drift.Value(domainScoresJson),

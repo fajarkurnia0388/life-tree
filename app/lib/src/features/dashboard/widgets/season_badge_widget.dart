@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../../core/domain/app_constants.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
@@ -30,7 +31,7 @@ class SeasonBadgeWidget extends ConsumerWidget {
     String message;
 
     switch (season) {
-      case 'Recovery':
+      case Season.recovery:
         badgeColor = CalmTheme.secondaryBlue;
         final daysLeft = _recoveryDaysLeft;
         label = daysLeft != null
@@ -39,7 +40,7 @@ class SeasonBadgeWidget extends ConsumerWidget {
         icon = Icons.ac_unit_rounded;
         message = 'Notifikasi dijeda. Anda sedang memulihkan energi.';
         break;
-      case 'Dormant':
+      case Season.dormant:
         badgeColor = Colors.blueGrey;
         label = 'Musim Hening (Dormant Mode)';
         icon = Icons.blur_on_rounded;
@@ -77,7 +78,7 @@ class SeasonBadgeWidget extends ConsumerWidget {
                 ],
               ),
             ),
-            if (season == 'Recovery')
+            if (season == Season.recovery)
               TextButton(
                 onPressed: () => _endRecoveryMode(ref),
                 style: TextButton.styleFrom(

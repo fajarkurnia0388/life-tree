@@ -109,7 +109,7 @@ class HabitListSection extends ConsumerWidget {
     HabitWithLog item,
     bool isAction,
   ) {
-    final isDone = item.log?.status == 'Done';
+    final isDone = item.log?.status == HabitStatus.done;
     final domainColor = DomainColors.forDomain(item.habit.domainTag);
     final paused = isRecoveryActive && !isDone;
     final beban = item.habit.initiationFriction + item.habit.energyCost;
@@ -200,7 +200,7 @@ class HabitListSection extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  if (paused)
+                  if (paused) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       constraints: const BoxConstraints(minHeight: 44),
@@ -213,8 +213,9 @@ class HabitListSection extends ConsumerWidget {
                         '⏸ Dijeda',
                         style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                       ),
-                    )
-                  else if (!isDone && item.log == null)
+                    ),
+                    const SizedBox(width: 8),
+                  ] else if (!isDone && item.log == null) ...[
                     OutlinedButton(
                       onPressed: () => onFrictionIntervention(context, item.habit),
                       style: OutlinedButton.styleFrom(
@@ -227,6 +228,15 @@ class HabitListSection extends ConsumerWidget {
                         style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                       ),
                     ),
+                    const SizedBox(width: 8),
+                  ],
+                  IconButton(
+                    icon: Icon(Icons.edit_outlined, size: 20, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                    onPressed: () => context.push('/add-habit?habitId=${item.habit.habitId}'),
+                    constraints: const BoxConstraints(),
+                    padding: const EdgeInsets.all(8),
+                    tooltip: 'Edit Kebiasaan',
+                  ),
                 ],
               ),
             ),

@@ -25,7 +25,7 @@ class ActionOfTheDayCard extends StatelessWidget {
     final domainColor = DomainColors.forDomain(habit.domainTag);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final isRecovery = data.season == 'Recovery';
+    final isRecovery = data.season == Season.recovery;
 
     final card = Card(
       color: domainColor.withValues(alpha: isDark ? 0.08 : 0.03),

@@ -223,10 +223,16 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
     final db = ref.read(dbProvider);
     try {
       final profiles = await db.select(db.userProfiles).get();
-      final habits = await db.select(db.habits).get();
-      final logs = await db.select(db.habitLogs).get();
-      final entries = await db.select(db.journalEntries).get();
-      final canvas = await db.select(db.thinkingCanvasSessions).get();
+      if (profiles.isEmpty) throw Exception('Profil tidak ditemukan');
+      final userId = profiles.first.userId;
+
+      final habits = await (db.select(db.habits)..where((tbl) => tbl.userId.equals(userId))).get();
+      final habitIds = habits.map((h) => h.habitId).toList();
+      final logs = habitIds.isEmpty
+          ? <HabitLog>[]
+          : await (db.select(db.habitLogs)..where((tbl) => tbl.habitId.isIn(habitIds))).get();
+      final entries = await (db.select(db.journalEntries)..where((tbl) => tbl.userId.equals(userId))).get();
+      final canvas = await (db.select(db.thinkingCanvasSessions)..where((tbl) => tbl.userId.equals(userId))).get();
 
       final data = {
         'profiles': profiles.map((p) => {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
 import 'core/routing/router.dart';
 import 'core/theme/theme.dart';
 import 'features/onboarding/onboarding_view.dart';
@@ -26,9 +25,6 @@ class LifeTreeApp extends ConsumerWidget {
           debugShowCheckedModeBanner: false,
         );
 
-        if (kDebugMode) {
-          return ExcludeSemantics(child: appWidget);
-        }
         return appWidget;
       },
       loading: () => const MaterialApp(

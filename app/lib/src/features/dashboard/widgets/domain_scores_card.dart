@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../../core/domain/app_constants.dart';
 import '../dashboard_provider.dart';
 import 'radar_chart_widget.dart';
 
@@ -43,7 +44,7 @@ class DomainScoresCard extends StatelessWidget {
     final List<String> domains = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
     for (final domain in domains) {
       final domainHabits = data.habitsToday.where((h) => h.habit.domainTag == domain);
-      final completedHabits = domainHabits.where((h) => h.log?.status == 'Done');
+      final completedHabits = domainHabits.where((h) => h.log?.status == HabitStatus.done);
       if (domainHabits.isNotEmpty) {
         final baselineScore = scores[domain] ?? 5.0;
         final dailyRatio = completedHabits.length / domainHabits.length;
