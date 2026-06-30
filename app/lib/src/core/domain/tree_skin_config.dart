@@ -17,7 +17,9 @@ class TreeSkinConfig {
     }
 
     final normalized = skinId.trim();
-    return supportedSkins.contains(normalized) ? normalized : TreeSkin.defaultSkin;
+    return supportedSkins.contains(normalized)
+        ? normalized
+        : TreeSkin.defaultSkin;
   }
 
   // ─── Growth stage names (ordered from early growth to mature) ───────────

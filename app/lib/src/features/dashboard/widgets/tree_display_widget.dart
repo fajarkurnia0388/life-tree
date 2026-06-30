@@ -46,12 +46,13 @@ class TreeDisplayWidget extends StatelessWidget {
           fit: StackFit.expand,
           alignment: Alignment.bottomCenter,
           children: [
-
             // ── Neutral canvas for the conceptual tree view ──
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.18),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.surface.withValues(alpha: 0.18),
                 ),
               ),
             ),
@@ -85,17 +86,13 @@ class TreeDisplayWidget extends StatelessWidget {
             // ── Snow overlay (Recovery mode) ──
             if (isRecovery)
               const Positioned.fill(
-                child: IgnorePointer(
-                  child: SnowOverlayWidget(),
-                ),
+                child: IgnorePointer(child: SnowOverlayWidget()),
               ),
           ],
         ),
       ),
     );
   }
-
-
 }
 
 /// A card widget wrapping the tree display with progress bar and stage label.
@@ -131,7 +128,9 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
 
     try {
       // Find boundary render object
-      final boundary = _repaintBoundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      final boundary =
+          _repaintBoundaryKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
       if (boundary == null) {
         throw Exception('RepaintBoundary render object not ready');
       }
@@ -144,7 +143,8 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
       }
       final pngBytes = byteData.buffer.asUint8List();
 
-      final fileName = 'lifetree_${widget.skinId}_${widget.cumulativeDays}d_${DateTime.now().millisecondsSinceEpoch}.png';
+      final fileName =
+          'lifetree_${widget.skinId}_${widget.cumulativeDays}d_${DateTime.now().millisecondsSinceEpoch}.png';
 
       // 1. Always save to temp directory so it can be shared reliably on mobile/web
       final tempDir = await getTemporaryDirectory();
@@ -154,7 +154,8 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
       // 2. On desktop platforms, also try saving to Downloads directory for easy user access
       Directory? downloadsDir;
       File? downloadsFile;
-      if (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
+      if (!kIsWeb &&
+          (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
         try {
           downloadsDir = await getDownloadsDirectory();
           if (downloadsDir != null) {
@@ -206,7 +207,9 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
         final theme = Theme.of(context);
         return Dialog(
           backgroundColor: theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           clipBehavior: Clip.antiAlias,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
@@ -215,11 +218,17 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
               children: [
                 // Header
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   color: theme.colorScheme.primary.withValues(alpha: 0.08),
                   child: Row(
                     children: [
-                      Icon(Icons.camera_alt_rounded, color: theme.colorScheme.primary),
+                      Icon(
+                        Icons.camera_alt_rounded,
+                        color: theme.colorScheme.primary,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -256,7 +265,9 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                         Text(
                           'Tersimpan di: Downloads/$fileName',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.6,
+                            ),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -278,15 +289,20 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                             Navigator.of(context).pop();
                             await SharePlus.instance.share(
                               ShareParams(
-                                files: [XFile(tempFile.path, mimeType: 'image/png')],
-                                text: 'Lihat keindahan pohon LifeTree saya! 🌲✨ Hari ke-${widget.cumulativeDays} (${widget.skinId}). #LifeTree',
+                                files: [
+                                  XFile(tempFile.path, mimeType: 'image/png'),
+                                ],
+                                text:
+                                    'Lihat keindahan pohon LifeTree saya! 🌲✨ Hari ke-${widget.cumulativeDays} (${widget.skinId}). #LifeTree',
                               ),
                             );
                           },
                           icon: const Icon(Icons.share_rounded, size: 18),
                           label: const Text('Bagikan / Simpan Foto'),
                           style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                             elevation: 0,
                           ),
                         ),
@@ -304,11 +320,20 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                                 await launchUrl(uri);
                               }
                             },
-                            icon: const Icon(Icons.folder_open_rounded, size: 18),
+                            icon: const Icon(
+                              Icons.folder_open_rounded,
+                              size: 18,
+                            ),
                             label: const Text('Buka Folder Downloads'),
                             style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                              side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              side: BorderSide(
+                                color: theme.colorScheme.primary.withValues(
+                                  alpha: 0.2,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -321,12 +346,16 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                         child: TextButton(
                           onPressed: () => Navigator.of(context).pop(),
                           style: TextButton.styleFrom(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
                           child: Text(
                             'Tutup',
                             style: TextStyle(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -347,11 +376,19 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final stage = TreeSkinConfig.getStage(widget.cumulativeDays, widget.season);
-    final label = TreeSkinConfig.getStageLabel(widget.cumulativeDays, widget.season);
+    final label = TreeSkinConfig.getStageLabel(
+      widget.cumulativeDays,
+      widget.season,
+    );
     final normalizedSkinId = TreeSkinConfig.normalizeSkinId(widget.skinId);
-    final progress = TreeSkinConfig.getProgress(widget.cumulativeDays, widget.season);
+    final progress = TreeSkinConfig.getProgress(
+      widget.cumulativeDays,
+      widget.season,
+    );
     final isRecovery = widget.season == Season.recovery;
-    final progressColor = isRecovery ? CalmTheme.secondaryBlue : theme.colorScheme.primary;
+    final progressColor = isRecovery
+        ? CalmTheme.secondaryBlue
+        : theme.colorScheme.primary;
 
     return Card(
       child: Padding(
@@ -393,13 +430,18 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                                       height: 14,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
                                       ),
                                     )
                                   : Icon(
                                       Icons.camera_alt_outlined,
                                       size: 16,
-                                      color: Colors.white.withValues(alpha: 0.85),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.85,
+                                      ),
                                     ),
                             ),
                           ),
@@ -426,11 +468,18 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(label, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                      Text(
+                        label,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -439,15 +488,26 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                   onTap: widget.onSkinShopTap,
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.15)),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withValues(
+                          alpha: 0.15,
+                        ),
+                      ),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.palette_outlined, size: 14, color: theme.colorScheme.primary),
+                        Icon(
+                          Icons.palette_outlined,
+                          size: 14,
+                          color: theme.colorScheme.primary,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'Skin: $normalizedSkinId',
@@ -507,20 +567,22 @@ class _StageBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = isRecovery ? CalmTheme.secondaryBlue : theme.colorScheme.primary;
+    final color = isRecovery
+        ? CalmTheme.secondaryBlue
+        : theme.colorScheme.primary;
     final label = switch (stage) {
-      TreeSkinConfig.stageSeed        => 'Benih',
-      TreeSkinConfig.stageSprout      => 'Tunas',
-      TreeSkinConfig.stageSeedling    => 'Bibit',
-      TreeSkinConfig.stageSapling     => 'Batang Muda',
-      TreeSkinConfig.stageYoung       => 'Pohon Muda',
-      TreeSkinConfig.stageGrowing     => 'Tumbuh',
+      TreeSkinConfig.stageSeed => 'Benih',
+      TreeSkinConfig.stageSprout => 'Tunas',
+      TreeSkinConfig.stageSeedling => 'Bibit',
+      TreeSkinConfig.stageSapling => 'Batang Muda',
+      TreeSkinConfig.stageYoung => 'Pohon Muda',
+      TreeSkinConfig.stageGrowing => 'Tumbuh',
       TreeSkinConfig.stageEstablished => 'Mantap',
-      TreeSkinConfig.stageBlooming    => 'Rimbun',
+      TreeSkinConfig.stageBlooming => 'Rimbun',
       TreeSkinConfig.stageFlourishing => 'Subur',
-      TreeSkinConfig.stageMature      => 'Dewasa',
-      TreeSkinConfig.stageRecovery    => 'Istirahat',
-      _                               => stage,
+      TreeSkinConfig.stageMature => 'Dewasa',
+      TreeSkinConfig.stageRecovery => 'Istirahat',
+      _ => stage,
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -531,7 +593,11 @@ class _StageBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color),
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          color: color,
+        ),
       ),
     );
   }
@@ -545,7 +611,8 @@ class SnowOverlayWidget extends StatefulWidget {
   State<SnowOverlayWidget> createState() => _SnowOverlayWidgetState();
 }
 
-class _SnowOverlayWidgetState extends State<SnowOverlayWidget> with SingleTickerProviderStateMixin {
+class _SnowOverlayWidgetState extends State<SnowOverlayWidget>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final List<_Snowflake> _snowflakes;
 
@@ -618,10 +685,7 @@ class _AnimatedSnowPainter extends CustomPainter {
   final List<_Snowflake> snowflakes;
   final double progress;
 
-  _AnimatedSnowPainter({
-    required this.snowflakes,
-    required this.progress,
-  });
+  _AnimatedSnowPainter({required this.snowflakes, required this.progress});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -645,4 +709,3 @@ class _AnimatedSnowPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _AnimatedSnowPainter oldDelegate) => true;
 }
-

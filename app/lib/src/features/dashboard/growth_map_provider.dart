@@ -59,12 +59,21 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
   Map<String, double> domainScores = {};
   if (dashboardData.profile.latestDomainScores != null) {
     try {
-      final Map<String, dynamic> raw = jsonDecode(dashboardData.profile.latestDomainScores!);
+      final Map<String, dynamic> raw = jsonDecode(
+        dashboardData.profile.latestDomainScores!,
+      );
       raw.forEach((k, v) => domainScores[k] = (v as num).toDouble());
     } catch (_) {}
   }
 
-  final domains = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
+  final domains = [
+    'Tubuh',
+    'Keuangan',
+    'Hubungan',
+    'Emosi',
+    'Karir',
+    'Rekreasi',
+  ];
   final domainColors = {
     'Tubuh': Colors.green,
     'Keuangan': Colors.orange,
@@ -106,7 +115,9 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
 
   for (final hl in dashboardData.habitsToday) {
     final isDone = hl.log?.status == HabitStatus.done;
-    final initial = hl.habit.title.substring(0, math.min(2, hl.habit.title.length)).toUpperCase();
+    final initial = hl.habit.title
+        .substring(0, math.min(2, hl.habit.title.length))
+        .toUpperCase();
 
     leafNodes.add(
       LeafNode(
@@ -128,12 +139,14 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
   List<FruitNode> fruitNodes = [];
 
   try {
-    final decisions = await (db.select(db.decisionEntries)
-          ..where((tbl) =>
-              tbl.userId.equals(dashboardData.profile.userId) &
-              tbl.decisionDate.isBiggerOrEqualValue(sevenDaysAgo) &
-              tbl.deletedAt.isNull()))
-        .get();
+    final decisions =
+        await (db.select(db.decisionEntries)..where(
+              (tbl) =>
+                  tbl.userId.equals(dashboardData.profile.userId) &
+                  tbl.decisionDate.isBiggerOrEqualValue(sevenDaysAgo) &
+                  tbl.deletedAt.isNull(),
+            ))
+            .get();
 
     fruitNodes = decisions.map((d) {
       return FruitNode(

@@ -18,10 +18,7 @@ void main() {
     });
 
     test('returns consistent stage label for early growth', () {
-      expect(
-        TreeSkinConfig.getStageLabel(3, Season.growth),
-        contains('Tunas'),
-      );
+      expect(TreeSkinConfig.getStageLabel(3, Season.growth), contains('Tunas'));
     });
   });
 }

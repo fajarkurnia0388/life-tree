@@ -28,11 +28,29 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   String _selectedDomainFilter = 'Semua';
 
   String _monthName(int month) {
-    const months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const months = [
+      '',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des',
+    ];
     return months[month];
   }
 
-  Future<void> _toggleHabit(BuildContext context, Habit habit, HabitLog? log) async {
+  Future<void> _toggleHabit(
+    BuildContext context,
+    Habit habit,
+    HabitLog? log,
+  ) async {
     final service = ref.read(habitLogServiceProvider);
     final now = DateTime.now();
 
@@ -98,7 +116,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     };
     if (data.profile.latestDomainScores != null) {
       try {
-        final Map<String, dynamic> parsed = jsonDecode(data.profile.latestDomainScores!);
+        final Map<String, dynamic> parsed = jsonDecode(
+          data.profile.latestDomainScores!,
+        );
         parsed.forEach((key, value) {
           final numVal = value as num;
           if (scores.containsKey(key)) {
@@ -119,7 +139,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           score: currentScore,
           onFocusApplied: () {
             setState(() {
-              _selectedDomainFilter = (_selectedDomainFilter == domain) ? 'Semua' : domain;
+              _selectedDomainFilter = (_selectedDomainFilter == domain)
+                  ? 'Semua'
+                  : domain;
             });
           },
         );
@@ -144,7 +166,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             Text(
               'Gunakan waktu hari ini untuk beristirahat atau tambahkan kebiasaan baru.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
             ),
           ],
         ),
@@ -159,26 +184,46 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Builder(builder: (context) {
-          final hour = DateTime.now().hour;
-          final greeting = hour < 11 ? 'Selamat Pagi' : hour < 15 ? 'Selamat Siang' : 'Selamat Sore';
-          final now = DateTime.now();
-          final dateStr = '${now.day} ${_monthName(now.month)} ${now.year}';
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(greeting, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-              Text(dateStr, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
-            ],
-          );
-        }),
+        title: Builder(
+          builder: (context) {
+            final hour = DateTime.now().hour;
+            final greeting = hour < 11
+                ? 'Selamat Pagi'
+                : hour < 15
+                ? 'Selamat Siang'
+                : 'Selamat Sore';
+            final now = DateTime.now();
+            final dateStr = '${now.day} ${_monthName(now.month)} ${now.year}';
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  greeting,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  dateStr,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
       body: dataAsync.when(
         data: (data) {
           // Filter habits today based on the selected focus domain
           final filteredHabits = _selectedDomainFilter == 'Semua'
               ? data.habitsToday
-              : data.habitsToday.where((hwl) => hwl.habit.domainTag == _selectedDomainFilter).toList();
+              : data.habitsToday
+                    .where(
+                      (hwl) => hwl.habit.domainTag == _selectedDomainFilter,
+                    )
+                    .toList();
 
           // Whether recovery (rest) mode is currently active.
           final isRecoveryActive = data.season == Season.recovery;
@@ -195,9 +240,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               } catch (_) {}
             }
             double highestPriority = -1.0;
-            final uncompletedFiltered = filteredHabits.where((hwl) => hwl.log?.status != HabitStatus.done).toList();
+            final uncompletedFiltered = filteredHabits
+                .where((hwl) => hwl.log?.status != HabitStatus.done)
+                .toList();
             for (final hwl in uncompletedFiltered) {
-              final score = computeHabitPriorityScore(habit: hwl.habit, domainScores: domainScores);
+              final score = computeHabitPriorityScore(
+                habit: hwl.habit,
+                domainScores: domainScores,
+              );
               if (score > highestPriority) {
                 highestPriority = score;
                 activeActionOfTheDay = hwl.habit;
@@ -227,8 +277,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     skinId: data.profile.selectedSkin,
                     cumulativeDays: data.cumulativeDays,
                     season: data.season,
-                    onSkinShopTap: () => _showSkinShop(context, ref, data.profile),
-                    activeDomainColor: _selectedDomainFilter == 'Semua' ? null : DomainColors.forDomain(_selectedDomainFilter),
+                    onSkinShopTap: () =>
+                        _showSkinShop(context, ref, data.profile),
+                    activeDomainColor: _selectedDomainFilter == 'Semua'
+                        ? null
+                        : DomainColors.forDomain(_selectedDomainFilter),
                   ),
                   const SizedBox(height: 16),
 
@@ -240,15 +293,28 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   if (data.allDone)
                     const CelebrationCard()
                   else if (activeActionOfTheDay != null) ...[
-                    Builder(builder: (context) {
-                      final hwl = data.habitsToday.firstWhere((item) => item.habit.habitId == activeActionOfTheDay!.habitId);
-                      return ActionOfTheDayCard(
-                        habit: activeActionOfTheDay!,
-                        data: data,
-                        onDonePressed: () => _toggleHabit(context, activeActionOfTheDay!, hwl.log),
-                        onNotCapablePressed: () => _showFrictionIntervention(context, activeActionOfTheDay!),
-                      );
-                    })
+                    Builder(
+                      builder: (context) {
+                        final hwl = data.habitsToday.firstWhere(
+                          (item) =>
+                              item.habit.habitId ==
+                              activeActionOfTheDay!.habitId,
+                        );
+                        return ActionOfTheDayCard(
+                          habit: activeActionOfTheDay!,
+                          data: data,
+                          onDonePressed: () => _toggleHabit(
+                            context,
+                            activeActionOfTheDay!,
+                            hwl.log,
+                          ),
+                          onNotCapablePressed: () => _showFrictionIntervention(
+                            context,
+                            activeActionOfTheDay!,
+                          ),
+                        );
+                      },
+                    ),
                   ] else
                     _buildNoActionsCard(theme),
                   const SizedBox(height: 24),
@@ -274,9 +340,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(
-          child: Text('Terjadi kesalahan: $err'),
-        ),
+        error: (err, stack) => Center(child: Text('Terjadi kesalahan: $err')),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showQuickActionsBottomSheet(context),
@@ -295,7 +359,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         final theme = Theme.of(context);
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 20.0,
+              horizontal: 16.0,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -313,7 +380,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 ),
                 Text(
                   'Aksi Cepat ⚡',
-                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -322,8 +391,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     backgroundColor: Color(0xFFE8F5E9),
                     child: Icon(Icons.add_rounded, color: Color(0xFF2E7D32)),
                   ),
-                  title: const Text('Tambah Kebiasaan Baru', style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: const Text('Buat kebiasaan baru di domain kehidupan Anda'),
+                  title: const Text(
+                    'Tambah Kebiasaan Baru',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: const Text(
+                    'Buat kebiasaan baru di domain kehidupan Anda',
+                  ),
                   onTap: () {
                     Navigator.pop(context);
                     context.push('/add-habit');
@@ -335,7 +409,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     backgroundColor: Color(0xFFE3F2FD),
                     child: Icon(Icons.book_rounded, color: Color(0xFF1E88E5)),
                   ),
-                  title: const Text('Tulis Jurnal Hari Ini', style: TextStyle(fontWeight: FontWeight.bold)),
+                  title: const Text(
+                    'Tulis Jurnal Hari Ini',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: const Text('Catat mood & jurnal harian Anda'),
                   onTap: () {
                     Navigator.pop(context);
