@@ -270,9 +270,9 @@ class _DomainInsightDialogState extends State<DomainInsightDialog>
                 color: domainColor,
                 boxShadow: [
                   BoxShadow(
-                    color: domainColor.withValues(alpha: 0.6),
-                    blurRadius: 24,
-                    spreadRadius: 8,
+                    color: domainColor.withValues(alpha: 0.5),
+                    blurRadius: 20,
+                    spreadRadius: 6,
                   ),
                 ],
               ),
@@ -293,10 +293,10 @@ class _DomainInsightDialogState extends State<DomainInsightDialog>
                             valueColor: const AlwaysStoppedAnimation<Color>(
                               Colors.white,
                             ),
-                            strokeWidth: 4.5,
+                            strokeWidth: 5.0,
                           ),
                         ),
-                        Icon(_getIcon(), size: 36, color: Colors.white),
+                        Icon(_getIcon(), size: 34, color: Colors.white),
                       ],
                     ),
                   );

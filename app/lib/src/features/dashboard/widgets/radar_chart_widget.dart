@@ -100,6 +100,27 @@ class RadarChartWidget extends StatelessWidget {
     );
   }
 
+  void _showHelpDialog(BuildContext context, ThemeData theme) {
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          title: const Text('Interaksi domain'),
+          content: const Text(
+            'Ketuk kartu nama domain untuk melihat kutipan, tips wawasan, atau menyaring dasbor.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Tutup'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -109,20 +130,41 @@ class RadarChartWidget extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            Text(
-              'Radar Keseimbangan Hidup 🎡',
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Radar Keseimbangan Hidup 🎡',
+                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                  tooltip: 'Tentang interaksi domain',
+                  onPressed: () => _showHelpDialog(context, theme),
+                  icon: Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.35),
+                        width: 1,
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.info_outline_rounded,
+                      size: 12,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Ketuk kartu nama domain untuk melihat kutipan, tips wawasan, atau menyaring dasbor.',
-              style: TextStyle(
-                fontSize: 11,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             Semantics(
               label: _buildSemanticsLabel(),
               image: true,
