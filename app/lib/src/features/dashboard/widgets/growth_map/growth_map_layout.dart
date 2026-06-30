@@ -16,7 +16,9 @@ class GrowthMapLayout {
     final List<GrowthMapNode> positionedNodes = [];
 
     // 1. Position Root Node
-    final closeUpRootYOffset = selectedDomain != null ? height * 0.42 : height * 0.52;
+    final closeUpRootYOffset = selectedDomain != null
+        ? height * 0.42
+        : height * 0.52;
     final rootPos = Offset(width / 2, closeUpRootYOffset);
     final positionedRoot = root.copyWith(position: rootPos);
     positionedNodes.add(positionedRoot);
@@ -33,7 +35,14 @@ class GrowthMapLayout {
       subNodesByDomain.putIfAbsent(fruit.domainTag, () => []).add(fruit);
     }
 
-    final domainOrder = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
+    final domainOrder = [
+      'Tubuh',
+      'Keuangan',
+      'Hubungan',
+      'Emosi',
+      'Karir',
+      'Rekreasi',
+    ];
     final Map<String, Offset> branchPositions = {};
 
     if (selectedDomain != null && branches.isNotEmpty) {
@@ -69,8 +78,14 @@ class GrowthMapLayout {
         final subRadiusBase = math.min(width * 0.18, height * 0.20);
         final subRadius = subRadiusBase + (j * 16.0);
 
-        final subX = (branchPos.dx + math.cos(subAngle) * subRadius).clamp(20.0, width - 20.0);
-        final subY = (branchPos.dy - math.sin(subAngle) * subRadius).clamp(20.0, height - 20.0);
+        final subX = (branchPos.dx + math.cos(subAngle) * subRadius).clamp(
+          20.0,
+          width - 20.0,
+        );
+        final subY = (branchPos.dy - math.sin(subAngle) * subRadius).clamp(
+          20.0,
+          height - 20.0,
+        );
 
         positionedNodes.add(node.copyWith(position: Offset(subX, subY)));
       }
@@ -99,8 +114,14 @@ class GrowthMapLayout {
       final angle = branchAngles[i % branchAngles.length];
       final radius = branchRadius;
 
-      final x = (rootPos.dx + math.cos(angle) * radius).clamp(24.0, width - 24.0);
-      final y = (rootPos.dy - math.sin(angle) * radius).clamp(24.0, height - 24.0);
+      final x = (rootPos.dx + math.cos(angle) * radius).clamp(
+        24.0,
+        width - 24.0,
+      );
+      final y = (rootPos.dy - math.sin(angle) * radius).clamp(
+        24.0,
+        height - 24.0,
+      );
 
       final branchPos = Offset(x, y);
       branchPositions[domain] = branchPos;
@@ -116,8 +137,14 @@ class GrowthMapLayout {
         final subAngle = angle + spread;
         final subRadius = 34.0 + (k > 1 ? 10.0 : 0.0) + (j * 6.0);
 
-        final subX = (branchPos.dx + math.cos(subAngle) * subRadius).clamp(20.0, width - 20.0);
-        final subY = (branchPos.dy - math.sin(subAngle) * subRadius).clamp(20.0, height - 20.0);
+        final subX = (branchPos.dx + math.cos(subAngle) * subRadius).clamp(
+          20.0,
+          width - 20.0,
+        );
+        final subY = (branchPos.dy - math.sin(subAngle) * subRadius).clamp(
+          20.0,
+          height - 20.0,
+        );
 
         positionedNodes.add(node.copyWith(position: Offset(subX, subY)));
       }
