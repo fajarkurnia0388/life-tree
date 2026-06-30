@@ -71,13 +71,6 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # Tree skin illustration assets
-  assets:
-    - assets/trees/default/
-    - assets/trees/sakura/
-    - assets/trees/maple/
-    - assets/trees/bonsai/
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

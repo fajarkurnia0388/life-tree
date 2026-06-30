@@ -12,7 +12,7 @@ import '../../../core/domain/app_constants.dart';
 import '../../../core/domain/tree_skin_config.dart';
 import '../../../core/theme/theme.dart';
 import '../dashboard_provider.dart';
-import 'tree_painter.dart';
+import 'growth_map/growth_map_widget.dart';
 
 /// Displays the tree illustration for a given skin and growth stage.
 /// Shows a PNG illustration asset with animated crossfade transitions between stages.
@@ -36,8 +36,6 @@ class TreeDisplayWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final stage = TreeSkinConfig.getStage(cumulativeDays, season);
-    final assetPath = TreeSkinConfig.getAssetPath(skinId, stage);
     final isRecovery = season == Season.recovery;
 
     // 1. Determine celestial time of day (Auto or Overridden)
@@ -77,7 +75,6 @@ class TreeDisplayWidget extends ConsumerWidget {
     };
 
     const double groundRatio = 0.22;
-    final double treeSize = height * 0.80;
     const Duration skyTransition = Duration(milliseconds: 600);
 
     // ── Wrap everything in a rounded clip ──
@@ -186,41 +183,12 @@ class TreeDisplayWidget extends ConsumerWidget {
               ),
             ),
 
-            // ── Tree — AnimatedSwitcher only triggers on stage/skin change, NOT on time change ──
-            Positioned(
-              bottom: height * 0.04,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 700),
-                  switchInCurve: Curves.easeInOut,
-                  switchOutCurve: Curves.easeInOut,
-                  transitionBuilder: (child, animation) =>
-                      FadeTransition(opacity: animation, child: child),
-                  child: SizedBox(
-                    key: ValueKey('tree-$skinId-$stage'),
-                    width: treeSize,
-                    height: treeSize,
-                    child: Image.asset(
-                      assetPath,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.bottomCenter,
-                      filterQuality: FilterQuality.medium,
-                      color: isRecovery ? const Color(0x22B2EBF2) : null,
-                      colorBlendMode: isRecovery ? BlendMode.srcATop : null,
-                      errorBuilder: (context, error, stackTrace) {
-                        return CustomPaint(
-                          painter: OrganicTreePainter(
-                            days: cumulativeDays.toDouble(),
-                            skinId: skinId,
-                            isRecovery: isRecovery,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
+            // ── Growth Map (Iterasi 2) ──
+            Positioned.fill(
+              child: GrowthMapWidget(
+                width: width,
+                height: height,
+                activeDomainColor: activeDomainColor,
               ),
             ),
 
