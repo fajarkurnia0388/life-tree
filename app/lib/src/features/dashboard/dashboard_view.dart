@@ -270,6 +270,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         _selectedDomainFilter = domain;
                       });
                     },
+                    onDomainReset: () {
+                      setState(() {
+                        _selectedDomainFilter = 'Semua';
+                      });
+                    },
                   ),
                   const SizedBox(height: 16),
 

@@ -21,6 +21,7 @@ class TreeDisplayWidget extends StatelessWidget {
   final Color? activeDomainColor;
   final String? selectedDomain;
   final void Function(String domain)? onDomainNavigate;
+  final VoidCallback? onDomainReset;
 
   const TreeDisplayWidget({
     super.key,
@@ -31,6 +32,7 @@ class TreeDisplayWidget extends StatelessWidget {
     this.activeDomainColor,
     this.selectedDomain,
     this.onDomainNavigate,
+    this.onDomainReset,
   });
 
   @override
@@ -86,6 +88,34 @@ class TreeDisplayWidget extends StatelessWidget {
               ),
             ),
 
+            if (selectedDomain != null && onDomainReset != null)
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Tooltip(
+                  message: 'Tampilkan semua domain',
+                  child: ClipOval(
+                    child: Material(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      child: InkWell(
+                        onTap: onDomainReset,
+                        child: SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: Center(
+                            child: Icon(
+                              Icons.arrow_back_rounded,
+                              size: 16,
+                              color: Colors.white.withValues(alpha: 0.85),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
             // ── Snow overlay (Recovery mode) ──
             if (isRecovery)
               const Positioned.fill(
@@ -105,6 +135,7 @@ class TreeVitalityCard extends StatefulWidget {
   final Color? activeDomainColor;
   final String? selectedDomain;
   final void Function(String domain)? onDomainNavigate;
+  final VoidCallback? onDomainReset;
 
   const TreeVitalityCard({
     super.key,
@@ -113,6 +144,7 @@ class TreeVitalityCard extends StatefulWidget {
     this.activeDomainColor,
     this.selectedDomain,
     this.onDomainNavigate,
+    this.onDomainReset,
   });
 
   @override
@@ -405,6 +437,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                     activeDomainColor: widget.activeDomainColor,
                     selectedDomain: widget.selectedDomain,
                     onDomainNavigate: widget.onDomainNavigate,
+                    onDomainReset: widget.onDomainReset,
                   ),
                 ),
                 // Floating minimal capture button at top-right (outside RepaintBoundary so it's not captured)
