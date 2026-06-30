@@ -8,14 +8,12 @@ import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/domain/app_constants.dart';
-import '../../../core/domain/tree_skin_config.dart';
 import '../../../core/theme/theme.dart';
 import 'growth_map/growth_map_widget.dart';
 
-/// Displays the conceptual tree view for a given skin and growth state.
+/// Displays the conceptual tree view for the current growth state.
 /// Renders the growth state through a conceptual map rather than static image assets.
 class TreeDisplayWidget extends StatelessWidget {
-  final String skinId;
   final int cumulativeDays;
   final String season;
   final double width;
@@ -24,7 +22,6 @@ class TreeDisplayWidget extends StatelessWidget {
 
   const TreeDisplayWidget({
     super.key,
-    required this.skinId,
     required this.cumulativeDays,
     required this.season,
     this.width = double.infinity,
@@ -97,18 +94,14 @@ class TreeDisplayWidget extends StatelessWidget {
 
 /// A card widget wrapping the tree display with progress bar and status label.
 class TreeVitalityCard extends StatefulWidget {
-  final String skinId;
   final int cumulativeDays;
   final String season;
-  final VoidCallback onSkinShopTap;
   final Color? activeDomainColor;
 
   const TreeVitalityCard({
     super.key,
-    required this.skinId,
     required this.cumulativeDays,
     required this.season,
-    required this.onSkinShopTap,
     this.activeDomainColor,
   });
 
@@ -144,7 +137,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
       final pngBytes = byteData.buffer.asUint8List();
 
       final fileName =
-          'lifetree_${widget.skinId}_${widget.cumulativeDays}d_${DateTime.now().millisecondsSinceEpoch}.png';
+          'lifetree_${widget.cumulativeDays}d_${DateTime.now().millisecondsSinceEpoch}.png';
 
       // 1. Always save to temp directory so it can be shared reliably on mobile/web
       final tempDir = await getTemporaryDirectory();
@@ -293,7 +286,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                                   XFile(tempFile.path, mimeType: 'image/png'),
                                 ],
                                 text:
-                                    'Lihat keindahan pohon LifeTree saya! 🌲✨ Hari ke-${widget.cumulativeDays} (${widget.skinId}). #LifeTree',
+                                    'Lihat keindahan pohon LifeTree saya! 🌲✨ Hari ke-${widget.cumulativeDays}. #LifeTree',
                               ),
                             );
                           },
@@ -375,16 +368,10 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final stage = TreeSkinConfig.getStage(widget.cumulativeDays, widget.season);
-    final label = TreeSkinConfig.getStageLabel(
-      widget.cumulativeDays,
-      widget.season,
-    );
-    final normalizedSkinId = TreeSkinConfig.normalizeSkinId(widget.skinId);
-    final progress = TreeSkinConfig.getProgress(
-      widget.cumulativeDays,
-      widget.season,
-    );
+    final label = widget.season == Season.recovery
+        ? 'Pohon Istirahat dan Pemulihan ❄️'
+        : 'Kesehatan & Pertumbuhan Pohon';
+    final progress = 1.0;
     final isRecovery = widget.season == Season.recovery;
     final progressColor = isRecovery
         ? CalmTheme.secondaryBlue
@@ -401,7 +388,6 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                 RepaintBoundary(
                   key: _repaintBoundaryKey,
                   child: TreeDisplayWidget(
-                    skinId: widget.skinId,
                     cumulativeDays: widget.cumulativeDays,
                     season: widget.season,
                     width: double.infinity,
@@ -411,8 +397,8 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                 ),
                 // Floating minimal capture button at top-right (outside RepaintBoundary so it's not captured)
                 Positioned(
-                  top: 12,
-                  right: 12,
+                  top: 0,
+                  right: 0,
                   child: Tooltip(
                     message: 'Ambil Foto Pohon',
                     child: ClipOval(
@@ -454,7 +440,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
             ),
             const SizedBox(height: 20),
 
-            // Info Section (Title & Skin button)
+            // Info Section
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -464,7 +450,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Kesehatan & Pertumbuhan Pohon',
+                        'Status Pohon',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
@@ -483,44 +469,6 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                     ],
                   ),
                 ),
-                // Skin Shop button
-                InkWell(
-                  onTap: widget.onSkinShopTap,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: theme.colorScheme.primary.withValues(
-                          alpha: 0.15,
-                        ),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.palette_outlined,
-                          size: 14,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Skin: $normalizedSkinId',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -536,7 +484,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
-                _StageBadge(stage: stage, isRecovery: isRecovery),
+                _StageBadge(isRecovery: isRecovery),
               ],
             ),
             const SizedBox(height: 16),
@@ -558,11 +506,10 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
   }
 }
 
-/// Small pill badge showing the current growth status.
+/// Small pill badge showing the current tree status.
 class _StageBadge extends StatelessWidget {
-  final String stage;
   final bool isRecovery;
-  const _StageBadge({required this.stage, required this.isRecovery});
+  const _StageBadge({required this.isRecovery});
 
   @override
   Widget build(BuildContext context) {
@@ -570,20 +517,7 @@ class _StageBadge extends StatelessWidget {
     final color = isRecovery
         ? CalmTheme.secondaryBlue
         : theme.colorScheme.primary;
-    final label = switch (stage) {
-      TreeSkinConfig.stageSeed => 'Benih',
-      TreeSkinConfig.stageSprout => 'Tunas',
-      TreeSkinConfig.stageSeedling => 'Bibit',
-      TreeSkinConfig.stageSapling => 'Batang Muda',
-      TreeSkinConfig.stageYoung => 'Pohon Muda',
-      TreeSkinConfig.stageGrowing => 'Tumbuh',
-      TreeSkinConfig.stageEstablished => 'Mantap',
-      TreeSkinConfig.stageBlooming => 'Rimbun',
-      TreeSkinConfig.stageFlourishing => 'Subur',
-      TreeSkinConfig.stageMature => 'Dewasa',
-      TreeSkinConfig.stageRecovery => 'Istirahat',
-      _ => stage,
-    };
+    final label = isRecovery ? 'Istirahat' : 'Aktif';
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(

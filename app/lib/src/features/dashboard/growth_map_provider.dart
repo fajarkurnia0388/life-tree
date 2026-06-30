@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/providers/db_provider.dart';
 import '../../core/domain/app_constants.dart';
-import '../../core/domain/tree_skin_config.dart';
 import 'dashboard_provider.dart';
 import 'widgets/growth_map/growth_map_node.dart';
 
@@ -17,7 +16,6 @@ class GrowthMapViewModel {
   final List<FruitNode> fruits;
   final int cumulativeDays;
   final String season;
-  final String skinId;
 
   GrowthMapViewModel({
     required this.root,
@@ -27,7 +25,6 @@ class GrowthMapViewModel {
     required this.fruits,
     required this.cumulativeDays,
     required this.season,
-    required this.skinId,
   });
 }
 
@@ -172,6 +169,5 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
     fruits: fruitNodes,
     cumulativeDays: dashboardData.cumulativeDays,
     season: dashboardData.season,
-    skinId: TreeSkinConfig.normalizeSkinId(dashboardData.profile.selectedSkin),
   );
 });

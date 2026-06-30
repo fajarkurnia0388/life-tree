@@ -4,33 +4,16 @@ import 'growth_map_node.dart';
 
 class GrowthMapPainter extends CustomPainter {
   final List<GrowthMapNode> nodes;
-  final String skinId;
   final String season;
 
   GrowthMapPainter({
     required this.nodes,
-    required this.skinId,
     required this.season,
   });
 
-  // ─── Theme Colors per Skin ──────────────────────────────────────────────────
-  Color get _connectorColor {
-    return switch (skinId) {
-      'Sakura' => const Color(0xFFF48FB1).withValues(alpha: 0.5), // Sakura Dawn
-      'Maple' => const Color(0xFFFFB74D).withValues(alpha: 0.5),  // Maple Ember
-      'Bonsai' => const Color(0xFF81C784).withValues(alpha: 0.5), // Bonsai Zen
-      _ => const Color(0xFF81C784).withValues(alpha: 0.5),        // Nature Calm (Default)
-    };
-  }
+  Color get _connectorColor => const Color(0xFF81C784).withValues(alpha: 0.5);
 
-  Color get _rootColor {
-    return switch (skinId) {
-      'Sakura' => const Color(0xFFEF9A9A),
-      'Maple' => const Color(0xFFA1887F),
-      'Bonsai' => const Color(0xFF1B5E20),
-      _ => const Color(0xFF8B6B4F),
-    };
-  }
+  Color get _rootColor => const Color(0xFF8B6B4F);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -166,6 +149,6 @@ class GrowthMapPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant GrowthMapPainter oldDelegate) {
-    return oldDelegate.nodes != nodes || oldDelegate.skinId != skinId || oldDelegate.season != season;
+    return oldDelegate.nodes != nodes || oldDelegate.season != season;
   }
 }

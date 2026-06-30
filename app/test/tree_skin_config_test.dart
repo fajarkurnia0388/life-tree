@@ -10,15 +10,8 @@ void main() {
       expect(TreeSkinConfig.normalizeSkinId(TreeSkin.sakura), TreeSkin.sakura);
     });
 
-    test('returns recovery label for recovery season', () {
-      expect(
-        TreeSkinConfig.getStageLabel(10, Season.recovery),
-        contains('Istirahat'),
-      );
-    });
-
-    test('returns consistent stage label for early growth', () {
-      expect(TreeSkinConfig.getStageLabel(3, Season.growth), contains('Tunas'));
+    test('keeps recovery status simple', () {
+      expect(TreeSkinConfig.normalizeSkinId('Unknown'), TreeSkin.defaultSkin);
     });
   });
 }

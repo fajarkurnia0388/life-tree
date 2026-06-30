@@ -15,7 +15,6 @@ import '../habit/services/habit_log_service.dart';
 import 'widgets/season_badge_widget.dart';
 import 'sheets/friction_intervention_sheet.dart';
 import 'widgets/tree_display_widget.dart';
-import 'widgets/skin_shop_bottom_sheet.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
@@ -87,22 +86,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     ).then((_) {
       ref.invalidate(dashboardDataProvider);
     });
-  }
-
-  void _showSkinShop(BuildContext context, WidgetRef ref, UserProfile profile) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return TreeSkinShopBottomSheet(
-          profile: profile,
-          onSuccess: () {
-            ref.invalidate(dashboardDataProvider);
-          },
-        );
-      },
-    );
   }
 
   Widget _buildRadarChartCard(DashboardData data) {
@@ -274,11 +257,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
                   // 2. Tree Vitality
                   TreeVitalityCard(
-                    skinId: data.profile.selectedSkin,
                     cumulativeDays: data.cumulativeDays,
                     season: data.season,
-                    onSkinShopTap: () =>
-                        _showSkinShop(context, ref, data.profile),
                     activeDomainColor: _selectedDomainFilter == 'Semua'
                         ? null
                         : DomainColors.forDomain(_selectedDomainFilter),

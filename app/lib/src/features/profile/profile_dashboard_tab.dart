@@ -9,7 +9,6 @@ import 'package:share_plus/share_plus.dart';
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
-import '../dashboard/widgets/skin_shop_bottom_sheet.dart';
 import '../onboarding/onboarding_view.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/life_compass_section.dart';
@@ -141,22 +140,6 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
               child: const Text('Simpan'),
             ),
           ],
-        );
-      },
-    );
-  }
-
-  void _showSkinShop(BuildContext context, UserProfile profile) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return TreeSkinShopBottomSheet(
-          profile: profile,
-          onSuccess: () {
-            ref.invalidate(dashboardDataProvider);
-          },
         );
       },
     );
@@ -385,25 +368,6 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                 ),
                 const SizedBox(height: 16),
 
-                Card(
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.12),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.local_florist_rounded, color: Colors.green),
-                    ),
-                    title: const Text('Toko Skin Pohon 🌸', style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text('Skin Aktif: ${profile.selectedSkin}'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _showSkinShop(context, profile),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
                 Text('Pengaturan Sistem', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
 
@@ -460,7 +424,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                           color: Colors.blueGrey,
                         ),
                         title: const Text('Mode Developer'),
-                        subtitle: const Text('Buka semua skin premium & aktifkan kontrol simulasi.'),
+                        subtitle: const Text('Aktifkan kontrol simulasi untuk pengalaman pengembangan.'),
                         trailing: Switch(
                           value: isDevMode,
                           onChanged: (val) => _toggleDeveloperMode(profile, val),

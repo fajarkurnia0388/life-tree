@@ -115,7 +115,6 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                   child: CustomPaint(
                     painter: GrowthMapPainter(
                       nodes: positionedNodes,
-                      skinId: viewModel.skinId,
                       season: viewModel.season,
                     ),
                   ),
