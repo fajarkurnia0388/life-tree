@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../dashboard_provider.dart';
 
-/// Dev Tools widget untuk debugging
+/// Dev tools for inspecting and simulating tree growth state during development.
 class DevToolbarWidget extends StatelessWidget {
   const DevToolbarWidget({
     super.key,
@@ -16,9 +16,7 @@ class DevToolbarWidget extends StatelessWidget {
     return Consumer(
       builder: (context, ref, child) {
         final ageOverride = ref.watch(devCumulativeDaysOverrideProvider);
-        final timeOverride = ref.watch(devTimeOfDayOverrideProvider);
         final isAgePlaying = ref.watch(devAgePlayProvider);
-        final isTimePlaying = ref.watch(devTimePlayProvider);
         final currentAge = ageOverride ?? data.cumulativeDays;
 
         return Card(
@@ -67,7 +65,7 @@ class DevToolbarWidget extends StatelessWidget {
                   children: [
                     const Icon(Icons.nature_people_rounded, size: 14, color: Colors.green),
                     const SizedBox(width: 4),
-                    const Text('Usia Pohon', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const Text('Fase Pohon', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                     const Spacer(),
                     GestureDetector(
                       onTap: () => ref.read(devAgePlayProvider.notifier).toggle(),
@@ -140,56 +138,6 @@ class DevToolbarWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Divider(height: 1),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.nights_stay_rounded, size: 14, color: Colors.purple),
-                    const SizedBox(width: 4),
-                    const Text('Waktu Langit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                    const Spacer(),
-                    GestureDetector(
-                      onTap: () => ref.read(devTimePlayProvider.notifier).toggle(),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: isTimePlaying ? Colors.purple.withValues(alpha: 0.15) : Colors.grey.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              isTimePlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                              size: 14,
-                              color: isTimePlaying ? Colors.purple : Colors.grey,
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              isTimePlaying ? 'Jeda' : 'Siklus Auto',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: isTimePlaying ? Colors.purple : Colors.grey,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 6,
-                  children: [
-                    _timeChip(ref, 'Auto', null, timeOverride),
-                    _timeChip(ref, '🌅 Pagi', CelestialTime.morning, timeOverride),
-                    _timeChip(ref, '☀️ Siang', CelestialTime.noon, timeOverride),
-                    _timeChip(ref, '🌇 Sore', CelestialTime.sunset, timeOverride),
-                    _timeChip(ref, '🌙 Malam', CelestialTime.night, timeOverride),
-                  ],
-                ),
               ],
             ),
           ),
@@ -198,25 +146,4 @@ class DevToolbarWidget extends StatelessWidget {
     );
   }
 
-  Widget _timeChip(WidgetRef ref, String label, CelestialTime? time, CelestialTime currentOverride) {
-    final resolvedTime = time ?? CelestialTime.auto;
-    final isSelected = currentOverride == resolvedTime;
-    return Semantics(
-      button: true,
-      label: 'Waktu langit $label',
-      selected: isSelected,
-      child: FilterChip(
-        label: Text(label, style: TextStyle(fontSize: 11, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
-        selected: isSelected,
-        onSelected: (_) {
-          ref.read(devTimePlayProvider.notifier).stop();
-          ref.read(devTimeOfDayOverrideProvider.notifier).state = resolvedTime;
-        },
-        selectedColor: Colors.purple.withValues(alpha: 0.2),
-        checkmarkColor: Colors.purple,
-        showCheckmark: false,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      ),
-    );
-  }
 }

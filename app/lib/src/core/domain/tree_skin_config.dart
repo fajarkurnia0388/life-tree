@@ -1,10 +1,26 @@
 import 'app_constants.dart';
 
-/// Defines growth stage thresholds and labels for the Growth Map.
+/// Defines skin and growth stage behavior for the conceptual tree UI.
 class TreeSkinConfig {
   TreeSkinConfig._();
 
-  // ─── Growth stage names (ordered young → old) ──────────────────────────────
+  static const Set<String> supportedSkins = {
+    TreeSkin.defaultSkin,
+    TreeSkin.sakura,
+    TreeSkin.maple,
+    TreeSkin.bonsai,
+  };
+
+  static String normalizeSkinId(String? skinId) {
+    if (skinId == null || skinId.trim().isEmpty) {
+      return TreeSkin.defaultSkin;
+    }
+
+    final normalized = skinId.trim();
+    return supportedSkins.contains(normalized) ? normalized : TreeSkin.defaultSkin;
+  }
+
+  // ─── Growth stage names (ordered from early growth to mature) ───────────
   static const String stageSeed = 'seed';
   static const String stageSprout = 'sprout';
   static const String stageSeedling = 'seedling';
@@ -58,7 +74,10 @@ class TreeSkinConfig {
 
   /// Human-readable stage label for UI display.
   static String getStageLabel(int cumulativeDays, String season) {
-    if (season == Season.recovery) return 'Pohon Istirahat Bersalju ❄️';
+    if (season == Season.recovery) {
+      return 'Pohon Istirahat dan Pemulihan ❄️';
+    }
+
     final stage = getStage(cumulativeDays, season);
     return switch (stage) {
       stageSeed => 'Benih — Awal Perjalanan 🌰',

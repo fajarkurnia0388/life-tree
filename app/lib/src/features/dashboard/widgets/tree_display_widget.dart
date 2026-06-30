@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -11,12 +10,11 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/domain/app_constants.dart';
 import '../../../core/domain/tree_skin_config.dart';
 import '../../../core/theme/theme.dart';
-import '../dashboard_provider.dart';
 import 'growth_map/growth_map_widget.dart';
 
-/// Displays the tree illustration for a given skin and growth stage.
-/// Shows a PNG illustration asset with animated crossfade transitions between stages.
-class TreeDisplayWidget extends ConsumerWidget {
+/// Displays the conceptual tree view for a given skin and growth stage.
+/// Renders the growth state through a conceptual map rather than static image assets.
+class TreeDisplayWidget extends StatelessWidget {
   final String skinId;
   final int cumulativeDays;
   final String season;
@@ -35,47 +33,8 @@ class TreeDisplayWidget extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final isRecovery = season == Season.recovery;
-
-    // 1. Determine celestial time of day (Auto or Overridden)
-    final timeOverride = ref.watch(devTimeOfDayOverrideProvider);
-    final CelestialTime activeTime;
-    if (timeOverride != CelestialTime.auto) {
-      activeTime = timeOverride;
-    } else {
-      final hour = DateTime.now().hour;
-      if (hour >= 6 && hour < 11) {
-        activeTime = CelestialTime.morning;
-      } else if (hour >= 11 && hour < 15) {
-        activeTime = CelestialTime.noon;
-      } else if (hour >= 15 && hour < 18) {
-        activeTime = CelestialTime.sunset;
-      } else {
-        activeTime = CelestialTime.night;
-      }
-    }
-
-    // 2. Map sky gradient colors (top → horizon)
-    final List<Color> skyColors = switch (activeTime) {
-      CelestialTime.morning => const [Color(0xFF89CFF0), Color(0xFFFFF3E0)], // Light blue → warm yellow horizon
-      CelestialTime.noon    => const [Color(0xFF1565C0), Color(0xFF4FC3F7)], // Deep blue → light blue
-      CelestialTime.sunset  => const [Color(0xFF4A148C), Color(0xFFFF7043)], // Purple → fiery orange horizon
-      CelestialTime.night   => const [Color(0xFF0D1B2A), Color(0xFF1B2838)], // Dark navy → deep indigo
-      _                     => const [Color(0xFF1565C0), Color(0xFF4FC3F7)],
-    };
-
-    // 3. Map ground colors per time of day
-    final List<Color> groundColors = switch (activeTime) {
-      CelestialTime.morning => const [Color(0xFF4CAF50), Color(0xFF388E3C)], // Fresh morning green
-      CelestialTime.noon    => const [Color(0xFF66BB6A), Color(0xFF43A047)], // Bright noon green
-      CelestialTime.sunset  => const [Color(0xFF8D6E63), Color(0xFF6D4C41)], // Warm brown earth at dusk
-      CelestialTime.night   => const [Color(0xFF1A3327), Color(0xFF0F2319)], // Dark night earth
-      _                     => const [Color(0xFF66BB6A), Color(0xFF43A047)],
-    };
-
-    const double groundRatio = 0.22;
-    const Duration skyTransition = Duration(milliseconds: 600);
 
     // ── Wrap everything in a rounded clip ──
     return ClipRRect(
@@ -88,18 +47,11 @@ class TreeDisplayWidget extends ConsumerWidget {
           alignment: Alignment.bottomCenter,
           children: [
 
-            // ── Sky background — AnimatedContainer interpolates colors smoothly ──
+            // ── Neutral canvas for the conceptual tree view ──
             Positioned.fill(
-              child: AnimatedContainer(
-                duration: skyTransition,
-                curve: Curves.easeInOut,
+              child: Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: const [0.0, 0.75],
-                    colors: skyColors,
-                  ),
+                  color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.18),
                 ),
               ),
             ),
@@ -120,68 +72,6 @@ class TreeDisplayWidget extends ConsumerWidget {
                   ),
                 ),
               ),
-
-            // ── Night stars ──
-            if (activeTime == CelestialTime.night)
-              Positioned.fill(
-                child: AnimatedOpacity(
-                  duration: skyTransition,
-                  opacity: activeTime == CelestialTime.night ? 1.0 : 0.0,
-                  child: CustomPaint(painter: _StarsPainter()),
-                ),
-              ),
-
-            // ── Sun / Moon celestial body — AnimatedSwitcher for position changes ──
-            AnimatedSwitcher(
-              duration: skyTransition,
-              transitionBuilder: (child, animation) =>
-                  FadeTransition(opacity: animation, child: child),
-              child: KeyedSubtree(
-                key: ValueKey(activeTime),
-                child: Stack(
-                  children: _buildCelestialBody(activeTime, width, height),
-                ),
-              ),
-            ),
-
-            // ── Ground strip — AnimatedContainer for smooth color lerp ──
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: AnimatedContainer(
-                duration: skyTransition,
-                curve: Curves.easeInOut,
-                height: height * groundRatio,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: groundColors,
-                  ),
-                ),
-              ),
-            ),
-
-            // ── Ground edge shadow ──
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: height * groundRatio - 4,
-              child: Container(
-                height: 8,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.0),
-                      Colors.black.withValues(alpha: 0.22),
-                    ],
-                  ),
-                ),
-              ),
-            ),
 
             // ── Growth Map (Iterasi 2) ──
             Positioned.fill(
@@ -206,132 +96,6 @@ class TreeDisplayWidget extends ConsumerWidget {
   }
 
 
-  List<Widget> _buildCelestialBody(CelestialTime time, double w, double h) {
-    final double sunMoonSize = h * 0.14; // proportional to panorama height
-    switch (time) {
-      case CelestialTime.morning:
-        // Rising sun on the right, mid-low sky
-        return [
-          Positioned(
-            top: h * 0.18,
-            right: w * 0.12,
-            child: Container(
-              width: sunMoonSize,
-              height: sunMoonSize,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFFFCC02),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.orange.withValues(alpha: 0.5),
-                    blurRadius: 18,
-                    spreadRadius: 4,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ];
-
-      case CelestialTime.noon:
-        // High sun centered-right
-        return [
-          Positioned(
-            top: h * 0.06,
-            right: w * 0.18,
-            child: Container(
-              width: sunMoonSize * 1.1,
-              height: sunMoonSize * 1.1,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFFDD835),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.yellow.withValues(alpha: 0.55),
-                    blurRadius: 22,
-                    spreadRadius: 6,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ];
-
-      case CelestialTime.sunset:
-        // Large sun touching horizon, left side
-        return [
-          Positioned(
-            bottom: h * 0.20,
-            left: w * 0.10,
-            child: Container(
-              width: sunMoonSize * 1.3,
-              height: sunMoonSize * 1.3,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFFF6F00),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.deepOrange.withValues(alpha: 0.5),
-                    blurRadius: 24,
-                    spreadRadius: 5,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ];
-
-      case CelestialTime.night:
-        // Crescent moon — top right
-        return [
-          Positioned(
-            top: h * 0.08,
-            right: w * 0.10,
-            child: SizedBox(
-              width: sunMoonSize * 1.2,
-              height: sunMoonSize * 1.2,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  // Full moon disk
-                  Container(
-                    width: sunMoonSize * 1.2,
-                    height: sunMoonSize * 1.2,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFFFF9C4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.white.withValues(alpha: 0.35),
-                          blurRadius: 16,
-                          spreadRadius: 2,
-                        )
-                      ],
-                    ),
-                  ),
-                  // Mask circle: creates crescent cutout
-                  Positioned(
-                    top: -sunMoonSize * 0.18,
-                    left: sunMoonSize * 0.30,
-                    child: Container(
-                      width: sunMoonSize * 1.2,
-                      height: sunMoonSize * 1.2,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFF0D1B2A),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ];
-
-      default:
-        return [];
-    }
-  }
 }
 
 /// A card widget wrapping the tree display with progress bar and stage label.
@@ -584,6 +348,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
     final theme = Theme.of(context);
     final stage = TreeSkinConfig.getStage(widget.cumulativeDays, widget.season);
     final label = TreeSkinConfig.getStageLabel(widget.cumulativeDays, widget.season);
+    final normalizedSkinId = TreeSkinConfig.normalizeSkinId(widget.skinId);
     final progress = TreeSkinConfig.getProgress(widget.cumulativeDays, widget.season);
     final isRecovery = widget.season == Season.recovery;
     final progressColor = isRecovery ? CalmTheme.secondaryBlue : theme.colorScheme.primary;
@@ -685,7 +450,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                         Icon(Icons.palette_outlined, size: 14, color: theme.colorScheme.primary),
                         const SizedBox(width: 4),
                         Text(
-                          'Skin Shop',
+                          'Skin: $normalizedSkinId',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -881,29 +646,3 @@ class _AnimatedSnowPainter extends CustomPainter {
   bool shouldRepaint(covariant _AnimatedSnowPainter oldDelegate) => true;
 }
 
-class _StarsPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.65)
-      ..style = PaintingStyle.fill;
-    
-    final starPoints = [
-      Offset(size.width * 0.16, size.height * 0.38),
-      Offset(size.width * 0.76, size.height * 0.22),
-      Offset(size.width * 0.46, size.height * 0.14),
-      Offset(size.width * 0.82, size.height * 0.44),
-      Offset(size.width * 0.32, size.height * 0.58),
-      Offset(size.width * 0.68, size.height * 0.68),
-      Offset(size.width * 0.22, size.height * 0.18),
-      Offset(size.width * 0.86, size.height * 0.16),
-    ];
-    
-    for (final pt in starPoints) {
-      canvas.drawCircle(pt, 1.2, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}

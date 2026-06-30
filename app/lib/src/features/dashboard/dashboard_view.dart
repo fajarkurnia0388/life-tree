@@ -9,7 +9,6 @@ import 'dashboard_provider.dart';
 import 'widgets/domain_insight_dialog.dart';
 import 'widgets/action_of_the_day_card.dart';
 import 'widgets/celebration_card.dart';
-import 'widgets/dev_toolbar_widget.dart';
 import 'widgets/domain_scores_card.dart';
 import 'widgets/habit_list_section.dart';
 import '../habit/services/habit_log_service.dart';
@@ -232,12 +231,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     activeDomainColor: _selectedDomainFilter == 'Semua' ? null : DomainColors.forDomain(_selectedDomainFilter),
                   ),
                   const SizedBox(height: 16),
-
-                  // Dev Toolbar (only in Dev Mode)
-                  if (data.profile.isDeveloperMode) ...[
-                    DevToolbarWidget(data: data),
-                    const SizedBox(height: 16),
-                  ],
 
                   // Radar Chart Keseimbangan
                   _buildRadarChartCard(data),
