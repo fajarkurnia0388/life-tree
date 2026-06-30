@@ -262,6 +262,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     activeDomainColor: _selectedDomainFilter == 'Semua'
                         ? null
                         : DomainColors.forDomain(_selectedDomainFilter),
+                    selectedDomain: _selectedDomainFilter == 'Semua'
+                        ? null
+                        : _selectedDomainFilter,
+                    onDomainNavigate: (domain) {
+                      setState(() {
+                        _selectedDomainFilter = domain;
+                      });
+                    },
                   ),
                   const SizedBox(height: 16),
 

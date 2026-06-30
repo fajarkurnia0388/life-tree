@@ -19,6 +19,8 @@ class TreeDisplayWidget extends StatelessWidget {
   final double width;
   final double height;
   final Color? activeDomainColor;
+  final String? selectedDomain;
+  final void Function(String domain)? onDomainNavigate;
 
   const TreeDisplayWidget({
     super.key,
@@ -27,6 +29,8 @@ class TreeDisplayWidget extends StatelessWidget {
     this.width = double.infinity,
     this.height = 220,
     this.activeDomainColor,
+    this.selectedDomain,
+    this.onDomainNavigate,
   });
 
   @override
@@ -77,6 +81,8 @@ class TreeDisplayWidget extends StatelessWidget {
                 width: width,
                 height: height,
                 activeDomainColor: activeDomainColor,
+                selectedDomain: selectedDomain,
+                onDomainTap: onDomainNavigate,
               ),
             ),
 
@@ -97,12 +103,16 @@ class TreeVitalityCard extends StatefulWidget {
   final int cumulativeDays;
   final String season;
   final Color? activeDomainColor;
+  final String? selectedDomain;
+  final void Function(String domain)? onDomainNavigate;
 
   const TreeVitalityCard({
     super.key,
     required this.cumulativeDays,
     required this.season,
     this.activeDomainColor,
+    this.selectedDomain,
+    this.onDomainNavigate,
   });
 
   @override
@@ -393,6 +403,8 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                     width: double.infinity,
                     height: 220,
                     activeDomainColor: widget.activeDomainColor,
+                    selectedDomain: widget.selectedDomain,
+                    onDomainNavigate: widget.onDomainNavigate,
                   ),
                 ),
                 // Floating minimal capture button at top-right (outside RepaintBoundary so it's not captured)

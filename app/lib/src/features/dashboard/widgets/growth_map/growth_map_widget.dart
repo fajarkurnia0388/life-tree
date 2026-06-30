@@ -15,12 +15,16 @@ class GrowthMapWidget extends ConsumerStatefulWidget {
   final double width;
   final double height;
   final Color? activeDomainColor;
+  final String? selectedDomain;
+  final void Function(String domain)? onDomainTap;
 
   const GrowthMapWidget({
     super.key,
     required this.width,
     required this.height,
     this.activeDomainColor,
+    this.selectedDomain,
+    this.onDomainTap,
   });
 
   @override
@@ -97,8 +101,12 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
               'Karir',
               'Rekreasi',
             ];
+            final activeDomain = widget.selectedDomain;
+            final relevantDomains = activeDomain != null
+                ? [activeDomain]
+                : domainOrder;
 
-            for (final domain in domainOrder) {
+            for (final domain in relevantDomains) {
               final domainLeaves = extendedLeaves.where(
                 (l) => l.domainTag == domain,
               );
@@ -123,10 +131,19 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
               width: w,
               height: h,
               root: viewModel.root,
-              branches: viewModel.branches,
-              leaves: extendedLeaves,
-              flowers: viewModel.flowers,
-              fruits: viewModel.fruits,
+              branches: activeDomain == null
+                  ? viewModel.branches
+                  : viewModel.branches.where((b) => b.id == activeDomain).toList(),
+              leaves: activeDomain == null
+                  ? extendedLeaves
+                  : extendedLeaves.where((l) => l.domainTag == activeDomain).toList(),
+              flowers: activeDomain == null
+                  ? viewModel.flowers
+                  : viewModel.flowers.where((f) => f.domainTag == activeDomain).toList(),
+              fruits: activeDomain == null
+                  ? viewModel.fruits
+                  : viewModel.fruits.where((f) => f.domainTag == activeDomain).toList(),
+              selectedDomain: activeDomain,
             );
 
             return Stack(
@@ -150,9 +167,11 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                   );
 
                   if (node is RootNode) {
+                    final rootDiameter = widget.selectedDomain != null ? 56.0 : 44.0;
+                    final iconSize = widget.selectedDomain != null ? 28.0 : 24.0;
                     return Positioned(
-                      left: offset.dx - 22,
-                      top: offset.dy - 22,
+                      left: offset.dx - rootDiameter / 2,
+                      top: offset.dy - rootDiameter / 2,
                       child: Semantics(
                         label: semanticLabel,
                         button: true,
@@ -195,8 +214,8 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                             },
                             borderRadius: BorderRadius.circular(22),
                             child: Container(
-                              width: 44,
-                              height: 44,
+                              width: rootDiameter,
+                              height: rootDiameter,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: theme.colorScheme.surface,
@@ -216,7 +235,7 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                               ),
                               child: Icon(
                                 node.icon,
-                                size: 24,
+                                size: iconSize,
                                 color: theme.colorScheme.primary,
                               ),
                             ),
@@ -225,7 +244,9 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                       ),
                     );
                   } else if (node is BranchNode) {
-                    // Glow color depends on branch health
+                    final isSelectedBranch = widget.selectedDomain != null && node.id == widget.selectedDomain;
+                    final branchDiameter = isSelectedBranch ? 56.0 : 36.0;
+                    final iconSize = isSelectedBranch ? 26.0 : 18.0;
                     final isDeficit = node.score < 5.0;
                     final glowColor = isDeficit
                         ? Colors.amber[800]!
@@ -233,67 +254,97 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                     final isHealthy = node.score >= 8.0;
 
                     return Positioned(
-                      left: offset.dx - 18,
-                      top: offset.dy - 18,
+                      left: offset.dx - branchDiameter / 2,
+                      top: offset.dy - branchDiameter / 2,
                       child: Semantics(
                         label: semanticLabel,
                         button: true,
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => DomainInsightDialog(
-                                  domain: node.id,
-                                  score: node.score,
-                                ),
-                              );
-                            },
+                            onTap: widget.onDomainTap != null
+                                ? () => widget.onDomainTap!(node.id)
+                                : () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => DomainInsightDialog(
+                                        domain: node.id,
+                                        score: node.score,
+                                      ),
+                                    );
+                                  },
                             borderRadius: BorderRadius.circular(18),
-                            child: Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: theme.colorScheme.surface,
-                                border: Border.all(
-                                  color: glowColor,
-                                  width: isHealthy ? 2.5 : 1.5,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: glowColor.withValues(
-                                      alpha: isHealthy ? 0.35 : 0.15,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: branchDiameter,
+                                  height: branchDiameter,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: theme.colorScheme.surface,
+                                    border: Border.all(
+                                      color: glowColor,
+                                      width: isHealthy ? 2.5 : 1.5,
                                     ),
-                                    blurRadius: isHealthy ? 10 : 5,
-                                    spreadRadius: isHealthy ? 3 : 1,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: glowColor.withValues(
+                                          alpha: isHealthy ? 0.35 : 0.15,
+                                        ),
+                                        blurRadius: isHealthy ? 10 : 5,
+                                        spreadRadius: isHealthy ? 3 : 1,
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Icon(node.icon, size: 18, color: glowColor),
-                                  if (isDeficit)
-                                    Positioned(
-                                      top: 0,
-                                      right: 0,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(2),
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.amber,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Icon(node.icon, size: iconSize, color: glowColor),
+                                      if (isDeficit)
+                                        Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(2),
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.amber,
+                                            ),
+                                            child: const Icon(
+                                              Icons.priority_high_rounded,
+                                              size: 8,
+                                              color: Colors.white,
+                                            ),
+                                          ),
                                         ),
-                                        child: const Icon(
-                                          Icons.priority_high_rounded,
-                                          size: 8,
-                                          color: Colors.white,
-                                        ),
+                                    ],
+                                  ),
+                                ),
+                                if (isSelectedBranch) ...[
+                                  const SizedBox(height: 6),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.surface.withValues(alpha: 0.92),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
                                       ),
                                     ),
+                                    child: Text(
+                                      'Lihat kebiasaan',
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: theme.colorScheme.onSurface,
+                                      ),
+                                    ),
+                                  ),
                                 ],
-                              ),
+                              ],
                             ),
                           ),
                         ),

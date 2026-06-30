@@ -11,11 +11,13 @@ class GrowthMapLayout {
     required List<LeafNode> leaves,
     required List<FlowerNode> flowers,
     required List<FruitNode> fruits,
+    String? selectedDomain,
   }) {
     final List<GrowthMapNode> positionedNodes = [];
 
     // 1. Position Root Node
-    final rootPos = Offset(width / 2, height - 35);
+    final closeUpRootYOffset = selectedDomain != null ? height * 0.42 : height * 0.52;
+    final rootPos = Offset(width / 2, closeUpRootYOffset);
     final positionedRoot = root.copyWith(position: rootPos);
     positionedNodes.add(positionedRoot);
 
@@ -31,10 +33,62 @@ class GrowthMapLayout {
       subNodesByDomain.putIfAbsent(fruit.domainTag, () => []).add(fruit);
     }
 
-    // 2. Position Branches (6 Domains)
-    // Order: Tubuh, Keuangan, Hubungan, Emosi, Karir, Rekreasi
     final domainOrder = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
     final Map<String, Offset> branchPositions = {};
+
+    if (selectedDomain != null && branches.isNotEmpty) {
+      // Single-domain close-up layout
+      final branch = branches.first;
+      final branchAngles = {
+        'Tubuh': math.pi * 270 / 180,
+        'Keuangan': math.pi * 330 / 180,
+        'Hubungan': math.pi * 30 / 180,
+        'Emosi': math.pi * 90 / 180,
+        'Karir': math.pi * 150 / 180,
+        'Rekreasi': math.pi * 210 / 180,
+      };
+      final angle = branchAngles[selectedDomain] ?? math.pi * 270 / 180;
+      final branchGap = math.min(width * 0.22, height * 0.26);
+      final branchPos = Offset(
+        (rootPos.dx + math.cos(angle) * branchGap).clamp(24.0, width - 24.0),
+        (rootPos.dy - math.sin(angle) * branchGap).clamp(24.0, height - 24.0),
+      );
+      branchPositions[branch.id] = branchPos;
+      positionedNodes.add(branch.copyWith(position: branchPos));
+
+      final subNodes = subNodesByDomain[branch.id] ?? [];
+      final k = subNodes.length;
+      for (int j = 0; j < k; j++) {
+        final node = subNodes[j];
+        final double sectorCenter = angle;
+        final double arcWidth = math.pi * 90 / 180;
+        final double arcStart = sectorCenter - (arcWidth / 2);
+        final double subAngle = k == 1
+            ? sectorCenter
+            : arcStart + (arcWidth / (k - 1)) * j;
+        final subRadiusBase = math.min(width * 0.18, height * 0.20);
+        final subRadius = subRadiusBase + (j * 16.0);
+
+        final subX = (branchPos.dx + math.cos(subAngle) * subRadius).clamp(20.0, width - 20.0);
+        final subY = (branchPos.dy - math.sin(subAngle) * subRadius).clamp(20.0, height - 20.0);
+
+        positionedNodes.add(node.copyWith(position: Offset(subX, subY)));
+      }
+
+      return positionedNodes;
+    }
+
+    // 2. Position Branches (6 Domains)
+    final branchAngles = [
+      math.pi * 270 / 180,
+      math.pi * 330 / 180,
+      math.pi * 30 / 180,
+      math.pi * 90 / 180,
+      math.pi * 150 / 180,
+      math.pi * 210 / 180,
+    ];
+
+    final branchRadius = math.min(width * 0.30, height * 0.32);
 
     for (int i = 0; i < domainOrder.length; i++) {
       final domain = domainOrder[i];
@@ -42,51 +96,30 @@ class GrowthMapLayout {
       if (bIndex == -1) continue;
 
       final branch = branches[bIndex];
+      final angle = branchAngles[i % branchAngles.length];
+      final radius = branchRadius;
 
-      // Proportional spacing fanned horizontally
-      final x = width * (0.09 + i * 0.164);
-      
-      // Beautiful fanned arch
-      final archFactor = math.sin(math.pi * (i + 0.5) / 6);
-      final y = height * 0.52 - (24 * archFactor);
+      final x = (rootPos.dx + math.cos(angle) * radius).clamp(24.0, width - 24.0);
+      final y = (rootPos.dy - math.sin(angle) * radius).clamp(24.0, height - 24.0);
 
       final branchPos = Offset(x, y);
       branchPositions[domain] = branchPos;
-      
-      final positionedBranch = branch.copyWith(position: branchPos);
-      positionedNodes.add(positionedBranch);
 
-      // 3. Position Leaves, Flowers, Fruits (Sub-nodes branching from this domain)
+      positionedNodes.add(branch.copyWith(position: branchPos));
+
       final subNodes = subNodesByDomain[domain] ?? [];
       final k = subNodes.length;
 
       for (int j = 0; j < k; j++) {
         final node = subNodes[j];
-        double subX = x;
-        double subY = height * 0.20; // fallback y
+        final spread = k <= 1 ? 0.0 : (j - (k - 1) / 2) * 0.22;
+        final subAngle = angle + spread;
+        final subRadius = 34.0 + (k > 1 ? 10.0 : 0.0) + (j * 6.0);
 
-        if (k == 1) {
-          subX = x;
-          subY = height * 0.18;
-        } else if (k == 2) {
-          subX = x + (j == 0 ? -14.0 : 14.0);
-          subY = height * 0.18;
-        } else {
-          // 3 or more (spread in fan canopy)
-          if (j == 0) {
-            subX = x - 18.0;
-            subY = height * 0.20;
-          } else if (j == 1) {
-            subX = x;
-            subY = height * 0.10;
-          } else {
-            subX = x + 18.0;
-            subY = height * 0.20;
-          }
-        }
+        final subX = (branchPos.dx + math.cos(subAngle) * subRadius).clamp(20.0, width - 20.0);
+        final subY = (branchPos.dy - math.sin(subAngle) * subRadius).clamp(20.0, height - 20.0);
 
-        final positionedSub = node.copyWith(position: Offset(subX, subY));
-        positionedNodes.add(positionedSub);
+        positionedNodes.add(node.copyWith(position: Offset(subX, subY)));
       }
     }
 
