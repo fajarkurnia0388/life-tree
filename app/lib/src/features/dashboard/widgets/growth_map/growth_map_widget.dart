@@ -30,7 +30,11 @@ class GrowthMapWidget extends ConsumerStatefulWidget {
 class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
   bool _isToggling = false;
 
-  Future<void> _toggleHabit(BuildContext context, dynamic habit, dynamic log) async {
+  Future<void> _toggleHabit(
+    BuildContext context,
+    dynamic habit,
+    dynamic log,
+  ) async {
     if (_isToggling) return;
     setState(() => _isToggling = true);
 
@@ -51,7 +55,10 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
     } catch (e) {
       if (mounted) {
         messenger.showSnackBar(
-          SnackBar(content: Text('Gagal memperbarui status kebiasaan: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Gagal memperbarui status kebiasaan: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -68,19 +75,33 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
 
     return growthMapAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Gagal memuat peta pertumbuhan: $err')),
+      error: (err, stack) =>
+          Center(child: Text('Gagal memuat peta pertumbuhan: $err')),
       data: (viewModel) {
         return LayoutBuilder(
           builder: (context, constraints) {
-            final w = constraints.maxWidth > 0 ? constraints.maxWidth : widget.width;
-            final h = constraints.maxHeight > 0 ? constraints.maxHeight : widget.height;
+            final w = constraints.maxWidth > 0
+                ? constraints.maxWidth
+                : widget.width;
+            final h = constraints.maxHeight > 0
+                ? constraints.maxHeight
+                : widget.height;
 
             // Generate "+" empty placeholder leaf nodes for domains with no habits today
             final List<LeafNode> extendedLeaves = List.from(viewModel.leaves);
-            final domainOrder = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
-            
+            final domainOrder = [
+              'Tubuh',
+              'Keuangan',
+              'Hubungan',
+              'Emosi',
+              'Karir',
+              'Rekreasi',
+            ];
+
             for (final domain in domainOrder) {
-              final domainLeaves = extendedLeaves.where((l) => l.domainTag == domain);
+              final domainLeaves = extendedLeaves.where(
+                (l) => l.domainTag == domain,
+              );
               if (domainLeaves.isEmpty) {
                 extendedLeaves.add(
                   LeafNode(
@@ -90,7 +111,8 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                     isDone: false,
                     initial: '+',
                     originalHabit: null,
-                    semanticLabel: 'Dahan $domain belum memiliki kebiasaan hari ini. Ketuk untuk menambah.',
+                    semanticLabel:
+                        'Dahan $domain belum memiliki kebiasaan hari ini. Ketuk untuk menambah.',
                   ),
                 );
               }
@@ -123,7 +145,9 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                 // 2. Interactive Nodes Overlay
                 ...positionedNodes.map((node) {
                   final offset = node.position;
-                  final String semanticLabel = GrowthMapSemantics.buildLabel(node);
+                  final String semanticLabel = GrowthMapSemantics.buildLabel(
+                    node,
+                  );
 
                   if (node is RootNode) {
                     return Positioned(
@@ -143,11 +167,22 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: node.coreValues.isEmpty
-                                        ? [const Text('Belum ada nilai terpilih. Silakan atur di Tab Profil.')]
-                                        : node.coreValues.map((v) => ListTile(
-                                              leading: const Icon(Icons.star_rounded, color: Colors.amber),
-                                              title: Text(v),
-                                            )).toList(),
+                                        ? [
+                                            const Text(
+                                              'Belum ada nilai terpilih. Silakan atur di Tab Profil.',
+                                            ),
+                                          ]
+                                        : node.coreValues
+                                              .map(
+                                                (v) => ListTile(
+                                                  leading: const Icon(
+                                                    Icons.star_rounded,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  title: Text(v),
+                                                ),
+                                              )
+                                              .toList(),
                                   ),
                                   actions: [
                                     TextButton(
@@ -165,16 +200,25 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: theme.colorScheme.surface,
-                                border: Border.all(color: theme.colorScheme.primary, width: 2.0),
+                                border: Border.all(
+                                  color: theme.colorScheme.primary,
+                                  width: 2.0,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: theme.colorScheme.primary.withValues(alpha: 0.25),
+                                    color: theme.colorScheme.primary.withValues(
+                                      alpha: 0.25,
+                                    ),
                                     blurRadius: 8,
                                     spreadRadius: 2,
                                   ),
                                 ],
                               ),
-                              child: Icon(node.icon, size: 24, color: theme.colorScheme.primary),
+                              child: Icon(
+                                node.icon,
+                                size: 24,
+                                color: theme.colorScheme.primary,
+                              ),
                             ),
                           ),
                         ),
@@ -183,7 +227,9 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                   } else if (node is BranchNode) {
                     // Glow color depends on branch health
                     final isDeficit = node.score < 5.0;
-                    final glowColor = isDeficit ? Colors.amber[800]! : node.color;
+                    final glowColor = isDeficit
+                        ? Colors.amber[800]!
+                        : node.color;
                     final isHealthy = node.score >= 8.0;
 
                     return Positioned(
@@ -211,10 +257,15 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: theme.colorScheme.surface,
-                                border: Border.all(color: glowColor, width: isHealthy ? 2.5 : 1.5),
+                                border: Border.all(
+                                  color: glowColor,
+                                  width: isHealthy ? 2.5 : 1.5,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: glowColor.withValues(alpha: isHealthy ? 0.35 : 0.15),
+                                    color: glowColor.withValues(
+                                      alpha: isHealthy ? 0.35 : 0.15,
+                                    ),
                                     blurRadius: isHealthy ? 10 : 5,
                                     spreadRadius: isHealthy ? 3 : 1,
                                   ),
@@ -234,7 +285,11 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                                           shape: BoxShape.circle,
                                           color: Colors.amber,
                                         ),
-                                        child: const Icon(Icons.priority_high_rounded, size: 8, color: Colors.white),
+                                        child: const Icon(
+                                          Icons.priority_high_rounded,
+                                          size: 8,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                 ],
@@ -260,7 +315,11 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                               if (isPlaceholder) {
                                 context.push('/add-habit');
                               } else {
-                                _toggleHabit(context, node.originalHabit, node.originalLog);
+                                _toggleHabit(
+                                  context,
+                                  node.originalHabit,
+                                  node.originalLog,
+                                );
                               }
                             },
                             borderRadius: BorderRadius.circular(11),
@@ -269,22 +328,34 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                               height: 22,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: node.isDone 
-                                    ? Colors.teal 
-                                    : (isPlaceholder ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5) : theme.colorScheme.surface),
+                                color: node.isDone
+                                    ? Colors.teal
+                                    : (isPlaceholder
+                                          ? theme
+                                                .colorScheme
+                                                .surfaceContainerHighest
+                                                .withValues(alpha: 0.5)
+                                          : theme.colorScheme.surface),
                                 border: Border.all(
-                                  color: node.isDone 
-                                      ? Colors.teal 
-                                      : (isPlaceholder ? theme.colorScheme.outline.withValues(alpha: 0.3) : theme.colorScheme.outline),
+                                  color: node.isDone
+                                      ? Colors.teal
+                                      : (isPlaceholder
+                                            ? theme.colorScheme.outline
+                                                  .withValues(alpha: 0.3)
+                                            : theme.colorScheme.outline),
                                   width: 1.0,
                                 ),
-                                boxShadow: node.isDone ? [
-                                  BoxShadow(
-                                    color: Colors.teal.withValues(alpha: 0.35),
-                                    blurRadius: 6,
-                                    spreadRadius: 1,
-                                  )
-                                ] : null,
+                                boxShadow: node.isDone
+                                    ? [
+                                        BoxShadow(
+                                          color: Colors.teal.withValues(
+                                            alpha: 0.35,
+                                          ),
+                                          blurRadius: 6,
+                                          spreadRadius: 1,
+                                        ),
+                                      ]
+                                    : null,
                               ),
                               child: Center(
                                 child: Text(
@@ -294,7 +365,10 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                                     fontWeight: FontWeight.bold,
                                     color: node.isDone
                                         ? Colors.white
-                                        : (isPlaceholder ? theme.colorScheme.onSurface.withValues(alpha: 0.4) : theme.colorScheme.onSurface),
+                                        : (isPlaceholder
+                                              ? theme.colorScheme.onSurface
+                                                    .withValues(alpha: 0.4)
+                                              : theme.colorScheme.onSurface),
                                   ),
                                 ),
                               ),
@@ -317,8 +391,12 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                               showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: Text('Keputusan Penting: ${node.label}'),
-                                  content: Text('Domain: ${node.domainTag}\n\nKeputusan ini dicatat sebagai milestone penting dalam perjalanan pertumbuhanmu.'),
+                                  title: Text(
+                                    'Keputusan Penting: ${node.label}',
+                                  ),
+                                  content: Text(
+                                    'Domain: ${node.domainTag}\n\nKeputusan ini dicatat sebagai milestone penting dalam perjalanan pertumbuhanmu.',
+                                  ),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(context),
@@ -337,13 +415,19 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                                 color: Colors.purple,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.purple.withValues(alpha: 0.35),
+                                    color: Colors.purple.withValues(
+                                      alpha: 0.35,
+                                    ),
                                     blurRadius: 6,
                                     spreadRadius: 1,
-                                  )
+                                  ),
                                 ],
                               ),
-                              child: Icon(node.icon, size: 12, color: Colors.white),
+                              child: Icon(
+                                node.icon,
+                                size: 12,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -356,9 +440,7 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                   Positioned.fill(
                     child: Container(
                       color: Colors.transparent,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      child: const Center(child: CircularProgressIndicator()),
                     ),
                   ),
               ],

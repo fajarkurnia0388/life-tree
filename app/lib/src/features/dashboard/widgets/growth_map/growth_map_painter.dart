@@ -6,10 +6,7 @@ class GrowthMapPainter extends CustomPainter {
   final List<GrowthMapNode> nodes;
   final String season;
 
-  GrowthMapPainter({
-    required this.nodes,
-    required this.season,
-  });
+  GrowthMapPainter({required this.nodes, required this.season});
 
   Color get _connectorColor => const Color(0xFF81C784).withValues(alpha: 0.5);
 
@@ -73,7 +70,7 @@ class GrowthMapPainter extends CustomPainter {
       // Draw fanning bezier curve from Root to Branch
       final path = Path();
       path.moveTo(rootPos.dx, rootPos.dy);
-      
+
       // Control point fanning slightly outwards
       final ctrlX = rootPos.dx + (branchPos.dx - rootPos.dx) * 0.25;
       final ctrlY = (rootPos.dy + branchPos.dy) / 2;
@@ -99,13 +96,16 @@ class GrowthMapPainter extends CustomPainter {
 
     // Draw lines to Leaves
     for (final leaf in leafNodes) {
-      final branch = branchNodes.firstWhere((b) => b.id == leaf.domainTag, orElse: () => branchNodes.first);
+      final branch = branchNodes.firstWhere(
+        (b) => b.id == leaf.domainTag,
+        orElse: () => branchNodes.first,
+      );
       final branchPos = branch.position;
       final leafPos = leaf.position;
 
       // Line color is vibrant if habit is done, else dim
-      subBranchPaint.color = leaf.isDone 
-          ? branch.color.withValues(alpha: 0.8) 
+      subBranchPaint.color = leaf.isDone
+          ? branch.color.withValues(alpha: 0.8)
           : Colors.grey.withValues(alpha: 0.3);
       subBranchPaint.strokeWidth = leaf.isDone ? 2.2 : 1.5;
 
@@ -124,7 +124,10 @@ class GrowthMapPainter extends CustomPainter {
 
     // Draw lines to Flowers (Stables)
     for (final flower in flowerNodes) {
-      final branch = branchNodes.firstWhere((b) => b.id == flower.domainTag, orElse: () => branchNodes.first);
+      final branch = branchNodes.firstWhere(
+        (b) => b.id == flower.domainTag,
+        orElse: () => branchNodes.first,
+      );
       final branchPos = branch.position;
       final flowerPos = flower.position;
 
@@ -136,7 +139,10 @@ class GrowthMapPainter extends CustomPainter {
 
     // Draw lines to Fruits (Decisions)
     for (final fruit in fruitNodes) {
-      final branch = branchNodes.firstWhere((b) => b.id == fruit.domainTag, orElse: () => branchNodes.first);
+      final branch = branchNodes.firstWhere(
+        (b) => b.id == fruit.domainTag,
+        orElse: () => branchNodes.first,
+      );
       final branchPos = branch.position;
       final fruitPos = fruit.position;
 

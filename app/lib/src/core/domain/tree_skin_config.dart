@@ -31,7 +31,5 @@ class TreeSkinConfig {
   }
 
   /// Progress bar color for the conceptual tree view.
-  static const Map<String, int> progressColors = {
-    Season.recovery: 0xFF7CB9E8,
-  };
+  static const Map<String, int> progressColors = {Season.recovery: 0xFF7CB9E8};
 }
