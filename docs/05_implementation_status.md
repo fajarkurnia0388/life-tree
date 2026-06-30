@@ -11,13 +11,13 @@ Laporan ini menyajikan status pencapaian pengembangan aplikasi **LifeTree** (Per
 ---
 
 ## 1. Ringkasan Status Proyek
-*   **Tanggal Pembaruan:** 29 Juni 2026
+*   **Tanggal Pembaruan:** 30 Juni 2026
 *   **Target Platform:** Windows Desktop, Android, iOS (Cross-Platform)
 *   **Penyimpanan Data:** Offline-First (SQLite Local Database via Drift Generator)
 *   **Versi Skema Database Saat Ini:** `7` (Mendukung target goals, kustomisasi review period, kompas hidup, dan marketplace template lokal)
 *   **Status Analisis & Tes:**
     *   `flutter analyze` → **Lolos 100%** (Bersih dari error, warning, lints)
-    *   `flutter test` → **28/28 Tests Passed** (Unit test: HabitLogService, Low Mood Consecutive, Dashboard Priority, LocalMarketplaceService)
+    *   `flutter test` → **34/34 Tests Passed** (Unit/widget test: Onboarding, Decision, Weekly Pulse, Safety, Profile, HabitLog, Scheduling)
 
 ---
 
@@ -78,7 +78,7 @@ Laporan ini menyajikan status pencapaian pengembangan aplikasi **LifeTree** (Per
 | App Reset (Purge DB) | ✅ SELESAI | 🟡 Implemented | Semua tabel termasuk DecisionEntries dihapus |
 | AXTree Debug Shielding | ✅ SELESAI | 🟡 Implemented | `ExcludeSemantics` kondisional di debug mode |
 | SQLCipher Encryption | ⬜ BACKLOG | ⚪ Backlog | Database saat ini SQLite biasa, belum terenkripsi |
-| userId Query Consistency | ⬜ BACKLOG | ⚪ Backlog | Beberapa query belum filter berdasarkan `userId` aktif |
+| userId Query Consistency | ✅ SELESAI | 🟢 Production-Ready | Semua kueri Drift difilter berdasarkan userId aktif |
 
 ---
 
@@ -86,11 +86,7 @@ Laporan ini menyajikan status pencapaian pengembangan aplikasi **LifeTree** (Per
 
 | Prioritas | Item | Area |
 |---|---|---|
-| 🔴 P1 | Validasi scheduling habit non-daily (3x/week, Weekly, Custom) dengan unit test | `dashboard_provider.dart` |
-| 🔴 P1 | Tambah filter `userId` pada semua query habits & logs | `dashboard_provider.dart` |
-| 🟡 P2 | Refactor `dashboard_view.dart` (~1.900 baris) menjadi sub-widget terpisah | `dashboard/widgets/` |
 | 🟡 P2 | `ExportService` menggunakan `share_plus` ke file nyata | `features/export/` |
-| 🟡 P2 | Domain constants/enum untuk string status literal | `core/domain/` |
 | 🟢 P3 | Tambah `TimeService` / `clockProvider` untuk test deterministik | `core/time/` |
 | 🟢 P3 | SQLCipher encryption database | `data/local_db/` |
 | 🟢 P3 | Frequency cap wellness prompt (maks 1x per 7 hari) | `features/wellness/` |

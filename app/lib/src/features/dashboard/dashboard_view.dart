@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/local_db/database.dart';
 import 'dashboard_provider.dart';
+import 'widgets/domain_insight_dialog.dart';
 import 'widgets/action_of_the_day_card.dart';
 import 'widgets/celebration_card.dart';
 import 'widgets/dev_toolbar_widget.dart';
@@ -88,13 +89,41 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   }
 
   Widget _buildRadarChartCard(DashboardData data) {
+    Map<String, double> scores = {
+      'Tubuh': 5.0,
+      'Keuangan': 5.0,
+      'Hubungan': 5.0,
+      'Emosi': 5.0,
+      'Karir': 5.0,
+      'Rekreasi': 5.0,
+    };
+    if (data.profile.latestDomainScores != null) {
+      try {
+        final Map<String, dynamic> parsed = jsonDecode(data.profile.latestDomainScores!);
+        parsed.forEach((key, value) {
+          final numVal = value as num;
+          if (scores.containsKey(key)) {
+            scores[key] = numVal.toDouble();
+          }
+        });
+      } catch (_) {}
+    }
+
     return DomainScoresCard(
       data: data,
       selectedDomain: _selectedDomainFilter,
       onDomainSelected: (domain) {
-        setState(() {
-          _selectedDomainFilter = (_selectedDomainFilter == domain) ? 'Semua' : domain;
-        });
+        final currentScore = scores[domain] ?? 5.0;
+        DomainInsightDialog.show(
+          context,
+          domain: domain,
+          score: currentScore,
+          onFocusApplied: () {
+            setState(() {
+              _selectedDomainFilter = (_selectedDomainFilter == domain) ? 'Semua' : domain;
+            });
+          },
+        );
       },
     );
   }
