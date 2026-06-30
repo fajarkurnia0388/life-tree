@@ -46,48 +46,51 @@ class GrowthMapLayout {
     final Map<String, Offset> branchPositions = {};
 
     if (selectedDomain != null && branches.isNotEmpty) {
-      // Single-domain close-up layout
+      // Single-domain close-up layout.
+      // The previous radial layout could place the selected domain, the CTA chip,
+      // and the root on top of each other (especially for the top/Emosi domain).
+      // Use a stable vertical composition instead: domain focus at the top,
+      // habit nodes in the middle, root safely below.
       final branch = branches.first;
-      final branchAngles = {
-        'Tubuh': math.pi * 270 / 180,
-        'Keuangan': math.pi * 330 / 180,
-        'Hubungan': math.pi * 30 / 180,
-        'Emosi': math.pi * 90 / 180,
-        'Karir': math.pi * 150 / 180,
-        'Rekreasi': math.pi * 210 / 180,
-      };
-      final angle = branchAngles[selectedDomain] ?? math.pi * 270 / 180;
-      final branchGap = math.min(width * 0.22, height * 0.26);
+      final focusedRootPos = Offset(
+        width / 2,
+        // Put the root center near the bottom edge so only its upper half is
+        // visible in the clipped tree canvas.
+        height * 0.96,
+      );
+      positionedNodes[0] = positionedRoot.copyWith(position: focusedRootPos);
+
       final branchPos = Offset(
-        (rootPos.dx + math.cos(angle) * branchGap).clamp(24.0, width - 24.0),
-        (rootPos.dy - math.sin(angle) * branchGap).clamp(24.0, height - 24.0),
+        width / 2,
+        // Keep the selected domain icon exactly in the visual center.
+        height * 0.60,
       );
       branchPositions[branch.id] = branchPos;
       positionedNodes.add(branch.copyWith(position: branchPos));
 
       final subNodes = subNodesByDomain[branch.id] ?? [];
       final k = subNodes.length;
+      const double horizontalGap = 38.0;
+      const int maxNodesPerRow = 5;
       for (int j = 0; j < k; j++) {
         final node = subNodes[j];
-        final double sectorCenter = angle;
-        final double arcWidth = math.pi * 90 / 180;
-        final double arcStart = sectorCenter - (arcWidth / 2);
-        final double subAngle = k == 1
-            ? sectorCenter
-            : arcStart + (arcWidth / (k - 1)) * j;
-        final subRadiusBase = math.min(width * 0.18, height * 0.20);
-        final subRadius = subRadiusBase + (j * 16.0);
-
-        final subX = (branchPos.dx + math.cos(subAngle) * subRadius).clamp(
-          20.0,
-          width - 20.0,
+        final row = j ~/ maxNodesPerRow;
+        final indexInRow = j % maxNodesPerRow;
+        final nodesInThisRow = math.min(
+          maxNodesPerRow,
+          k - row * maxNodesPerRow,
         );
-        final subY = (branchPos.dy - math.sin(subAngle) * subRadius).clamp(
-          20.0,
-          height - 20.0,
-        );
+        final xOffset = (indexInRow - (nodesInThisRow - 1) / 2) * horizontalGap;
 
-        positionedNodes.add(node.copyWith(position: Offset(subX, subY)));
+        final nodeX = (branchPos.dx + xOffset).clamp(22.0, width - 22.0);
+        final isPlaceholderLeaf =
+            node is LeafNode && node.originalHabit == null;
+        final rawNodeY = isPlaceholderLeaf
+            ? branchPos.dy - 60.0 - row * 28.0
+            : branchPos.dy + 42.0 + row * 28.0;
+        final nodeY = rawNodeY.clamp(22.0, height - 22.0);
+
+        positionedNodes.add(node.copyWith(position: Offset(nodeX, nodeY)));
       }
 
       return positionedNodes;

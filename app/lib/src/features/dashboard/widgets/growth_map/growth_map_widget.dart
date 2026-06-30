@@ -176,10 +176,10 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
 
                   if (node is RootNode) {
                     final rootDiameter = widget.selectedDomain != null
-                        ? 56.0
+                        ? 46.0
                         : 44.0;
                     final iconSize = widget.selectedDomain != null
-                        ? 28.0
+                        ? 22.0
                         : 24.0;
                     return Positioned(
                       left: offset.dx - rootDiameter / 2,
@@ -259,8 +259,8 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                     final isSelectedBranch =
                         widget.selectedDomain != null &&
                         node.id == widget.selectedDomain;
-                    final branchDiameter = isSelectedBranch ? 56.0 : 36.0;
-                    final iconSize = isSelectedBranch ? 26.0 : 18.0;
+                    final branchDiameter = isSelectedBranch ? 46.0 : 36.0;
+                    final iconSize = isSelectedBranch ? 22.0 : 18.0;
                     final isDeficit = node.score < 5.0;
                     final glowColor = isDeficit
                         ? Colors.amber[800]!
@@ -339,32 +339,11 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                                     ],
                                   ),
                                 ),
-                                if (isSelectedBranch) ...[
-                                  const SizedBox(height: 6),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: theme.colorScheme.surface
-                                          .withValues(alpha: 0.92),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: theme.colorScheme.onSurface
-                                            .withValues(alpha: 0.08),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Lihat kebiasaan',
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            color: theme.colorScheme.onSurface,
-                                          ),
-                                    ),
-                                  ),
-                                ],
+                                // Keep the focused map visually clean. The old
+                                // visible "Lihat kebiasaan" chip often collided
+                                // with the root/placeholder nodes on compact
+                                // mobile widths; the node remains tappable and
+                                // accessible through Semantics.
                               ],
                             ),
                           ),
