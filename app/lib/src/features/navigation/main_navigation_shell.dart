@@ -6,6 +6,8 @@ import '../reflection/reflection_dashboard_tab.dart';
 import '../marketplace/marketplace_view.dart';
 import '../profile/profile_dashboard_tab.dart';
 
+final navigationIndexProvider = StateProvider<int>((ref) => 0);
+
 class MainNavigationShell extends ConsumerStatefulWidget {
   const MainNavigationShell({super.key});
 
@@ -14,8 +16,6 @@ class MainNavigationShell extends ConsumerStatefulWidget {
 }
 
 class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
-  int _currentIndex = 0;
-
   final List<Widget> _tabs = const [
     DashboardView(),
     JournalDashboardTab(),
@@ -26,17 +26,17 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex = ref.watch(navigationIndexProvider);
+
     return Scaffold(
       body: IndexedStack(
-        index: _currentIndex,
+        index: currentIndex,
         children: _tabs,
       ),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
+        selectedIndex: currentIndex,
         onDestinationSelected: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          ref.read(navigationIndexProvider.notifier).state = index;
         },
         destinations: const [
           NavigationDestination(

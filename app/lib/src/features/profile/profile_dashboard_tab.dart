@@ -351,6 +351,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
       await db.delete(db.reminderPreferences).go();
       await db.delete(db.wellnessPromptLogs).go();
       await db.delete(db.decisionEntries).go();
+      await db.delete(db.valueDilemmaResponses).go();
     });
 
     ref.invalidate(onboardingCompletedProvider);

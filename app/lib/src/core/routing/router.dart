@@ -10,6 +10,8 @@ import '../../features/habit/add_habit_view.dart';
 import '../../features/marketplace/marketplace_view.dart';
 import '../../features/weekly_pulse/weekly_pulse_view.dart';
 import '../../features/decision_journal/decision_journal_view.dart';
+import '../../features/value_compass/value_mirror_intro_view.dart';
+import '../../features/value_compass/value_mirror_session_view.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refreshListenable = ValueNotifier<AsyncValue<bool>>(const AsyncLoading());
@@ -83,6 +85,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/decision-journal',
         builder: (context, state) => const DecisionJournalView(),
+      ),
+      GoRoute(
+        path: '/value-mirror',
+        builder: (context, state) => const ValueMirrorIntroView(),
+        routes: [
+          GoRoute(
+            path: 'session',
+            builder: (context, state) => const ValueMirrorSessionView(),
+          ),
+        ],
       ),
     ],
   );

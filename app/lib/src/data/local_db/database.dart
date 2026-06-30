@@ -30,6 +30,8 @@ class UserProfiles extends Table {
   TextColumn get coreValues => text().nullable()();
   BoolColumn get isDeveloperMode => boolean().withDefault(const Constant(false))();
   DateTimeColumn get recoveryEndDate => dateTime().nullable()();
+  TextColumn get revealedValueScores => text().nullable()();
+  DateTimeColumn get revealedValueLastUpdatedAt => dateTime().nullable()();
 
   @override
   Set<Column> get primaryKey => {userId};
@@ -234,6 +236,21 @@ class MarketplaceTemplates extends Table {
   Set<Column> get primaryKey => {templateId};
 }
 
+@DataClassName('ValueDilemmaResponse')
+class ValueDilemmaResponses extends Table {
+  TextColumn get responseId => text()();
+  TextColumn get userId => text()();
+  TextColumn get dilemmaKey => text()();
+  TextColumn get chosenValueTag => text().nullable()();
+  TextColumn get chosenOptionLabel => text().nullable()();
+  TextColumn get openTextResponse => text().nullable()();
+  DateTimeColumn get answeredAt => dateTime()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {responseId};
+}
+
 @DriftDatabase(tables: [
   UserProfiles,
   LifeAudits,
@@ -246,7 +263,8 @@ class MarketplaceTemplates extends Table {
   ReminderPreferences,
   WellnessPromptLogs,
   DecisionEntries,
-  MarketplaceTemplates
+  MarketplaceTemplates,
+  ValueDilemmaResponses
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -265,7 +283,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -285,6 +303,7 @@ class AppDatabase extends _$AppDatabase {
           await customStatement('CREATE INDEX IF NOT EXISTS idx_wellness_prompt_log_cap ON wellness_prompt_logs (user_id, prompted_at DESC);');
           await customStatement('CREATE INDEX IF NOT EXISTS idx_consent_log_check ON consent_logs (user_id, consent_type);');
           await customStatement('CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);');
+          await customStatement('CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC);');
         },
         onUpgrade: (m, from, to) async {
           if (from < 2) {
@@ -316,6 +335,12 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 7) {
             await m.createTable(marketplaceTemplates);
+          }
+          if (from < 8) {
+            await m.createTable(valueDilemmaResponses);
+            await m.addColumn(userProfiles, userProfiles.revealedValueScores);
+            await m.addColumn(userProfiles, userProfiles.revealedValueLastUpdatedAt);
+            await customStatement('CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC);');
           }
         },
       );

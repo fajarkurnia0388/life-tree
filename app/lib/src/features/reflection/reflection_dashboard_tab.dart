@@ -11,6 +11,13 @@ class ReflectionDashboardTab extends StatelessWidget {
 
     final List<Map<String, dynamic>> reflectionFeatures = [
       {
+        'title': 'Cermin Nilai 🪞',
+        'desc': 'Jawab dilema ringan untuk melihat nilai apa yang sebenarnya kamu pegang lewat pilihan kecilmu.',
+        'route': '/value-mirror',
+        'icon': Icons.balance_rounded,
+        'color': CalmTheme.secondaryBlue,
+      },
+      {
         'title': 'Weekly Pulse 📈',
         'desc': 'Evaluasi berkala 2 mingguan untuk meninjau kembali keseimbangan hidup Anda di seluruh domain.',
         'route': '/weekly-pulse',
