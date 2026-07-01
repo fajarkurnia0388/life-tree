@@ -25,9 +25,24 @@ class MorphologicalTemplate {
       category: 'Bisnis',
       isPremium: false,
       dimensions: {
-        'Platform': ['Mobile App', 'SaaS Web', 'Chrome Extension', 'Telegram Bot'],
-        'Model Bisnis': ['Freemium', 'Langganan Bulanan', 'Sponsor Iklan', 'Pay-per-use'],
-        'Target Pasar': ['B2B Korporat', 'Pelajar Gen Z', 'Kreator Konten', 'UMKM Lokal'],
+        'Platform': [
+          'Mobile App',
+          'SaaS Web',
+          'Chrome Extension',
+          'Telegram Bot',
+        ],
+        'Model Bisnis': [
+          'Freemium',
+          'Langganan Bulanan',
+          'Sponsor Iklan',
+          'Pay-per-use',
+        ],
+        'Target Pasar': [
+          'B2B Korporat',
+          'Pelajar Gen Z',
+          'Kreator Konten',
+          'UMKM Lokal',
+        ],
       },
     ),
     MorphologicalTemplate(
@@ -36,9 +51,24 @@ class MorphologicalTemplate {
       category: 'Fisik',
       isPremium: false,
       dimensions: {
-        'Kategori': ['Kemasan Makanan', 'Peralatan Dapur', 'Alat Tulis', 'Dekorasi Rumah'],
-        'Bahan Organik': ['Bambu Serat', 'Pelepah Pisang', 'Karton Daur Ulang', 'Misilium Jamur'],
-        'Distribusi': ['Shopify DTC', 'Pasar Tani Lokal', 'Grosir B2B', 'Langganan Box'],
+        'Kategori': [
+          'Kemasan Makanan',
+          'Peralatan Dapur',
+          'Alat Tulis',
+          'Dekorasi Rumah',
+        ],
+        'Bahan Organik': [
+          'Bambu Serat',
+          'Pelepah Pisang',
+          'Karton Daur Ulang',
+          'Misilium Jamur',
+        ],
+        'Distribusi': [
+          'Shopify DTC',
+          'Pasar Tani Lokal',
+          'Grosir B2B',
+          'Langganan Box',
+        ],
       },
     ),
     MorphologicalTemplate(
@@ -48,8 +78,18 @@ class MorphologicalTemplate {
       isPremium: true,
       dimensions: {
         'Genre': ['Roguelike', 'Cozy Puzzle', 'Deckbuilder', 'Metroidvania'],
-        'Gaya Visual': ['Pixel Art Retro', 'Low Poly 3D', 'Hand-drawn 2D', 'Teks Naratif'],
-        'Mekanik Kunci': ['Time Loop', 'Peningkatan Gravitasi', 'Memasak Kuliner', 'Card Battler'],
+        'Gaya Visual': [
+          'Pixel Art Retro',
+          'Low Poly 3D',
+          'Hand-drawn 2D',
+          'Teks Naratif',
+        ],
+        'Mekanik Kunci': [
+          'Time Loop',
+          'Peningkatan Gravitasi',
+          'Memasak Kuliner',
+          'Card Battler',
+        ],
       },
     ),
     MorphologicalTemplate(
@@ -58,9 +98,24 @@ class MorphologicalTemplate {
       category: 'F&B',
       isPremium: true,
       dimensions: {
-        'Jenis Kuliner': ['Mie Nusantara', 'Pastry Manis', 'Kopi Susu', 'Camilan Sehat'],
-        'Bahan Utama': ['Tepung Singkong', 'Susu Gandum (Oat)', 'Gula Aren Organik', 'Matcha Uji'],
-        'Konsep Saji': ['Drive-Thru Kontainer', 'Fine Dining Santai', 'Kemasan Bento Keranjang', 'Dapur Bersama'],
+        'Jenis Kuliner': [
+          'Mie Nusantara',
+          'Pastry Manis',
+          'Kopi Susu',
+          'Camilan Sehat',
+        ],
+        'Bahan Utama': [
+          'Tepung Singkong',
+          'Susu Gandum (Oat)',
+          'Gula Aren Organik',
+          'Matcha Uji',
+        ],
+        'Konsep Saji': [
+          'Drive-Thru Kontainer',
+          'Fine Dining Santai',
+          'Kemasan Bento Keranjang',
+          'Dapur Bersama',
+        ],
       },
     ),
     MorphologicalTemplate(
@@ -69,9 +124,24 @@ class MorphologicalTemplate {
       category: 'Sosial',
       isPremium: true,
       dimensions: {
-        'Media': ['Video TikTok Pendek', 'Podcast Dialog', 'Infografis Instagram', 'Zine Cetak Mini'],
-        'Target Usia': ['Anak SD-SMP', 'Remaja SMA', 'Keluarga Muda', 'Lansia Aktif'],
-        'Topik Utama': ['Kesehatan Mental', 'Literasi Keuangan', 'Peduli Sampah Plastik', 'Gizi Sehat Stunting'],
+        'Media': [
+          'Video TikTok Pendek',
+          'Podcast Dialog',
+          'Infografis Instagram',
+          'Zine Cetak Mini',
+        ],
+        'Target Usia': [
+          'Anak SD-SMP',
+          'Remaja SMA',
+          'Keluarga Muda',
+          'Lansia Aktif',
+        ],
+        'Topik Utama': [
+          'Kesehatan Mental',
+          'Literasi Keuangan',
+          'Peduli Sampah Plastik',
+          'Gizi Sehat Stunting',
+        ],
       },
     ),
   ];
@@ -168,7 +238,8 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
 
       final int spinCycles = 24 + (i * 12);
       final int baseTarget = currentItem + spinCycles;
-      final int remainderDiff = (targetItem - (baseTarget % opts.length) + opts.length) % opts.length;
+      final int remainderDiff =
+          (targetItem - (baseTarget % opts.length) + opts.length) % opts.length;
       final int targetIndex = baseTarget + remainderDiff;
 
       _controllers[dim]!.animateToItem(
@@ -178,7 +249,9 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
       );
     }
 
-    await Future.delayed(Duration(milliseconds: 1800 + (_dimensions.length - 1) * 600));
+    await Future.delayed(
+      Duration(milliseconds: 1800 + (_dimensions.length - 1) * 600),
+    );
 
     if (mounted) {
       setState(() {
@@ -195,12 +268,11 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text('Tambah Opsi di "$dimension"'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
+          title: Text('Tambah Opsi di "$dimension"'),
+          content: TextField(controller: controller, autofocus: true),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -230,7 +302,9 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: const Text('Tambah Dimensi Baru'),
           content: TextField(controller: controller, autofocus: true),
           actions: [
@@ -271,7 +345,12 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
             color: theme.colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          padding: const EdgeInsets.only(top: 16, bottom: 24, left: 16, right: 16),
+          padding: const EdgeInsets.only(
+            top: 16,
+            bottom: 24,
+            left: 16,
+            right: 16,
+          ),
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height * 0.75,
           ),
@@ -306,29 +385,50 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.08,
+                          ),
                         ),
                       ),
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(12),
                         title: Row(
                           children: [
-                            Text(t.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            Text(
+                              t.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
                             const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                                color: theme.colorScheme.primary.withValues(
+                                  alpha: 0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 t.category,
-                                style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.primary,
+                                ),
                               ),
                             ),
                             if (t.isPremium) ...[
                               const SizedBox(width: 8),
-                              const Icon(Icons.star_rounded, color: Colors.amber, size: 14),
+                              const Icon(
+                                Icons.star_rounded,
+                                color: Colors.amber,
+                                size: 14,
+                              ),
                             ],
                           ],
                         ),
@@ -336,20 +436,33 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 4),
-                            Text(t.description, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                            Text(
+                              t.description,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey,
+                              ),
+                            ),
                             const SizedBox(height: 8),
                             Wrap(
                               spacing: 4,
                               children: t.dimensions.keys.map((k) {
                                 return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.04),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
                                     k,
-                                    style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 );
                               }).toList(),
@@ -380,7 +493,9 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Template "${t.title}" berhasil diterapkan!'),
+                              content: Text(
+                                'Template "${t.title}" berhasil diterapkan!',
+                              ),
                               backgroundColor: theme.colorScheme.primary,
                             ),
                           );
@@ -416,7 +531,10 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                 TextButton.icon(
                   onPressed: _showTemplateMarketplace,
                   icon: const Icon(Icons.storefront_rounded, size: 16),
-                  label: const Text('Marketplace', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                  label: const Text(
+                    'Marketplace',
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline_rounded),
@@ -432,7 +550,10 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
           decoration: BoxDecoration(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.08), width: 1.5),
+            border: Border.all(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+              width: 1.5,
+            ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
           child: Row(
@@ -462,9 +583,18 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                           color: Colors.black87,
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: const [
-                            BoxShadow(color: Colors.black45, blurRadius: 4, offset: Offset(0, 2)),
+                            BoxShadow(
+                              color: Colors.black45,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
                           ],
-                          border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.4), width: 1.5),
+                          border: Border.all(
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.4,
+                            ),
+                            width: 1.5,
+                          ),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
@@ -476,39 +606,51 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                                   controller: controller,
                                   itemExtent: 32,
                                   physics: const FixedExtentScrollPhysics(),
-                                  childDelegate: ListWheelChildLoopingListDelegate(
-                                    children: opts.map((opt) {
-                                      return Center(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                          child: Text(
-                                            opt,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                                  childDelegate:
+                                      ListWheelChildLoopingListDelegate(
+                                        children: opts.map((opt) {
+                                          return Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 4.0,
+                                                  ),
+                                              child: Text(
+                                                opt,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
+                                          );
+                                        }).toList(),
+                                      ),
                                 )
                               else
                                 const Center(
-                                  child: Text('Kosong', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                                  child: Text(
+                                    'Kosong',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                                 ),
                               IgnorePointer(
                                 child: Center(
                                   child: Container(
                                     height: 32,
                                     decoration: BoxDecoration(
-                                      color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                                      color: theme.colorScheme.primary
+                                          .withValues(alpha: 0.15),
                                       border: Border.symmetric(
                                         horizontal: BorderSide(
-                                          color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                                          color: theme.colorScheme.primary
+                                              .withValues(alpha: 0.7),
                                           width: 1.5,
                                         ),
                                       ),
@@ -527,7 +669,10 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                                       gradient: LinearGradient(
                                         begin: Alignment.topCenter,
                                         end: Alignment.bottomCenter,
-                                        colors: [Colors.black, Colors.transparent],
+                                        colors: [
+                                          Colors.black,
+                                          Colors.transparent,
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -544,7 +689,10 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                                       gradient: LinearGradient(
                                         begin: Alignment.bottomCenter,
                                         end: Alignment.topCenter,
-                                        colors: [Colors.black, Colors.transparent],
+                                        colors: [
+                                          Colors.black,
+                                          Colors.transparent,
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -564,13 +712,17 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
         const SizedBox(height: 12),
         ElevatedButton.icon(
           onPressed: _isSpinning ? null : _spinCombinations,
-          icon: Icon(_isSpinning ? Icons.refresh_rounded : Icons.casino_rounded),
+          icon: Icon(
+            _isSpinning ? Icons.refresh_rounded : Icons.casino_rounded,
+          ),
           label: Text(_isSpinning ? 'Sedang Memutar...' : 'Putar Dadu Acak 🎲'),
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: theme.colorScheme.onPrimary,
             minimumSize: const Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             elevation: 4,
           ),
         ),
@@ -582,7 +734,10 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
               Expanded(
                 child: Text(
                   '$dim (${list.length} opsi)',
-                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               TextButton(

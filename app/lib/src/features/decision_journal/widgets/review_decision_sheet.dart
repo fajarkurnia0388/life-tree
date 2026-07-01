@@ -30,18 +30,21 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
     final db = ref.read(dbProvider);
 
     try {
-      await (db.update(db.decisionEntries)..where((tbl) => tbl.decisionId.equals(widget.decision.decisionId)))
+      await (db.update(db.decisionEntries)
+            ..where((tbl) => tbl.decisionId.equals(widget.decision.decisionId)))
           .write(
-        DecisionEntriesCompanion(
-          isReviewed: const drift.Value(true),
-          reviewReflection: drift.Value(_reflectionController.text.trim()),
-        ),
-      );
+            DecisionEntriesCompanion(
+              isReviewed: const drift.Value(true),
+              reviewReflection: drift.Value(_reflectionController.text.trim()),
+            ),
+          );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Review keputusan berhasil disimpan! Terima kasih telah berefleksi.'),
+            content: Text(
+              'Review keputusan berhasil disimpan! Terima kasih telah berefleksi.',
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -50,7 +53,10 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menyimpan review: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Gagal menyimpan review: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -110,7 +116,10 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
                     children: [
                       const Text(
                         'Review Hasil Keputusan 📝',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                       IconButton(
                         onPressed: () => Navigator.pop(context),
@@ -122,35 +131,58 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
                   const SizedBox(height: 8),
                   Text(
                     widget.decision.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     widget.decision.description,
-                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   if (options.length >= 2) ...[
-                    Text('Pilihan: Opsi A (${options[0]}) vs Opsi B (${options[1]})', style: const TextStyle(fontSize: 11)),
+                    Text(
+                      'Pilihan: Opsi A (${options[0]}) vs Opsi B (${options[1]})',
+                      style: const TextStyle(fontSize: 11),
+                    ),
                   ],
                   const SizedBox(height: 12),
                   if (assumptions.isNotEmpty) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.03),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.03,
+                        ),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.06)),
+                        border: Border.all(
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.06,
+                          ),
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
                             'Ingat kembali asumsi awal Anda:',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
                           ),
                           const SizedBox(height: 6),
-                          ...assumptions.map((asm) => Text('• $asm', style: const TextStyle(fontSize: 11))),
+                          ...assumptions.map(
+                            (asm) => Text(
+                              '• $asm',
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -158,7 +190,10 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
                   ],
                   Text(
                     'Ekspektasi awal: "${widget.decision.expectations}"',
-                    style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -166,10 +201,15 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
                     maxLines: 4,
                     decoration: InputDecoration(
                       labelText: 'Refleksi Nyata (Setelah 90 Hari)',
-                      hintText: 'Bagaimana realitas sebenarnya? Apakah asumsi awal Anda terbukti benar? Opsi mana yang akhirnya Anda pilih, dan apakah ekspektasi Anda tercapai?',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      hintText:
+                          'Bagaimana realitas sebenarnya? Apakah asumsi awal Anda terbukti benar? Opsi mana yang akhirnya Anda pilih, dan apakah ekspektasi Anda tercapai?',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    validator: (v) => v == null || v.trim().isEmpty ? 'Harap isi catatan refleksi hasil nyata' : null,
+                    validator: (v) => v == null || v.trim().isEmpty
+                        ? 'Harap isi catatan refleksi hasil nyata'
+                        : null,
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
@@ -178,13 +218,18 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
                       backgroundColor: theme.colorScheme.primary,
                       foregroundColor: theme.colorScheme.onPrimary,
                       minimumSize: const Size(88, 52),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: _isSaving
                         ? const CircularProgressIndicator(color: Colors.white)
                         : const Text(
                             'Simpan & Selesaikan Peninjauan',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                   ),
                   const SizedBox(height: 16),

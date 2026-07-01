@@ -30,7 +30,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
     'Saya merasa tenang dan rileks',
     'Saya merasa aktif dan penuh vitalitas',
     'Saya bangun tidur dengan perasaan segar dan istirahat yang cukup',
-    'Kehidupan sehari-hari saya dipenuhi dengan hal-hal yang menarik bagi saya'
+    'Kehidupan sehari-hari saya dipenuhi dengan hal-hal yang menarik bagi saya',
   ];
 
   final List<Map<String, dynamic>> _options = [
@@ -65,7 +65,9 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
       final userId = profiles.first.userId;
 
       // 1. Calculate WHO-5 scores
-      final totalRawScore = _answers.reduce((value, element) => value! + element!)!;
+      final totalRawScore = _answers.reduce(
+        (value, element) => value! + element!,
+      )!;
       // Map 0-25 range to SQLite 1-10 range for score column constraint
       final mappedScore = (totalRawScore / 2.5).round().clamp(1, 10);
       final percentage = totalRawScore * 4; // 0-100%
@@ -81,21 +83,33 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
       // 3. Write into database
       final now = DateTime.now();
       final mondayOffset = now.weekday - DateTime.monday;
-      final weekStartDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: mondayOffset));
+      final weekStartDate = DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).subtract(Duration(days: mondayOffset));
 
-      final existing = await (db.select(db.weeklyPulses)
-            ..where((tbl) => tbl.userId.equals(userId) & tbl.weekStartDate.equals(weekStartDate)))
-          .get();
+      final existing =
+          await (db.select(db.weeklyPulses)..where(
+                (tbl) =>
+                    tbl.userId.equals(userId) &
+                    tbl.weekStartDate.equals(weekStartDate),
+              ))
+              .get();
 
       if (existing.isNotEmpty) {
-        await (db.update(db.weeklyPulses)
-              ..where((tbl) => tbl.pulseId.equals(existing.first.pulseId)))
-            .write(WeeklyPulsesCompanion(
-              score: drift.Value(mappedScore),
-              reflectionText: drift.Value(jsonEncode(metadata)),
-            ));
+        await (db.update(
+          db.weeklyPulses,
+        )..where((tbl) => tbl.pulseId.equals(existing.first.pulseId))).write(
+          WeeklyPulsesCompanion(
+            score: drift.Value(mappedScore),
+            reflectionText: drift.Value(jsonEncode(metadata)),
+          ),
+        );
       } else {
-        await db.into(db.weeklyPulses).insert(
+        await db
+            .into(db.weeklyPulses)
+            .insert(
               WeeklyPulsesCompanion.insert(
                 pulseId: const Uuid().v4(),
                 userId: userId,
@@ -122,12 +136,14 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
         }
       }
       domainScores['Emosi'] = mappedScore.toDouble();
-      await (db.update(db.userProfiles)
-            ..where((tbl) => tbl.userId.equals(userId)))
-          .write(UserProfilesCompanion(
-            latestDomainScores: drift.Value(jsonEncode(domainScores)),
-            updatedAt: drift.Value(now),
-          ));
+      await (db.update(
+        db.userProfiles,
+      )..where((tbl) => tbl.userId.equals(userId))).write(
+        UserProfilesCompanion(
+          latestDomainScores: drift.Value(jsonEncode(domainScores)),
+          updatedAt: drift.Value(now),
+        ),
+      );
 
       ref.invalidate(dashboardDataProvider);
 
@@ -137,7 +153,9 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
         if (isLowMood) {
           final profiles = await db.select(db.userProfiles).get();
           if (profiles.isNotEmpty) {
-            await db.into(db.wellnessPromptLogs).insert(
+            await db
+                .into(db.wellnessPromptLogs)
+                .insert(
                   WellnessPromptLogsCompanion.insert(
                     promptId: const Uuid().v4(),
                     userId: profiles.first.userId,
@@ -153,7 +171,9 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
           barrierDismissible: false,
           builder: (context) {
             return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               title: Text(isLowMood ? 'Refleksi Diri 🌱' : 'Luar Biasa! ✨'),
               content: Text(
                 isLowMood
@@ -167,7 +187,9 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                     context.go('/'); // Back to dashboard
                   },
                   style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   child: const Text('Kembali ke Dashboard'),
                 ),
@@ -212,7 +234,9 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
             color: theme.colorScheme.primaryContainer.withValues(alpha: 0.1),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+              side: BorderSide(
+                color: theme.colorScheme.primary.withValues(alpha: 0.2),
+              ),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -223,7 +247,12 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                   Expanded(
                     child: Text(
                       'Jawablah sejujur mungkin berdasarkan apa yang Anda rasakan selama 2 minggu terakhir.',
-                      style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.7,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -249,7 +278,10 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                     const SizedBox(height: 8),
                     Text(
                       _questions[qIndex],
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                     const Divider(height: 32),
                     Expanded(
@@ -258,35 +290,57 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                         children: _options.map((opt) {
                           final isSelected = _answers[qIndex] == opt['value'];
                           return Card(
-                            color: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.08) : Colors.transparent,
+                            color: isSelected
+                                ? theme.colorScheme.primary.withValues(
+                                    alpha: 0.08,
+                                  )
+                                : Colors.transparent,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                               side: BorderSide(
-                                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.15),
+                                color: isSelected
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.onSurface.withValues(
+                                        alpha: 0.15,
+                                      ),
                                 width: isSelected ? 2 : 1,
                               ),
                             ),
                             margin: const EdgeInsets.only(bottom: 12),
                             child: ListTile(
                               leading: Icon(
-                                isSelected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
-                                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                                isSelected
+                                    ? Icons.radio_button_checked_rounded
+                                    : Icons.radio_button_off_rounded,
+                                color: isSelected
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.onSurface.withValues(
+                                        alpha: 0.4,
+                                      ),
                               ),
-                              title: Text(opt['label'] as String, style: const TextStyle(fontSize: 14)),
+                              title: Text(
+                                opt['label'] as String,
+                                style: const TextStyle(fontSize: 14),
+                              ),
                               onTap: () {
                                 setState(() {
                                   _answers[qIndex] = opt['value'] as int?;
                                 });
                                 // Auto advance after 300ms for smooth transition
-                                Future.delayed(const Duration(milliseconds: 300), () {
-                                  if (mounted && _currentStep == qIndex) {
-                                    _pageController.nextPage(
-                                      duration: const Duration(milliseconds: 250),
-                                      curve: Curves.easeInOut,
-                                    );
-                                  }
-                                });
+                                Future.delayed(
+                                  const Duration(milliseconds: 300),
+                                  () {
+                                    if (mounted && _currentStep == qIndex) {
+                                      _pageController.nextPage(
+                                        duration: const Duration(
+                                          milliseconds: 250,
+                                        ),
+                                        curve: Curves.easeInOut,
+                                      );
+                                    }
+                                  },
+                                );
                               },
                             ),
                           );
@@ -320,7 +374,10 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
               const SizedBox(height: 12),
               Text(
                 'Tuliskan catatan refleksi mingguan Anda, hambatan terbesar Anda, atau hal yang paling disyukuri minggu ini.',
-                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
               ),
               const SizedBox(height: 16),
               Expanded(
@@ -329,7 +386,9 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                   maxLines: 8,
                   decoration: InputDecoration(
                     hintText: 'Tulis refleksi Anda di sini...',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
                 ),
               ),
@@ -348,9 +407,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
     final canGoNext = _currentStep < 5 ? _answers[_currentStep] != null : true;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Weekly Pulse Check'),
-      ),
+      appBar: AppBar(title: const Text('Weekly Pulse Check')),
       body: _isSaving
           ? const Center(
               child: Column(
@@ -367,14 +424,20 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                 // Progress Bar
                 LinearProgressIndicator(
                   value: (_currentStep + 1) / totalSteps,
-                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                  backgroundColor: theme.colorScheme.primary.withValues(
+                    alpha: 0.1,
+                  ),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    theme.colorScheme.primary,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     'Langkah ${_currentStep + 1} dari $totalSteps',
-                    style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 // Stepper PageView
@@ -407,7 +470,9 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                           ),
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size(100, 48),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                           child: const Text('Kembali'),
                         )
@@ -430,7 +495,9 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                           backgroundColor: theme.colorScheme.primary,
                           foregroundColor: theme.colorScheme.onPrimary,
                           minimumSize: const Size(100, 48),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                         child: Text(isLastStep ? 'Kirim' : 'Lanjut'),
                       ),

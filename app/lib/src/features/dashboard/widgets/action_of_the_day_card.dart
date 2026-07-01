@@ -42,7 +42,10 @@ class ActionOfTheDayCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: domainColor,
                     borderRadius: BorderRadius.circular(8),
@@ -50,11 +53,20 @@ class ActionOfTheDayCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.star_rounded, color: Colors.white, size: 16),
+                      const Icon(
+                        Icons.star_rounded,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                       const SizedBox(width: 6),
                       const Text(
                         'ACTION OF THE DAY',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 1),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 1,
+                        ),
                       ),
                     ],
                   ),
@@ -62,14 +74,21 @@ class ActionOfTheDayCard extends StatelessWidget {
                 if (isRecovery) ...[
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.blueGrey,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Text(
                       '⏸ DIJEDA',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -78,17 +97,17 @@ class ActionOfTheDayCard extends StatelessWidget {
                   onPressed: () => _showWhyDialog(context, domainColor),
                   icon: Icon(Icons.info_outline, color: domainColor),
                   iconSize: 20,
-                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  constraints: const BoxConstraints(
+                    minWidth: 44,
+                    minHeight: 44,
+                  ),
                   padding: EdgeInsets.zero,
                   tooltip: 'Mengapa kebiasaan ini dipilih',
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              habit.title,
-              style: theme.textTheme.headlineMedium,
-            ),
+            Text(habit.title, style: theme.textTheme.headlineMedium),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -101,7 +120,10 @@ class ActionOfTheDayCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Beban: ${habit.initiationFriction + habit.energyCost} Poin',
-                  style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
                 ),
               ],
             ),
@@ -115,7 +137,9 @@ class ActionOfTheDayCard extends StatelessWidget {
                       backgroundColor: domainColor,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(88, 48),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Text('Tandai Selesai'),
                   ),
@@ -125,10 +149,15 @@ class ActionOfTheDayCard extends StatelessWidget {
                   onPressed: isRecovery ? null : onNotCapablePressed,
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(88, 48),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     side: const BorderSide(color: Colors.redAccent, width: 1),
                   ),
-                  child: const Text('Tidak Sanggup', style: TextStyle(color: Colors.redAccent)),
+                  child: const Text(
+                    'Tidak Sanggup',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
                 ),
               ],
             ),
@@ -138,15 +167,10 @@ class ActionOfTheDayCard extends StatelessWidget {
     );
 
     if (isRecovery) {
-      return Opacity(
-        opacity: 0.55,
-        child: card,
-      );
+      return Opacity(opacity: 0.55, child: card);
     }
     return card;
   }
-
-
 
   /// Parses the user's latest domain scores safely and returns the score
   /// for the given domain. Defaults to 5.0 when missing or unparseable.
@@ -174,7 +198,8 @@ class ActionOfTheDayCard extends StatelessWidget {
     final domainScore = _domainScoreFor(domain);
     final domainDeficit = 10.0 - domainScore;
     final load = habit.initiationFriction + habit.energyCost;
-    final priority = (domainDeficit * habit.impactScore) / (load > 0 ? load : 1);
+    final priority =
+        (domainDeficit * habit.impactScore) / (load > 0 ? load : 1);
 
     final domainScoreText = domainScore == domainScore.roundToDouble()
         ? domainScore.toStringAsFixed(0)
@@ -226,13 +251,20 @@ class ActionOfTheDayCard extends StatelessWidget {
 
   String _getDomainEmoji(String domain) {
     switch (domain) {
-      case 'Tubuh': return '🏃';
-      case 'Keuangan': return '💰';
-      case 'Hubungan': return '🤝';
-      case 'Emosi': return '🧠';
-      case 'Karir': return '📚';
-      case 'Rekreasi': return '🎮';
-      default: return '🌱';
+      case 'Tubuh':
+        return '🏃';
+      case 'Keuangan':
+        return '💰';
+      case 'Hubungan':
+        return '🤝';
+      case 'Emosi':
+        return '🧠';
+      case 'Karir':
+        return '📚';
+      case 'Rekreasi':
+        return '🎮';
+      default:
+        return '🌱';
     }
   }
 }

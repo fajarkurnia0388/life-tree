@@ -41,7 +41,9 @@ class LifeCompassSection extends StatelessWidget {
     Map<String, int> revealedScores = {};
     if (profile.revealedValueScores != null) {
       try {
-        final Map<String, dynamic> raw = jsonDecode(profile.revealedValueScores!);
+        final Map<String, dynamic> raw = jsonDecode(
+          profile.revealedValueScores!,
+        );
         raw.forEach((key, val) {
           revealedScores[key] = val as int;
           totalResponses += revealedScores[key]!;
@@ -85,7 +87,9 @@ class LifeCompassSection extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text(
                   'Kompas Hidup 🧭',
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -115,7 +119,10 @@ class LifeCompassSection extends StatelessWidget {
                   icon: const Icon(Icons.edit_rounded, size: 14),
                   label: const Text('Edit', style: TextStyle(fontSize: 12)),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -141,11 +148,18 @@ class LifeCompassSection extends StatelessWidget {
                 runSpacing: 8,
                 children: declaredValues.map((v) {
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.15)),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withValues(
+                          alpha: 0.15,
+                        ),
+                      ),
                     ),
                     child: Text(
                       v,
@@ -160,7 +174,10 @@ class LifeCompassSection extends StatelessWidget {
               ),
 
             const SizedBox(height: 20),
-            Divider(height: 1, color: theme.colorScheme.onSurface.withValues(alpha: 0.08)),
+            Divider(
+              height: 1,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+            ),
             const SizedBox(height: 16),
 
             // --- Sub-blok: Versi Tersirat ---
@@ -190,7 +207,9 @@ class LifeCompassSection extends StatelessWidget {
                     label: const Text('Mulai Cermin Nilai 🪞'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ],
@@ -201,11 +220,18 @@ class LifeCompassSection extends StatelessWidget {
                 runSpacing: 8,
                 children: revealedValues.map((v) {
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color: Colors.teal.withValues(alpha: isDark ? 0.12 : 0.06),
+                      color: Colors.teal.withValues(
+                        alpha: isDark ? 0.12 : 0.06,
+                      ),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.teal.withValues(alpha: 0.25)),
+                      border: Border.all(
+                        color: Colors.teal.withValues(alpha: 0.25),
+                      ),
                     ),
                     child: Text(
                       v,
@@ -246,7 +272,9 @@ class LifeCompassSection extends StatelessWidget {
                 label: const Text('Lihat Perbandingan 🪞'),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   side: const BorderSide(color: Colors.teal),
                   foregroundColor: Colors.teal,
                 ),

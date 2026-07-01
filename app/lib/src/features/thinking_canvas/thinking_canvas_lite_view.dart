@@ -23,10 +23,12 @@ class ThinkingCanvasLiteView extends ConsumerStatefulWidget {
   const ThinkingCanvasLiteView({super.key});
 
   @override
-  ConsumerState<ThinkingCanvasLiteView> createState() => _ThinkingCanvasLiteViewState();
+  ConsumerState<ThinkingCanvasLiteView> createState() =>
+      _ThinkingCanvasLiteViewState();
 }
 
-class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView> {
+class _ThinkingCanvasLiteViewState
+    extends ConsumerState<ThinkingCanvasLiteView> {
   final _formKey = GlobalKey<FormState>();
   final _topicController = TextEditingController();
   final _summaryController = TextEditingController();
@@ -59,13 +61,17 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
     }
     _scoringItems.clear();
 
-    final method = ThinkingMethod.allMethods.firstWhere((m) => m.key == methodKey);
-    
-    if (method.template == WorkspaceTemplate.multiColumn && method.columns != null) {
+    final method = ThinkingMethod.allMethods.firstWhere(
+      (m) => m.key == methodKey,
+    );
+
+    if (method.template == WorkspaceTemplate.multiColumn &&
+        method.columns != null) {
       for (final col in method.columns!) {
         _dynamicControllers[col] = TextEditingController();
       }
-    } else if (method.template == WorkspaceTemplate.sequential && method.stepLabels != null) {
+    } else if (method.template == WorkspaceTemplate.sequential &&
+        method.stepLabels != null) {
       for (final step in method.stepLabels!) {
         _dynamicControllers[step] = TextEditingController();
       }
@@ -101,7 +107,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
   }
 
   Widget _buildMethodGuidelineCard(ThemeData theme) {
-    final method = ThinkingMethod.allMethods.firstWhere((m) => m.key == _selectedMethod);
+    final method = ThinkingMethod.allMethods.firstWhere(
+      (m) => m.key == _selectedMethod,
+    );
     final steps = method.steps;
     final format = method.format;
 
@@ -112,10 +120,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
         color: theme.colorScheme.primaryContainer.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
         border: Border(
-          left: BorderSide(
-            color: theme.colorScheme.primary,
-            width: 4,
-          ),
+          left: BorderSide(color: theme.colorScheme.primary, width: 4),
         ),
       ),
       child: Column(
@@ -123,7 +128,11 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb_outline_rounded, color: theme.colorScheme.primary, size: 20),
+              Icon(
+                Icons.lightbulb_outline_rounded,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               const Text(
                 'Panduan Coretan Kertas Fisik',
@@ -162,7 +171,11 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
           const Divider(height: 16),
           const Text(
             'Rekomendasi Format Kertas:',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.grey),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+              color: Colors.grey,
+            ),
           ),
           const SizedBox(height: 4),
           Container(
@@ -171,7 +184,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
             decoration: BoxDecoration(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.08)),
+              border: Border.all(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+              ),
             ),
             child: Text(
               format,
@@ -190,11 +205,17 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.12)),
+              border: Border.all(
+                color: theme.colorScheme.primary.withValues(alpha: 0.12),
+              ),
             ),
             child: Row(
               children: [
-                Icon(Icons.timer_outlined, color: theme.colorScheme.primary, size: 20),
+                Icon(
+                  Icons.timer_outlined,
+                  color: theme.colorScheme.primary,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 const Text(
                   'Timer Sesi:',
@@ -213,13 +234,13 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 if (!_canvasTimerActive)
                   DropdownButton<int>(
                     value: _canvasSelectedMinutes,
-                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.onSurface,
+                    ),
                     underline: const SizedBox(),
                     items: [1, 2, 3, 5, 7, 10, 15].map((m) {
-                      return DropdownMenuItem(
-                        value: m,
-                        child: Text('$m mnt'),
-                      );
+                      return DropdownMenuItem(value: m, child: Text('$m mnt'));
                     }).toList(),
                     onChanged: (val) {
                       if (val != null) {
@@ -230,12 +251,17 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 const SizedBox(width: 8),
                 IconButton(
                   icon: Icon(
-                    _canvasTimerActive ? Icons.pause_circle_filled_rounded : Icons.play_circle_filled_rounded,
+                    _canvasTimerActive
+                        ? Icons.pause_circle_filled_rounded
+                        : Icons.play_circle_filled_rounded,
                     color: theme.colorScheme.primary,
                     size: 28,
                   ),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  constraints: const BoxConstraints(
+                    minWidth: 44,
+                    minHeight: 44,
+                  ),
                   onPressed: () {
                     if (_canvasTimerActive) {
                       _pauseCanvasTimer();
@@ -244,12 +270,16 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                     }
                   },
                 ),
-                if (!_canvasTimerActive && _canvasSecondsRemaining != _canvasSelectedMinutes * 60) ...[
+                if (!_canvasTimerActive &&
+                    _canvasSecondsRemaining != _canvasSelectedMinutes * 60) ...[
                   const SizedBox(width: 8),
                   IconButton(
                     icon: const Icon(Icons.replay_rounded, size: 20),
                     padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                    constraints: const BoxConstraints(
+                      minWidth: 44,
+                      minHeight: 44,
+                    ),
                     onPressed: _resetCanvasTimer,
                   ),
                 ],
@@ -260,6 +290,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
       ),
     );
   }
+
   Future<void> _saveCanvasSession() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -279,7 +310,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
     // If user checked "Add to Habits", insert a new habit in the selected domain
     if (_addToHabits && actionText.isNotEmpty) {
       createdHabitId = const Uuid().v4();
-      await db.into(db.habits).insert(
+      await db
+          .into(db.habits)
+          .insert(
             HabitsCompanion.insert(
               habitId: createdHabitId,
               userId: userId,
@@ -287,7 +320,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
               title: actionText,
               status: const drift.Value(HabitStatus.active),
               frequency: const drift.Value('Daily'),
-              initiationFriction: const drift.Value(2), // low friction default for next action steps
+              initiationFriction: const drift.Value(
+                2,
+              ), // low friction default for next action steps
               originalFriction: const drift.Value(2),
               energyCost: const drift.Value(2),
               impactScore: const drift.Value(4),
@@ -295,13 +330,15 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
             ),
           );
 
-      await db.into(db.reminderPreferences).insert(
-            ReminderPreferencesCompanion.insert(habitId: createdHabitId),
-          );
+      await db
+          .into(db.reminderPreferences)
+          .insert(ReminderPreferencesCompanion.insert(habitId: createdHabitId));
     }
 
     String finalSummary = '';
-    final method = ThinkingMethod.allMethods.firstWhere((m) => m.key == _selectedMethod);
+    final method = ThinkingMethod.allMethods.firstWhere(
+      (m) => m.key == _selectedMethod,
+    );
     if (method.template == WorkspaceTemplate.freeform) {
       if (_selectedMethod == 'MindMapping') {
         finalSummary = jsonEncode({
@@ -325,12 +362,16 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
       });
       finalSummary = jsonEncode(data);
     } else if (method.template == WorkspaceTemplate.scoring) {
-      final data = _scoringItems.map((item) => {
-        'name': item.nameController.text.trim(),
-        'impact': item.impact,
-        'ease': item.ease,
-        'total': item.impact * item.ease,
-      }).toList();
+      final data = _scoringItems
+          .map(
+            (item) => {
+              'name': item.nameController.text.trim(),
+              'impact': item.impact,
+              'ease': item.ease,
+              'total': item.impact * item.ease,
+            },
+          )
+          .toList();
       finalSummary = jsonEncode({'items': data});
     }
 
@@ -338,10 +379,16 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
       sessionId: sessionId,
       userId: userId,
       methodKey: _selectedMethod,
-      topic: drift.Value(_topicController.text.trim().isEmpty ? null : _topicController.text.trim()),
+      topic: drift.Value(
+        _topicController.text.trim().isEmpty
+            ? null
+            : _topicController.text.trim(),
+      ),
       summaryText: drift.Value(finalSummary.isEmpty ? null : finalSummary),
       nextAction: drift.Value(actionText.isEmpty ? null : actionText),
-      paperArtifactRef: drift.Value(_refController.text.trim().isEmpty ? null : _refController.text.trim()),
+      paperArtifactRef: drift.Value(
+        _refController.text.trim().isEmpty ? null : _refController.text.trim(),
+      ),
       paperSession: const drift.Value(true),
       linkedHabitId: drift.Value(createdHabitId),
       createdAt: now,
@@ -353,7 +400,10 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sesi Thinking Canvas berhasil dicatat!'), backgroundColor: Colors.green),
+        const SnackBar(
+          content: Text('Sesi Thinking Canvas berhasil dicatat!'),
+          backgroundColor: Colors.green,
+        ),
       );
       context.pop();
     }
@@ -414,17 +464,19 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: const Text('Waktu Sesi Habis! ⏱️'),
           content: const Text(
             'Sesi coretan kertas Anda telah mencapai batas waktu.\n\n'
-            'Mari ringkas poin-poin utama Anda di lembar kerja digital di bawah.'
+            'Mari ringkas poin-poin utama Anda di lembar kerja digital di bawah.',
           ),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Lanjut ke Digitalisasi'),
-            )
+            ),
           ],
         );
       },
@@ -537,8 +589,8 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
     if (profiles.isNotEmpty) {
       final p = profiles.first;
       return p.unlockedSkins.contains('Sakura') ||
-             p.unlockedSkins.contains('Maple') ||
-             p.unlockedSkins.contains('Bonsai');
+          p.unlockedSkins.contains('Maple') ||
+          p.unlockedSkins.contains('Bonsai');
     }
     return false;
   }
@@ -548,11 +600,13 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: const Text('Fitur Premium 👑'),
           content: const Text(
             'Metode berpikir tingkat lanjut dan workspace interaktif ini eksklusif untuk pengguna Premium.\n\n'
-            'Aktifkan Mode Developer di menu dashboard utama untuk membuka kunci seluruh fitur premium secara gratis!'
+            'Aktifkan Mode Developer di menu dashboard utama untuk membuka kunci seluruh fitur premium secara gratis!',
           ),
           actions: [
             TextButton(
@@ -586,7 +640,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
   }
 
   Widget _buildWorkspace(ThemeData theme) {
-    final method = ThinkingMethod.allMethods.firstWhere((m) => m.key == _selectedMethod);
+    final method = ThinkingMethod.allMethods.firstWhere(
+      (m) => m.key == _selectedMethod,
+    );
     switch (method.template) {
       case WorkspaceTemplate.freeform:
         if (_selectedMethod == 'MindMapping') {
@@ -602,7 +658,10 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 _mindMapNodes.isEmpty
                     ? 'Belum ada peta pikiran yang dibuat. Buat visual mind map sekarang!'
                     : 'Peta pikiran aktif: ${_mindMapNodes.length} gelembung ide.',
-                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
@@ -625,7 +684,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 label: const Text('Buka Editor Kanvas Visual 🎨'),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ],
@@ -633,19 +694,28 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
         } else if (_selectedMethod == 'Freewriting') {
           return FreewritingWorkspace(controller: _summaryController);
         } else if (_selectedMethod == 'LotusBlossom') {
-          return LotusBlossomWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return LotusBlossomWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'MorphologicalAnalysis') {
           return MorphologicalWorkspace(
             onChanged: (val) => _customWorkspaceValue = val,
             isPremiumUser: _isPremiumUserCached,
             onPremiumLocked: _showPremiumDialog,
           );
-        } else if (_selectedMethod == 'Brainstorming' || _selectedMethod == 'WorstPossibleIdea') {
-          return RapidBrainstormWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+        } else if (_selectedMethod == 'Brainstorming' ||
+            _selectedMethod == 'WorstPossibleIdea') {
+          return RapidBrainstormWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'QuestionStorming') {
-          return QuestionStormWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return QuestionStormWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'RandomWord') {
-          return RandomWordWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return RandomWordWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'RoleStorming') {
           return RoleStormingWorkspace(
             onChanged: (val) => _customWorkspaceValue = val,
@@ -653,27 +723,49 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
             onPremiumLocked: _showPremiumDialog,
           );
         } else if (_selectedMethod == 'SixThinkingHats') {
-          return SixThinkingHatsWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return SixThinkingHatsWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'DisneyStrategy') {
-          return DisneyStrategyWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return DisneyStrategyWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'SCAMPER') {
-          return ScamperWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return ScamperWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'SWOT') {
-          return SwotMatrixWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return SwotMatrixWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'Starbursting') {
-          return StarburstingWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return StarburstingWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'MindDump') {
-          return MindDumpWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return MindDumpWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'AffinityMapping') {
-          return AffinityMappingWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return AffinityMappingWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == '5Whys') {
-          return FiveWhysWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return FiveWhysWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'FirstPrinciples') {
-          return FirstPrinciplesWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return FirstPrinciplesWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'DoubleDiamond') {
-          return DoubleDiamondWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return DoubleDiamondWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         } else if (_selectedMethod == 'Validation') {
-          return ValidationWorkspace(onChanged: (val) => _customWorkspaceValue = val);
+          return ValidationWorkspace(
+            onChanged: (val) => _customWorkspaceValue = val,
+          );
         }
 
         // Fallback for default freeform (e.g. Mind Dump)
@@ -682,7 +774,8 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
           maxLines: 5,
           decoration: InputDecoration(
             labelText: '4. Ringkasan Hasil Berpikir',
-            hintText: method.placeholder ?? 'Tuliskan hasil berpikir Anda di sini...',
+            hintText:
+                method.placeholder ?? 'Tuliskan hasil berpikir Anda di sini...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           validator: (val) {
@@ -704,7 +797,8 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
             ),
             const SizedBox(height: 12),
             ...columns.map((col) {
-              final controller = _dynamicControllers[col] ?? TextEditingController();
+              final controller =
+                  _dynamicControllers[col] ?? TextEditingController();
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
                 child: TextFormField(
@@ -713,7 +807,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                   decoration: InputDecoration(
                     labelText: col,
                     hintText: 'Masukkan poin untuk kolom $col...',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   validator: (val) {
                     if (val == null || val.trim().isEmpty) {
@@ -740,7 +836,8 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
             ...steps.asMap().entries.map((entry) {
               final idx = entry.key + 1;
               final stepLabel = entry.value;
-              final controller = _dynamicControllers[stepLabel] ?? TextEditingController();
+              final controller =
+                  _dynamicControllers[stepLabel] ?? TextEditingController();
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
                 child: TextFormField(
@@ -749,7 +846,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                   decoration: InputDecoration(
                     labelText: 'Langkah $idx: $stepLabel',
                     hintText: 'Tulis tanggapan langkah ini...',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   validator: (val) {
                     if (val == null || val.trim().isEmpty) {
@@ -777,7 +876,10 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 TextButton.icon(
                   onPressed: _addScoringRow,
                   icon: const Icon(Icons.add_circle_outline_rounded, size: 18),
-                  label: const Text('Tambah Opsi', style: TextStyle(fontSize: 12)),
+                  label: const Text(
+                    'Tambah Opsi',
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ),
               ],
             ),
@@ -791,7 +893,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 margin: const EdgeInsets.symmetric(vertical: 6.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.08)),
+                  side: BorderSide(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                  ),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -807,7 +911,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                                 labelText: 'Opsi Ide ${index + 1}',
                                 hintText: 'Misal: Buka jasa kurir sayur',
                                 isDense: true,
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
                               validator: (val) {
                                 if (val == null || val.trim().isEmpty) {
@@ -819,7 +925,11 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                           ),
                           if (_scoringItems.length > 1)
                             IconButton(
-                              icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 20),
+                              icon: const Icon(
+                                Icons.delete_outline_rounded,
+                                color: Colors.redAccent,
+                                size: 20,
+                              ),
                               onPressed: () => _removeScoringRow(index),
                             ),
                         ],
@@ -831,7 +941,13 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Dampak: ${item.impact}/5', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                Text(
+                                  'Dampak: ${item.impact}/5',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 Slider(
                                   value: item.impact.toDouble(),
                                   min: 1,
@@ -851,7 +967,13 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Kemudahan: ${item.ease}/5', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                Text(
+                                  'Kemudahan: ${item.ease}/5',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 Slider(
                                   value: item.ease.toDouble(),
                                   min: 1,
@@ -868,14 +990,25 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                           ),
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                              color: theme.colorScheme.primary.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Column(
                               children: [
-                                const Text('SKOR', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold)),
+                                const Text(
+                                  'SKOR',
+                                  style: TextStyle(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 Text(
                                   '$totalScore',
                                   style: TextStyle(
@@ -898,6 +1031,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
         );
     }
   }
+
   @override
   void dispose() {
     _canvasTimer?.cancel();
@@ -915,7 +1049,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final activeMethod = ThinkingMethod.allMethods.firstWhere((m) => m.key == _selectedMethod);
+    final activeMethod = ThinkingMethod.allMethods.firstWhere(
+      (m) => m.key == _selectedMethod,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -942,20 +1078,31 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
               const SizedBox(height: 8),
               Text(
                 'Prinsip LifeTree: Paper-First. Tulislah coretan Anda di buku atau kertas asli terlebih dahulu untuk mengurangi screen fatigue.',
-                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
               ),
               const SizedBox(height: 24),
- 
+
               // Method Selector
-              const Text('1. Metode Berpikir', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                '1. Metode Berpikir',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               InkWell(
                 onTap: _showMethodPickerSheet,
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
-                    border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
+                    border: Border.all(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -969,66 +1116,90 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                               children: [
                                 Text(
                                   activeMethod.name,
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
                                 ),
                                 if (activeMethod.isPremium) ...[
                                   const SizedBox(width: 6),
-                                  Icon(Icons.lock_rounded, color: Colors.amber[700], size: 14),
+                                  Icon(
+                                    Icons.lock_rounded,
+                                    color: Colors.amber[700],
+                                    size: 14,
+                                  ),
                                 ],
                               ],
                             ),
                             const SizedBox(height: 4),
                             Text(
                               activeMethod.desc,
-                              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.6,
+                                ),
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                       ),
-                      Icon(Icons.arrow_drop_down_rounded, color: theme.colorScheme.primary),
+                      Icon(
+                        Icons.arrow_drop_down_rounded,
+                        color: theme.colorScheme.primary,
+                      ),
                     ],
                   ),
                 ),
               ),
               _buildMethodGuidelineCard(theme),
               const SizedBox(height: 24),
- 
+
               // Topic
               TextFormField(
                 controller: _topicController,
                 decoration: InputDecoration(
                   labelText: '2. Topik / Masalah yang Sedang Dipikirkan',
-                  hintText: 'Misal: Memilih opsi karir baru atau mengurai burnout',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  hintText:
+                      'Misal: Memilih opsi karir baru atau mengurai burnout',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
- 
+
               // Paper Artifact Ref
               TextFormField(
                 controller: _refController,
                 decoration: InputDecoration(
                   labelText: '3. Referensi Kertas Fisik (Opsional)',
-                  hintText: 'Misal: Buku Jurnal A hal. 14, Sticky note meja kerja',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  hintText:
+                      'Misal: Buku Jurnal A hal. 14, Sticky note meja kerja',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   prefixIcon: const Icon(Icons.menu_book_rounded),
                 ),
               ),
               const SizedBox(height: 24),
- 
+
               // Dynamic Workspace
               _buildWorkspace(theme),
               const SizedBox(height: 24),
- 
+
               // Next Action
               TextFormField(
                 controller: _actionController,
                 decoration: InputDecoration(
                   labelText: '5. Satu Aksi Kecil Berikutnya (Next Small Step)',
-                  hintText: 'Aksi sangat kecil, misal: Cari info kontak dokter olahraga',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  hintText:
+                      'Aksi sangat kecil, misal: Cari info kontak dokter olahraga',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 validator: (val) {
                   if (val == null || val.trim().isEmpty) {
@@ -1038,7 +1209,7 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                 },
               ),
               const SizedBox(height: 16),
- 
+
               // Checkbox to automatically add to habits
               Row(
                 children: [
@@ -1059,24 +1230,50 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                   ),
                 ],
               ),
- 
+
               if (_addToHabits) ...[
                 const SizedBox(height: 12),
-                const Text('Domain Kebiasaan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                const Text(
+                  'Domain Kebiasaan',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   initialValue: _habitDomain,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                   items: const [
-                    DropdownMenuItem(value: 'Tubuh', child: Text('Tubuh (Body) 🏃')),
-                    DropdownMenuItem(value: 'Keuangan', child: Text('Keuangan (Finance) 💰')),
-                    DropdownMenuItem(value: 'Hubungan', child: Text('Hubungan (Relations) 🤝')),
-                    DropdownMenuItem(value: 'Emosi', child: Text('Emosi (Emotion) 🧠')),
-                    DropdownMenuItem(value: 'Karir', child: Text('Karir/Belajar (Career) 📚')),
-                    DropdownMenuItem(value: 'Rekreasi', child: Text('Rekreasi (Recreation) 🎮')),
+                    DropdownMenuItem(
+                      value: 'Tubuh',
+                      child: Text('Tubuh (Body) 🏃'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Keuangan',
+                      child: Text('Keuangan (Finance) 💰'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Hubungan',
+                      child: Text('Hubungan (Relations) 🤝'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Emosi',
+                      child: Text('Emosi (Emotion) 🧠'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Karir',
+                      child: Text('Karir/Belajar (Career) 📚'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Rekreasi',
+                      child: Text('Rekreasi (Recreation) 🎮'),
+                    ),
                   ],
                   onChanged: (val) {
                     if (val != null) {
@@ -1087,9 +1284,9 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                   },
                 ),
               ],
- 
+
               const SizedBox(height: 32),
- 
+
               // Save Button
               ElevatedButton(
                 onPressed: _saveCanvasSession,
@@ -1101,7 +1298,10 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text('Simpan Sesi', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  'Simpan Sesi',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),

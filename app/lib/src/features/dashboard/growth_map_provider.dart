@@ -51,11 +51,13 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
       final List<dynamic> raw = jsonDecode(dashboardData.profile.coreValues!);
       coreValues = raw.map((v) => v.toString()).toList();
     } catch (e, stackTrace) {
-      ref.read(errorLoggerProvider).logError(
-        e,
-        stackTrace,
-        context: 'GrowthMapProvider.parseCoreValues',
-      );
+      ref
+          .read(errorLoggerProvider)
+          .logError(
+            e,
+            stackTrace,
+            context: 'GrowthMapProvider.parseCoreValues',
+          );
     }
   }
 
@@ -68,11 +70,13 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
       );
       raw.forEach((k, v) => domainScores[k] = (v as num).toDouble());
     } catch (e, stackTrace) {
-      ref.read(errorLoggerProvider).logError(
-        e,
-        stackTrace,
-        context: 'GrowthMapProvider.parseDomainScores',
-      );
+      ref
+          .read(errorLoggerProvider)
+          .logError(
+            e,
+            stackTrace,
+            context: 'GrowthMapProvider.parseDomainScores',
+          );
     }
   }
 
@@ -168,11 +172,9 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
       );
     }).toList();
   } catch (e, stackTrace) {
-    ref.read(errorLoggerProvider).logError(
-      e,
-      stackTrace,
-      context: 'GrowthMapProvider.loadDecisions',
-    );
+    ref
+        .read(errorLoggerProvider)
+        .logError(e, stackTrace, context: 'GrowthMapProvider.loadDecisions');
   }
 
   return GrowthMapViewModel(

@@ -12,8 +12,12 @@ import 'widgets/review_decision_sheet.dart';
 // Stream provider to automatically watch decisions in database
 final decisionListProvider = StreamProvider<List<DecisionEntry>>((ref) {
   final db = ref.watch(dbProvider);
-  return (db.select(db.decisionEntries)
-        ..orderBy([(tbl) => drift.OrderingTerm(expression: tbl.decisionDate, mode: drift.OrderingMode.desc)]))
+  return (db.select(db.decisionEntries)..orderBy([
+        (tbl) => drift.OrderingTerm(
+          expression: tbl.decisionDate,
+          mode: drift.OrderingMode.desc,
+        ),
+      ]))
       .watch();
 });
 
@@ -21,10 +25,12 @@ class DecisionJournalView extends ConsumerStatefulWidget {
   const DecisionJournalView({super.key});
 
   @override
-  ConsumerState<DecisionJournalView> createState() => _DecisionJournalViewState();
+  ConsumerState<DecisionJournalView> createState() =>
+      _DecisionJournalViewState();
 }
 
-class _DecisionJournalViewState extends ConsumerState<DecisionJournalView> with SingleTickerProviderStateMixin {
+class _DecisionJournalViewState extends ConsumerState<DecisionJournalView>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -78,7 +84,9 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView> with 
           controller: _tabController,
           indicatorColor: theme.colorScheme.primary,
           labelColor: theme.colorScheme.primary,
-          unselectedLabelColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          unselectedLabelColor: theme.colorScheme.onSurface.withValues(
+            alpha: 0.6,
+          ),
           tabs: const [
             Tab(text: 'Menunggu Review'),
             Tab(text: 'Sudah Ditinjau'),
@@ -111,7 +119,11 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView> with 
     );
   }
 
-  Widget _buildDecisionList(BuildContext context, List<DecisionEntry> list, {required bool isPending}) {
+  Widget _buildDecisionList(
+    BuildContext context,
+    List<DecisionEntry> list, {
+    required bool isPending,
+  }) {
     final theme = Theme.of(context);
 
     if (list.isEmpty) {
@@ -130,7 +142,10 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView> with 
                 isPending
                     ? 'Tidak ada keputusan yang menunggu review.'
                     : 'Belum ada keputusan yang selesai ditinjau.',
-                style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -181,14 +196,22 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView> with 
                     Expanded(
                       child: Text(
                         d.title,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                     if (isOverdue)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.error.withValues(alpha: 0.12),
+                          color: theme.colorScheme.error.withValues(
+                            alpha: 0.12,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -205,28 +228,57 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView> with 
                 const SizedBox(height: 8),
                 Text(
                   d.description,
-                  style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
                 ),
                 const Divider(height: 24),
                 if (options.length >= 2) ...[
-                  const Text('Pilihan yang Dipertimbangkan:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  const Text(
+                    'Pilihan yang Dipertimbangkan:',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
                   const SizedBox(height: 4),
-                  Text('⚖️ Opsi A: ${options[0]}', style: const TextStyle(fontSize: 12)),
-                  Text('⚖️ Opsi B: ${options[1]}', style: const TextStyle(fontSize: 12)),
+                  Text(
+                    '⚖️ Opsi A: ${options[0]}',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  Text(
+                    '⚖️ Opsi B: ${options[1]}',
+                    style: const TextStyle(fontSize: 12),
+                  ),
                   const SizedBox(height: 12),
                 ],
                 if (assumptions.isNotEmpty) ...[
-                  const Text('Asumsi/Keyakinan Utama:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  const Text(
+                    'Asumsi/Keyakinan Utama:',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
                   const SizedBox(height: 4),
-                  ...assumptions.map((asm) => Padding(
-                        padding: const EdgeInsets.only(left: 4.0, bottom: 2.0),
-                        child: Text('• $asm', style: const TextStyle(fontSize: 12)),
-                      )),
+                  ...assumptions.map(
+                    (asm) => Padding(
+                      padding: const EdgeInsets.only(left: 4.0, bottom: 2.0),
+                      child: Text(
+                        '• $asm',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 12),
                 ],
-                const Text('Ekspektasi Hasil:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                const Text(
+                  'Ekspektasi Hasil:',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                ),
                 const SizedBox(height: 4),
-                Text(d.expectations, style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+                Text(
+                  d.expectations,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -236,14 +288,25 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView> with 
                       children: [
                         Text(
                           'Tanggal Keputusan: ${_formatDate(d.decisionDate)}',
-                          style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.5,
+                            ),
+                          ),
                         ),
                         Text(
                           'Tanggal Review: ${_formatDate(d.reviewDate)} (${d.reviewPeriodDays} hari)',
                           style: TextStyle(
                             fontSize: 10,
-                            fontWeight: isOverdue ? FontWeight.bold : FontWeight.normal,
-                            color: isOverdue ? theme.colorScheme.error : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                            fontWeight: isOverdue
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: isOverdue
+                                ? theme.colorScheme.error
+                                : theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
                           ),
                         ),
                       ],
@@ -252,12 +315,24 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView> with 
                       ElevatedButton(
                         onPressed: () => _showReviewDecisionDialog(context, d),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isOverdue ? theme.colorScheme.error : theme.colorScheme.primary,
-                          foregroundColor: isOverdue ? theme.colorScheme.onError : theme.colorScheme.onPrimary,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          backgroundColor: isOverdue
+                              ? theme.colorScheme.error
+                              : theme.colorScheme.primary,
+                          foregroundColor: isOverdue
+                              ? theme.colorScheme.onError
+                              : theme.colorScheme.onPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           minimumSize: const Size(100, 36),
                         ),
-                        child: const Text('Review', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        child: const Text(
+                          'Review',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                   ],
                 ),
@@ -269,7 +344,11 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView> with 
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.15)),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withValues(
+                          alpha: 0.15,
+                        ),
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

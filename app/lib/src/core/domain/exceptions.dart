@@ -1,5 +1,5 @@
 /// Custom exception types for LifeTree application.
-/// 
+///
 /// These exceptions provide more semantic meaning than generic exceptions,
 /// making it easier to handle different error scenarios appropriately.
 library;
@@ -16,7 +16,7 @@ abstract class LifeTreeException implements Exception {
 }
 
 /// Thrown when a database operation fails.
-/// 
+///
 /// Examples: insert/update/delete failures, constraint violations, etc.
 class DatabaseException extends LifeTreeException {
   const DatabaseException(super.message, [super.originalError]);
@@ -26,7 +26,7 @@ class DatabaseException extends LifeTreeException {
 }
 
 /// Thrown when user input validation fails.
-/// 
+///
 /// Examples: empty required fields, invalid formats, out of range values.
 class ValidationException extends LifeTreeException {
   final String? fieldName;
@@ -38,11 +38,12 @@ class ValidationException extends LifeTreeException {
   }) : super(message, originalError);
 
   @override
-  String toString() => 'ValidationException${fieldName != null ? ' [$fieldName]' : ''}: $message';
+  String toString() =>
+      'ValidationException${fieldName != null ? ' [$fieldName]' : ''}: $message';
 }
 
 /// Thrown when a network operation fails (for future cloud sync).
-/// 
+///
 /// Currently unused in MVP, but prepared for future cloud sync features.
 class NetworkException extends LifeTreeException {
   const NetworkException(super.message, [super.originalError]);
@@ -52,7 +53,7 @@ class NetworkException extends LifeTreeException {
 }
 
 /// Thrown when data parsing/serialization fails.
-/// 
+///
 /// Examples: JSON decode errors, invalid data format from database.
 class DataFormatException extends LifeTreeException {
   const DataFormatException(super.message, [super.originalError]);

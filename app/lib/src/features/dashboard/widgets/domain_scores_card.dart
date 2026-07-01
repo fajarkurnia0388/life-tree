@@ -48,15 +48,29 @@ class DomainScoresCard extends StatelessWidget {
       );
     }
 
-    final List<String> domains = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
+    final List<String> domains = [
+      'Tubuh',
+      'Keuangan',
+      'Hubungan',
+      'Emosi',
+      'Karir',
+      'Rekreasi',
+    ];
     for (final domain in domains) {
-      final domainHabits = data.habitsToday.where((h) => h.habit.domainTag == domain);
-      final completedHabits = domainHabits.where((h) => h.log?.status == HabitStatus.done);
+      final domainHabits = data.habitsToday.where(
+        (h) => h.habit.domainTag == domain,
+      );
+      final completedHabits = domainHabits.where(
+        (h) => h.log?.status == HabitStatus.done,
+      );
       if (domainHabits.isNotEmpty) {
         final baselineScore = scores[domain] ?? 5.0;
         final dailyRatio = completedHabits.length / domainHabits.length;
         final dailyScore = dailyRatio * 10.0;
-        scores[domain] = (baselineScore * 0.7 + dailyScore * 0.3).clamp(1.0, 10.0);
+        scores[domain] = (baselineScore * 0.7 + dailyScore * 0.3).clamp(
+          1.0,
+          10.0,
+        );
       }
     }
 
@@ -64,7 +78,13 @@ class DomainScoresCard extends StatelessWidget {
 
     final activeDomains = <String>{'Tubuh'};
     if (isDevMode) {
-      activeDomains.addAll(['Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi']);
+      activeDomains.addAll([
+        'Keuangan',
+        'Hubungan',
+        'Emosi',
+        'Karir',
+        'Rekreasi',
+      ]);
     } else {
       try {
         final jsonStr = data.profile.latestDomainScores;
