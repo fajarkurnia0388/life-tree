@@ -78,13 +78,39 @@ class TreeDisplayWidget extends StatelessWidget {
               ),
 
             // ── Peta Pertumbuhan Konseptual ──
+            // AnimatedSwitcher gives the focus/unfocus state a PPT-like
+            // transition instead of snapping instantly between layouts.
             Positioned.fill(
-              child: GrowthMapWidget(
-                width: width,
-                height: height,
-                activeDomainColor: activeDomainColor,
-                selectedDomain: selectedDomain,
-                onDomainTap: onDomainNavigate,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 520),
+                reverseDuration: const Duration(milliseconds: 420),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) {
+                  final curved = CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                    reverseCurve: Curves.easeInCubic,
+                  );
+                  return FadeTransition(
+                    opacity: curved,
+                    child: ScaleTransition(
+                      scale: Tween<double>(
+                        begin: 0.94,
+                        end: 1.0,
+                      ).animate(curved),
+                      child: child,
+                    ),
+                  );
+                },
+                child: GrowthMapWidget(
+                  key: ValueKey(selectedDomain ?? 'all-domains'),
+                  width: width,
+                  height: height,
+                  activeDomainColor: activeDomainColor,
+                  selectedDomain: selectedDomain,
+                  onDomainTap: onDomainNavigate,
+                ),
               ),
             ),
 

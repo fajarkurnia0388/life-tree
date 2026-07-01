@@ -164,7 +164,10 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                     final iconSize = widget.selectedDomain != null
                         ? 22.0
                         : 24.0;
-                    return Positioned(
+                    return AnimatedPositioned(
+                      key: ValueKey('root-${node.id}'),
+                      duration: const Duration(milliseconds: 520),
+                      curve: Curves.easeOutCubic,
                       left: offset.dx - rootDiameter / 2,
                       top: offset.dy - rootDiameter / 2,
                       child: Semantics(
@@ -250,7 +253,10 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                         : node.color;
                     final isHealthy = node.score >= 8.0;
 
-                    return Positioned(
+                    return AnimatedPositioned(
+                      key: ValueKey('branch-${node.id}'),
+                      duration: const Duration(milliseconds: 560),
+                      curve: Curves.easeOutCubic,
                       left: offset.dx - branchDiameter / 2,
                       top: offset.dy - branchDiameter / 2,
                       child: Semantics(
@@ -336,7 +342,10 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                   } else if (node is LeafNode) {
                     final isPlaceholder = node.originalHabit == null;
 
-                    return Positioned(
+                    return AnimatedPositioned(
+                      key: ValueKey('leaf-${node.id}'),
+                      duration: const Duration(milliseconds: 600),
+                      curve: Curves.easeOutCubic,
                       left: offset.dx - 11,
                       top: offset.dy - 11,
                       child: Semantics(
@@ -412,7 +421,10 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                       ),
                     );
                   } else if (node is FruitNode) {
-                    return Positioned(
+                    return AnimatedPositioned(
+                      key: ValueKey('fruit-${node.id}'),
+                      duration: const Duration(milliseconds: 600),
+                      curve: Curves.easeOutCubic,
                       left: offset.dx - 11,
                       top: offset.dy - 11,
                       child: Semantics(

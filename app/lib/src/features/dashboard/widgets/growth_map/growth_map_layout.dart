@@ -47,10 +47,8 @@ class GrowthMapLayout {
 
     if (selectedDomain != null && branches.isNotEmpty) {
       // Single-domain close-up layout.
-      // The previous radial layout could place the selected domain, the CTA chip,
-      // and the root on top of each other (especially for the top/Emosi domain).
-      // Use a stable vertical composition instead: domain focus at the top,
-      // habit nodes in the middle, root safely below.
+      // Use a stable vertical composition: selected domain in focus, quick-add
+      // nodes around it, and the root partially visible at the bottom.
       final branch = branches.first;
       final focusedRootPos = Offset(
         width / 2,
@@ -62,7 +60,7 @@ class GrowthMapLayout {
 
       final branchPos = Offset(
         width / 2,
-        // Keep the selected domain icon exactly in the visual center.
+        // Selected domain focus position in the close-up view.
         height * 0.60,
       );
       branchPositions[branch.id] = branchPos;
