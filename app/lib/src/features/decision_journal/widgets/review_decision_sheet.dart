@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/providers/db_provider.dart';
+import '../../../core/services/error_handler_service.dart';
 import '../../../data/local_db/database.dart';
 
 class ReviewDecisionSheet extends StatefulWidget {
@@ -76,7 +77,13 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
     try {
       options = List<String>.from(jsonDecode(widget.decision.options));
       assumptions = List<String>.from(jsonDecode(widget.decision.assumptions));
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'ReviewDecisionSheet.parseDecisionData',
+      );
+    }
 
     return Consumer(
       builder: (context, ref, child) {

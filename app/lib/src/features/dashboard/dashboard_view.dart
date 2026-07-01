@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../core/domain/priority_helper.dart';
 import '../../core/domain/app_constants.dart';
+import '../../core/services/error_handler_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/local_db/database.dart';
@@ -89,14 +90,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   }
 
   Widget _buildRadarChartCard(DashboardData data) {
-    Map<String, double> scores = {
-      'Tubuh': 5.0,
-      'Keuangan': 5.0,
-      'Hubungan': 5.0,
-      'Emosi': 5.0,
-      'Karir': 5.0,
-      'Rekreasi': 5.0,
-    };
+    Map<String, double> scores = Map.from(DomainDefaults.scores);
     if (data.profile.latestDomainScores != null) {
       try {
         final Map<String, dynamic> parsed = jsonDecode(
@@ -108,7 +102,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             scores[key] = numVal.toDouble();
           }
         });
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorHandlerService().logError(
+          e,
+          stackTrace,
+          context: 'DashboardView._buildRadarChartCard',
+        );
+      }
     }
 
     return DomainScoresCard(
@@ -220,7 +220,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             if (data.profile.latestDomainScores != null) {
               try {
                 domainScores = jsonDecode(data.profile.latestDomainScores!);
-              } catch (_) {}
+              } catch (e, stackTrace) {
+                ErrorHandlerService().logError(
+                  e,
+                  stackTrace,
+                  context: 'DashboardView.calculateFilteredAction',
+                );
+              }
             }
             double highestPriority = -1.0;
             final uncompletedFiltered = filteredHabits

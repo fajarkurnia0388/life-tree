@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import '../../../core/domain/app_constants.dart';
+import '../../../core/services/error_handler_service.dart';
 import '../../../data/local_db/database.dart';
 import '../dashboard_provider.dart';
 
@@ -158,7 +159,13 @@ class ActionOfTheDayCard extends StatelessWidget {
         final value = decoded[domain];
         if (value is num) return value.toDouble();
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'ActionOfTheDayCard._domainScoreFor',
+      );
+    }
     return 5.0;
   }
 

@@ -6,6 +6,7 @@ import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/domain/priority_helper.dart';
+import '../../core/services/error_logger_provider.dart';
 
 class DashboardData {
   final UserProfile profile;
@@ -226,7 +227,13 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
   if (profile.latestDomainScores != null) {
     try {
       domainScores = jsonDecode(profile.latestDomainScores!);
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ref.read(errorLoggerProvider).logError(
+        e,
+        stackTrace,
+        context: 'DashboardProvider.parseDomainScores',
+      );
+    }
   }
   
   Habit? actionOfTheDay;

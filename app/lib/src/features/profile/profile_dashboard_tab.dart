@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../core/providers/db_provider.dart';
+import '../../core/services/error_handler_service.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import '../onboarding/onboarding_view.dart';
@@ -34,7 +35,13 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
           currentValues[i] = parsed[i];
         }
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'ProfileDashboardTab.parseCoreValues',
+      );
+    }
 
     final controller1 = TextEditingController(text: currentValues[0]);
     final controller2 = TextEditingController(text: currentValues[1]);

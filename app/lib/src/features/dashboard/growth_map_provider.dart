@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/providers/db_provider.dart';
 import '../../core/domain/app_constants.dart';
+import '../../core/services/error_logger_provider.dart';
 import 'dashboard_provider.dart';
 import 'widgets/growth_map/growth_map_node.dart';
 
@@ -49,7 +50,13 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
     try {
       final List<dynamic> raw = jsonDecode(dashboardData.profile.coreValues!);
       coreValues = raw.map((v) => v.toString()).toList();
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ref.read(errorLoggerProvider).logError(
+        e,
+        stackTrace,
+        context: 'GrowthMapProvider.parseCoreValues',
+      );
+    }
   }
 
   // 2. Parse Domain Scores (latestDomainScores)
@@ -60,7 +67,13 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
         dashboardData.profile.latestDomainScores!,
       );
       raw.forEach((k, v) => domainScores[k] = (v as num).toDouble());
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ref.read(errorLoggerProvider).logError(
+        e,
+        stackTrace,
+        context: 'GrowthMapProvider.parseDomainScores',
+      );
+    }
   }
 
   final domains = [
@@ -154,7 +167,13 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
         semanticLabel: '',
       );
     }).toList();
-  } catch (_) {}
+  } catch (e, stackTrace) {
+    ref.read(errorLoggerProvider).logError(
+      e,
+      stackTrace,
+      context: 'GrowthMapProvider.loadDecisions',
+    );
+  }
 
   return GrowthMapViewModel(
     root: RootNode(

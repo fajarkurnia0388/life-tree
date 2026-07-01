@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/domain/app_constants.dart';
+import '../../../core/services/error_handler_service.dart';
 import '../../../core/theme/theme.dart';
 import 'growth_map/growth_map_widget.dart';
 
@@ -223,7 +224,13 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
             downloadsFile = File('${downloadsDir.path}/$fileName');
             await downloadsFile.writeAsBytes(pngBytes);
           }
-        } catch (_) {}
+        } catch (e, stackTrace) {
+          ErrorHandlerService().logError(
+            e,
+            stackTrace,
+            context: 'TreeDisplayWidget.saveToDownloads',
+          );
+        }
       }
 
       if (mounted) {

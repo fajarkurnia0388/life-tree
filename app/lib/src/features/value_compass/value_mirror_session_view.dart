@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/services/error_handler_service.dart';
 import '../../core/theme/theme.dart';
 import 'domain/value_dilemma.dart';
 import 'services/value_compass_service.dart';
@@ -46,7 +47,12 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
           .get();
       final excludeKeys = recent.map((r) => r.dilemmaKey).toSet();
       return ValueDilemmaPool.drawSession(excludeKeys: excludeKeys);
-    } catch (_) {
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'ValueMirrorSessionView.loadRecentResponses',
+      );
       return ValueDilemmaPool.drawSession();
     }
   }
@@ -152,7 +158,13 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
           for (final v in raw.values) {
             totalResponses += v as int;
           }
-        } catch (_) {}
+        } catch (e, stackTrace) {
+          ErrorHandlerService().logError(
+            e,
+            stackTrace,
+            context: 'ValueMirrorSessionView.parseRevealedValueScores',
+          );
+        }
       }
 
       if (mounted) {

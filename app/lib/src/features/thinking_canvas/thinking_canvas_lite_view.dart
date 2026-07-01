@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/services/error_handler_service.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'package:drift/drift.dart' as drift;
@@ -470,7 +471,13 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
         final content = await file.readAsString();
         _dontShowOnboardingAgain = content.trim() == 'true';
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'ThinkingCanvasLiteView.loadOnboardingPreference',
+      );
+    }
   }
 
   Future<void> _setHideOnboarding(bool hide) async {
@@ -486,7 +493,13 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
       setState(() {
         _dontShowOnboardingAgain = hide;
       });
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'ThinkingCanvasLiteView.setHideOnboarding',
+      );
+    }
   }
 
   Future<void> _checkFirstTimeUsage() async {

@@ -60,6 +60,18 @@ class WellnessPromptTrigger {
   static const String weeklyPulse = 'Weekly_Pulse';
 }
 
+class DomainDefaults {
+  DomainDefaults._();
+  static const Map<String, double> scores = {
+    'Tubuh': 5.0,
+    'Keuangan': 5.0,
+    'Hubungan': 5.0,
+    'Emosi': 5.0,
+    'Karir': 5.0,
+    'Rekreasi': 5.0,
+  };
+}
+
 class DomainColors {
   DomainColors._();
   static Color forDomain(String? domain) {

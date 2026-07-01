@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/services/error_handler_service.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'package:drift/drift.dart' as drift;
@@ -112,7 +113,13 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
       if (currentProfile.latestDomainScores != null) {
         try {
           domainScores = jsonDecode(currentProfile.latestDomainScores!);
-        } catch (_) {}
+        } catch (e, stackTrace) {
+          ErrorHandlerService().logError(
+            e,
+            stackTrace,
+            context: 'WeeklyPulseView.parseDomainScores',
+          );
+        }
       }
       domainScores['Emosi'] = mappedScore.toDouble();
       await (db.update(db.userProfiles)

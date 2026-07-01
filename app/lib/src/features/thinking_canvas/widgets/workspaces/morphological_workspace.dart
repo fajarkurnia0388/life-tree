@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../../../../core/services/error_handler_service.dart';
 
 class MorphologicalTemplate {
   final String title;
@@ -157,7 +158,13 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
       int currentItem = 0;
       try {
         currentItem = _controllers[dim]!.selectedItem;
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorHandlerService().logError(
+          e,
+          stackTrace,
+          context: 'MorphologicalWorkspace.getControllerSelectedItem',
+        );
+      }
 
       final int spinCycles = 24 + (i * 12);
       final int baseTarget = currentItem + spinCycles;

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../core/services/error_handler_service.dart';
 import '../../../data/local_db/database.dart';
 import 'compass_comparison_dialog.dart';
 
@@ -27,7 +28,13 @@ class LifeCompassSection extends StatelessWidget {
       if (jsonStr != null && jsonStr.isNotEmpty) {
         declaredValues = List<String>.from(jsonDecode(jsonStr));
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'LifeCompassSection.parseDeclaredValues',
+      );
+    }
 
     // 2. Parse revealed values (Versi Tersirat)
     int totalResponses = 0;
@@ -39,7 +46,13 @@ class LifeCompassSection extends StatelessWidget {
           revealedScores[key] = val as int;
           totalResponses += revealedScores[key]!;
         });
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorHandlerService().logError(
+          e,
+          stackTrace,
+          context: 'LifeCompassSection.parseRevealedValues',
+        );
+      }
     }
 
     final hasEnoughData = totalResponses >= 5;

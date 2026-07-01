@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../../core/domain/app_constants.dart';
+import '../../../core/services/error_handler_service.dart';
 import '../dashboard_provider.dart';
 import 'radar_chart_widget.dart';
 
@@ -39,7 +40,13 @@ class DomainScoresCard extends StatelessWidget {
           }
         });
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'DomainScoresCard.parseDomainScores',
+      );
+    }
 
     final List<String> domains = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
     for (final domain in domains) {
@@ -65,7 +72,13 @@ class DomainScoresCard extends StatelessWidget {
           final Map<String, dynamic> parsed = jsonDecode(jsonStr);
           activeDomains.addAll(parsed.keys);
         }
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorHandlerService().logError(
+          e,
+          stackTrace,
+          context: 'DomainScoresCard.parseActiveDomains',
+        );
+      }
       for (final hwl in data.habitsToday) {
         if (hwl.habit.domainTag != null) {
           activeDomains.add(hwl.habit.domainTag!);

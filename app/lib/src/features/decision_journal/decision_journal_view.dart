@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/services/error_handler_service.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'package:drift/drift.dart' as drift;
@@ -150,7 +151,13 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView> with 
         try {
           options = List<String>.from(jsonDecode(d.options));
           assumptions = List<String>.from(jsonDecode(d.assumptions));
-        } catch (_) {}
+        } catch (e, stackTrace) {
+          ErrorHandlerService().logError(
+            e,
+            stackTrace,
+            context: 'DecisionJournalView.parseDecisionData',
+          );
+        }
 
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
