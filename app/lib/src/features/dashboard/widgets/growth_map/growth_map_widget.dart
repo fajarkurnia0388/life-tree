@@ -93,18 +93,7 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
 
             // Generate "+" empty placeholder leaf nodes for domains with no habits today
             final List<LeafNode> extendedLeaves = List.from(viewModel.leaves);
-            final domainOrder = [
-              'Tubuh',
-              'Keuangan',
-              'Hubungan',
-              'Emosi',
-              'Karir',
-              'Rekreasi',
-            ];
             final activeDomain = widget.selectedDomain;
-            final relevantDomains = activeDomain != null
-                ? [activeDomain]
-                : domainOrder;
 
             // Do not display placeholder "+" nodes in the full domain view.
             // Keep only real habit nodes for a cleaner growth map.
