@@ -11,9 +11,7 @@ class ValueMirrorIntroView extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cermin Nilai 🪞'),
-      ),
+      appBar: AppBar(title: const Text('Cermin Nilai 🪞')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
@@ -57,24 +55,43 @@ class ValueMirrorIntroView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.3,
+                  ),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                  border: Border.all(
+                    color: theme.colorScheme.outlineVariant.withValues(
+                      alpha: 0.5,
+                    ),
+                  ),
                 ),
                 child: Column(
                   children: [
-                    _buildGuidelineRow(context, Icons.done_all_rounded, 'Tidak ada jawaban benar atau salah'),
+                    _buildGuidelineRow(
+                      context,
+                      Icons.done_all_rounded,
+                      'Tidak ada jawaban benar atau salah',
+                    ),
                     const SizedBox(height: 12),
-                    _buildGuidelineRow(context, Icons.visibility_off_rounded, 'Ini bukan tes kepribadian — ini adalah cermin pilihanmu'),
+                    _buildGuidelineRow(
+                      context,
+                      Icons.visibility_off_rounded,
+                      'Ini bukan tes kepribadian — ini adalah cermin pilihanmu',
+                    ),
                     const SizedBox(height: 12),
-                    _buildGuidelineRow(context, Icons.timer_outlined, 'Hanya memerlukan ~2 menit untuk 7 pertanyaan refleksi'),
+                    _buildGuidelineRow(
+                      context,
+                      Icons.timer_outlined,
+                      'Hanya memerlukan ~2 menit untuk 7 pertanyaan refleksi',
+                    ),
                   ],
                 ),
               ),
               const Spacer(),
               Semantics(
                 label: 'Mulai sesi refleksi nilai',
-                hint: 'Memulai sesi Value Mirror untuk refleksi nilai hidup Anda',
+                hint:
+                    'Memulai sesi Value Mirror untuk refleksi nilai hidup Anda',
                 button: true,
                 child: ElevatedButton(
                   onPressed: () => context.push('/value-mirror/session'),
@@ -82,7 +99,9 @@ class ValueMirrorIntroView extends StatelessWidget {
                     backgroundColor: CalmTheme.secondaryBlue,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
                   child: const Text(
                     'Mulai Sesi',
@@ -99,7 +118,9 @@ class ValueMirrorIntroView extends StatelessWidget {
                   onPressed: () => context.pop(),
                   child: Text(
                     'Kembali',
-                    style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                 ),
               ),

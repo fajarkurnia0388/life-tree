@@ -12,7 +12,8 @@ class FreewritingWorkspace extends StatefulWidget {
   State<FreewritingWorkspace> createState() => _FreewritingWorkspaceState();
 }
 
-class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with SingleTickerProviderStateMixin {
+class _FreewritingWorkspaceState extends State<FreewritingWorkspace>
+    with SingleTickerProviderStateMixin {
   Timer? _countdownTimer;
   Timer? _inactivityTimer;
 
@@ -105,17 +106,19 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: const Text('Waktu Habis! 🎉'),
           content: const Text(
             'Selamat! Sesi menulis bebas (Freewriting) tanpa henti selesai.\n\n'
-            'Kembali ke kertas coretan untuk menyeleksi poin terbaik.'
+            'Kembali ke kertas coretan untuk menyeleksi poin terbaik.',
           ),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Lanjut'),
-            )
+            ),
           ],
         );
       },
@@ -131,7 +134,9 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final double progress = _timerActive ? (_secondsRemaining / (_selectedDurationMinutes * 60)) : 1.0;
+    final double progress = _timerActive
+        ? (_secondsRemaining / (_selectedDurationMinutes * 60))
+        : 1.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -170,7 +175,9 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
                     child: CircularProgressIndicator(
                       value: progress,
                       strokeWidth: 3,
-                      backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                      backgroundColor: theme.colorScheme.primary.withValues(
+                        alpha: 0.1,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -182,7 +189,7 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
                       fontSize: 13,
                     ),
                   ),
-                ]
+                ],
               ],
             ),
           ],
@@ -197,8 +204,11 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
                   controller: widget.controller,
                   maxLines: 8,
                   decoration: InputDecoration(
-                    hintText: 'Mulai menulis apa saja di sini, jangan biarkan jari Anda berhenti mengetik...',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    hintText:
+                        'Mulai menulis apa saja di sini, jangan biarkan jari Anda berhenti mengetik...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (val) {
@@ -214,10 +224,15 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.redAccent.withValues(alpha: 0.5), width: 2),
+                          border: Border.all(
+                            color: Colors.redAccent.withValues(alpha: 0.5),
+                            width: 2,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.red.withValues(alpha: _pulseAnimation.value),
+                              color: Colors.red.withValues(
+                                alpha: _pulseAnimation.value,
+                              ),
                               blurRadius: 16,
                               spreadRadius: 4,
                             ),
@@ -226,12 +241,21 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
                         child: Center(
                           child: Card(
                             color: Colors.red.withValues(alpha: 0.9),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                             child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
                               child: Text(
                                 '🚨 JANGAN BERHENTI MENULIS! Alirkan pikiran...',
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                ),
                               ),
                             ),
                           ),

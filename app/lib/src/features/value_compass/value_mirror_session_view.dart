@@ -275,9 +275,7 @@ class _ValueMirrorSessionViewState
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: LoadingStateWidget(
-                message: 'Memuat sesi refleksi...',
-              ),
+              child: LoadingStateWidget(message: 'Memuat sesi refleksi...'),
             );
           }
           if (snapshot.hasError) {
@@ -346,9 +344,7 @@ class _ValueMirrorSessionViewState
                 Container(
                   color: Colors.black.withValues(alpha: 0.1),
                   child: Center(
-                    child: LoadingStateWidget(
-                      message: 'Menyimpan jawaban...',
-                    ),
+                    child: LoadingStateWidget(message: 'Menyimpan jawaban...'),
                   ),
                 ),
             ],

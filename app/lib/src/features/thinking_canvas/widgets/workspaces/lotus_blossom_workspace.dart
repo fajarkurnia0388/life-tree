@@ -54,15 +54,23 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
   }
 
   void _editCell(int index, bool isSubGrid) {
-    final currentText = isSubGrid ? _subGrids[_activePetalIndex]![index] : _cells[index];
+    final currentText = isSubGrid
+        ? _subGrids[_activePetalIndex]![index]
+        : _cells[index];
     final controller = TextEditingController(text: currentText);
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text(isSubGrid ? 'Edit Sub-Ide Kelopak' : (index == 4 ? 'Edit Topik Utama' : 'Edit Arah Gagasan')),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            isSubGrid
+                ? 'Edit Sub-Ide Kelopak'
+                : (index == 4 ? 'Edit Topik Utama' : 'Edit Arah Gagasan'),
+          ),
           content: TextField(
             controller: controller,
             autofocus: true,
@@ -80,7 +88,8 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
               onPressed: () {
                 setState(() {
                   if (isSubGrid) {
-                    _subGrids[_activePetalIndex]![index] = controller.text.trim();
+                    _subGrids[_activePetalIndex]![index] = controller.text
+                        .trim();
                   } else {
                     _cells[index] = controller.text.trim();
                     if (index != 4) {
@@ -114,14 +123,19 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              isViewingSubGrid ? 'Sub-Kelopak: "${_cells[_activePetalIndex]}"' : '4. Kelopak Radial Lotus Blossom',
+              isViewingSubGrid
+                  ? 'Sub-Kelopak: "${_cells[_activePetalIndex]}"'
+                  : '4. Kelopak Radial Lotus Blossom',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             if (isViewingSubGrid)
               TextButton.icon(
                 onPressed: () => setState(() => _activePetalIndex = -1),
                 icon: const Icon(Icons.arrow_back_rounded, size: 16),
-                label: const Text('Kembali ke Pusat', style: TextStyle(fontSize: 12)),
+                label: const Text(
+                  'Kembali ke Pusat',
+                  style: TextStyle(fontSize: 12),
+                ),
               ),
           ],
         ),
@@ -133,7 +147,9 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
           decoration: BoxDecoration(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.02),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.06)),
+            border: Border.all(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
+            ),
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -164,7 +180,9 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                       painter: _LotusStemsPainter(
                         center: Offset(cx, cy),
                         offsets: nodeOffsets,
-                        themeColor: theme.colorScheme.primary.withValues(alpha: 0.3),
+                        themeColor: theme.colorScheme.primary.withValues(
+                          alpha: 0.3,
+                        ),
                       ),
                     ),
                   ),
@@ -174,7 +192,9 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                     final index = entry.key;
                     final pos = entry.value;
                     final isCenter = index == 4;
-                    final text = isViewingSubGrid ? _subGrids[_activePetalIndex]![index] : _cells[index];
+                    final text = isViewingSubGrid
+                        ? _subGrids[_activePetalIndex]![index]
+                        : _cells[index];
 
                     return Positioned(
                       left: pos.dx - 32,
@@ -205,18 +225,28 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                             color: isCenter
                                 ? theme.colorScheme.primary
                                 : (text.isNotEmpty
-                                    ? theme.colorScheme.primaryContainer.withValues(alpha: 0.85)
-                                    : theme.colorScheme.onSurface.withValues(alpha: 0.04)),
+                                      ? theme.colorScheme.primaryContainer
+                                            .withValues(alpha: 0.85)
+                                      : theme.colorScheme.onSurface.withValues(
+                                          alpha: 0.04,
+                                        )),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: (isCenter ? theme.colorScheme.primary : theme.colorScheme.onSurface)
-                                    .withValues(alpha: 0.12),
+                                color:
+                                    (isCenter
+                                            ? theme.colorScheme.primary
+                                            : theme.colorScheme.onSurface)
+                                        .withValues(alpha: 0.12),
                                 blurRadius: 6,
-                              )
+                              ),
                             ],
                             border: Border.all(
-                              color: isCenter ? Colors.white : theme.colorScheme.primary.withValues(alpha: 0.3),
+                              color: isCenter
+                                  ? Colors.white
+                                  : theme.colorScheme.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
                               width: isCenter ? 2 : 1,
                             ),
                           ),
@@ -236,8 +266,11 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                                   color: isCenter
                                       ? theme.colorScheme.onPrimary
                                       : (text.isNotEmpty
-                                          ? theme.colorScheme.onPrimaryContainer
-                                          : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                                            ? theme
+                                                  .colorScheme
+                                                  .onPrimaryContainer
+                                            : theme.colorScheme.onSurface
+                                                  .withValues(alpha: 0.6)),
                                 ),
                               ),
                             ),
@@ -254,7 +287,11 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
         const SizedBox(height: 6),
         const Text(
           '*Kelopak berbentuk melingkar. Ketuk petal terisi untuk masuk ke sub-cabang ide.',
-          style: TextStyle(fontSize: 10, fontStyle: FontStyle.italic, color: Colors.grey),
+          style: TextStyle(
+            fontSize: 10,
+            fontStyle: FontStyle.italic,
+            color: Colors.grey,
+          ),
         ),
       ],
     );

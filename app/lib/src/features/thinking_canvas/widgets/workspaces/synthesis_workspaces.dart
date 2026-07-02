@@ -72,7 +72,8 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
           controller: _inputController,
           decoration: InputDecoration(
             labelText: 'Tambah Item',
-            hintText: 'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
+            hintText:
+                'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
               onPressed: _addNote,
@@ -88,7 +89,9 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
             decoration: BoxDecoration(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.06)),
+              border: Border.all(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
+              ),
             ),
             child: const Column(
               children: [
@@ -120,7 +123,13 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
                 decoration: BoxDecoration(
                   color: color,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 3, offset: Offset(1, 2))],
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 3,
+                      offset: Offset(1, 2),
+                    ),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -128,10 +137,21 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('#${index + 1}', style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.black54)),
+                        Text(
+                          '#${index + 1}',
+                          style: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                          ),
+                        ),
                         GestureDetector(
                           onTap: () => _removeNote(index),
-                          child: const Icon(Icons.close_rounded, size: 14, color: Colors.black54),
+                          child: const Icon(
+                            Icons.close_rounded,
+                            size: 14,
+                            color: Colors.black54,
+                          ),
                         ),
                       ],
                     ),
@@ -140,7 +160,11 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
                       child: SingleChildScrollView(
                         child: Text(
                           _notes[index],
-                          style: const TextStyle(fontSize: 11, color: Colors.black87, fontWeight: FontWeight.w500),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
@@ -162,12 +186,17 @@ class AffinityMappingWorkspace extends StatefulWidget {
   const AffinityMappingWorkspace({super.key, required this.onChanged});
 
   @override
-  State<AffinityMappingWorkspace> createState() => _AffinityMappingWorkspaceState();
+  State<AffinityMappingWorkspace> createState() =>
+      _AffinityMappingWorkspaceState();
 }
 
 class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
   final List<Map<String, dynamic>> _items = [];
-  final List<String> _groups = const ['Grup A (Hijau)', 'Grup B (Biru)', 'Grup C (Orange)'];
+  final List<String> _groups = const [
+    'Grup A (Hijau)',
+    'Grup B (Biru)',
+    'Grup C (Orange)',
+  ];
 
   final TextEditingController _inputController = TextEditingController();
 
@@ -175,10 +204,7 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
     final text = _inputController.text.trim();
     if (text.isNotEmpty) {
       setState(() {
-        _items.add({
-          'text': text,
-          'group': _groups[0],
-        });
+        _items.add({'text': text, 'group': _groups[0]});
         _inputController.clear();
       });
       _notifyChanges();
@@ -254,7 +280,9 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
             decoration: BoxDecoration(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.06)),
+              border: Border.all(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
+              ),
             ),
             child: const Column(
               children: [
@@ -279,23 +307,35 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
 
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 4),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(item['text'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        child: Text(
+                          item['text'],
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                       DropdownButton<String>(
                         value: activeGroup,
-                        style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
                         underline: const SizedBox(),
                         items: _groups.map((g) {
-                          return DropdownMenuItem(
-                            value: g,
-                            child: Text(g),
-                          );
+                          return DropdownMenuItem(value: g, child: Text(g));
                         }).toList(),
                         onChanged: (val) {
                           if (val != null) _changeGroup(index, val);
@@ -304,7 +344,11 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
                       const SizedBox(width: 8),
                       GestureDetector(
                         onTap: () => _removeItem(index),
-                        child: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 18),
+                        child: const Icon(
+                          Icons.delete_outline_rounded,
+                          color: Colors.redAccent,
+                          size: 18,
+                        ),
                       ),
                     ],
                   ),
@@ -329,7 +373,10 @@ class FiveWhysWorkspace extends StatefulWidget {
 }
 
 class _FiveWhysWorkspaceState extends State<FiveWhysWorkspace> {
-  final List<TextEditingController> _controllers = List.generate(5, (_) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(
+    5,
+    (_) => TextEditingController(),
+  );
 
   @override
   void initState() {
@@ -378,9 +425,14 @@ class _FiveWhysWorkspaceState extends State<FiveWhysWorkspace> {
                     width: 24,
                     height: 24,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1 + (index * 0.1)),
+                      color: theme.colorScheme.primary.withValues(
+                        alpha: 0.1 + (index * 0.1),
+                      ),
                       shape: BoxShape.circle,
-                      border: Border.all(color: theme.colorScheme.primary, width: 1.5),
+                      border: Border.all(
+                        color: theme.colorScheme.primary,
+                        width: 1.5,
+                      ),
                     ),
                     child: Center(
                       child: Text(
@@ -407,10 +459,17 @@ class _FiveWhysWorkspaceState extends State<FiveWhysWorkspace> {
                   controller: _controllers[index],
                   style: const TextStyle(fontSize: 12),
                   decoration: InputDecoration(
-                    labelText: index == 0 ? 'Mengapa masalah ini terjadi?' : 'Mengapa hal itu bisa terjadi?',
+                    labelText: index == 0
+                        ? 'Mengapa masalah ini terjadi?'
+                        : 'Mengapa hal itu bisa terjadi?',
                     hintText: 'Tuliskan analisis sebab Anda...',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
                   ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (val) {
@@ -437,15 +496,19 @@ class FirstPrinciplesWorkspace extends StatefulWidget {
   const FirstPrinciplesWorkspace({super.key, required this.onChanged});
 
   @override
-  State<FirstPrinciplesWorkspace> createState() => _FirstPrinciplesWorkspaceState();
+  State<FirstPrinciplesWorkspace> createState() =>
+      _FirstPrinciplesWorkspaceState();
 }
 
 class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
-  final List<TextEditingController> _controllers = List.generate(3, (_) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(
+    3,
+    (_) => TextEditingController(),
+  );
   final List<String> _steps = const [
     'Asumsi Lama (Bagaimana orang biasa melakukannya)',
     'Fakta Dasar (Kebenaran fisik/logika murni)',
-    'Konstruksi Baru (Solusi orisinil yang dirancang dari nol)'
+    'Konstruksi Baru (Solusi orisinil yang dirancang dari nol)',
   ];
 
   @override
@@ -491,10 +554,14 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isLast ? theme.colorScheme.primary.withValues(alpha: 0.04) : theme.colorScheme.onSurface.withValues(alpha: 0.02),
+              color: isLast
+                  ? theme.colorScheme.primary.withValues(alpha: 0.04)
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isLast ? theme.colorScheme.primary.withValues(alpha: 0.2) : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                color: isLast
+                    ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                 width: isLast ? 1.5 : 1,
               ),
             ),
@@ -506,7 +573,9 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: isLast ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    color: isLast
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -543,28 +612,35 @@ class DoubleDiamondWorkspace extends StatefulWidget {
 
 class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
   int _activeTab = 0;
-  final List<TextEditingController> _controllers = List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
 
   final List<Map<String, String>> _phases = const [
     {
       'title': '1. DISCOVER 🔍',
       'label': 'Divergen: Cari Wawasan',
-      'hint': 'Tulis wawasan, riset lapangan, atau tren perilaku pengguna yang Anda temukan.',
+      'hint':
+          'Tulis wawasan, riset lapangan, atau tren perilaku pengguna yang Anda temukan.',
     },
     {
       'title': '2. DEFINE 🎯',
       'label': 'Konvergen: Fokus Masalah',
-      'hint': 'Rumuskan satu pernyataan masalah utama yang krusial untuk segera diselesaikan.',
+      'hint':
+          'Rumuskan satu pernyataan masalah utama yang krusial untuk segera diselesaikan.',
     },
     {
       'title': '3. DEVELOP 💡',
       'label': 'Divergen: Eksplorasi Ide',
-      'hint': 'Brainstorming berbagai alternatif solusi liar untuk memecahkan masalah utama.',
+      'hint':
+          'Brainstorming berbagai alternatif solusi liar untuk memecahkan masalah utama.',
     },
     {
       'title': '4. DELIVER 🚀',
       'label': 'Konvergen: Eksekusi Solusi',
-      'hint': 'Pilih satu solusi terbaik, buat prototipe kecil, dan rencanakan cara mengujinya.',
+      'hint':
+          'Pilih satu solusi terbaik, buat prototipe kecil, dan rencanakan cara mengujinya.',
     },
   ];
 
@@ -617,10 +693,14 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
                   margin: const EdgeInsets.symmetric(horizontal: 1.5),
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.04),
+                    color: isActive
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                      color: isActive
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                     ),
                   ),
                   child: Text(
@@ -629,7 +709,9 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
                     style: TextStyle(
                       fontSize: 9,
                       fontWeight: FontWeight.bold,
-                      color: isActive ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+                      color: isActive
+                          ? theme.colorScheme.onPrimary
+                          : theme.colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -643,19 +725,28 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
           decoration: BoxDecoration(
             color: theme.colorScheme.primary.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.12)),
+            border: Border.all(
+              color: theme.colorScheme.primary.withValues(alpha: 0.12),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '${phase['title']} — ${phase['label']}:',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
                 phase['hint']!,
-                style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ),
@@ -666,7 +757,8 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
           maxLines: 4,
           style: const TextStyle(fontSize: 12),
           decoration: InputDecoration(
-            labelText: 'Catatan untuk Fase ${_phases[_activeTab]['title']!.split(' ')[1]}',
+            labelText:
+                'Catatan untuk Fase ${_phases[_activeTab]['title']!.split(' ')[1]}',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -764,7 +856,9 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
     final buffer = StringBuffer();
     buffer.writeln('Lembar Validasi Asumsi Ide:');
     buffer.writeln('- ASUMSI UTAMA: ${_asumsiController.text.trim()}');
-    buffer.writeln('- STATUS VALIDASI: ${_isValidated ? "VALID (Terbukti) 🟢" : "GUGUR (Terbantahkan) 🔴"}');
+    buffer.writeln(
+      '- STATUS VALIDASI: ${_isValidated ? "VALID (Terbukti) 🟢" : "GUGUR (Terbantahkan) 🔴"}',
+    );
     buffer.writeln('- BUKTI PENDUKUNG (Supports):');
     if (_supports.isEmpty) buffer.writeln('  (Tidak ada)');
     for (final s in _supports) {
@@ -808,22 +902,37 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: _isValidated ? Colors.green.withValues(alpha: 0.06) : Colors.red.withValues(alpha: 0.06),
+            color: _isValidated
+                ? Colors.green.withValues(alpha: 0.06)
+                : Colors.red.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: _isValidated ? Colors.green.withValues(alpha: 0.3) : Colors.red.withValues(alpha: 0.3)),
+            border: Border.all(
+              color: _isValidated
+                  ? Colors.green.withValues(alpha: 0.3)
+                  : Colors.red.withValues(alpha: 0.3),
+            ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Hasil Akhir Hipotesis:',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: _isValidated ? Colors.green : Colors.red),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: _isValidated ? Colors.green : Colors.red,
+                ),
               ),
               Row(
                 children: [
                   Text(
-                    _isValidated ? 'VALID (Terbukti) 🟢' : 'GUGUR (Terbantah) 🔴',
-                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                    _isValidated
+                        ? 'VALID (Terbukti) 🟢'
+                        : 'GUGUR (Terbantah) 🔴',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Switch(
@@ -845,7 +954,14 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('Bukti Pendukung (+)', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green)),
+                  const Text(
+                    'Bukti Pendukung (+)',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
                   const SizedBox(height: 6),
                   TextField(
                     controller: _supportInput,
@@ -855,10 +971,19 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                       hintText: 'Ketik bukti...',
                       suffixIcon: GestureDetector(
                         onTap: _addSupport,
-                        child: const Icon(Icons.add_circle, color: Colors.green, size: 20),
+                        child: const Icon(
+                          Icons.add_circle,
+                          color: Colors.green,
+                          size: 20,
+                        ),
                       ),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 4,
+                      ),
                     ),
                     onSubmitted: (_) => _addSupport(),
                   ),
@@ -868,13 +993,22 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                       margin: const EdgeInsets.symmetric(vertical: 2),
                       color: Colors.green.withValues(alpha: 0.03),
                       child: ListTile(
-                        title: Text(_supports[index], style: const TextStyle(fontSize: 10)),
+                        title: Text(
+                          _supports[index],
+                          style: const TextStyle(fontSize: 10),
+                        ),
                         trailing: GestureDetector(
                           onTap: () => _removeSupport(index),
-                          child: const Icon(Icons.close_rounded, size: 12, color: Colors.redAccent),
+                          child: const Icon(
+                            Icons.close_rounded,
+                            size: 12,
+                            color: Colors.redAccent,
+                          ),
                         ),
                         dense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 6),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                        ),
                       ),
                     );
                   }),
@@ -886,7 +1020,14 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('Bukti Pembantah (-)', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.red)),
+                  const Text(
+                    'Bukti Pembantah (-)',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
                   const SizedBox(height: 6),
                   TextField(
                     controller: _opposeInput,
@@ -896,10 +1037,19 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                       hintText: 'Ketik bukti...',
                       suffixIcon: GestureDetector(
                         onTap: _addOppose,
-                        child: const Icon(Icons.add_circle, color: Colors.red, size: 20),
+                        child: const Icon(
+                          Icons.add_circle,
+                          color: Colors.red,
+                          size: 20,
+                        ),
                       ),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 4,
+                      ),
                     ),
                     onSubmitted: (_) => _addOppose(),
                   ),
@@ -909,13 +1059,22 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                       margin: const EdgeInsets.symmetric(vertical: 2),
                       color: Colors.red.withValues(alpha: 0.03),
                       child: ListTile(
-                        title: Text(_opposes[index], style: const TextStyle(fontSize: 10)),
+                        title: Text(
+                          _opposes[index],
+                          style: const TextStyle(fontSize: 10),
+                        ),
                         trailing: GestureDetector(
                           onTap: () => _removeOppose(index),
-                          child: const Icon(Icons.close_rounded, size: 12, color: Colors.redAccent),
+                          child: const Icon(
+                            Icons.close_rounded,
+                            size: 12,
+                            color: Colors.redAccent,
+                          ),
                         ),
                         dense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 6),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                        ),
                       ),
                     );
                   }),

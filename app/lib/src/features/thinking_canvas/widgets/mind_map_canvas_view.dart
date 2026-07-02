@@ -18,7 +18,8 @@ class MindMapCanvasView extends StatefulWidget {
 
 class _MindMapCanvasViewState extends State<MindMapCanvasView> {
   final List<MindMapNode> _nodes = [];
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
 
   String? _selectedNodeId;
 
@@ -71,7 +72,8 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
     final size = MediaQuery.of(context).size;
     final double xVal = -400.0 + (size.width / 2);
     final double yVal = -300.0 + (size.height / 2);
-    _transformationController.value = Matrix4.identity()..translateByDouble(xVal, yVal, 0.0, 1.0);
+    _transformationController.value = Matrix4.identity()
+      ..translateByDouble(xVal, yVal, 0.0, 1.0);
   }
 
   void _addNewRootNode() {
@@ -98,7 +100,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
     final parent = _nodes.firstWhere((n) => n.id == parentId);
     setState(() {
       final id = 'node_${DateTime.now().millisecondsSinceEpoch}';
-      
+
       // Position child slightly offset from parent
       final rng = Random();
       final double angle = rng.nextDouble() * 2 * pi;
@@ -127,7 +129,9 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: const Text('Edit Gagasan'),
           content: TextField(
             controller: controller,
@@ -147,7 +151,9 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  node.text = controller.text.trim().isEmpty ? 'Gagasan' : controller.text.trim();
+                  node.text = controller.text.trim().isEmpty
+                      ? 'Gagasan'
+                      : controller.text.trim();
                 });
                 Navigator.pop(context);
               },
@@ -168,7 +174,12 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
       while (addedMore) {
         addedMore = false;
         final currentChildren = _nodes
-            .where((n) => n.parentId != null && idsToRemove.contains(n.parentId) && !idsToRemove.contains(n.id))
+            .where(
+              (n) =>
+                  n.parentId != null &&
+                  idsToRemove.contains(n.parentId) &&
+                  !idsToRemove.contains(n.id),
+            )
             .map((n) => n.id)
             .toList();
 
@@ -196,7 +207,10 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final selectedNode = _selectedNodeId != null
-        ? _nodes.firstWhere((n) => n.id == _selectedNodeId, orElse: () => _nodes.first)
+        ? _nodes.firstWhere(
+            (n) => n.id == _selectedNodeId,
+            orElse: () => _nodes.first,
+          )
         : null;
 
     return Scaffold(
@@ -249,7 +263,9 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                     // Grid background
                     Positioned.fill(
                       child: CustomPaint(
-                        painter: _GridBackgroundPainter(theme.colorScheme.onSurface.withValues(alpha: 0.04)),
+                        painter: _GridBackgroundPainter(
+                          theme.colorScheme.onSurface.withValues(alpha: 0.04),
+                        ),
                       ),
                     ),
 
@@ -313,14 +329,22 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
               bottom: 16,
               child: Card(
                 elevation: 6,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 12.0,
+                  ),
                   child: Row(
                     children: [
                       // Sub-node / child button
                       IconButton(
-                        icon: const Icon(Icons.account_tree_rounded, color: Colors.blueAccent),
+                        icon: const Icon(
+                          Icons.account_tree_rounded,
+                          color: Colors.blueAccent,
+                        ),
                         tooltip: 'Tambah Cabang (+)',
                         onPressed: () => _addChildNode(selectedNode.id),
                       ),
@@ -328,7 +352,10 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
 
                       // Edit button
                       IconButton(
-                        icon: const Icon(Icons.edit_rounded, color: Colors.green),
+                        icon: const Icon(
+                          Icons.edit_rounded,
+                          color: Colors.green,
+                        ),
                         tooltip: 'Edit Teks',
                         onPressed: () => _editNodeText(selectedNode.id),
                       ),
@@ -340,9 +367,11 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: _palette.map((colorVal) {
-                              final isCurrentColor = selectedNode.colorValue == colorVal;
+                              final isCurrentColor =
+                                  selectedNode.colorValue == colorVal;
                               return GestureDetector(
-                                onTap: () => _changeNodeColor(selectedNode.id, colorVal),
+                                onTap: () =>
+                                    _changeNodeColor(selectedNode.id, colorVal),
                                 behavior: HitTestBehavior.opaque,
                                 child: Container(
                                   width: 44,
@@ -355,7 +384,11 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                                       color: Color(colorVal),
                                       shape: BoxShape.circle,
                                       border: isCurrentColor
-                                          ? Border.all(color: theme.colorScheme.onSurface, width: 2)
+                                          ? Border.all(
+                                              color:
+                                                  theme.colorScheme.onSurface,
+                                              width: 2,
+                                            )
                                           : null,
                                     ),
                                   ),
@@ -369,7 +402,10 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
 
                       // Delete button
                       IconButton(
-                        icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
+                        icon: const Icon(
+                          Icons.delete_outline_rounded,
+                          color: Colors.redAccent,
+                        ),
                         tooltip: 'Hapus Node',
                         onPressed: () => _deleteNode(selectedNode.id),
                       ),
@@ -401,7 +437,9 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
           ),
         ],
         border: Border.all(
-          color: isSelected ? theme.colorScheme.primary : Colors.white.withValues(alpha: 0.5),
+          color: isSelected
+              ? theme.colorScheme.primary
+              : Colors.white.withValues(alpha: 0.5),
           width: isSelected ? 3 : 1.5,
         ),
       ),
@@ -457,7 +495,10 @@ class _MindMapLinesPainter extends CustomPainter {
       if (node.parentId == null) continue;
 
       // Find parent node
-      final parent = nodes.firstWhere((n) => n.id == node.parentId, orElse: () => node);
+      final parent = nodes.firstWhere(
+        (n) => n.id == node.parentId,
+        orElse: () => node,
+      );
       if (parent == node) continue;
 
       // Calculate connection coordinates from node centers
@@ -469,9 +510,12 @@ class _MindMapLinesPainter extends CustomPainter {
       final path = Path()
         ..moveTo(start.dx, start.dy)
         ..cubicTo(
-          start.dx + (end.dx - start.dx) / 2, start.dy, // control point 1
-          start.dx + (end.dx - start.dx) / 2, end.dy,   // control point 2
-          end.dx, end.dy,
+          start.dx + (end.dx - start.dx) / 2,
+          start.dy, // control point 1
+          start.dx + (end.dx - start.dx) / 2,
+          end.dy, // control point 2
+          end.dx,
+          end.dy,
         );
 
       paint.color = Color(node.colorValue).withValues(alpha: 0.5);

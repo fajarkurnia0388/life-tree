@@ -108,9 +108,7 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView>
           );
         },
         loading: () => Center(
-          child: LoadingStateWidget(
-            message: 'Memuat jurnal keputusan...',
-          ),
+          child: LoadingStateWidget(message: 'Memuat jurnal keputusan...'),
         ),
         error: (err, stack) => Center(child: Text('Gagal memuat jurnal: $err')),
       ),

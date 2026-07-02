@@ -21,18 +21,15 @@ class MethodPickerBottomSheet extends StatefulWidget {
   });
 
   @override
-  State<MethodPickerBottomSheet> createState() => _MethodPickerBottomSheetState();
+  State<MethodPickerBottomSheet> createState() =>
+      _MethodPickerBottomSheetState();
 }
 
 class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
   String _searchQuery = '';
 
   static const List<MapEntry<String, List<String>>> _categoryGroups = [
-    MapEntry('Quick Dump', [
-      'MindDump',
-      'Freewriting',
-      'MindDumpCluster',
-    ]),
+    MapEntry('Quick Dump', ['MindDump', 'Freewriting', 'MindDumpCluster']),
     MapEntry('Kreatif', [
       'Brainstorming',
       'MindMapping',
@@ -51,17 +48,8 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
       'AffinityMapping',
       'ReverseBrainstorming',
     ]),
-    MapEntry('Keputusan', [
-      'Scoring',
-      'Validation',
-      'FirstPrinciples',
-      'PMI',
-    ]),
-    MapEntry('Lainnya', [
-      'SixThinkingHats',
-      'DisneyStrategy',
-      'DoubleDiamond',
-    ]),
+    MapEntry('Keputusan', ['Scoring', 'Validation', 'FirstPrinciples', 'PMI']),
+    MapEntry('Lainnya', ['SixThinkingHats', 'DisneyStrategy', 'DoubleDiamond']),
   ];
 
   Color _getLevelColor(String level, ThemeData theme) {
@@ -84,11 +72,13 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: const Text('Fitur Premium 👑'),
           content: const Text(
             'Metode berpikir tingkat lanjut dan workspace interaktif ini eksklusif untuk pengguna Premium.\n\n'
-            'Aktifkan Mode Developer di menu dashboard utama untuk membuka kunci seluruh fitur premium secara gratis!'
+            'Aktifkan Mode Developer di menu dashboard utama untuk membuka kunci seluruh fitur premium secara gratis!',
           ),
           actions: [
             TextButton(
@@ -145,18 +135,28 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
                             Flexible(
                               child: Text(
                                 m.name,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
                               ),
                             ),
                             if (m.isPremium) ...[
                               const SizedBox(width: 6),
-                              Icon(Icons.lock_rounded, color: Colors.amber[700], size: 14),
+                              Icon(
+                                Icons.lock_rounded,
+                                color: Colors.amber[700],
+                                size: 14,
+                              ),
                             ],
                           ],
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: levelColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
@@ -187,10 +187,10 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
                         m.template == WorkspaceTemplate.freeform
                             ? Icons.edit_note_rounded
                             : m.template == WorkspaceTemplate.multiColumn
-                                ? Icons.view_column_rounded
-                                : m.template == WorkspaceTemplate.sequential
-                                    ? Icons.format_list_numbered_rounded
-                                    : Icons.table_chart_rounded,
+                            ? Icons.view_column_rounded
+                            : m.template == WorkspaceTemplate.sequential
+                            ? Icons.format_list_numbered_rounded
+                            : Icons.table_chart_rounded,
                         size: 14,
                         color: theme.colorScheme.primary.withValues(alpha: 0.7),
                       ),
@@ -199,13 +199,15 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
                         m.template == WorkspaceTemplate.freeform
                             ? 'Workspace: Teks Bebas'
                             : m.template == WorkspaceTemplate.multiColumn
-                                ? 'Workspace: Input Kolom'
-                                : m.template == WorkspaceTemplate.sequential
-                                    ? 'Workspace: Langkah Berurutan'
-                                    : 'Workspace: Tabel Skoring',
+                            ? 'Workspace: Input Kolom'
+                            : m.template == WorkspaceTemplate.sequential
+                            ? 'Workspace: Langkah Berurutan'
+                            : 'Workspace: Tabel Skoring',
                         style: TextStyle(
                           fontSize: 11,
-                          color: theme.colorScheme.primary.withValues(alpha: 0.8),
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.8,
+                          ),
                         ),
                       ),
                     ],
@@ -261,7 +263,8 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
         final m = methodsByKey[key];
         if (m == null) continue;
         seenKeys.add(key);
-        final matchesSearch = query.isEmpty ||
+        final matchesSearch =
+            query.isEmpty ||
             m.name.toLowerCase().contains(query) ||
             m.desc.toLowerCase().contains(query);
         if (matchesSearch) methods.add(m);
@@ -271,7 +274,8 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
 
     final unmapped = ThinkingMethod.allMethods.where((m) {
       if (seenKeys.contains(m.key)) return false;
-      final matchesSearch = query.isEmpty ||
+      final matchesSearch =
+          query.isEmpty ||
           m.name.toLowerCase().contains(query) ||
           m.desc.toLowerCase().contains(query);
       return matchesSearch;
@@ -321,7 +325,9 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
             children: [
               Text(
                 'Pilih Metode Berpikir 🧠',
-                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               IconButton(
                 icon: const Icon(Icons.close_rounded),
@@ -337,19 +343,28 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
               hintText: 'Cari metode (misal: SWOT, 5 Whys)...',
               prefixIcon: const Icon(Icons.search_rounded),
               isDense: true,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
           const SizedBox(height: 4),
           Expanded(
             child: !hasResults
                 ? const Center(
-                    child: Text('Metode tidak ditemukan.', style: TextStyle(fontStyle: FontStyle.italic)),
+                    child: Text(
+                      'Metode tidak ditemukan.',
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
                   )
                 : ListView(
                     children: [
                       for (final group in visibleGroups) ...[
-                        _buildSectionHeader(group.key, group.value.length, theme),
+                        _buildSectionHeader(
+                          group.key,
+                          group.value.length,
+                          theme,
+                        ),
                         for (final m in group.value) _buildMethodCard(m, theme),
                       ],
                     ],

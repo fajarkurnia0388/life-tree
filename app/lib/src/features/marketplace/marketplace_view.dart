@@ -25,7 +25,15 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
   String _sortBy = 'Terpopuler';
   late Future<List<PublicTemplate>> _templatesFuture;
 
-  final List<String> _domains = ['Semua', 'Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
+  final List<String> _domains = [
+    'Semua',
+    'Tubuh',
+    'Keuangan',
+    'Hubungan',
+    'Emosi',
+    'Karir',
+    'Rekreasi',
+  ];
   final List<String> _sortOptions = ['Terpopuler', 'Terbaik', 'Terbaru'];
 
   @override
@@ -54,9 +62,14 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
       if (profiles.isEmpty) throw Exception('Profil tidak ditemukan');
       final userId = profiles.first.userId;
 
-      final existing = await (db.select(db.habits)
-            ..where((tbl) => tbl.userId.equals(userId) & tbl.title.equals(t.title) & tbl.deletedAt.isNull()))
-          .get();
+      final existing =
+          await (db.select(db.habits)..where(
+                (tbl) =>
+                    tbl.userId.equals(userId) &
+                    tbl.title.equals(t.title) &
+                    tbl.deletedAt.isNull(),
+              ))
+              .get();
 
       if (existing.isNotEmpty) {
         if (mounted) {
@@ -88,9 +101,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
         createdAt: now,
       );
 
-      final reminder = ReminderPreferencesCompanion.insert(
-        habitId: habitId,
-      );
+      final reminder = ReminderPreferencesCompanion.insert(habitId: habitId);
 
       await db.into(db.habits).insert(newHabit);
       await db.into(db.reminderPreferences).insert(reminder);
@@ -101,7 +112,9 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Kebiasaan "${t.title}" berhasil diunduh ke daftar lokal!'),
+            content: Text(
+              'Kebiasaan "${t.title}" berhasil diunduh ke daftar lokal!',
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -129,7 +142,9 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               title: const Text('Beri Rating Kebiasaan'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -146,7 +161,9 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                       final starIndex = index + 1;
                       return IconButton(
                         icon: Icon(
-                          starIndex <= selectedStars ? Icons.star_rounded : Icons.star_outline_rounded,
+                          starIndex <= selectedStars
+                              ? Icons.star_rounded
+                              : Icons.star_outline_rounded,
                           color: Colors.amber,
                           size: 36,
                         ),
@@ -246,7 +263,9 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                     _refreshTemplates();
                   },
                 ),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onChanged: (_) => _refreshTemplates(),
             ),
@@ -284,7 +303,10 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                const Text('Urutkan:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Urutkan:',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: SizedBox(
@@ -298,7 +320,10 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                         return Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: ChoiceChip(
-                            label: Text(option, style: const TextStyle(fontSize: 11)),
+                            label: Text(
+                              option,
+                              style: const TextStyle(fontSize: 11),
+                            ),
                             selected: isSelected,
                             onSelected: (selected) {
                               if (selected) {
@@ -324,9 +349,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: LoadingStateWidget(
-                      message: 'Memuat template...',
-                    ),
+                    child: LoadingStateWidget(message: 'Memuat template...'),
                   );
                 }
 

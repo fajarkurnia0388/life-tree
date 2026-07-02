@@ -341,9 +341,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           );
         },
         loading: () => const Center(
-          child: LoadingStateWidget(
-            message: 'Memuat data dashboard...',
-          ),
+          child: LoadingStateWidget(message: 'Memuat data dashboard...'),
         ),
         error: (err, stack) => ErrorStateWidget(
           message: 'Gagal memuat dashboard',
@@ -427,7 +425,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 const Divider(),
                 Semantics(
                   label: 'Tulis jurnal hari ini',
-                  hint: 'Buka halaman jurnal untuk mencatat mood dan refleksi harian',
+                  hint:
+                      'Buka halaman jurnal untuk mencatat mood dan refleksi harian',
                   button: true,
                   child: ListTile(
                     leading: const CircleAvatar(

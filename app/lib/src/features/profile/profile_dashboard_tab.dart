@@ -138,7 +138,9 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                     maxLength: 50,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
-                      if (value != null && value.trim().isNotEmpty && value.trim().length < 2) {
+                      if (value != null &&
+                          value.trim().isNotEmpty &&
+                          value.trim().length < 2) {
                         return 'Minimal 2 karakter';
                       }
                       return null;
@@ -154,7 +156,9 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                     maxLength: 50,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
-                      if (value != null && value.trim().isNotEmpty && value.trim().length < 2) {
+                      if (value != null &&
+                          value.trim().isNotEmpty &&
+                          value.trim().length < 2) {
                         return 'Minimal 2 karakter';
                       }
                       return null;
@@ -597,11 +601,8 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
             ),
           );
         },
-        loading: () => Center(
-          child: LoadingStateWidget(
-            message: 'Memuat profil...',
-          ),
-        ),
+        loading: () =>
+            Center(child: LoadingStateWidget(message: 'Memuat profil...')),
         error: (err, _) => Center(child: Text('Gagal memuat profil: $err')),
       ),
     );

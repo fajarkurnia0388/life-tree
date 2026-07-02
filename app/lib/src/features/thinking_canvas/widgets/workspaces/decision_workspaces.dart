@@ -9,7 +9,8 @@ class SixThinkingHatsWorkspace extends StatefulWidget {
   const SixThinkingHatsWorkspace({super.key, required this.onChanged});
 
   @override
-  State<SixThinkingHatsWorkspace> createState() => _SixThinkingHatsWorkspaceState();
+  State<SixThinkingHatsWorkspace> createState() =>
+      _SixThinkingHatsWorkspaceState();
 }
 
 class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
@@ -20,7 +21,8 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
       'textColor': Colors.black87,
       'name': 'Topi Putih',
       'label': 'Fakta & Data',
-      'hint': 'Informasi apa saja yang kita miliki? Data apa yang masih kurang?',
+      'hint':
+          'Informasi apa saja yang kita miliki? Data apa yang masih kurang?',
     },
     {
       'color': Colors.red,
@@ -28,7 +30,8 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
       'textColor': Colors.white,
       'name': 'Topi Merah',
       'label': 'Firasat & Emosi',
-      'hint': 'Bagaimana intuisi atau perasaan Anda melihat masalah ini tanpa logika?',
+      'hint':
+          'Bagaimana intuisi atau perasaan Anda melihat masalah ini tanpa logika?',
     },
     {
       'color': Colors.black,
@@ -36,7 +39,8 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
       'textColor': Colors.white,
       'name': 'Topi Hitam',
       'label': 'Risiko & Kelemahan',
-      'hint': 'Mengapa ide ini bisa gagal? Apa saja risiko/hambatan terburuknya?',
+      'hint':
+          'Mengapa ide ini bisa gagal? Apa saja risiko/hambatan terburuknya?',
     },
     {
       'color': Colors.amber,
@@ -44,7 +48,8 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
       'textColor': Colors.black87,
       'name': 'Topi Kuning',
       'label': 'Manfaat & Harapan',
-      'hint': 'Apa keuntungan dan nilai positif dari solusi ini? Mengapa ini berhasil?',
+      'hint':
+          'Apa keuntungan dan nilai positif dari solusi ini? Mengapa ini berhasil?',
     },
     {
       'color': Colors.green,
@@ -52,7 +57,8 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
       'textColor': Colors.white,
       'name': 'Topi Hijau',
       'label': 'Kreativitas & Opsi',
-      'hint': 'Opsi alternatif apa lagi yang belum kita coba? Pikirkan solusi liar!',
+      'hint':
+          'Opsi alternatif apa lagi yang belum kita coba? Pikirkan solusi liar!',
     },
     {
       'color': Colors.blue,
@@ -60,7 +66,8 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
       'textColor': Colors.white,
       'name': 'Topi Biru',
       'label': 'Kontrol Proses',
-      'hint': 'Apa kesimpulan akhir kita? Apa langkah selanjutnya yang harus diambil?',
+      'hint':
+          'Apa kesimpulan akhir kita? Apa langkah selanjutnya yang harus diambil?',
     },
   ];
 
@@ -122,15 +129,22 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: h['color'] as Color,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isSelected ? theme.colorScheme.primary : (h['borderColor'] as Color).withValues(alpha: 0.5),
+                    color: isSelected
+                        ? theme.colorScheme.primary
+                        : (h['borderColor'] as Color).withValues(alpha: 0.5),
                     width: isSelected ? 3 : 1.5,
                   ),
-                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 3)],
+                  boxShadow: const [
+                    BoxShadow(color: Colors.black12, blurRadius: 3),
+                  ],
                 ),
                 child: Text(
                   h['label'] as String,
@@ -150,7 +164,9 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
           decoration: BoxDecoration(
             color: (activeHat['color'] as Color).withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: (activeHat['borderColor'] as Color).withValues(alpha: 0.3)),
+            border: Border.all(
+              color: (activeHat['borderColor'] as Color).withValues(alpha: 0.3),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,13 +176,18 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: activeHat['color'] == Colors.white ? Colors.black87 : activeHat['color'] as Color,
+                  color: activeHat['color'] == Colors.white
+                      ? Colors.black87
+                      : activeHat['color'] as Color,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 activeHat['hint'] as String,
-                style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ),
@@ -201,7 +222,8 @@ class DisneyStrategyWorkspace extends StatefulWidget {
   const DisneyStrategyWorkspace({super.key, required this.onChanged});
 
   @override
-  State<DisneyStrategyWorkspace> createState() => _DisneyStrategyWorkspaceState();
+  State<DisneyStrategyWorkspace> createState() =>
+      _DisneyStrategyWorkspaceState();
 }
 
 class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
@@ -210,21 +232,24 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
   final List<Map<String, String>> _rooms = const [
     {
       'title': '1. Ruang Dreamer ☁️',
-      'hint': 'Tuliskan visi terbesar Anda tanpa batasan logistik atau finansial. Berimajinasilah!',
+      'hint':
+          'Tuliskan visi terbesar Anda tanpa batasan logistik atau finansial. Berimajinasilah!',
       'label': 'Visi Dreamer (Impian)',
       'gradientStart': '0xFF4F83CC',
       'gradientEnd': '0xFF96C0CE',
     },
     {
       'title': '2. Ruang Realist 🛠️',
-      'hint': 'Bagaimana cara merealisasikan mimpi ini? Tulis rencana taktis dan langkah konkret.',
+      'hint':
+          'Bagaimana cara merealisasikan mimpi ini? Tulis rencana taktis dan langkah konkret.',
       'label': 'Langkah Realist (Rencana)',
       'gradientStart': '0xFF5C8D89',
       'gradientEnd': '0xFF8FB9A8',
     },
     {
       'title': '3. Ruang Critic 🔎',
-      'hint': 'Temukan celah, risiko, dan kelemahan rencana ini secara kritis untuk memolesnya.',
+      'hint':
+          'Temukan celah, risiko, dan kelemahan rencana ini secara kritis untuk memolesnya.',
       'label': 'Analisis Critic (Evaluasi)',
       'gradientStart': '0xFF7E8A97',
       'gradientEnd': '0xFFB2BEC3',
@@ -284,10 +309,14 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
                   margin: const EdgeInsets.symmetric(horizontal: 2.0),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
-                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.04),
+                    color: isActive
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                      color: isActive
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                     ),
                   ),
                   child: Text(
@@ -296,7 +325,9 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: isActive ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+                      color: isActive
+                          ? theme.colorScheme.onPrimary
+                          : theme.colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -319,14 +350,22 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
             children: [
               Text(
                 room['title']!,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
                 room['hint']!,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 10, color: Colors.white70, fontStyle: FontStyle.italic),
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: Colors.white70,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ),
@@ -366,13 +405,47 @@ class ScamperWorkspace extends StatefulWidget {
 
 class _ScamperWorkspaceState extends State<ScamperWorkspace> {
   final List<Map<String, String>> _panels = const [
-    {'key': 'S', 'name': 'Substitute (Substitusi)', 'hint': 'Komponen, bahan, atau proses apa yang bisa kita ganti?'},
-    {'key': 'C', 'name': 'Combine (Kombinasi)', 'hint': 'Bagaimana cara menggabungkan ide ini dengan produk/layanan lain?'},
-    {'key': 'A', 'name': 'Adapt (Adaptasi)', 'hint': 'Bagaimana cara mengadaptasi ide sukses dari industri lain ke masalah ini?'},
-    {'key': 'M', 'name': 'Modify (Modifikasi)', 'hint': 'Apakah kita bisa mengubah bentuk, ukuran, atau kemasan menjadi lebih besar/kecil?'},
-    {'key': 'P', 'name': 'Put to another use', 'hint': 'Bagaimana jika ide ini digunakan untuk segmen pasar/tujuan yang berbeda?'},
-    {'key': 'E', 'name': 'Eliminate (Eliminasi)', 'hint': 'Bagian/fitur apa yang paling tidak penting dan bisa kita hilangkan saja?'},
-    {'key': 'R', 'name': 'Reverse (Pembalikan)', 'hint': 'Bagaimana jika kita membalik alur prosesnya dari belakang ke depan?'},
+    {
+      'key': 'S',
+      'name': 'Substitute (Substitusi)',
+      'hint': 'Komponen, bahan, atau proses apa yang bisa kita ganti?',
+    },
+    {
+      'key': 'C',
+      'name': 'Combine (Kombinasi)',
+      'hint':
+          'Bagaimana cara menggabungkan ide ini dengan produk/layanan lain?',
+    },
+    {
+      'key': 'A',
+      'name': 'Adapt (Adaptasi)',
+      'hint':
+          'Bagaimana cara mengadaptasi ide sukses dari industri lain ke masalah ini?',
+    },
+    {
+      'key': 'M',
+      'name': 'Modify (Modifikasi)',
+      'hint':
+          'Apakah kita bisa mengubah bentuk, ukuran, atau kemasan menjadi lebih besar/kecil?',
+    },
+    {
+      'key': 'P',
+      'name': 'Put to another use',
+      'hint':
+          'Bagaimana jika ide ini digunakan untuk segmen pasar/tujuan yang berbeda?',
+    },
+    {
+      'key': 'E',
+      'name': 'Eliminate (Eliminasi)',
+      'hint':
+          'Bagian/fitur apa yang paling tidak penting dan bisa kita hilangkan saja?',
+    },
+    {
+      'key': 'R',
+      'name': 'Reverse (Pembalikan)',
+      'hint':
+          'Bagaimana jika kita membalik alur prosesnya dari belakang ke depan?',
+    },
   ];
 
   int _expandedIndex = 0;
@@ -426,7 +499,9 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(
-                color: isExpanded ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                color: isExpanded
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                 width: isExpanded ? 1.5 : 1,
               ),
             ),
@@ -438,7 +513,9 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: isExpanded ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                      color: isExpanded
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.05),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -447,13 +524,25 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: isExpanded ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+                          color: isExpanded
+                              ? theme.colorScheme.onPrimary
+                              : theme.colorScheme.onSurface,
                         ),
                       ),
                     ),
                   ),
-                  title: Text(p['name']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  trailing: Icon(isExpanded ? Icons.expand_less_rounded : Icons.expand_more_rounded),
+                  title: Text(
+                    p['name']!,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                  trailing: Icon(
+                    isExpanded
+                        ? Icons.expand_less_rounded
+                        : Icons.expand_more_rounded,
+                  ),
                   onTap: () {
                     setState(() {
                       _expandedIndex = isExpanded ? -1 : index;
@@ -462,13 +551,21 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                 ),
                 if (isExpanded)
                   Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+                    padding: const EdgeInsets.only(
+                      left: 16.0,
+                      right: 16.0,
+                      bottom: 16.0,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
                           p['hint']!,
-                          style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.grey,
+                          ),
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
@@ -476,7 +573,9 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                           maxLines: 2,
                           decoration: InputDecoration(
                             hintText: 'Tulis ide SCAMPER Anda di sini...',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (val) {
@@ -534,8 +633,12 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
     final buffer = StringBuffer();
     buffer.writeln('Analisis Matriks SWOT:');
     buffer.writeln('- STRENGTHS (Kekuatan): ${_controllers['S']!.text.trim()}');
-    buffer.writeln('- WEAKNESSES (Kelemahan): ${_controllers['W']!.text.trim()}');
-    buffer.writeln('- OPPORTUNITIES (Peluang): ${_controllers['O']!.text.trim()}');
+    buffer.writeln(
+      '- WEAKNESSES (Kelemahan): ${_controllers['W']!.text.trim()}',
+    );
+    buffer.writeln(
+      '- OPPORTUNITIES (Peluang): ${_controllers['O']!.text.trim()}',
+    );
     buffer.writeln('- THREATS (Ancaman): ${_controllers['T']!.text.trim()}');
     widget.onChanged(buffer.toString());
   }
@@ -560,22 +663,50 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
           mainAxisSpacing: 10,
           childAspectRatio: 0.85,
           children: [
-            _buildSwotBox('STRENGTHS (S)', _controllers['S']!, Colors.green, theme),
-            _buildSwotBox('WEAKNESSES (W)', _controllers['W']!, Colors.red, theme),
-            _buildSwotBox('OPPORTUNITIES (O)', _controllers['O']!, Colors.blue, theme),
-            _buildSwotBox('THREATS (T)', _controllers['T']!, Colors.orange, theme),
+            _buildSwotBox(
+              'STRENGTHS (S)',
+              _controllers['S']!,
+              Colors.green,
+              theme,
+            ),
+            _buildSwotBox(
+              'WEAKNESSES (W)',
+              _controllers['W']!,
+              Colors.red,
+              theme,
+            ),
+            _buildSwotBox(
+              'OPPORTUNITIES (O)',
+              _controllers['O']!,
+              Colors.blue,
+              theme,
+            ),
+            _buildSwotBox(
+              'THREATS (T)',
+              _controllers['T']!,
+              Colors.orange,
+              theme,
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSwotBox(String label, TextEditingController controller, Color accentColor, ThemeData theme) {
+  Widget _buildSwotBox(
+    String label,
+    TextEditingController controller,
+    Color accentColor,
+    ThemeData theme,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: accentColor.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: accentColor.withValues(alpha: 0.3), width: 1.5),
+        border: Border.all(
+          color: accentColor.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
       ),
       padding: const EdgeInsets.all(10),
       child: Column(
@@ -586,13 +717,20 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
               Container(
                 width: 8,
                 height: 8,
-                decoration: BoxDecoration(color: accentColor, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  shape: BoxShape.circle,
+                ),
               ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: accentColor),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: accentColor,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -633,12 +771,31 @@ class StarburstingWorkspace extends StatefulWidget {
 
 class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
   final List<Map<String, String>> _points = const [
-    {'key': 'WHO', 'question': 'Siapa target pengguna, pesaing, atau aktor kunci utama?'},
-    {'key': 'WHAT', 'question': 'Apa masalah inti, solusi alternatif, atau fiturnya?'},
-    {'key': 'WHERE', 'question': 'Di mana produk ini dipasarkan atau diimplementasikan?'},
-    {'key': 'WHEN', 'question': 'Kapan waktu rilis terbaik, deadline, atau batas peluncuran?'},
-    {'key': 'WHY', 'question': 'Mengapa ide ini harus dibuat? Apa nilai keunikannya?'},
-    {'key': 'HOW', 'question': 'Bagaimana cara mendistribusikan, membiayai, atau mempromosikannya?'},
+    {
+      'key': 'WHO',
+      'question': 'Siapa target pengguna, pesaing, atau aktor kunci utama?',
+    },
+    {
+      'key': 'WHAT',
+      'question': 'Apa masalah inti, solusi alternatif, atau fiturnya?',
+    },
+    {
+      'key': 'WHERE',
+      'question': 'Di mana produk ini dipasarkan atau diimplementasikan?',
+    },
+    {
+      'key': 'WHEN',
+      'question': 'Kapan waktu rilis terbaik, deadline, atau batas peluncuran?',
+    },
+    {
+      'key': 'WHY',
+      'question': 'Mengapa ide ini harus dibuat? Apa nilai keunikannya?',
+    },
+    {
+      'key': 'HOW',
+      'question':
+          'Bagaimana cara mendistribusikan, membiayai, atau mempromosikannya?',
+    },
   ];
 
   int _selectedPointIndex = 0;
@@ -665,7 +822,9 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
     for (int i = 0; i < _points.length; i++) {
       final text = _controllers[i]!.text.trim();
       if (text.isNotEmpty) {
-        buffer.writeln('- [${_points[i]['key']}] ${_points[i]['question']}: $text');
+        buffer.writeln(
+          '- [${_points[i]['key']}] ${_points[i]['question']}: $text',
+        );
       }
     }
     widget.onChanged(buffer.toString());
@@ -700,10 +859,14 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
-                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.04),
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.04),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                    color: isSelected
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                   ),
                 ),
                 child: Center(
@@ -712,7 +875,9 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+                      color: isSelected
+                          ? theme.colorScheme.onPrimary
+                          : theme.colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -726,19 +891,28 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
           decoration: BoxDecoration(
             color: theme.colorScheme.primary.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.12)),
+            border: Border.all(
+              color: theme.colorScheme.primary.withValues(alpha: 0.12),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Fokus Pertanyaan ${activePoint['key']}:',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
                 activePoint['question']!,
-                style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ),

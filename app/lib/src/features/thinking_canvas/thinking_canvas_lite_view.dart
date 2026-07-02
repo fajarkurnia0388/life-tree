@@ -919,7 +919,8 @@ class _ThinkingCanvasLiteViewState
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               validator: (val) {
                                 if (val == null || val.trim().isEmpty) {
                                   return 'Nama opsi ide tidak boleh kosong';
