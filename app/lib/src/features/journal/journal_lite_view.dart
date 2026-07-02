@@ -21,7 +21,7 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
   final _q1Controller = TextEditingController();
   final _q2Controller = TextEditingController();
   final _q3Controller = TextEditingController();
-  
+
   int _selectedMood = 3; // Default 3 (Biasa Saja)
   bool _showDeepReflection = false;
 
@@ -54,12 +54,14 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
     if (profiles.isEmpty) return;
     final userId = profiles.first.userId;
 
-    final entries = await (db.select(db.journalEntries)
-          ..where((tbl) =>
-              tbl.userId.equals(userId) &
-              tbl.deletedAt.isNull() &
-              tbl.date.isBiggerOrEqualValue(windowStart)))
-        .get();
+    final entries =
+        await (db.select(db.journalEntries)..where(
+              (tbl) =>
+                  tbl.userId.equals(userId) &
+                  tbl.deletedAt.isNull() &
+                  tbl.date.isBiggerOrEqualValue(windowStart),
+            ))
+            .get();
 
     // Map normalized day -> moodScore for quick lookup.
     final moodByDate = <DateTime, int>{};
@@ -106,7 +108,9 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+          color: theme.colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.4,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
@@ -121,7 +125,9 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
 
     final parts = <String>[];
     if (_yesterdayMood != null) {
-      parts.add('Kemarin: ${_emojiForScore(_yesterdayMood!)} ($_yesterdayMood)');
+      parts.add(
+        'Kemarin: ${_emojiForScore(_yesterdayMood!)} ($_yesterdayMood)',
+      );
     }
     if (_avg7DayMood != null) {
       parts.add('Rata-rata 7 hari: ${_avg7DayMood!.toStringAsFixed(1)}');
@@ -158,7 +164,8 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
   Widget _buildSparkline(ThemeData theme) {
     final primary = theme.colorScheme.primary;
     return Semantics(
-      label: 'Tren mood 7 hari terakhir: '
+      label:
+          'Tren mood 7 hari terakhir: '
           '${_last7DayMoods.map((s) => s == 0 ? 'tidak ada data' : '$s').join(', ')}',
       child: SizedBox(
         height: 32,
@@ -193,14 +200,16 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
     final db = ref.read(dbProvider);
     final now = DateTime.now();
     final todayStart = DateTime(now.year, now.month, now.day);
-    
+
     final profiles = await db.select(db.userProfiles).get();
     if (profiles.isEmpty) return;
     final userId = profiles.first.userId;
 
-    final existing = await (db.select(db.journalEntries)
-          ..where((tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart)))
-        .get();
+    final existing =
+        await (db.select(db.journalEntries)..where(
+              (tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart),
+            ))
+            .get();
 
     if (existing.isNotEmpty && mounted) {
       final entry = existing.first;
@@ -232,20 +241,20 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
 
   Future<void> _saveJournalEntry() async {
     if (!_formKey.currentState!.validate()) return;
- 
+
     final db = ref.read(dbProvider);
     final now = DateTime.now();
     final todayStart = DateTime(now.year, now.month, now.day);
- 
+
     // Get user id
     final profiles = await db.select(db.userProfiles).get();
     if (profiles.isEmpty) return;
     final userId = profiles.first.userId;
- 
+
     final entryId = const Uuid().v4();
- 
+
     final keywordText = _keywordController.text.trim();
-    
+
     // Deep reflection fields mapping
     final String? textContent = _showDeepReflection
         ? 'Pikiran: ${_q1Controller.text.trim()}\n\nRespons: ${_q2Controller.text.trim()}'
@@ -254,26 +263,32 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
         ? _q3Controller.text.trim()
         : null;
     final String entryType = _showDeepReflection ? 'Deep' : 'Lite';
- 
+
     // Check if entry already exists for today
-    final existing = await (db.select(db.journalEntries)
-          ..where((tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart)))
-        .get();
- 
+    final existing =
+        await (db.select(db.journalEntries)..where(
+              (tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart),
+            ))
+            .get();
+
     if (existing.isNotEmpty) {
       // Update existing
-      await (db.update(db.journalEntries)
-            ..where((tbl) => tbl.entryId.equals(existing.first.entryId)))
-          .write(JournalEntriesCompanion(
-            moodScore: drift.Value(_selectedMood),
-            keyword: drift.Value(keywordText.isEmpty ? null : keywordText),
-            textContent: drift.Value(textContent),
-            gratitudeText: drift.Value(gratitudeText),
-            entryType: drift.Value(entryType),
-          ));
+      await (db.update(
+        db.journalEntries,
+      )..where((tbl) => tbl.entryId.equals(existing.first.entryId))).write(
+        JournalEntriesCompanion(
+          moodScore: drift.Value(_selectedMood),
+          keyword: drift.Value(keywordText.isEmpty ? null : keywordText),
+          textContent: drift.Value(textContent),
+          gratitudeText: drift.Value(gratitudeText),
+          entryType: drift.Value(entryType),
+        ),
+      );
     } else {
       // Insert new
-      await db.into(db.journalEntries).insert(
+      await db
+          .into(db.journalEntries)
+          .insert(
             JournalEntriesCompanion.insert(
               entryId: entryId,
               userId: userId,
@@ -295,11 +310,13 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
     final dayH1 = dayH0.subtract(const Duration(days: 1));
     final dayH2 = dayH0.subtract(const Duration(days: 2));
 
-    final consecutiveEntries = await (db.select(db.journalEntries)
-          ..where((tbl) =>
-              tbl.userId.equals(userId) &
-              tbl.date.isIn([dayH0, dayH1, dayH2])))
-        .get();
+    final consecutiveEntries =
+        await (db.select(db.journalEntries)..where(
+              (tbl) =>
+                  tbl.userId.equals(userId) &
+                  tbl.date.isIn([dayH0, dayH1, dayH2]),
+            ))
+            .get();
 
     // Build a map from date -> moodScore for quick lookup
     final moodByDate = {
@@ -307,7 +324,8 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
     };
 
     // All 3 consecutive days must have an entry AND moodScore <= 2
-    final hasConsecutiveLowMood = moodByDate.containsKey(dayH0) &&
+    final hasConsecutiveLowMood =
+        moodByDate.containsKey(dayH0) &&
         moodByDate.containsKey(dayH1) &&
         moodByDate.containsKey(dayH2) &&
         moodByDate[dayH0]! <= 2 &&
@@ -315,7 +333,9 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
         moodByDate[dayH2]! <= 2;
 
     if (hasConsecutiveLowMood) {
-      await db.into(db.wellnessPromptLogs).insert(
+      await db
+          .into(db.wellnessPromptLogs)
+          .insert(
             WellnessPromptLogsCompanion.insert(
               promptId: const Uuid().v4(),
               userId: userId,
@@ -329,7 +349,10 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Jurnal harian berhasil disimpan!'), backgroundColor: Colors.green),
+        const SnackBar(
+          content: Text('Jurnal harian berhasil disimpan!'),
+          backgroundColor: Colors.green,
+        ),
       );
       context.pop();
     }
@@ -345,7 +368,7 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
           content: const Text(
             'Kami mendeteksi suasana hati Anda kurang baik selama beberapa hari terakhir. '
             'Ingatlah untuk tidak menekan diri Anda terlalu keras. Anda selalu bisa beristirahat. '
-            '\n\nJika membutuhkan teman berbicara atau bantuan psikologis profesional, silakan kunjungi Safety Card di pojok kanan atas layar utama.'
+            '\n\nJika membutuhkan teman berbicara atau bantuan psikologis profesional, silakan kunjungi Safety Card di pojok kanan atas layar utama.',
           ),
           actions: [
             TextButton(
@@ -386,9 +409,7 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Jurnal Lite'),
-      ),
+      appBar: AppBar(title: const Text('Jurnal Lite')),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -433,10 +454,16 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.12) : Colors.transparent,
+                            color: isSelected
+                                ? theme.colorScheme.primary.withValues(
+                                    alpha: 0.12,
+                                  )
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+                              color: isSelected
+                                  ? theme.colorScheme.primary
+                                  : Colors.transparent,
                               width: 1.5,
                             ),
                           ),
@@ -451,8 +478,14 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                                 mood['label'] as String,
                                 style: TextStyle(
                                   fontSize: 10,
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? theme.colorScheme.primary
+                                      : theme.colorScheme.onSurface.withValues(
+                                          alpha: 0.6,
+                                        ),
                                 ),
                               ),
                             ],
@@ -480,7 +513,8 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                   prefixIcon: const Icon(Icons.tag_rounded),
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (v) => AppFormTheme.optionalTextValidator(v, maxLength: 20),
+                validator: (v) =>
+                    AppFormTheme.optionalTextValidator(v, maxLength: 20),
                 maxLength: 20,
               ),
               const SizedBox(height: 16),
@@ -494,7 +528,9 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                   });
                 },
                 title: const Text('Refleksi Mendalam (Opsional) ✍️'),
-                subtitle: const Text('Jawab 3 pertanyaan reflektif untuk kesehatan emosional.'),
+                subtitle: const Text(
+                  'Jawab 3 pertanyaan reflektif untuk kesehatan emosional.',
+                ),
                 activeThumbColor: theme.colorScheme.primary,
                 contentPadding: EdgeInsets.zero,
               ),
@@ -509,7 +545,10 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                       children: [
                         const Text(
                           'Apa yang paling menyita pikiran Anda hari ini?',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         TextFormField(
@@ -517,18 +556,24 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                           maxLines: 2,
                           decoration: AppFormTheme.inputDecoration(
                             labelText: 'Fokus Pikiran',
-                            hintText: 'Tuliskan unek-unek atau fokus pikiran Anda...',
+                            hintText:
+                                'Tuliskan unek-unek atau fokus pikiran Anda...',
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) 
-                              ? 'Harap isi kolom ini' 
+                          validator: (v) =>
+                              _showDeepReflection &&
+                                  (v == null || v.trim().isEmpty)
+                              ? 'Harap isi kolom ini'
                               : null,
                         ),
                         const SizedBox(height: 16),
 
                         const Text(
                           'Bagaimana Anda merespons hal tersebut?',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         TextFormField(
@@ -536,43 +581,56 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                           maxLines: 2,
                           decoration: AppFormTheme.inputDecoration(
                             labelText: 'Respons Anda',
-                            hintText: 'Tindakan atau sikap mental yang Anda ambil...',
+                            hintText:
+                                'Tindakan atau sikap mental yang Anda ambil...',
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) 
-                              ? 'Harap isi kolom ini' 
+                          validator: (v) =>
+                              _showDeepReflection &&
+                                  (v == null || v.trim().isEmpty)
+                              ? 'Harap isi kolom ini'
                               : null,
                         ),
                         const SizedBox(height: 16),
 
                         const Text(
                           'Tuliskan 1 hal kecil yang Anda syukuri hari ini.',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Wrap(
                           spacing: 6,
                           runSpacing: 6,
-                          children: [
-                            'Kesehatan 🍎',
-                            'Cuaca Cerah ☀️',
-                            'Keluarga 🏠',
-                            'Makanan Enak 🍲',
-                            'Istirahat Cukup 🛌',
-                          ].map((s) {
-                            return ActionChip(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                              label: Text(s, style: const TextStyle(fontSize: 10)),
-                              onPressed: () {
-                                final current = _q3Controller.text.trim();
-                                if (current.isEmpty) {
-                                  _q3Controller.text = s;
-                                } else {
-                                  _q3Controller.text = '$current, $s';
-                                }
-                              },
-                            );
-                          }).toList(),
+                          children:
+                              [
+                                'Kesehatan 🍎',
+                                'Cuaca Cerah ☀️',
+                                'Keluarga 🏠',
+                                'Makanan Enak 🍲',
+                                'Istirahat Cukup 🛌',
+                              ].map((s) {
+                                return ActionChip(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 1,
+                                  ),
+                                  label: Text(
+                                    s,
+                                    style: const TextStyle(fontSize: 10),
+                                  ),
+                                  onPressed: () {
+                                    final current = _q3Controller.text.trim();
+                                    if (current.isEmpty) {
+                                      _q3Controller.text = s;
+                                    } else {
+                                      _q3Controller.text = '$current, $s';
+                                    }
+                                  },
+                                );
+                              }).toList(),
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
@@ -580,11 +638,14 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                           maxLines: 2,
                           decoration: AppFormTheme.inputDecoration(
                             labelText: 'Rasa Syukur',
-                            hintText: 'Misal: Secangkir kopi hangat, senyum rekan kerja...',
+                            hintText:
+                                'Misal: Secangkir kopi hangat, senyum rekan kerja...',
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) 
-                              ? 'Harap isi kolom ini' 
+                          validator: (v) =>
+                              _showDeepReflection &&
+                                  (v == null || v.trim().isEmpty)
+                              ? 'Harap isi kolom ini'
                               : null,
                         ),
                       ],
@@ -605,7 +666,10 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text('Simpan Jurnal', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  'Simpan Jurnal',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 /// Form-specific theme configurations and input decoration styles.
-/// 
+///
 /// Provides consistent styling for form inputs, validation messages,
 /// and error states across the application.
-/// 
+///
 /// Usage:
 /// ```dart
 /// TextFormField(
@@ -52,22 +52,13 @@ class AppFormTheme {
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: Colors.red,
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: Colors.red,
-          width: 2,
-        ),
+        borderSide: const BorderSide(color: Colors.red, width: 2),
       ),
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 14,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
   }
 

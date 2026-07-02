@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 /// Reusable error state widget with retry functionality.
-/// 
+///
 /// Displays an error icon, message, optional error details, and a retry button.
 /// Designed to provide users with clear feedback and recovery options when errors occur.
-/// 
+///
 /// Usage:
 /// ```dart
 /// if (snapshot.hasError) {
@@ -54,7 +54,8 @@ class ErrorStateWidget extends StatelessWidget {
             Icon(
               icon ?? Icons.error_outline,
               size: 64,
-              color: iconColor ?? theme.colorScheme.error.withValues(alpha: 0.7),
+              color:
+                  iconColor ?? theme.colorScheme.error.withValues(alpha: 0.7),
             ),
             const SizedBox(height: 24),
 

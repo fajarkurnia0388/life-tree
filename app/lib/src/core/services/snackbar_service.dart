@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 /// Standardized SnackBar service for consistent error, success, and info messages.
-/// 
+///
 /// Provides appropriate durations and styling for different message types:
 /// - Error messages: 6-8 seconds (users need time to read and understand)
 /// - Success messages: 3-4 seconds (quick confirmation)
 /// - Info messages: 4-5 seconds (moderate attention)
-/// 
+///
 /// Usage:
 /// ```dart
 /// SnackBarService.showError(
@@ -100,17 +100,12 @@ class SnackBarService {
     final snackBar = SnackBar(
       content: Text(
         message,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 14,
-        ),
+        style: const TextStyle(color: Colors.white, fontSize: 14),
       ),
       backgroundColor: backgroundColor,
       duration: duration,
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       action: actionLabel != null && onActionPressed != null
           ? SnackBarAction(
               label: actionLabel,

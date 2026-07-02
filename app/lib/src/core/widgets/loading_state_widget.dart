@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 /// Reusable loading state widget with contextual messages.
-/// 
+///
 /// Displays a loading indicator with an optional message to inform users
 /// what is being loaded, improving perceived performance.
-/// 
+///
 /// Usage:
 /// ```dart
 /// loading: () => LoadingStateWidget(
@@ -53,9 +53,7 @@ class LoadingStateWidget extends StatelessWidget {
               const SizedBox(
                 width: 48,
                 height: 48,
-                child: CircularProgressIndicator(
-                  strokeWidth: 3,
-                ),
+                child: CircularProgressIndicator(strokeWidth: 3),
               ),
 
           // Message
@@ -79,7 +77,7 @@ class LoadingStateWidget extends StatelessWidget {
 }
 
 /// Skeleton loading widget for lists
-/// 
+///
 /// Shows a placeholder skeleton while content is loading,
 /// improving perceived performance.
 class SkeletonLoadingWidget extends StatelessWidget {

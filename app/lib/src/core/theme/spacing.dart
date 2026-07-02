@@ -1,8 +1,8 @@
 /// Application-wide spacing constants for consistent layout.
-/// 
+///
 /// Use these constants instead of hardcoded values to ensure
 /// visual consistency across the app.
-/// 
+///
 /// Usage:
 /// ```dart
 /// Padding(
@@ -27,10 +27,10 @@ class AppSpacing {
   static const double cardPadding = 20.0;
   static const double cardPaddingVertical = 20.0;
   static const double cardPaddingHorizontal = 20.0;
-  
+
   static const double buttonPaddingVertical = 14.0;
   static const double buttonPaddingHorizontal = 24.0;
-  
+
   static const double screenPadding = 24.0;
   static const double screenPaddingHorizontal = 24.0;
   static const double screenPaddingVertical = 16.0;

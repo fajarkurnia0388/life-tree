@@ -46,9 +46,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
   Future<void> _loadHabitForEdit() async {
     final db = ref.read(dbProvider);
-    final habit = await (db.select(db.habits)
-          ..where((tbl) => tbl.habitId.equals(widget.habitId!)))
-        .getSingleOrNull();
+    final habit = await (db.select(
+      db.habits,
+    )..where((tbl) => tbl.habitId.equals(widget.habitId!))).getSingleOrNull();
     if (habit != null && mounted) {
       setState(() {
         _isEditing = true;
@@ -62,7 +62,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         _frequency = habit.frequency;
         _domainTag = habit.domainTag ?? 'Tubuh';
         _showTemplates = false; // Hide templates in edit mode
-        
+
         if (habit.scheduledDays != null) {
           _selectedDays.clear();
           _selectedDays.addAll(
@@ -78,13 +78,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
   Future<void> _deleteHabit() async {
     if (_existingHabit == null) return;
-    
+
     final proceed = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Hapus Kebiasaan'),
-          content: const Text('Apakah Anda yakin ingin menghapus kebiasaan ini? Tindakan ini tidak dapat dibatalkan.'),
+          content: const Text(
+            'Apakah Anda yakin ingin menghapus kebiasaan ini? Tindakan ini tidak dapat dibatalkan.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
@@ -98,19 +100,18 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         );
       },
     );
-    
+
     if (proceed != true) return;
-    
+
     final db = ref.read(dbProvider);
     final now = DateTime.now();
-    
-    await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(_existingHabit!.habitId)))
-        .write(HabitsCompanion(
-          deletedAt: drift.Value(now),
-        ));
-        
+
+    await (db.update(db.habits)
+          ..where((tbl) => tbl.habitId.equals(_existingHabit!.habitId)))
+        .write(HabitsCompanion(deletedAt: drift.Value(now)));
+
     ref.invalidate(dashboardDataProvider);
-    
+
     if (mounted) {
       context.pop();
     }
@@ -126,18 +127,30 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     if (profiles.isEmpty) return;
     final userId = profiles.first.userId;
 
-    final activeHabits = await (db.select(db.habits)
-          ..where((tbl) => tbl.userId.equals(userId) & tbl.status.equals(HabitStatus.active) & tbl.deletedAt.isNull()))
-        .get();
-    
-    final currentLoad = activeHabits.fold<int>(0, (sum, h) => sum + h.initiationFriction + h.energyCost);
+    final activeHabits =
+        await (db.select(db.habits)..where(
+              (tbl) =>
+                  tbl.userId.equals(userId) &
+                  tbl.status.equals(HabitStatus.active) &
+                  tbl.deletedAt.isNull(),
+            ))
+            .get();
+
+    final currentLoad = activeHabits.fold<int>(
+      0,
+      (sum, h) => sum + h.initiationFriction + h.energyCost,
+    );
     int nextLoad = currentLoad;
     if (_isEditing && _existingHabit != null) {
-      nextLoad = currentLoad - (_existingHabit!.initiationFriction + _existingHabit!.energyCost) + _initiationFriction + _energyCost;
+      nextLoad =
+          currentLoad -
+          (_existingHabit!.initiationFriction + _existingHabit!.energyCost) +
+          _initiationFriction +
+          _energyCost;
     } else {
       nextLoad = currentLoad + _initiationFriction + _energyCost;
     }
-    
+
     final maxCapacity = profiles.first.canopyLoadCapacity;
 
     if (nextLoad > maxCapacity) {
@@ -150,7 +163,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             content: Text(
               'Total beban kapasitas harian Anda adalah $maxCapacity poin. '
               'Menambahkan/mengubah habit ini akan meningkatkan beban menjadi $nextLoad poin. '
-              '\n\nLifeTree menyarankan untuk menjaga beban di bawah batas agar tidak kelelahan. Tetap lanjutkan?'
+              '\n\nLifeTree menyarankan untuk menjaga beban di bawah batas agar tidak kelelahan. Tetap lanjutkan?',
             ),
             actions: [
               TextButton(
@@ -171,22 +184,29 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     final scheduledDaysStr = _frequency == 'Daily'
         ? null
         : _selectedDays.isEmpty
-            ? '1'
-            : _selectedDays.join(',');
+        ? '1'
+        : _selectedDays.join(',');
 
     if (_isEditing && _existingHabit != null) {
-      await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(widget.habitId!)))
-          .write(HabitsCompanion(
-            domainTag: drift.Value(_domainTag),
-            title: drift.Value(_titleController.text.trim()),
-            frequency: drift.Value(_frequency),
-            scheduledDays: drift.Value(scheduledDaysStr),
-            initiationFriction: drift.Value(_initiationFriction),
-            energyCost: drift.Value(_energyCost),
-            impactScore: drift.Value(_impactScore),
-            mvaDurationMin: drift.Value(_mvaDurationMin),
-            goalTag: drift.Value(_goalTagController.text.trim().isEmpty ? null : _goalTagController.text.trim()),
-          ));
+      await (db.update(
+        db.habits,
+      )..where((tbl) => tbl.habitId.equals(widget.habitId!))).write(
+        HabitsCompanion(
+          domainTag: drift.Value(_domainTag),
+          title: drift.Value(_titleController.text.trim()),
+          frequency: drift.Value(_frequency),
+          scheduledDays: drift.Value(scheduledDaysStr),
+          initiationFriction: drift.Value(_initiationFriction),
+          energyCost: drift.Value(_energyCost),
+          impactScore: drift.Value(_impactScore),
+          mvaDurationMin: drift.Value(_mvaDurationMin),
+          goalTag: drift.Value(
+            _goalTagController.text.trim().isEmpty
+                ? null
+                : _goalTagController.text.trim(),
+          ),
+        ),
+      );
     } else {
       final habitId = const Uuid().v4();
       final newHabit = HabitsCompanion.insert(
@@ -203,19 +223,21 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         impactScore: drift.Value(_impactScore),
         mvaDurationMin: drift.Value(_mvaDurationMin),
         createdAt: now,
-        goalTag: drift.Value(_goalTagController.text.trim().isEmpty ? null : _goalTagController.text.trim()),
+        goalTag: drift.Value(
+          _goalTagController.text.trim().isEmpty
+              ? null
+              : _goalTagController.text.trim(),
+        ),
       );
 
-      final reminder = ReminderPreferencesCompanion.insert(
-        habitId: habitId,
-      );
+      final reminder = ReminderPreferencesCompanion.insert(habitId: habitId);
 
       await db.into(db.habits).insert(newHabit);
       await db.into(db.reminderPreferences).insert(reminder);
     }
 
     ref.invalidate(dashboardDataProvider);
-    
+
     if (mounted) {
       context.pop();
     }
@@ -276,7 +298,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               const SizedBox(height: 8),
               Text(
                 'LifeTree membantu Anda membangun kebiasaan secara perlahan tanpa memicu rasa bersalah.',
-                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
               ),
               const SizedBox(height: 24),
 
@@ -294,7 +319,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                           : Icons.expand_more_rounded,
                       color: theme.colorScheme.primary,
                     ),
-                    tooltip: _showTemplates ? 'Sembunyikan Template' : 'Tampilkan Template',
+                    tooltip: _showTemplates
+                        ? 'Sembunyikan Template'
+                        : 'Tampilkan Template',
                     onPressed: () {
                       setState(() {
                         _showTemplates = !_showTemplates;
@@ -310,23 +337,31 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'].map((tag) {
-                      final isSelected = _domainTag == tag;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ChoiceChip(
-                          label: Text(tag),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            if (selected) {
-                              setState(() {
-                                _domainTag = tag;
-                              });
-                            }
-                          },
-                        ),
-                      );
-                    }).toList(),
+                    children:
+                        [
+                          'Tubuh',
+                          'Keuangan',
+                          'Hubungan',
+                          'Emosi',
+                          'Karir',
+                          'Rekreasi',
+                        ].map((tag) {
+                          final isSelected = _domainTag == tag;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: ChoiceChip(
+                              label: Text(tag),
+                              selected: isSelected,
+                              onSelected: (selected) {
+                                if (selected) {
+                                  setState(() {
+                                    _domainTag = tag;
+                                  });
+                                }
+                              },
+                            ),
+                          );
+                        }).toList(),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -341,12 +376,20 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                       final t = _activeTemplates[index];
                       return Container(
                         width: 200,
-                        margin: const EdgeInsets.only(right: 12, bottom: 8, top: 4),
+                        margin: const EdgeInsets.only(
+                          right: 12,
+                          bottom: 8,
+                          top: 4,
+                        ),
                         child: Card(
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.08)),
+                            side: BorderSide(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.08,
+                              ),
+                            ),
                           ),
                           child: InkWell(
                             borderRadius: BorderRadius.circular(12),
@@ -366,7 +409,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                                 children: [
                                   Text(
                                     t.title,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -374,17 +420,35 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                                   Expanded(
                                     child: Text(
                                       t.description,
-                                      style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.6),
+                                      ),
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text('🚀 $t.friction   ⚡ $t.energy', style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
-                                      Text('⏱️ ${t.mvaDuration}m', style: TextStyle(fontSize: 9, color: theme.colorScheme.primary, fontWeight: FontWeight.bold)),
+                                      Text(
+                                        '🚀 $t.friction   ⚡ $t.energy',
+                                        style: const TextStyle(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        '⏱️ ${t.mvaDuration}m',
+                                        style: TextStyle(
+                                          fontSize: 9,
+                                          color: theme.colorScheme.primary,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -399,17 +463,36 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 const SizedBox(height: 16),
               ],
 
-              const Text('Kategori Kebiasaan', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'Kategori Kebiasaan',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 initialValue: _domainTag,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
-                items: ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi']
-                    .map((val) => DropdownMenuItem(value: val, child: Text(val)))
-                    .toList(),
+                items:
+                    [
+                          'Tubuh',
+                          'Keuangan',
+                          'Hubungan',
+                          'Emosi',
+                          'Karir',
+                          'Rekreasi',
+                        ]
+                        .map(
+                          (val) =>
+                              DropdownMenuItem(value: val, child: Text(val)),
+                        )
+                        .toList(),
                 onChanged: (val) {
                   if (val != null) {
                     setState(() {
@@ -431,7 +514,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
               const SizedBox(height: 20),
 
-              const Text('Target / Goal yang Terkait (Opsional) 🎯', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'Target / Goal yang Terkait (Opsional) 🎯',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _goalTagController,
@@ -441,11 +527,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                   prefixIcon: const Icon(Icons.track_changes_rounded),
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (v) => AppFormTheme.optionalTextValidator(v, maxLength: 100),
+                validator: (v) =>
+                    AppFormTheme.optionalTextValidator(v, maxLength: 100),
               ),
               const SizedBox(height: 24),
 
-              const Text('Frekuensi Rutinitas', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'Frekuensi Rutinitas',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               SegmentedButton<String>(
                 segments: const [
@@ -462,13 +552,24 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               const SizedBox(height: 16),
 
               if (_frequency == 'Weekly') ...[
-                const Text('Pilih Hari Penjadwalan:', style: TextStyle(fontSize: 13)),
+                const Text(
+                  'Pilih Hari Penjadwalan:',
+                  style: TextStyle(fontSize: 13),
+                ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
                   children: List.generate(7, (index) {
                     final dayNum = index + 1;
-                    final daysAbbr = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+                    final daysAbbr = [
+                      'Sen',
+                      'Sel',
+                      'Rab',
+                      'Kam',
+                      'Jum',
+                      'Sab',
+                      'Min',
+                    ];
                     final isSelected = _selectedDays.contains(dayNum);
                     return FilterChip(
                       label: Text(daysAbbr[index]),
@@ -491,7 +592,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
               _buildSliderSection(
                 title: '🚀 Seberapa susah memulai?',
-                helperText: 'Contoh: olahraga ke gym = susah (4-5), baca 1 halaman = mudah (1-2)',
+                helperText:
+                    'Contoh: olahraga ke gym = susah (4-5), baca 1 halaman = mudah (1-2)',
                 value: _initiationFriction,
                 minLabel: 'Sangat Mudah',
                 maxLabel: 'Sangat Susah',
@@ -500,7 +602,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
               _buildSliderSection(
                 title: '⚡ Seberapa menguras energi?',
-                helperText: 'Contoh: lari 30 menit = banyak energi (4-5), nulis jurnal = sedikit (1-2)',
+                helperText:
+                    'Contoh: lari 30 menit = banyak energi (4-5), nulis jurnal = sedikit (1-2)',
                 value: _energyCost,
                 minLabel: 'Sedikit Energi',
                 maxLabel: 'Banyak Energi',
@@ -509,7 +612,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
               _buildSliderSection(
                 title: '🎯 Seberapa besar dampaknya?',
-                helperText: 'Contoh: olahraga rutin = dampak besar (5), minum vitamin = menengah (3)',
+                helperText:
+                    'Contoh: olahraga rutin = dampak besar (5), minum vitamin = menengah (3)',
                 value: _impactScore,
                 minLabel: 'Dampak Kecil',
                 maxLabel: 'Dampak Besar',
@@ -518,7 +622,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
               _buildSliderSection(
                 title: '⏱️ Durasi minimum (menit)',
-                helperText: 'MVA: Minimum Viable Action — durasi terpendek agar tetap "valid dilakukan"',
+                helperText:
+                    'MVA: Minimum Viable Action — durasi terpendek agar tetap "valid dilakukan"',
                 value: _mvaDurationMin,
                 minLabel: '1 menit',
                 maxLabel: '30 menit',
@@ -541,14 +646,26 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(_isEditing ? 'Perbarui Kebiasaan' : 'Simpan Kebiasaan', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                child: Text(
+                  _isEditing ? 'Perbarui Kebiasaan' : 'Simpan Kebiasaan',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               if (_isEditing) ...[
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
                   onPressed: _deleteHabit,
                   icon: const Icon(Icons.delete_outline, color: Colors.red),
-                  label: const Text('Hapus Kebiasaan', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  label: const Text(
+                    'Hapus Kebiasaan',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(88, 52),
                     side: const BorderSide(color: Colors.red),
@@ -583,9 +700,18 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
           const SizedBox(height: 2),
-          Text(helperText, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+          Text(
+            helperText,
+            style: TextStyle(
+              fontSize: 12,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
           Row(
             children: [
               Expanded(
@@ -613,8 +739,20 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(minLabel, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
-                Text(maxLabel, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                Text(
+                  minLabel,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
+                Text(
+                  maxLabel,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
               ],
             ),
           ),

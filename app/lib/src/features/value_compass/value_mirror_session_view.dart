@@ -18,10 +18,12 @@ class ValueMirrorSessionView extends ConsumerStatefulWidget {
   const ValueMirrorSessionView({super.key});
 
   @override
-  ConsumerState<ValueMirrorSessionView> createState() => _ValueMirrorSessionViewState();
+  ConsumerState<ValueMirrorSessionView> createState() =>
+      _ValueMirrorSessionViewState();
 }
 
-class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView> {
+class _ValueMirrorSessionViewState
+    extends ConsumerState<ValueMirrorSessionView> {
   late final Future<List<dynamic>> _sessionFuture;
   final _pageController = PageController();
   int _currentIndex = 0;
@@ -43,9 +45,13 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
     final db = ref.read(dbProvider);
     final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
     try {
-      final recent = await (db.select(db.valueDilemmaResponses)
-            ..where((tbl) => tbl.answeredAt.isBiggerOrEqualValue(sevenDaysAgo) & tbl.deletedAt.isNull()))
-          .get();
+      final recent =
+          await (db.select(db.valueDilemmaResponses)..where(
+                (tbl) =>
+                    tbl.answeredAt.isBiggerOrEqualValue(sevenDaysAgo) &
+                    tbl.deletedAt.isNull(),
+              ))
+              .get();
       final excludeKeys = recent.map((r) => r.dilemmaKey).toSet();
       return ValueDilemmaPool.drawSession(excludeKeys: excludeKeys);
     } catch (e, stackTrace) {
@@ -58,7 +64,12 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
     }
   }
 
-  Future<void> _handleBinaryAnswer(ValueDilemma dilemma, String option, String valueTag, int totalCards) async {
+  Future<void> _handleBinaryAnswer(
+    ValueDilemma dilemma,
+    String option,
+    String valueTag,
+    int totalCards,
+  ) async {
     if (_isSaving) return;
     setState(() => _isSaving = true);
 
@@ -84,7 +95,10 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menyimpan jawaban: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Gagal menyimpan jawaban: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -94,7 +108,11 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
     }
   }
 
-  Future<void> _handleOpenAnswer(OpenValueQuestion question, String text, int totalCards) async {
+  Future<void> _handleOpenAnswer(
+    OpenValueQuestion question,
+    String text,
+    int totalCards,
+  ) async {
     if (_isSaving) return;
     setState(() => _isSaving = true);
 
@@ -117,7 +135,10 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menyimpan jawaban: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Gagal menyimpan jawaban: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -155,7 +176,9 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
       int totalResponses = 0;
       if (profile.revealedValueScores != null) {
         try {
-          final Map<String, dynamic> raw = jsonDecode(profile.revealedValueScores!);
+          final Map<String, dynamic> raw = jsonDecode(
+            profile.revealedValueScores!,
+          );
           for (final v in raw.values) {
             totalResponses += v as int;
           }
@@ -187,7 +210,10 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menyelesaikan sesi: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Gagal menyelesaikan sesi: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -210,7 +236,9 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
               builder: (context) {
                 return AlertDialog(
                   title: const Text('Keluar dari Sesi?'),
-                  content: const Text('Jawaban yang sudah tersimpan tidak akan hilang, tapi sesi ini akan dihentikan.'),
+                  content: const Text(
+                    'Jawaban yang sudah tersimpan tidak akan hilang, tapi sesi ini akan dihentikan.',
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
@@ -221,8 +249,13 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
                         Navigator.pop(context); // Close dialog
                         context.go('/');
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: CalmTheme.alertMutedRed),
-                      child: const Text('Keluar', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: CalmTheme.alertMutedRed,
+                      ),
+                      child: const Text(
+                        'Keluar',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 );
@@ -250,7 +283,9 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
           }
           final cards = snapshot.data ?? [];
           if (cards.isEmpty) {
-            return const Center(child: Text('Tidak ada pertanyaan yang tersedia.'));
+            return const Center(
+              child: Text('Tidak ada pertanyaan yang tersedia.'),
+            );
           }
 
           return Stack(
@@ -263,22 +298,34 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
                   final cardData = cards[index];
                   if (cardData is ValueDilemma) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 20.0,
+                      ),
                       child: ValueDilemmaCard(
                         dilemma: cardData,
                         index: index,
                         total: cards.length,
-                        onSelected: (option, valueTag) => _handleBinaryAnswer(cardData, option, valueTag, cards.length),
+                        onSelected: (option, valueTag) => _handleBinaryAnswer(
+                          cardData,
+                          option,
+                          valueTag,
+                          cards.length,
+                        ),
                       ),
                     );
                   } else if (cardData is OpenValueQuestion) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 20.0,
+                      ),
                       child: ValueOpenQuestionCard(
                         question: cardData,
                         index: index,
                         total: cards.length,
-                        onSubmitted: (text) => _handleOpenAnswer(cardData, text, cards.length),
+                        onSubmitted: (text) =>
+                            _handleOpenAnswer(cardData, text, cards.length),
                       ),
                     );
                   }
@@ -288,9 +335,7 @@ class _ValueMirrorSessionViewState extends ConsumerState<ValueMirrorSessionView>
               if (_isSaving)
                 Container(
                   color: Colors.black.withValues(alpha: 0.1),
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
             ],
           );
