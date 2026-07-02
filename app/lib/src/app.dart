@@ -29,19 +29,11 @@ class DaojiApp extends ConsumerWidget {
       },
       loading: () => const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
       error: (err, stack) => MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: Center(
-            child: Text('Gagal memuat profil: $err'),
-          ),
-        ),
+        home: Scaffold(body: Center(child: Text('Gagal memuat profil: $err'))),
       ),
     );
   }

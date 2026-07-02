@@ -11,24 +11,32 @@ part 'database.g.dart';
 class UserProfiles extends Table {
   TextColumn get userId => text()();
   TextColumn get ageBand => text()();
-  TextColumn get supportMode => text().withDefault(const Constant(SupportMode.normal))();
-  TextColumn get engagementState => text().withDefault(const Constant(HabitStatus.active))();
-  TextColumn get timezone => text().withDefault(const Constant('Asia/Jakarta'))();
+  TextColumn get supportMode =>
+      text().withDefault(const Constant(SupportMode.normal))();
+  TextColumn get engagementState =>
+      text().withDefault(const Constant(HabitStatus.active))();
+  TextColumn get timezone =>
+      text().withDefault(const Constant('Asia/Jakarta'))();
   IntColumn get weekStartDay => integer().withDefault(const Constant(1))();
   TextColumn get latestDomainScores => text().nullable()(); // JSON string
-  IntColumn get canopyLoadCapacity => integer().withDefault(const Constant(10))();
-  BoolColumn get wellnessDisclaimerAcknowledged => boolean().withDefault(const Constant(false))();
+  IntColumn get canopyLoadCapacity =>
+      integer().withDefault(const Constant(10))();
+  BoolColumn get wellnessDisclaimerAcknowledged =>
+      boolean().withDefault(const Constant(false))();
   DateTimeColumn get lastWellnessPushAt => dateTime().nullable()();
   DateTimeColumn get lastWellnessPromptAt => dateTime().nullable()();
-  TextColumn get selectedSkin => text().withDefault(const Constant('Default'))();
-  TextColumn get unlockedSkins => text().withDefault(const Constant('Default'))();
+  TextColumn get selectedSkin =>
+      text().withDefault(const Constant('Default'))();
+  TextColumn get unlockedSkins =>
+      text().withDefault(const Constant('Default'))();
   TextColumn get securityLevel => text().withDefault(const Constant('Local'))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
   TextColumn get themeMode => text().withDefault(const Constant('System'))();
   TextColumn get coreValues => text().nullable()();
-  BoolColumn get isDeveloperMode => boolean().withDefault(const Constant(false))();
+  BoolColumn get isDeveloperMode =>
+      boolean().withDefault(const Constant(false))();
   DateTimeColumn get recoveryEndDate => dateTime().nullable()();
   TextColumn get revealedValueScores => text().nullable()();
   DateTimeColumn get revealedValueLastUpdatedAt => dateTime().nullable()();
@@ -64,8 +72,8 @@ class WeeklyPulses extends Table {
 
   @override
   List<Set<Column>> get uniqueKeys => [
-        {userId, domainTag, weekStartDate}
-      ];
+    {userId, domainTag, weekStartDate},
+  ];
 }
 
 @DataClassName('Habit')
@@ -74,11 +82,14 @@ class Habits extends Table {
   TextColumn get userId => text()();
   TextColumn get domainTag => text().nullable()();
   TextColumn get title => text().withLength(max: 100)();
-  TextColumn get status => text().withDefault(const Constant(HabitStatus.active))();
+  TextColumn get status =>
+      text().withDefault(const Constant(HabitStatus.active))();
   DateTimeColumn get archivedAt => dateTime().nullable()();
   TextColumn get frequency => text().withDefault(const Constant('Daily'))();
-  TextColumn get scheduledDays => text().nullable()(); // CSV: e.g. "1,3,5" (1=Monday ... 7=Sunday)
-  IntColumn get initiationFriction => integer().withDefault(const Constant(3))();
+  TextColumn get scheduledDays =>
+      text().nullable()(); // CSV: e.g. "1,3,5" (1=Monday ... 7=Sunday)
+  IntColumn get initiationFriction =>
+      integer().withDefault(const Constant(3))();
   IntColumn get originalFriction => integer().withDefault(const Constant(3))();
   IntColumn get energyCost => integer().withDefault(const Constant(3))();
   IntColumn get impactScore => integer().withDefault(const Constant(3))();
@@ -101,8 +112,10 @@ class HabitLogs extends Table {
   TextColumn get logId => text()();
   TextColumn get habitId => text()();
   DateTimeColumn get date => dateTime()();
-  TextColumn get status => text()(); // 'Done', 'Missed', 'Skipped_Intentionally', 'Paused'
-  TextColumn get frictionReasonSelected => text().nullable()(); // 'Kurang_Waktu', 'Kelelahan', 'Lupa'
+  TextColumn get status =>
+      text()(); // 'Done', 'Missed', 'Skipped_Intentionally', 'Paused'
+  TextColumn get frictionReasonSelected =>
+      text().nullable()(); // 'Kurang_Waktu', 'Kelelahan', 'Lupa'
   IntColumn get durationTargetMin => integer().nullable()();
   IntColumn get durationActualMin => integer().nullable()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
@@ -112,8 +125,8 @@ class HabitLogs extends Table {
 
   @override
   List<Set<Column>> get uniqueKeys => [
-        {habitId, date}
-      ];
+    {habitId, date},
+  ];
 }
 
 @DataClassName('JournalEntry')
@@ -125,7 +138,8 @@ class JournalEntries extends Table {
   TextColumn get keyword => text().nullable()();
   TextColumn get textContent => text().nullable()();
   TextColumn get gratitudeText => text().nullable()();
-  TextColumn get entryType => text().withDefault(const Constant('Lite'))(); // 'Lite', 'Deep'
+  TextColumn get entryType =>
+      text().withDefault(const Constant('Lite'))(); // 'Lite', 'Deep'
   TextColumn get conflictCopy => text().nullable()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
   DateTimeColumn get createdAt => dateTime()();
@@ -135,15 +149,16 @@ class JournalEntries extends Table {
 
   @override
   List<Set<Column>> get uniqueKeys => [
-        {userId, date, entryType}
-      ];
+    {userId, date, entryType},
+  ];
 }
 
 @DataClassName('ThinkingCanvasSession')
 class ThinkingCanvasSessions extends Table {
   TextColumn get sessionId => text()();
   TextColumn get userId => text()();
-  TextColumn get methodKey => text()(); // 'MindDump', 'Brainstorming', 'Scoring', 'PMI', 'ReverseBrainstorming', 'Validation'
+  TextColumn get methodKey =>
+      text()(); // 'MindDump', 'Brainstorming', 'Scoring', 'PMI', 'ReverseBrainstorming', 'Validation'
   TextColumn get topic => text().nullable()();
   TextColumn get rawNotes => text().nullable()();
   TextColumn get summaryText => text().nullable()();
@@ -163,7 +178,8 @@ class ThinkingCanvasSessions extends Table {
 class ConsentLogs extends Table {
   TextColumn get consentId => text()();
   TextColumn get userId => text()();
-  TextColumn get consentType => text()(); // 'ToS', 'Privacy_Policy', 'Data_Processing', 'Wellness_Disclaimer'
+  TextColumn get consentType =>
+      text()(); // 'ToS', 'Privacy_Policy', 'Data_Processing', 'Wellness_Disclaimer'
   DateTimeColumn get grantedAt => dateTime()();
   TextColumn get version => text()();
   DateTimeColumn get revokedAt => dateTime().nullable()();
@@ -175,9 +191,11 @@ class ConsentLogs extends Table {
 @DataClassName('ReminderPreference')
 class ReminderPreferences extends Table {
   TextColumn get habitId => text()();
-  BoolColumn get reminderEnabled => boolean().withDefault(const Constant(true))();
+  BoolColumn get reminderEnabled =>
+      boolean().withDefault(const Constant(true))();
   TextColumn get reminderTime => text().withDefault(const Constant('08:00'))();
-  TextColumn get quietHoursStart => text().withDefault(const Constant('22:00'))();
+  TextColumn get quietHoursStart =>
+      text().withDefault(const Constant('22:00'))();
   TextColumn get quietHoursEnd => text().withDefault(const Constant('07:00'))();
 
   @override
@@ -188,9 +206,11 @@ class ReminderPreferences extends Table {
 class WellnessPromptLogs extends Table {
   TextColumn get promptId => text()();
   TextColumn get userId => text()();
-  TextColumn get triggerType => text()(); // Valid values: WellnessPromptTrigger.lowMood, .safetyCard, .weeklyPulse
+  TextColumn get triggerType =>
+      text()(); // Valid values: WellnessPromptTrigger.lowMood, .safetyCard, .weeklyPulse
   DateTimeColumn get promptedAt => dateTime()();
-  TextColumn get userAction => text().nullable()(); // 'Dismissed', 'Opened_Safety_Card', 'Recovery_Mode', 'Tapped_Hotline_CTA'
+  TextColumn get userAction => text()
+      .nullable()(); // 'Dismissed', 'Opened_Safety_Card', 'Recovery_Mode', 'Tapped_Hotline_CTA'
 
   @override
   Set<Column> get primaryKey => {promptId};
@@ -251,21 +271,23 @@ class ValueDilemmaResponses extends Table {
   Set<Column> get primaryKey => {responseId};
 }
 
-@DriftDatabase(tables: [
-  UserProfiles,
-  LifeAudits,
-  WeeklyPulses,
-  Habits,
-  HabitLogs,
-  JournalEntries,
-  ThinkingCanvasSessions,
-  ConsentLogs,
-  ReminderPreferences,
-  WellnessPromptLogs,
-  DecisionEntries,
-  MarketplaceTemplates,
-  ValueDilemmaResponses
-])
+@DriftDatabase(
+  tables: [
+    UserProfiles,
+    LifeAudits,
+    WeeklyPulses,
+    Habits,
+    HabitLogs,
+    JournalEntries,
+    ThinkingCanvasSessions,
+    ConsentLogs,
+    ReminderPreferences,
+    WellnessPromptLogs,
+    DecisionEntries,
+    MarketplaceTemplates,
+    ValueDilemmaResponses,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
   AppDatabase.forTesting(super.e);
@@ -287,63 +309,104 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON');
-        },
-        onCreate: (m) async {
-          await m.createAll();
-          // Create custom performance and application indexes
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_habit_log_perf ON habit_logs (habit_id, date, status);');
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_habit_log_desc ON habit_logs (habit_id, date DESC);');
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_journal_entry_wellness ON journal_entries (user_id, date, mood_score);');
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_thinking_canvas_history ON thinking_canvas_sessions (user_id, created_at DESC);');
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_thinking_canvas_patterns ON thinking_canvas_sessions (user_id, method_key, created_at DESC);');
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_habit_active ON habits (user_id, status, domain_tag);');
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_weekly_pulse_ttl ON weekly_pulses (user_id, domain_tag, week_start_date DESC);');
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_wellness_prompt_log_cap ON wellness_prompt_logs (user_id, prompted_at DESC);');
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_consent_log_check ON consent_logs (user_id, consent_type);');
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);');
-          await customStatement('CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC);');
-        },
-        onUpgrade: (m, from, to) async {
-          if (from < 2) {
-            await m.addColumn(userProfiles, userProfiles.selectedSkin);
-            await m.addColumn(userProfiles, userProfiles.unlockedSkins);
-          }
-          if (from < 3) {
-            await m.addColumn(userProfiles, userProfiles.themeMode);
-          }
-          if (from < 4) {
-            await m.createTable(decisionEntries);
-            await customStatement('CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);');
-          }
-          if (from < 5) {
-            await m.addColumn(userProfiles, userProfiles.coreValues);
-            await m.addColumn(habits, habits.goalTag);
-            await m.addColumn(decisionEntries, decisionEntries.reviewPeriodDays);
-          }
-          if (from < 6) {
-            await m.addColumn(userProfiles, userProfiles.isDeveloperMode);
-            await m.addColumn(userProfiles, userProfiles.recoveryEndDate);
-            // Create performance indexes for upgraded users (FIX-14)
-            await customStatement('CREATE INDEX IF NOT EXISTS idx_habit_log_perf ON habit_logs (habit_id, date, status);');
-            await customStatement('CREATE INDEX IF NOT EXISTS idx_habit_log_desc ON habit_logs (habit_id, date DESC);');
-            await customStatement('CREATE INDEX IF NOT EXISTS idx_journal_entry_wellness ON journal_entries (user_id, date, mood_score);');
-            await customStatement('CREATE INDEX IF NOT EXISTS idx_habit_active ON habits (user_id, status, domain_tag);');
-            await customStatement('CREATE INDEX IF NOT EXISTS idx_weekly_pulse_ttl ON weekly_pulses (user_id, domain_tag, week_start_date DESC);');
-            await customStatement('CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);');
-          }
-          if (from < 7) {
-            await m.createTable(marketplaceTemplates);
-          }
-          if (from < 8) {
-            await m.createTable(valueDilemmaResponses);
-            await m.addColumn(userProfiles, userProfiles.revealedValueScores);
-            await m.addColumn(userProfiles, userProfiles.revealedValueLastUpdatedAt);
-            await customStatement('CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC);');
-          }
-        },
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+    onCreate: (m) async {
+      await m.createAll();
+      // Create custom performance and application indexes
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_habit_log_perf ON habit_logs (habit_id, date, status);',
       );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_habit_log_desc ON habit_logs (habit_id, date DESC);',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_journal_entry_wellness ON journal_entries (user_id, date, mood_score);',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_thinking_canvas_history ON thinking_canvas_sessions (user_id, created_at DESC);',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_thinking_canvas_patterns ON thinking_canvas_sessions (user_id, method_key, created_at DESC);',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_habit_active ON habits (user_id, status, domain_tag);',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_weekly_pulse_ttl ON weekly_pulses (user_id, domain_tag, week_start_date DESC);',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_wellness_prompt_log_cap ON wellness_prompt_logs (user_id, prompted_at DESC);',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_consent_log_check ON consent_logs (user_id, consent_type);',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC);',
+      );
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.addColumn(userProfiles, userProfiles.selectedSkin);
+        await m.addColumn(userProfiles, userProfiles.unlockedSkins);
+      }
+      if (from < 3) {
+        await m.addColumn(userProfiles, userProfiles.themeMode);
+      }
+      if (from < 4) {
+        await m.createTable(decisionEntries);
+        await customStatement(
+          'CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);',
+        );
+      }
+      if (from < 5) {
+        await m.addColumn(userProfiles, userProfiles.coreValues);
+        await m.addColumn(habits, habits.goalTag);
+        await m.addColumn(decisionEntries, decisionEntries.reviewPeriodDays);
+      }
+      if (from < 6) {
+        await m.addColumn(userProfiles, userProfiles.isDeveloperMode);
+        await m.addColumn(userProfiles, userProfiles.recoveryEndDate);
+        // Create performance indexes for upgraded users (FIX-14)
+        await customStatement(
+          'CREATE INDEX IF NOT EXISTS idx_habit_log_perf ON habit_logs (habit_id, date, status);',
+        );
+        await customStatement(
+          'CREATE INDEX IF NOT EXISTS idx_habit_log_desc ON habit_logs (habit_id, date DESC);',
+        );
+        await customStatement(
+          'CREATE INDEX IF NOT EXISTS idx_journal_entry_wellness ON journal_entries (user_id, date, mood_score);',
+        );
+        await customStatement(
+          'CREATE INDEX IF NOT EXISTS idx_habit_active ON habits (user_id, status, domain_tag);',
+        );
+        await customStatement(
+          'CREATE INDEX IF NOT EXISTS idx_weekly_pulse_ttl ON weekly_pulses (user_id, domain_tag, week_start_date DESC);',
+        );
+        await customStatement(
+          'CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);',
+        );
+      }
+      if (from < 7) {
+        await m.createTable(marketplaceTemplates);
+      }
+      if (from < 8) {
+        await m.createTable(valueDilemmaResponses);
+        await m.addColumn(userProfiles, userProfiles.revealedValueScores);
+        await m.addColumn(
+          userProfiles,
+          userProfiles.revealedValueLastUpdatedAt,
+        );
+        await customStatement(
+          'CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC);',
+        );
+      }
+    },
+  );
 }
 
 LazyDatabase _openConnection() {

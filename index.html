@@ -1,1465 +1,3122 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daoji — Personal OS untuk Orientasi Diri</title>
-<meta name="description" content="Daoji — Personal OS berbasis pohon untuk orientasi diri. Anti-guilt, bebas streak, berbasis ilmu perilaku.">
-<meta property="og:title" content="Daoji — Personal OS untuk Orientasi Diri">
-<meta property="og:description" content="Daoji mengubah kegagalan menjadi data refleksi — tanpa rasa bersalah, tanpa streak punishment. Dibangun di atas sains perilaku.">
-<meta property="og:image" content="https://fajarkurnia0388.github.io/daoji/og-image.png">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
-<style>
-:root {
-  --sage: #7C9A72;
-  --sage-light: #A3BC99;
-  --sage-dark: #5A7A50;
-  --muted-blue: #6B8F9E;
-  --muted-blue-light: #E8F0F5;
-  --cream: #F5F0E8;
-  --cream-dark: #EDE6D8;
-  --forest: #2D3B2D;
-  --forest-light: #3D4F3D;
-  --amber: #D4A574;
-  --amber-light: #F0DCC4;
-  --text: #2C2C2C;
-  --text-muted: #6B6B6B;
-  --white: #FFFFFF;
-  --shadow: 0 4px 24px rgba(0,0,0,0.08);
-  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daoji — Personal OS untuk Orientasi Diri</title>
+    <meta
+      name="description"
+      content="Daoji — Personal OS berbasis pohon untuk orientasi diri. Anti-guilt, bebas streak, berbasis ilmu perilaku."
+    />
+    <meta
+      property="og:title"
+      content="Daoji — Personal OS untuk Orientasi Diri"
+    />
+    <meta
+      property="og:description"
+      content="Daoji mengubah kegagalan menjadi data refleksi — tanpa rasa bersalah, tanpa streak punishment. Dibangun di atas sains perilaku."
+    />
+    <meta
+      property="og:image"
+      content="https://fajarkurnia0388.github.io/daoji/og-image.png"
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>"
+    />
+    <style>
+      :root {
+        --sage: #7c9a72;
+        --sage-light: #a3bc99;
+        --sage-dark: #5a7a50;
+        --muted-blue: #6b8f9e;
+        --muted-blue-light: #e8f0f5;
+        --cream: #f5f0e8;
+        --cream-dark: #ede6d8;
+        --forest: #2d3b2d;
+        --forest-light: #3d4f3d;
+        --amber: #d4a574;
+        --amber-light: #f0dcc4;
+        --text: #2c2c2c;
+        --text-muted: #6b6b6b;
+        --white: #ffffff;
+        --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
+        --radius: 16px;
+        --radius-sm: 10px;
+        --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
 
-* { margin:0; padding:0; box-sizing:border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-html { scroll-behavior: smooth; }
+      html {
+        scroll-behavior: smooth;
+      }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: var(--cream);
-  color: var(--text);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: var(--cream);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
 
-/* ===== NAV ===== */
-nav {
-  position: fixed; top:0; left:0; right:0; z-index:100;
-  background: rgba(245,240,232,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(124,154,114,0.15);
-  padding: 0 24px;
-  height: 64px;
-  display: flex; align-items: center; justify-content: space-between;
-  transition: var(--transition);
-}
-nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
-.nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--forest); }
-.nav-brand svg { width:32px; height:32px; }
-.nav-brand span { font-weight:700; font-size:1.15rem; letter-spacing:-0.02em; }
-.nav-links { display:flex; gap:8px; }
-.nav-links a {
-  text-decoration:none; color:var(--text-muted); font-size:0.88rem; font-weight:500;
-  padding:8px 14px; border-radius:8px; transition:var(--transition);
-}
-.nav-links a:hover { color:var(--forest); background:rgba(124,154,114,0.1); }
-.nav-cta {
-  background:var(--forest) !important; color:var(--white) !important;
-  padding:8px 20px !important; border-radius:8px !important; font-weight:600 !important;
-}
-.nav-cta:hover { background:var(--forest-light) !important; }
+      /* ===== NAV ===== */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(245, 240, 232, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(124, 154, 114, 0.15);
+        padding: 0 24px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: var(--transition);
+      }
+      nav.scrolled {
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+      }
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--forest);
+      }
+      .nav-brand svg {
+        width: 32px;
+        height: 32px;
+      }
+      .nav-brand span {
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: -0.02em;
+      }
+      .nav-links {
+        display: flex;
+        gap: 8px;
+      }
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 0.88rem;
+        font-weight: 500;
+        padding: 8px 14px;
+        border-radius: 8px;
+        transition: var(--transition);
+      }
+      .nav-links a:hover {
+        color: var(--forest);
+        background: rgba(124, 154, 114, 0.1);
+      }
+      .nav-cta {
+        background: var(--forest) !important;
+        color: var(--white) !important;
+        padding: 8px 20px !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+      }
+      .nav-cta:hover {
+        background: var(--forest-light) !important;
+      }
 
-/* ===== HERO ===== */
-.hero {
-  min-height:100vh; display:flex; align-items:center; justify-content:center;
-  padding: 100px 24px 60px;
-  background: linear-gradient(180deg, var(--cream) 0%, var(--cream-dark) 100%);
-  position:relative; overflow:hidden;
-}
-.hero::before {
-  content:''; position:absolute; top:-200px; right:-200px;
-  width:600px; height:600px; border-radius:50%;
-  background: radial-gradient(circle, rgba(124,154,114,0.12) 0%, transparent 70%);
-}
-.hero-inner {
-  max-width:1100px; display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
-}
-.hero-text h1 {
-  font-size:clamp(2.2rem,5vw,3.5rem); font-weight:800; line-height:1.1;
-  color:var(--forest); letter-spacing:-0.03em; margin-bottom:20px;
-}
-.hero-text h1 em { font-style:normal; color:var(--sage-dark); }
-.hero-text p {
-  font-size:1.15rem; color:var(--text-muted); max-width:480px; margin-bottom:32px;
-  line-height:1.7;
-}
-.hero-buttons { display:flex; gap:12px; flex-wrap:wrap; }
-.btn {
-  display:inline-flex; align-items:center; gap:8px;
-  padding:14px 28px; border-radius:12px; font-weight:600; font-size:0.95rem;
-  text-decoration:none; transition:var(--transition); cursor:pointer; border:none;
-}
-.btn-primary { background:var(--forest); color:var(--white); }
-.btn-primary:hover { background:var(--forest-light); transform:translateY(-2px); box-shadow:var(--shadow); }
-.btn-secondary { background:transparent; color:var(--forest); border:2px solid var(--sage-light); }
-.btn-secondary:hover { background:rgba(124,154,114,0.08); transform:translateY(-2px); }
-.hero-tree-wrap {
-  display:flex; align-items:center; justify-content:center;
-  position:relative;
-}
-.hero-tree-container {
-  width:380px; height:420px; position:relative;
-  background: linear-gradient(180deg, transparent 60%, rgba(124,154,114,0.06) 100%);
-  border-radius:24px;
-}
+      /* ===== HERO ===== */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 100px 24px 60px;
+        background: linear-gradient(
+          180deg,
+          var(--cream) 0%,
+          var(--cream-dark) 100%
+        );
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: -200px;
+        right: -200px;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(124, 154, 114, 0.12) 0%,
+          transparent 70%
+        );
+      }
+      .hero-inner {
+        max-width: 1100px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+      }
+      .hero-text h1 {
+        font-size: clamp(2.2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        line-height: 1.1;
+        color: var(--forest);
+        letter-spacing: -0.03em;
+        margin-bottom: 20px;
+      }
+      .hero-text h1 em {
+        font-style: normal;
+        color: var(--sage-dark);
+      }
+      .hero-text p {
+        font-size: 1.15rem;
+        color: var(--text-muted);
+        max-width: 480px;
+        margin-bottom: 32px;
+        line-height: 1.7;
+      }
+      .hero-buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: var(--transition);
+        cursor: pointer;
+        border: none;
+      }
+      .btn-primary {
+        background: var(--forest);
+        color: var(--white);
+      }
+      .btn-primary:hover {
+        background: var(--forest-light);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+      .btn-secondary {
+        background: transparent;
+        color: var(--forest);
+        border: 2px solid var(--sage-light);
+      }
+      .btn-secondary:hover {
+        background: rgba(124, 154, 114, 0.08);
+        transform: translateY(-2px);
+      }
+      .hero-tree-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .hero-tree-container {
+        width: 380px;
+        height: 420px;
+        position: relative;
+        background: linear-gradient(
+          180deg,
+          transparent 60%,
+          rgba(124, 154, 114, 0.06) 100%
+        );
+        border-radius: 24px;
+      }
 
-/* ===== TREE SVG ===== */
-.tree-svg { width:100%; height:100%; }
-.tree-ground { fill: var(--sage-light); opacity:0.3; }
-.tree-trunk { fill: #8B6F47; }
-.tree-canopy { fill: var(--sage); transition: all 1.2s cubic-bezier(0.4,0,0.2,1); }
-.tree-canopy-accent { fill: var(--sage-dark); opacity:0.6; transition: all 1.2s ease; }
-.tree-leaf { fill: var(--sage-light); opacity:0; transition: all 0.8s ease; }
-.tree-leaf.visible { opacity:1; }
-.tree-flower { fill: var(--amber); opacity:0; transition: all 0.6s ease; }
-.tree-flower.visible { opacity:1; }
-.tree-snow { fill: #E8F0F5; opacity:0; transition: all 0.8s ease; }
-.tree-snow.visible { opacity:0.9; }
+      /* ===== TREE SVG ===== */
+      .tree-svg {
+        width: 100%;
+        height: 100%;
+      }
+      .tree-ground {
+        fill: var(--sage-light);
+        opacity: 0.3;
+      }
+      .tree-trunk {
+        fill: #8b6f47;
+      }
+      .tree-canopy {
+        fill: var(--sage);
+        transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .tree-canopy-accent {
+        fill: var(--sage-dark);
+        opacity: 0.6;
+        transition: all 1.2s ease;
+      }
+      .tree-leaf {
+        fill: var(--sage-light);
+        opacity: 0;
+        transition: all 0.8s ease;
+      }
+      .tree-leaf.visible {
+        opacity: 1;
+      }
+      .tree-flower {
+        fill: var(--amber);
+        opacity: 0;
+        transition: all 0.6s ease;
+      }
+      .tree-flower.visible {
+        opacity: 1;
+      }
+      .tree-snow {
+        fill: #e8f0f5;
+        opacity: 0;
+        transition: all 0.8s ease;
+      }
+      .tree-snow.visible {
+        opacity: 0.9;
+      }
 
-/* Tree state variants */
-.tree-seedling .tree-trunk { transform:scale(0.3); transform-origin:bottom center; }
-.tree-seedling .tree-canopy { r:8; cy:195; }
-.tree-seedling .tree-canopy-accent { r:5; cy:192; }
+      /* Tree state variants */
+      .tree-seedling .tree-trunk {
+        transform: scale(0.3);
+        transform-origin: bottom center;
+      }
+      .tree-seedling .tree-canopy {
+        r: 8;
+        cy: 195;
+      }
+      .tree-seedling .tree-canopy-accent {
+        r: 5;
+        cy: 192;
+      }
 
-/* ===== SECTIONS ===== */
-section { padding: 80px 24px; }
-.section-inner { max-width:1100px; margin:0 auto; }
-.section-label {
-  display:inline-flex; align-items:center; gap:6px;
-  font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em;
-  color:var(--sage-dark); background:rgba(124,154,114,0.1);
-  padding:6px 14px; border-radius:20px; margin-bottom:16px;
-}
-.section-title {
-  font-size:clamp(1.6rem,3.5vw,2.4rem); font-weight:800;
-  color:var(--forest); letter-spacing:-0.02em; margin-bottom:16px; line-height:1.2;
-}
-.section-desc { color:var(--text-muted); font-size:1.05rem; max-width:600px; margin-bottom:40px; }
+      /* ===== SECTIONS ===== */
+      section {
+        padding: 80px 24px;
+      }
+      .section-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--sage-dark);
+        background: rgba(124, 154, 114, 0.1);
+        padding: 6px 14px;
+        border-radius: 20px;
+        margin-bottom: 16px;
+      }
+      .section-title {
+        font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+        font-weight: 800;
+        color: var(--forest);
+        letter-spacing: -0.02em;
+        margin-bottom: 16px;
+        line-height: 1.2;
+      }
+      .section-desc {
+        color: var(--text-muted);
+        font-size: 1.05rem;
+        max-width: 600px;
+        margin-bottom: 40px;
+      }
 
-/* ===== PHILOSOPHY ===== */
-.philosophy { background:var(--white); }
-.compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:40px; }
-.compare-card {
-  padding:32px; border-radius:var(--radius); transition:var(--transition);
-  position:relative; overflow:hidden;
-}
-.compare-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:4px;
-}
-.compare-bad { background:#FFF5F5; border:1px solid #FFE0E0; }
-.compare-bad::before { background:linear-gradient(90deg,#E57373,#EF9A9A); }
-.compare-good { background:#F0F7EE; border:1px solid #D5E8D0; }
-.compare-good::before { background:linear-gradient(90deg,var(--sage),var(--sage-light)); }
-.compare-card h3 { font-size:1.1rem; margin-bottom:16px; font-weight:700; }
-.compare-bad h3 { color:#C62828; }
-.compare-good h3 { color:var(--sage-dark); }
-.compare-card ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
-.compare-card li {
-  display:flex; align-items:flex-start; gap:10px; font-size:0.92rem; line-height:1.5;
-}
-.compare-bad li::before { content:'✕'; color:#E57373; font-weight:700; flex-shrink:0; }
-.compare-good li::before { content:'✓'; color:var(--sage); font-weight:700; flex-shrink:0; }
+      /* ===== PHILOSOPHY ===== */
+      .philosophy {
+        background: var(--white);
+      }
+      .compare-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 40px;
+      }
+      .compare-card {
+        padding: 32px;
+        border-radius: var(--radius);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+      .compare-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+      }
+      .compare-bad {
+        background: #fff5f5;
+        border: 1px solid #ffe0e0;
+      }
+      .compare-bad::before {
+        background: linear-gradient(90deg, #e57373, #ef9a9a);
+      }
+      .compare-good {
+        background: #f0f7ee;
+        border: 1px solid #d5e8d0;
+      }
+      .compare-good::before {
+        background: linear-gradient(90deg, var(--sage), var(--sage-light));
+      }
+      .compare-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+        font-weight: 700;
+      }
+      .compare-bad h3 {
+        color: #c62828;
+      }
+      .compare-good h3 {
+        color: var(--sage-dark);
+      }
+      .compare-card ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .compare-card li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.92rem;
+        line-height: 1.5;
+      }
+      .compare-bad li::before {
+        content: "✕";
+        color: #e57373;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .compare-good li::before {
+        content: "✓";
+        color: var(--sage);
+        font-weight: 700;
+        flex-shrink: 0;
+      }
 
-/* ===== DASHBOARD DEMO ===== */
-.dashboard-demo { background:var(--cream); }
-.phone-frame {
-  width:375px; max-width:100%; margin:0 auto;
-  background:var(--forest); border-radius:36px; padding:12px;
-  box-shadow:var(--shadow-lg);
-}
-.phone-screen {
-  background:var(--cream); border-radius:28px; overflow:hidden;
-  min-height:640px; position:relative;
-}
-.phone-notch {
-  width:120px; height:28px; background:var(--forest);
-  border-radius:0 0 16px 16px; margin:0 auto;
-}
-.screen-content { padding:16px; }
-.screen-tree-area {
-  height:180px; display:flex; align-items:flex-end; justify-content:center;
-  position:relative; margin-bottom:16px;
-}
-.screen-tree-svg { width:120px; height:160px; }
-.screen-season {
-  position:absolute; top:8px; right:8px;
-  font-size:0.72rem; font-weight:600; padding:4px 10px;
-  border-radius:12px; background:rgba(124,154,114,0.15); color:var(--sage-dark);
-}
-.screen-action-card {
-  background:var(--white); border-radius:var(--radius-sm); padding:20px;
-  margin-bottom:12px; border:1px solid rgba(0,0,0,0.06);
-  transition:var(--transition);
-}
-.screen-action-card:hover { box-shadow:0 2px 12px rgba(0,0,0,0.06); }
-.screen-action-label { font-size:0.72rem; color:var(--forest-light); font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
-.screen-action-title { font-size:1.05rem; font-weight:700; color:var(--forest); margin-bottom:4px; }
-.screen-action-meta { font-size:0.78rem; color:var(--text-muted); }
-.screen-journal-btn {
-  width:100%; padding:16px; border-radius:var(--radius-sm);
-  background:rgba(107,143,158,0.08); border:1px dashed var(--muted-blue);
-  color:var(--muted-blue); font-weight:600; font-size:0.9rem;
-  cursor:pointer; transition:var(--transition); text-align:center;
-}
-.screen-journal-btn:hover { background:rgba(107,143,158,0.15); }
-.screen-tab-bar {
-  display:flex; justify-content:space-around; padding:12px 0 4px;
-  border-top:1px solid rgba(0,0,0,0.06); margin-top:auto;
-}
-.screen-tab { text-align:center; font-size:0.68rem; color:var(--text-muted); }
-.screen-tab.active { color:var(--sage-dark); font-weight:700; }
-.screen-tab svg { width:20px; height:20px; margin:0 auto 3px; display:block; }
+      /* ===== DASHBOARD DEMO ===== */
+      .dashboard-demo {
+        background: var(--cream);
+      }
+      .phone-frame {
+        width: 375px;
+        max-width: 100%;
+        margin: 0 auto;
+        background: var(--forest);
+        border-radius: 36px;
+        padding: 12px;
+        box-shadow: var(--shadow-lg);
+      }
+      .phone-screen {
+        background: var(--cream);
+        border-radius: 28px;
+        overflow: hidden;
+        min-height: 640px;
+        position: relative;
+      }
+      .phone-notch {
+        width: 120px;
+        height: 28px;
+        background: var(--forest);
+        border-radius: 0 0 16px 16px;
+        margin: 0 auto;
+      }
+      .screen-content {
+        padding: 16px;
+      }
+      .screen-tree-area {
+        height: 180px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        position: relative;
+        margin-bottom: 16px;
+      }
+      .screen-tree-svg {
+        width: 120px;
+        height: 160px;
+      }
+      .screen-season {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 12px;
+        background: rgba(124, 154, 114, 0.15);
+        color: var(--sage-dark);
+      }
+      .screen-action-card {
+        background: var(--white);
+        border-radius: var(--radius-sm);
+        padding: 20px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        transition: var(--transition);
+      }
+      .screen-action-card:hover {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      }
+      .screen-action-label {
+        font-size: 0.72rem;
+        color: var(--forest-light);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .screen-action-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--forest);
+        margin-bottom: 4px;
+      }
+      .screen-action-meta {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+      }
+      .screen-journal-btn {
+        width: 100%;
+        padding: 16px;
+        border-radius: var(--radius-sm);
+        background: rgba(107, 143, 158, 0.08);
+        border: 1px dashed var(--muted-blue);
+        color: var(--muted-blue);
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: var(--transition);
+        text-align: center;
+      }
+      .screen-journal-btn:hover {
+        background: rgba(107, 143, 158, 0.15);
+      }
+      .screen-tab-bar {
+        display: flex;
+        justify-content: space-around;
+        padding: 12px 0 4px;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        margin-top: auto;
+      }
+      .screen-tab {
+        text-align: center;
+        font-size: 0.68rem;
+        color: var(--text-muted);
+      }
+      .screen-tab.active {
+        color: var(--sage-dark);
+        font-weight: 700;
+      }
+      .screen-tab svg {
+        width: 20px;
+        height: 20px;
+        margin: 0 auto 3px;
+        display: block;
+      }
 
-/* ===== TREE STATES DEMO ===== */
-.tree-states { background:var(--white); }
-.states-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:20px; margin-top:32px; }
-.state-card {
-  text-align:center; padding:24px 16px; border-radius:var(--radius);
-  background:var(--cream); border:2px solid transparent;
-  cursor:pointer; transition:var(--transition);
-}
-.state-card:hover, .state-card.active { border-color:var(--sage-light); transform:translateY(-4px); box-shadow:var(--shadow); }
-.state-card.active { border-color:var(--sage); }
-.state-card svg { width:80px; height:100px; margin:0 auto 12px; display:block; }
-.state-card h4 { font-size:0.85rem; font-weight:700; color:var(--forest); margin-bottom:4px; }
-.state-card p { font-size:0.72rem; color:var(--text-muted); }
+      /* ===== TREE STATES DEMO ===== */
+      .tree-states {
+        background: var(--white);
+      }
+      .states-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 20px;
+        margin-top: 32px;
+      }
+      .state-card {
+        text-align: center;
+        padding: 24px 16px;
+        border-radius: var(--radius);
+        background: var(--cream);
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+      .state-card:hover,
+      .state-card.active {
+        border-color: var(--sage-light);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow);
+      }
+      .state-card.active {
+        border-color: var(--sage);
+      }
+      .state-card svg {
+        width: 80px;
+        height: 100px;
+        margin: 0 auto 12px;
+        display: block;
+      }
+      .state-card h4 {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--forest);
+        margin-bottom: 4px;
+      }
+      .state-card p {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+      }
 
-/* ===== FEATURES ===== */
-.features { background:var(--cream); }
-.features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; }
-.feature-card {
-  background:var(--white); border-radius:var(--radius); padding:28px;
-  border:1px solid rgba(0,0,0,0.04); transition:var(--transition);
-}
-.feature-card:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
-.feature-icon {
-  width:48px; height:48px; border-radius:12px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:1.5rem; margin-bottom:16px;
-}
-.feature-card h3 { font-size:1rem; font-weight:700; color:var(--forest); margin-bottom:8px; }
-.feature-card p { font-size:0.88rem; color:var(--text-muted); line-height:1.6; }
+      /* ===== FEATURES ===== */
+      .features {
+        background: var(--cream);
+      }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .feature-card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 28px;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        transition: var(--transition);
+      }
+      .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow);
+      }
+      .feature-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+      }
+      .feature-card h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--forest);
+        margin-bottom: 8px;
+      }
+      .feature-card p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
 
-/* ===== FRICTION FLOW ===== */
-.friction-demo { background:var(--white); }
-.friction-flow { display:flex; flex-direction:column; gap:0; max-width:480px; margin:0 auto; }
-.friction-step {
-  display:flex; gap:16px; position:relative; padding-bottom:32px;
-}
-.friction-step:last-child { padding-bottom:0; }
-.friction-step::before {
-  content:''; position:absolute; left:19px; top:40px; bottom:0;
-  width:2px; background:var(--sage-light);
-}
-.friction-step:last-child::before { display:none; }
-.step-dot {
-  width:40px; height:40px; border-radius:50%; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  font-size:0.85rem; font-weight:700; color:var(--white);
-  background:var(--sage); z-index:1;
-}
-.step-content {
-  flex:1; background:var(--cream); border-radius:var(--radius-sm); padding:16px 20px;
-}
-.step-content h4 { font-size:0.92rem; font-weight:700; color:var(--forest); margin-bottom:6px; }
-.step-content p { font-size:0.82rem; color:var(--text-muted); }
-.step-options { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
-.step-opt {
-  padding:6px 14px; border-radius:8px; font-size:0.78rem; font-weight:600;
-  cursor:pointer; transition:var(--transition); border:1px solid rgba(0,0,0,0.08);
-  background:var(--white); font-family:inherit; color:inherit;
-}
-.step-opt:hover { border-color:var(--sage); color:var(--sage-dark); }
-.step-opt.selected { background:var(--sage); color:var(--white); border-color:var(--sage); }
+      /* ===== FRICTION FLOW ===== */
+      .friction-demo {
+        background: var(--white);
+      }
+      .friction-flow {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        max-width: 480px;
+        margin: 0 auto;
+      }
+      .friction-step {
+        display: flex;
+        gap: 16px;
+        position: relative;
+        padding-bottom: 32px;
+      }
+      .friction-step:last-child {
+        padding-bottom: 0;
+      }
+      .friction-step::before {
+        content: "";
+        position: absolute;
+        left: 19px;
+        top: 40px;
+        bottom: 0;
+        width: 2px;
+        background: var(--sage-light);
+      }
+      .friction-step:last-child::before {
+        display: none;
+      }
+      .step-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--white);
+        background: var(--sage);
+        z-index: 1;
+      }
+      .step-content {
+        flex: 1;
+        background: var(--cream);
+        border-radius: var(--radius-sm);
+        padding: 16px 20px;
+      }
+      .step-content h4 {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--forest);
+        margin-bottom: 6px;
+      }
+      .step-content p {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+      }
+      .step-options {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+      .step-opt {
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        background: var(--white);
+        font-family: inherit;
+        color: inherit;
+      }
+      .step-opt:hover {
+        border-color: var(--sage);
+        color: var(--sage-dark);
+      }
+      .step-opt.selected {
+        background: var(--sage);
+        color: var(--white);
+        border-color: var(--sage);
+      }
 
+      /* ===== THINKING CANVAS ===== */
+      .thinking-canvas {
+        background: var(--white);
+      }
+      .thinking-shell {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 24px;
+        align-items: start;
+      }
+      .method-picker {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .method-card {
+        background: var(--cream);
+        border: 2px solid transparent;
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        cursor: pointer;
+        transition: var(--transition);
+        text-align: left;
+      }
+      .method-card:hover,
+      .method-card.active {
+        border-color: var(--sage);
+        background: #f0f7ee;
+        transform: translateY(-2px);
+      }
+      .method-card .emoji {
+        font-size: 1.4rem;
+        display: block;
+        margin-bottom: 6px;
+      }
+      .method-card h4 {
+        color: var(--forest);
+        font-size: 0.92rem;
+        margin-bottom: 4px;
+      }
+      .method-card p {
+        color: var(--text-muted);
+        font-size: 0.78rem;
+        line-height: 1.45;
+      }
+      .method-panel,
+      .thinking-workspace {
+        background: var(--cream);
+        border-radius: var(--radius);
+        padding: 24px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+      .method-panel h3 {
+        color: var(--forest);
+        font-size: 1.25rem;
+        margin-bottom: 8px;
+      }
+      .method-meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 12px 0 18px;
+      }
+      .method-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--sage-dark);
+        background: rgba(124, 154, 114, 0.12);
+        padding: 5px 10px;
+        border-radius: 20px;
+      }
+      .method-steps {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .method-steps li {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        font-size: 0.9rem;
+        color: var(--text);
+      }
+      .method-steps li::before {
+        content: "✦";
+        color: var(--sage);
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .thinking-workspace {
+        margin-top: 20px;
+      }
+      .thinking-workspace label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--sage-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin: 14px 0 6px;
+      }
+      .thinking-workspace textarea,
+      .thinking-workspace input {
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        padding: 12px;
+        font: inherit;
+        background: var(--white);
+        color: var(--text);
+        resize: vertical;
+      }
+      .canvas-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+      }
+      .method-output {
+        margin-top: 14px;
+        padding: 14px;
+        border-radius: 12px;
+        background: rgba(124, 154, 114, 0.09);
+        color: var(--forest);
+        font-size: 0.88rem;
+      }
+      .modal-wide {
+        max-width: 720px;
+      }
+      @media (max-width: 768px) {
+        .thinking-shell {
+          grid-template-columns: 1fr;
+        }
+        .method-picker {
+          grid-template-columns: 1fr;
+        }
+      }
 
-/* ===== THINKING CANVAS ===== */
-.thinking-canvas { background:var(--white); }
-.thinking-shell { display:grid; grid-template-columns:0.9fr 1.1fr; gap:24px; align-items:start; }
-.method-picker { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.method-card {
-  background:var(--cream); border:2px solid transparent; border-radius:var(--radius-sm);
-  padding:16px; cursor:pointer; transition:var(--transition); text-align:left;
-}
-.method-card:hover, .method-card.active { border-color:var(--sage); background:#F0F7EE; transform:translateY(-2px); }
-.method-card .emoji { font-size:1.4rem; display:block; margin-bottom:6px; }
-.method-card h4 { color:var(--forest); font-size:0.92rem; margin-bottom:4px; }
-.method-card p { color:var(--text-muted); font-size:0.78rem; line-height:1.45; }
-.method-panel, .thinking-workspace {
-  background:var(--cream); border-radius:var(--radius); padding:24px; border:1px solid rgba(0,0,0,0.05);
-}
-.method-panel h3 { color:var(--forest); font-size:1.25rem; margin-bottom:8px; }
-.method-meta { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 18px; }
-.method-badge { font-size:0.72rem; font-weight:700; color:var(--sage-dark); background:rgba(124,154,114,0.12); padding:5px 10px; border-radius:20px; }
-.method-steps { list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:12px; }
-.method-steps li { display:flex; gap:10px; align-items:flex-start; font-size:0.9rem; color:var(--text); }
-.method-steps li::before { content:'✦'; color:var(--sage); font-weight:700; flex-shrink:0; }
-.thinking-workspace { margin-top:20px; }
-.thinking-workspace label { display:block; font-size:0.78rem; font-weight:700; color:var(--sage-dark); text-transform:uppercase; letter-spacing:0.06em; margin:14px 0 6px; }
-.thinking-workspace textarea, .thinking-workspace input {
-  width:100%; border:1px solid rgba(0,0,0,0.08); border-radius:10px; padding:12px;
-  font:inherit; background:var(--white); color:var(--text); resize:vertical;
-}
-.canvas-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
-.method-output { margin-top:14px; padding:14px; border-radius:12px; background:rgba(124,154,114,0.09); color:var(--forest); font-size:0.88rem; }
-.modal-wide { max-width:720px; }
-@media (max-width:768px) { .thinking-shell { grid-template-columns:1fr; } .method-picker { grid-template-columns:1fr; } }
+      /* ===== PRICING ===== */
+      .pricing {
+        background: var(--cream);
+      }
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        margin-top: 8px;
+      }
+      .pricing-card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 28px;
+        border: 2px solid transparent;
+        transition: var(--transition);
+        position: relative;
+      }
+      .pricing-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow);
+      }
+      .pricing-card.featured {
+        border-color: var(--sage);
+      }
+      .pricing-card.featured::before {
+        content: "Populer";
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--sage);
+        color: var(--white);
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 14px;
+        border-radius: 12px;
+      }
+      .pricing-tier {
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--forest-light);
+        margin-bottom: 8px;
+      }
+      .pricing-price {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--forest);
+        margin-bottom: 4px;
+      }
+      .pricing-period {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
+      .pricing-features {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+      .pricing-features li {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 0.85rem;
+      }
+      .pricing-features li::before {
+        content: "✓";
+        color: var(--sage);
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .pricing-btn {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: var(--transition);
+        text-align: center;
+        border: none;
+      }
+      .pricing-btn-primary {
+        background: var(--forest);
+        color: var(--white);
+      }
+      .pricing-btn-primary:hover {
+        background: var(--forest-light);
+      }
+      .pricing-btn-secondary {
+        background: var(--cream);
+        color: var(--forest);
+      }
+      .pricing-btn-secondary:hover {
+        background: var(--cream-dark);
+      }
 
-/* ===== PRICING ===== */
-.pricing { background:var(--cream); }
-.pricing-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; margin-top:8px; }
-.pricing-card {
-  background:var(--white); border-radius:var(--radius); padding:28px;
-  border:2px solid transparent; transition:var(--transition); position:relative;
-}
-.pricing-card:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
-.pricing-card.featured { border-color:var(--sage); }
-.pricing-card.featured::before {
-  content:'Populer'; position:absolute; top:-12px; left:50%; transform:translateX(-50%);
-  background:var(--sage); color:var(--white); font-size:0.72rem; font-weight:700;
-  padding:4px 14px; border-radius:12px;
-}
-.pricing-tier { font-size:0.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--forest-light); margin-bottom:8px; }
-.pricing-price { font-size:2rem; font-weight:800; color:var(--forest); margin-bottom:4px; }
-.pricing-period { font-size:0.82rem; color:var(--text-muted); margin-bottom:20px; }
-.pricing-features { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
-.pricing-features li { display:flex; align-items:flex-start; gap:8px; font-size:0.85rem; }
-.pricing-features li::before { content:'✓'; color:var(--sage); font-weight:700; flex-shrink:0; }
-.pricing-btn {
-  width:100%; padding:12px; border-radius:10px; font-weight:600; font-size:0.9rem;
-  cursor:pointer; transition:var(--transition); text-align:center; border:none;
-}
-.pricing-btn-primary { background:var(--forest); color:var(--white); }
-.pricing-btn-primary:hover { background:var(--forest-light); }
-.pricing-btn-secondary { background:var(--cream); color:var(--forest); }
-.pricing-btn-secondary:hover { background:var(--cream-dark); }
+      /* ===== COMPETITIVE ===== */
+      .competitive {
+        background: var(--white);
+        overflow-x: auto;
+      }
+      .scroll-hint {
+        display: none;
+      }
+      @media (max-width: 768px) {
+        .scroll-hint {
+          display: block !important;
+        }
+      }
+      .comp-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+        margin-top: 8px;
+        min-width: 700px;
+      }
+      .comp-table th {
+        background: var(--cream);
+        padding: 12px 10px;
+        text-align: left;
+        font-weight: 700;
+        color: var(--forest);
+        border-bottom: 2px solid var(--sage-light);
+        white-space: nowrap;
+      }
+      .comp-table td {
+        padding: 10px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+      .comp-table tr:hover td {
+        background: rgba(124, 154, 114, 0.04);
+      }
+      .comp-table .highlight {
+        background: rgba(124, 154, 114, 0.06);
+        font-weight: 600;
+      }
+      .comp-check {
+        color: var(--sage);
+        font-weight: 700;
+      }
+      .comp-cross {
+        color: #e0e0e0;
+      }
+      .comp-partial {
+        color: var(--amber);
+      }
 
-/* ===== COMPETITIVE ===== */
-.competitive { background:var(--white); overflow-x:auto; }
-.scroll-hint { display:none; }
-@media (max-width:768px) {
-  .scroll-hint { display:block !important; }
-}
-.comp-table {
-  width:100%; border-collapse:collapse; font-size:0.82rem; margin-top:8px;
-  min-width:700px;
-}
-.comp-table th { 
-  background:var(--cream); padding:12px 10px; text-align:left;
-  font-weight:700; color:var(--forest); border-bottom:2px solid var(--sage-light);
-  white-space:nowrap;
-}
-.comp-table td { padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); }
-.comp-table tr:hover td { background:rgba(124,154,114,0.04); }
-.comp-table .highlight { background:rgba(124,154,114,0.06); font-weight:600; }
-.comp-check { color:var(--sage); font-weight:700; }
-.comp-cross { color:#E0E0E0; }
-.comp-partial { color:var(--amber); }
+      /* ===== LIFE AUDIT ===== */
+      .life-audit {
+        background: var(--cream);
+      }
+      .audit-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+      }
+      .audit-card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 24px;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        transition: var(--transition);
+      }
+      .audit-card:hover {
+        box-shadow: var(--shadow);
+      }
+      .audit-domain {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .audit-domain span {
+        font-size: 1.3rem;
+      }
+      .audit-domain h4 {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--forest);
+      }
+      .audit-question {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-bottom: 16px;
+        line-height: 1.5;
+      }
+      .audit-slider {
+        width: 100%;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--cream-dark);
+        outline: none;
+      }
+      .audit-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--sage);
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+      .audit-value {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--sage-dark);
+        margin-top: 8px;
+      }
 
-/* ===== LIFE AUDIT ===== */
-.life-audit { background:var(--cream); }
-.audit-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
-.audit-card {
-  background:var(--white); border-radius:var(--radius); padding:24px;
-  border:1px solid rgba(0,0,0,0.04); transition:var(--transition);
-}
-.audit-card:hover { box-shadow:var(--shadow); }
-.audit-domain { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-.audit-domain span { font-size:1.3rem; }
-.audit-domain h4 { font-size:0.92rem; font-weight:700; color:var(--forest); }
-.audit-question { font-size:0.82rem; color:var(--text-muted); font-style:italic; margin-bottom:16px; line-height:1.5; }
-.audit-slider { width:100%; -webkit-appearance:none; appearance:none; height:6px; border-radius:3px; background:var(--cream-dark); outline:none; }
-.audit-slider::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:var(--sage); cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
-.audit-value { text-align:center; font-size:1.8rem; font-weight:800; color:var(--sage-dark); margin-top:8px; }
+      /* ===== CTA ===== */
+      .cta-section {
+        background: linear-gradient(
+          135deg,
+          var(--forest) 0%,
+          var(--forest-light) 100%
+        );
+        color: var(--white);
+        text-align: center;
+        padding: 80px 24px;
+      }
+      .cta-section h2 {
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+        font-weight: 800;
+        margin-bottom: 12px;
+      }
+      .cta-section p {
+        font-size: 1.05rem;
+        opacity: 0.8;
+        margin-bottom: 32px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .btn-white {
+        background: var(--white);
+        color: var(--forest);
+      }
+      .btn-white:hover {
+        background: var(--cream);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
 
-/* ===== CTA ===== */
-.cta-section {
-  background: linear-gradient(135deg, var(--forest) 0%, var(--forest-light) 100%);
-  color:var(--white); text-align:center; padding:80px 24px;
-}
-.cta-section h2 { font-size:clamp(1.5rem,3vw,2.2rem); font-weight:800; margin-bottom:12px; }
-.cta-section p { font-size:1.05rem; opacity:0.8; margin-bottom:32px; max-width:500px; margin-left:auto; margin-right:auto; }
-.btn-white { background:var(--white); color:var(--forest); }
-.btn-white:hover { background:var(--cream); transform:translateY(-2px); box-shadow:var(--shadow); }
+      /* ===== FOOTER ===== */
+      footer {
+        background: var(--forest);
+        color: rgba(255, 255, 255, 0.6);
+        padding: 40px 24px;
+        font-size: 0.82rem;
+      }
+      .footer-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .footer-inner a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+      }
+      .footer-inner a:hover {
+        color: var(--white);
+      }
 
-/* ===== FOOTER ===== */
-footer {
-  background:var(--forest); color:rgba(255,255,255,0.6);
-  padding:40px 24px; font-size:0.82rem;
-}
-.footer-inner { max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
-.footer-inner a { color:rgba(255,255,255,0.8); text-decoration:none; }
-.footer-inner a:hover { color:var(--white); }
+      /* ===== MOBILE NAV ===== */
+      .nav-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+      }
+      .nav-toggle span {
+        display: block;
+        width: 22px;
+        height: 2px;
+        background: var(--forest);
+        margin: 5px 0;
+        transition: var(--transition);
+      }
 
-/* ===== MOBILE NAV ===== */
-.nav-toggle { display:none; background:none; border:none; cursor:pointer; padding:8px; }
-.nav-toggle span { display:block; width:22px; height:2px; background:var(--forest); margin:5px 0; transition:var(--transition); }
+      /* ===== TOAST ===== */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--forest);
+        color: var(--white);
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        box-shadow: var(--shadow-lg);
+        z-index: 200;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        pointer-events: none;
+      }
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
 
-/* ===== TOAST ===== */
-.toast {
-  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px);
-  background:var(--forest); color:var(--white); padding:14px 28px;
-  border-radius:12px; font-size:0.9rem; font-weight:600;
-  box-shadow:var(--shadow-lg); z-index:200; transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
-  opacity:0; pointer-events:none;
-}
-.toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+      /* ===== MODAL ===== */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 150;
+        opacity: 0;
+        pointer-events: none;
+        transition: var(--transition);
+        padding: 24px;
+      }
+      .modal-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-box {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 32px;
+        max-width: 420px;
+        width: 100%;
+        transform: scale(0.9);
+        transition: var(--transition);
+      }
+      .modal-overlay.show .modal-box {
+        transform: scale(1);
+      }
+      .modal-box h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--forest);
+        margin-bottom: 12px;
+      }
+      .modal-box p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+      .modal-close {
+        background: var(--forest);
+        color: var(--white);
+        border: none;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+      .modal-close:hover {
+        background: var(--forest-light);
+      }
 
-/* ===== MODAL ===== */
-.modal-overlay {
-  position:fixed; inset:0; background:rgba(0,0,0,0.5);
-  display:flex; align-items:center; justify-content:center; z-index:150;
-  opacity:0; pointer-events:none; transition:var(--transition); padding:24px;
-}
-.modal-overlay.show { opacity:1; pointer-events:auto; }
-.modal-box {
-  background:var(--white); border-radius:var(--radius); padding:32px;
-  max-width:420px; width:100%; transform:scale(0.9); transition:var(--transition);
-}
-.modal-overlay.show .modal-box { transform:scale(1); }
-.modal-box h3 { font-size:1.2rem; font-weight:700; color:var(--forest); margin-bottom:12px; }
-.modal-box p { font-size:0.9rem; color:var(--text-muted); margin-bottom:20px; line-height:1.6; }
-.modal-close {
-  background:var(--forest); color:var(--white); border:none; padding:10px 24px;
-  border-radius:10px; font-weight:600; cursor:pointer; transition:var(--transition);
-}
-.modal-close:hover { background:var(--forest-light); }
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 768px) {
+        .hero-inner {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+        .hero-text p {
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .hero-buttons {
+          justify-content: center;
+        }
+        .hero-tree-container {
+          width: 280px;
+          height: 320px;
+        }
+        .compare-grid {
+          grid-template-columns: 1fr;
+        }
+        .nav-links {
+          display: none;
+        }
+        .nav-toggle {
+          display: block;
+        }
+        .nav-links.open {
+          display: flex;
+          flex-direction: column;
+          position: absolute;
+          top: 64px;
+          left: 0;
+          right: 0;
+          background: var(--cream);
+          padding: 16px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .states-grid {
+          grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        }
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 400px) {
+        .hero-tree-container {
+          width: 240px;
+          height: 280px;
+        }
+        .hero-buttons {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .btn {
+          justify-content: center;
+        }
+        .section-inner {
+          padding: 40px 16px;
+        }
+        .states-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+      }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width:768px) {
-  .hero-inner { grid-template-columns:1fr; text-align:center; }
-  .hero-text p { margin-left:auto; margin-right:auto; }
-  .hero-buttons { justify-content:center; }
-  .hero-tree-container { width:280px; height:320px; }
-  .compare-grid { grid-template-columns:1fr; }
-  .nav-links { display:none; }
-  .nav-toggle { display:block; }
-  .nav-links.open {
-    display:flex; flex-direction:column; position:absolute;
-    top:64px; left:0; right:0; background:var(--cream);
-    padding:16px; border-bottom:1px solid rgba(0,0,0,0.06);
-  }
-  .states-grid { grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); }
-  .features-grid { grid-template-columns:1fr; }
-}
-@media (max-width:400px) {
-  .hero-tree-container { width:240px; height:280px; }
-  .hero-buttons { flex-direction:column; align-items:stretch; }
-  .btn { justify-content:center; }
-  .section-inner { padding:40px 16px; }
-  .states-grid { grid-template-columns:1fr 1fr; gap:12px; }
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes float { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-8px); } }
-@keyframes grow { from { transform:scale(0.8); opacity:0; } to { transform:scale(1); opacity:1; } }
-@keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-.animate-in { opacity:0; transform:translateY(20px); transition:all 0.6s cubic-bezier(0.4,0,0.2,1); }
-.animate-in.visible { opacity:1; transform:translateY(0); }
-</style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav id="nav">
-  <a href="#" class="nav-brand">
-    <svg viewBox="0 0 32 32" fill="none">
-      <circle cx="16" cy="14" r="10" fill="#7C9A72"/>
-      <circle cx="16" cy="12" r="7" fill="#A3BC99"/>
-      <rect x="14.5" y="20" width="3" height="8" rx="1.5" fill="#8B6F47"/>
-      <circle cx="13" cy="11" r="2" fill="#7C9A72" opacity="0.7"/>
-      <circle cx="19" cy="13" r="1.5" fill="#5A7A50" opacity="0.5"/>
-    </svg>
-    <span>Daoji</span>
-  </a>
-  <button class="nav-toggle" onclick="toggleNavMenu(this)" aria-label="Menu" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="nav-links">
-    <a href="#philosophy">Filosofi</a>
-    <a href="#dashboard">Dashboard</a>
-    <a href="#features">Fitur</a>
-    <a href="#thinking">Thinking Canvas</a>
-    <a href="#audit">Life Audit</a>
-    <a href="#pricing">Harga</a>
-    <a href="#competitive">Kompetitif</a>
-    <a href="#cta" class="nav-cta">Mulai Gratis</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-inner">
-    <div class="hero-text">
-      <h1>Personal OS<br>untuk <em>Orientasi Diri</em></h1>
-      <p>Bukan sekadar habit tracker. Daoji mengubah kegagalan menjadi data refleksi — tanpa rasa bersalah, tanpa streak punishment. Dibangun di atas sains perilaku & kepatuhan hukum.</p>
-      <div class="hero-buttons">
-        <a href="#dashboard" class="btn btn-primary">🌿 Lihat Prototype</a>
-        <a href="#philosophy" class="btn btn-secondary">Pelajari Filosofi</a>
-      </div>
-    </div>
-    <div class="hero-tree-wrap">
-      <div class="hero-tree-container" id="heroTreeContainer">
-        <svg class="tree-svg" viewBox="0 0 380 420" id="heroTree">
-          <!-- Ground -->
-          <ellipse class="tree-ground" cx="190" cy="400" rx="140" ry="16"/>
-          <!-- Snow particles (hidden by default) -->
-          <g class="snow-particles" opacity="0">
-            <circle cx="120" cy="80" r="3" fill="#E8F0F5"/>
-            <circle cx="250" cy="60" r="2.5" fill="#E8F0F5"/>
-            <circle cx="180" cy="50" r="2" fill="#E8F0F5"/>
-            <circle cx="300" cy="90" r="3" fill="#E8F0F5"/>
-            <circle cx="80" cy="110" r="2" fill="#E8F0F5"/>
-          </g>
-          <!-- Trunk -->
-          <path class="tree-trunk" d="M182 400 L178 280 Q175 250 182 230 L198 230 Q205 250 202 280 L198 400 Z"/>
-          <path d="M185 300 Q170 280 160 270" stroke="#8B6F47" stroke-width="4" fill="none"/>
-          <path d="M195 290 Q210 265 220 255" stroke="#8B6F47" stroke-width="3" fill="none"/>
-          <!-- Canopy layers -->
-          <circle class="tree-canopy-accent" cx="160" cy="190" r="40" opacity="0.4"/>
-          <circle class="tree-canopy-accent" cx="220" cy="180" r="38" opacity="0.4"/>
-          <circle class="tree-canopy" cx="190" cy="160" r="60"/>
-          <circle class="tree-canopy-accent" cx="170" cy="140" r="35" opacity="0.3"/>
-          <circle class="tree-canopy-accent" cx="210" cy="130" r="30" opacity="0.3"/>
-          <circle class="tree-canopy" cx="190" cy="120" r="45"/>
-          <circle class="tree-canopy" cx="190" cy="90" r="32"/>
-          <!-- Flowers (hidden) -->
-          <g class="tree-flowers" opacity="0">
-            <circle cx="155" cy="150" r="5" fill="#D4A574"/>
-            <circle cx="225" cy="135" r="4" fill="#D4A574"/>
-            <circle cx="180" cy="100" r="5" fill="#E8B4B8"/>
-            <circle cx="210" cy="85" r="4" fill="#D4A574"/>
-            <circle cx="168" cy="120" r="3.5" fill="#E8B4B8"/>
-          </g>
-          <!-- Snow cap (hidden) -->
-          <g class="tree-snow-cap" opacity="0">
-            <ellipse cx="190" cy="65" rx="28" ry="8" fill="#E8F0F5"/>
-            <ellipse cx="175" cy="110" rx="22" ry="6" fill="#E8F0F5"/>
-            <ellipse cx="210" cy="140" rx="18" ry="5" fill="#E8F0F5"/>
-          </g>
+      /* ===== ANIMATIONS ===== */
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+      @keyframes grow {
+        from {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .animate-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav id="nav">
+      <a href="#" class="nav-brand">
+        <svg viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="14" r="10" fill="#7C9A72" />
+          <circle cx="16" cy="12" r="7" fill="#A3BC99" />
+          <rect x="14.5" y="20" width="3" height="8" rx="1.5" fill="#8B6F47" />
+          <circle cx="13" cy="11" r="2" fill="#7C9A72" opacity="0.7" />
+          <circle cx="19" cy="13" r="1.5" fill="#5A7A50" opacity="0.5" />
         </svg>
+        <span>Daoji</span>
+      </a>
+      <button
+        class="nav-toggle"
+        onclick="toggleNavMenu(this)"
+        aria-label="Menu"
+        aria-expanded="false"
+      >
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="#philosophy">Filosofi</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#features">Fitur</a>
+        <a href="#thinking">Thinking Canvas</a>
+        <a href="#audit">Life Audit</a>
+        <a href="#pricing">Harga</a>
+        <a href="#competitive">Kompetitif</a>
+        <a href="#cta" class="nav-cta">Mulai Gratis</a>
       </div>
-    </div>
-  </div>
-</section>
+    </nav>
 
-<!-- PHILOSOPHY -->
-<section class="philosophy" id="philosophy">
-  <div class="section-inner">
-    <div class="section-label">🌱 Filosofi Anti-Guilt</div>
-    <h2 class="section-title">Mengapa Streak Itu Beracun?</h2>
-    <p class="section-desc">Aplikasi produktivitas konvensional mengandalkan <em>loss aversion</em> via sistem streak — memicu rasa bersalah saat Anda melewatkan 1 hari. Daoji menolak pendekatan ini.</p>
-    <div class="compare-grid">
-      <div class="compare-card compare-bad">
-        <h3>❌ Aplikasi Konvensional</h3>
-        <ul>
-          <li>Streak rusak = kembali ke nol — hukuman visual</li>
-          <li>Guilt-driven: "Kamu merusak streak-mu!"</li>
-          <li>Overload tanpa peringatan — tambah habit terus</li>
-          <li>Satu domain saja: to-do list atau habit</li>
-          <li>Data tidak terenkripsi — bisa diakses server</li>
-        </ul>
-      </div>
-      <div class="compare-card compare-good">
-        <h3>✅ Daoji (Anti-Guilt)</h3>
-        <ul>
-          <li>Tidak ada streak — cumulation, bukan consecutive</li>
-          <li>Empathy-driven: "Pohonmu sedang beristirahat."</li>
-          <li>Canopy Load mencegah overload — soft enforcement</li>
-          <li>6 domain kehidupan terintegrasi (Life Audit)</li>
-          <li>Lokal-Pertama (Privasi Penuh) — Data tersimpan lokal, tanpa server</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- DASHBOARD DEMO -->
-<section class="dashboard-demo" id="dashboard">
-  <div class="section-inner" style="text-align:center;">
-    <div class="section-label">📱 Dashboard Prototype</div>
-    <h2 class="section-title">Central Command Dashboard</h2>
-    <p class="section-desc" style="margin-left:auto;margin-right:auto;">Ketuk elemen di layar untuk berinteraksi. Ini adalah simulasi layar utama Daoji.</p>
-    <div class="phone-frame" style="margin-top:32px;">
-      <div class="phone-screen" id="phoneScreen">
-        <div class="phone-notch"></div>
-        <div class="screen-content">
-          <!-- Tree Area -->
-          <div class="screen-tree-area" id="screenTreeArea" onclick="cycleTreeState()" role="button" tabindex="0" aria-label="Simulasikan pertumbuhan pohon">
-            <div class="screen-season" id="seasonBadge">🌱 Growth</div>
-            <svg class="screen-tree-svg" viewBox="0 0 120 160" id="screenTree">
-              <ellipse cx="60" cy="152" rx="45" ry="6" fill="rgba(124,154,114,0.2)"/>
-              <path d="M57 152 L55 110 Q54 98 57 90 L63 90 Q66 98 65 110 L63 152 Z" fill="#8B6F47"/>
-              <circle cx="42" cy="78" r="18" fill="#A3BC99" opacity="0.5"/>
-              <circle cx="78" cy="74" r="16" fill="#A3BC99" opacity="0.5"/>
-              <circle cx="60" cy="64" r="24" fill="#7C9A72"/>
-              <circle cx="50" cy="52" r="14" fill="#7C9A72" opacity="0.8"/>
-              <circle cx="70" cy="48" r="12" fill="#7C9A72" opacity="0.8"/>
-              <circle cx="60" cy="38" r="14" fill="#7C9A72"/>
-              <g class="screen-flowers" opacity="0">
-                <circle cx="42" cy="62" r="3" fill="#D4A574"/>
-                <circle cx="75" cy="52" r="2.5" fill="#E8B4B8"/>
-                <circle cx="55" cy="35" r="3" fill="#D4A574"/>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <h1>Personal OS<br />untuk <em>Orientasi Diri</em></h1>
+          <p>
+            Bukan sekadar habit tracker. Daoji mengubah kegagalan menjadi data
+            refleksi — tanpa rasa bersalah, tanpa streak punishment. Dibangun di
+            atas sains perilaku & kepatuhan hukum.
+          </p>
+          <div class="hero-buttons">
+            <a href="#dashboard" class="btn btn-primary">🌿 Lihat Prototype</a>
+            <a href="#philosophy" class="btn btn-secondary"
+              >Pelajari Filosofi</a
+            >
+          </div>
+        </div>
+        <div class="hero-tree-wrap">
+          <div class="hero-tree-container" id="heroTreeContainer">
+            <svg class="tree-svg" viewBox="0 0 380 420" id="heroTree">
+              <!-- Ground -->
+              <ellipse class="tree-ground" cx="190" cy="400" rx="140" ry="16" />
+              <!-- Snow particles (hidden by default) -->
+              <g class="snow-particles" opacity="0">
+                <circle cx="120" cy="80" r="3" fill="#E8F0F5" />
+                <circle cx="250" cy="60" r="2.5" fill="#E8F0F5" />
+                <circle cx="180" cy="50" r="2" fill="#E8F0F5" />
+                <circle cx="300" cy="90" r="3" fill="#E8F0F5" />
+                <circle cx="80" cy="110" r="2" fill="#E8F0F5" />
               </g>
-              <g class="screen-snow" opacity="0">
-                <ellipse cx="60" cy="28" rx="10" ry="3" fill="#E8F0F5"/>
-                <ellipse cx="50" cy="52" rx="8" ry="2.5" fill="#E8F0F5"/>
+              <!-- Trunk -->
+              <path
+                class="tree-trunk"
+                d="M182 400 L178 280 Q175 250 182 230 L198 230 Q205 250 202 280 L198 400 Z"
+              />
+              <path
+                d="M185 300 Q170 280 160 270"
+                stroke="#8B6F47"
+                stroke-width="4"
+                fill="none"
+              />
+              <path
+                d="M195 290 Q210 265 220 255"
+                stroke="#8B6F47"
+                stroke-width="3"
+                fill="none"
+              />
+              <!-- Canopy layers -->
+              <circle
+                class="tree-canopy-accent"
+                cx="160"
+                cy="190"
+                r="40"
+                opacity="0.4"
+              />
+              <circle
+                class="tree-canopy-accent"
+                cx="220"
+                cy="180"
+                r="38"
+                opacity="0.4"
+              />
+              <circle class="tree-canopy" cx="190" cy="160" r="60" />
+              <circle
+                class="tree-canopy-accent"
+                cx="170"
+                cy="140"
+                r="35"
+                opacity="0.3"
+              />
+              <circle
+                class="tree-canopy-accent"
+                cx="210"
+                cy="130"
+                r="30"
+                opacity="0.3"
+              />
+              <circle class="tree-canopy" cx="190" cy="120" r="45" />
+              <circle class="tree-canopy" cx="190" cy="90" r="32" />
+              <!-- Flowers (hidden) -->
+              <g class="tree-flowers" opacity="0">
+                <circle cx="155" cy="150" r="5" fill="#D4A574" />
+                <circle cx="225" cy="135" r="4" fill="#D4A574" />
+                <circle cx="180" cy="100" r="5" fill="#E8B4B8" />
+                <circle cx="210" cy="85" r="4" fill="#D4A574" />
+                <circle cx="168" cy="120" r="3.5" fill="#E8B4B8" />
+              </g>
+              <!-- Snow cap (hidden) -->
+              <g class="tree-snow-cap" opacity="0">
+                <ellipse cx="190" cy="65" rx="28" ry="8" fill="#E8F0F5" />
+                <ellipse cx="175" cy="110" rx="22" ry="6" fill="#E8F0F5" />
+                <ellipse cx="210" cy="140" rx="18" ry="5" fill="#E8F0F5" />
               </g>
             </svg>
           </div>
-          <!-- Action of the Day -->
-          <div class="screen-action-card" id="actionCard" onclick="markDone()" role="button" tabindex="0" aria-label="Tandai habit hari ini sebagai selesai">
-            <div class="screen-action-label">📋 Action of the Day</div>
-            <div class="screen-action-title" id="actionTitle">Olahraga 30 menit</div>
-            <div class="screen-action-meta" id="actionMeta">🏃 Tubuh · Load: 8/10 · Impact: ★★★★★</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHILOSOPHY -->
+    <section class="philosophy" id="philosophy">
+      <div class="section-inner">
+        <div class="section-label">🌱 Filosofi Anti-Guilt</div>
+        <h2 class="section-title">Mengapa Streak Itu Beracun?</h2>
+        <p class="section-desc">
+          Aplikasi produktivitas konvensional mengandalkan
+          <em>loss aversion</em> via sistem streak — memicu rasa bersalah saat
+          Anda melewatkan 1 hari. Daoji menolak pendekatan ini.
+        </p>
+        <div class="compare-grid">
+          <div class="compare-card compare-bad">
+            <h3>❌ Aplikasi Konvensional</h3>
+            <ul>
+              <li>Streak rusak = kembali ke nol — hukuman visual</li>
+              <li>Guilt-driven: "Kamu merusak streak-mu!"</li>
+              <li>Overload tanpa peringatan — tambah habit terus</li>
+              <li>Satu domain saja: to-do list atau habit</li>
+              <li>Data tidak terenkripsi — bisa diakses server</li>
+            </ul>
           </div>
-          <!-- Journal -->
-          <div class="screen-journal-btn" onclick="showJournalModal()" role="button" tabindex="0">📝 Quick Journaling — Ketuk untuk mulai</div>
-          <div class="screen-journal-btn" onclick="showThinkingModal()" style="margin-top:10px;background:rgba(124,154,114,0.08);border-color:var(--sage);color:var(--sage-dark);" role="button" tabindex="0">🧠 Thinking Canvas — Mulai sesi kertas</div>
-          <!-- Tab Bar -->
-          <div class="screen-tab-bar">
-            <div class="screen-tab active">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L3 8v10h5v-6h4v6h5V8z"/></svg>
-              Home
+          <div class="compare-card compare-good">
+            <h3>✅ Daoji (Anti-Guilt)</h3>
+            <ul>
+              <li>Tidak ada streak — cumulation, bukan consecutive</li>
+              <li>Empathy-driven: "Pohonmu sedang beristirahat."</li>
+              <li>Canopy Load mencegah overload — soft enforcement</li>
+              <li>6 domain kehidupan terintegrasi (Life Audit)</li>
+              <li>
+                Lokal-Pertama (Privasi Penuh) — Data tersimpan lokal, tanpa
+                server
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD DEMO -->
+    <section class="dashboard-demo" id="dashboard">
+      <div class="section-inner" style="text-align: center">
+        <div class="section-label">📱 Dashboard Prototype</div>
+        <h2 class="section-title">Central Command Dashboard</h2>
+        <p class="section-desc" style="margin-left: auto; margin-right: auto">
+          Ketuk elemen di layar untuk berinteraksi. Ini adalah simulasi layar
+          utama Daoji.
+        </p>
+        <div class="phone-frame" style="margin-top: 32px">
+          <div class="phone-screen" id="phoneScreen">
+            <div class="phone-notch"></div>
+            <div class="screen-content">
+              <!-- Tree Area -->
+              <div
+                class="screen-tree-area"
+                id="screenTreeArea"
+                onclick="cycleTreeState()"
+                role="button"
+                tabindex="0"
+                aria-label="Simulasikan pertumbuhan pohon"
+              >
+                <div class="screen-season" id="seasonBadge">🌱 Growth</div>
+                <svg
+                  class="screen-tree-svg"
+                  viewBox="0 0 120 160"
+                  id="screenTree"
+                >
+                  <ellipse
+                    cx="60"
+                    cy="152"
+                    rx="45"
+                    ry="6"
+                    fill="rgba(124,154,114,0.2)"
+                  />
+                  <path
+                    d="M57 152 L55 110 Q54 98 57 90 L63 90 Q66 98 65 110 L63 152 Z"
+                    fill="#8B6F47"
+                  />
+                  <circle cx="42" cy="78" r="18" fill="#A3BC99" opacity="0.5" />
+                  <circle cx="78" cy="74" r="16" fill="#A3BC99" opacity="0.5" />
+                  <circle cx="60" cy="64" r="24" fill="#7C9A72" />
+                  <circle cx="50" cy="52" r="14" fill="#7C9A72" opacity="0.8" />
+                  <circle cx="70" cy="48" r="12" fill="#7C9A72" opacity="0.8" />
+                  <circle cx="60" cy="38" r="14" fill="#7C9A72" />
+                  <g class="screen-flowers" opacity="0">
+                    <circle cx="42" cy="62" r="3" fill="#D4A574" />
+                    <circle cx="75" cy="52" r="2.5" fill="#E8B4B8" />
+                    <circle cx="55" cy="35" r="3" fill="#D4A574" />
+                  </g>
+                  <g class="screen-snow" opacity="0">
+                    <ellipse cx="60" cy="28" rx="10" ry="3" fill="#E8F0F5" />
+                    <ellipse cx="50" cy="52" rx="8" ry="2.5" fill="#E8F0F5" />
+                  </g>
+                </svg>
+              </div>
+              <!-- Action of the Day -->
+              <div
+                class="screen-action-card"
+                id="actionCard"
+                onclick="markDone()"
+                role="button"
+                tabindex="0"
+                aria-label="Tandai habit hari ini sebagai selesai"
+              >
+                <div class="screen-action-label">📋 Action of the Day</div>
+                <div class="screen-action-title" id="actionTitle">
+                  Olahraga 30 menit
+                </div>
+                <div class="screen-action-meta" id="actionMeta">
+                  🏃 Tubuh · Load: 8/10 · Impact: ★★★★★
+                </div>
+              </div>
+              <!-- Journal -->
+              <div
+                class="screen-journal-btn"
+                onclick="showJournalModal()"
+                role="button"
+                tabindex="0"
+              >
+                📝 Quick Journaling — Ketuk untuk mulai
+              </div>
+              <div
+                class="screen-journal-btn"
+                onclick="showThinkingModal()"
+                style="
+                  margin-top: 10px;
+                  background: rgba(124, 154, 114, 0.08);
+                  border-color: var(--sage);
+                  color: var(--sage-dark);
+                "
+                role="button"
+                tabindex="0"
+              >
+                🧠 Thinking Canvas — Mulai sesi kertas
+              </div>
+              <!-- Tab Bar -->
+              <div class="screen-tab-bar">
+                <div class="screen-tab active">
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 2L3 8v10h5v-6h4v6h5V8z" />
+                  </svg>
+                  Home
+                </div>
+                <div class="screen-tab">
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm8-6a6 6 0 100 12A6 6 0 0010 4z"
+                    />
+                  </svg>
+                  Radar
+                </div>
+                <div class="screen-tab">
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M3 4h14v2H3zm0 5h14v2H3zm0 5h10v2H3z" />
+                  </svg>
+                  Journal
+                </div>
+                <div class="screen-tab">
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      d="M10 2a6 6 0 100 12 6 6 0 000-12zm0 2a4 4 0 110 8 4 4 0 010-8z"
+                    />
+                  </svg>
+                  Settings
+                </div>
+              </div>
             </div>
-            <div class="screen-tab">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm8-6a6 6 0 100 12A6 6 0 0010 4z"/></svg>
-              Radar
+          </div>
+        </div>
+        <p
+          style="margin-top: 16px; font-size: 0.78rem; color: var(--text-muted)"
+        >
+          Ketuk pohon untuk mengubah state · Ketuk Action untuk menandai Done
+        </p>
+      </div>
+    </section>
+
+    <!-- TREE VITALITY STATES -->
+    <section class="tree-states" id="tree-states">
+      <div class="section-inner">
+        <div class="section-label">🌳 Tree Vitality</div>
+        <h2 class="section-title">Pohon Tumbuh, Tidak Pernah Mengecil</h2>
+        <p class="section-desc">
+          Hard Rule Anti-Guilt: pohon hanya bisa tumbuh atau "istirahat" — tidak
+          pernah mundur. Klik state untuk melihat visualisasi.
+        </p>
+        <div class="states-grid">
+          <div
+            class="state-card active"
+            onclick="setHeroState('seedling')"
+            role="button"
+            tabindex="0"
+          >
+            <svg viewBox="0 0 80 100">
+              <ellipse
+                cx="40"
+                cy="95"
+                rx="30"
+                ry="4"
+                fill="rgba(124,154,114,0.2)"
+              />
+              <rect x="38" y="75" width="4" height="20" rx="2" fill="#8B6F47" />
+              <circle cx="40" cy="72" r="6" fill="#7C9A72" />
+              <line
+                x1="40"
+                y1="72"
+                x2="34"
+                y2="64"
+                stroke="#7C9A72"
+                stroke-width="2"
+              />
+              <line
+                x1="40"
+                y1="72"
+                x2="46"
+                y2="66"
+                stroke="#7C9A72"
+                stroke-width="2"
+              />
+            </svg>
+            <h4>Seedling</h4>
+            <p>0–7 hari</p>
+          </div>
+          <div
+            class="state-card"
+            onclick="setHeroState('sapling')"
+            role="button"
+            tabindex="0"
+          >
+            <svg viewBox="0 0 80 100">
+              <ellipse
+                cx="40"
+                cy="95"
+                rx="30"
+                ry="4"
+                fill="rgba(124,154,114,0.2)"
+              />
+              <rect x="37" y="60" width="6" height="35" rx="3" fill="#8B6F47" />
+              <circle cx="34" cy="55" r="12" fill="#A3BC99" opacity="0.6" />
+              <circle cx="48" cy="52" r="10" fill="#A3BC99" opacity="0.6" />
+              <circle cx="40" cy="45" r="15" fill="#7C9A72" />
+            </svg>
+            <h4>Sapling</h4>
+            <p>8–30 hari</p>
+          </div>
+          <div
+            class="state-card"
+            onclick="setHeroState('young')"
+            role="button"
+            tabindex="0"
+          >
+            <svg viewBox="0 0 80 100">
+              <ellipse
+                cx="40"
+                cy="95"
+                rx="30"
+                ry="4"
+                fill="rgba(124,154,114,0.2)"
+              />
+              <rect x="36" y="50" width="8" height="45" rx="4" fill="#8B6F47" />
+              <circle cx="30" cy="42" r="16" fill="#A3BC99" opacity="0.5" />
+              <circle cx="52" cy="38" r="14" fill="#A3BC99" opacity="0.5" />
+              <circle cx="40" cy="32" r="20" fill="#7C9A72" />
+              <circle cx="36" cy="24" r="12" fill="#7C9A72" opacity="0.8" />
+              <circle cx="46" cy="22" r="10" fill="#7C9A72" opacity="0.8" />
+            </svg>
+            <h4>Young Tree</h4>
+            <p>31–60 hari</p>
+          </div>
+          <div
+            class="state-card"
+            onclick="setHeroState('mature')"
+            role="button"
+            tabindex="0"
+          >
+            <svg viewBox="0 0 80 100">
+              <ellipse
+                cx="40"
+                cy="95"
+                rx="30"
+                ry="4"
+                fill="rgba(124,154,114,0.2)"
+              />
+              <rect
+                x="35"
+                y="45"
+                width="10"
+                height="50"
+                rx="5"
+                fill="#8B6F47"
+              />
+              <path
+                d="M38 65 Q25 55 20 48"
+                stroke="#8B6F47"
+                stroke-width="3"
+                fill="none"
+              />
+              <path
+                d="M44 58 Q55 48 60 42"
+                stroke="#8B6F47"
+                stroke-width="2.5"
+                fill="none"
+              />
+              <circle cx="28" cy="35" r="18" fill="#A3BC99" opacity="0.5" />
+              <circle cx="55" cy="30" r="16" fill="#A3BC99" opacity="0.5" />
+              <circle cx="40" cy="25" r="22" fill="#7C9A72" />
+              <circle cx="35" cy="15" r="14" fill="#7C9A72" opacity="0.85" />
+              <circle cx="50" cy="13" r="12" fill="#7C9A72" opacity="0.85" />
+              <circle cx="40" cy="8" r="10" fill="#7C9A72" />
+            </svg>
+            <h4>Mature Tree</h4>
+            <p>&gt; 60 hari</p>
+          </div>
+          <div
+            class="state-card"
+            onclick="setHeroState('blooming')"
+            role="button"
+            tabindex="0"
+          >
+            <svg viewBox="0 0 80 100">
+              <ellipse
+                cx="40"
+                cy="95"
+                rx="30"
+                ry="4"
+                fill="rgba(124,154,114,0.2)"
+              />
+              <rect
+                x="35"
+                y="45"
+                width="10"
+                height="50"
+                rx="5"
+                fill="#8B6F47"
+              />
+              <circle cx="28" cy="35" r="18" fill="#A3BC99" opacity="0.5" />
+              <circle cx="55" cy="30" r="16" fill="#A3BC99" opacity="0.5" />
+              <circle cx="40" cy="25" r="22" fill="#7C9A72" />
+              <circle cx="40" cy="8" r="10" fill="#7C9A72" />
+              <circle cx="22" cy="30" r="3.5" fill="#D4A574" />
+              <circle cx="58" cy="24" r="3" fill="#E8B4B8" />
+              <circle cx="35" cy="12" r="3.5" fill="#D4A574" />
+              <circle cx="50" cy="10" r="2.5" fill="#E8B4B8" />
+            </svg>
+            <h4>Blooming ✿</h4>
+            <p>Otomatis (Decay)</p>
+          </div>
+          <div
+            class="state-card"
+            onclick="setHeroState('snow')"
+            role="button"
+            tabindex="0"
+          >
+            <svg viewBox="0 0 80 100">
+              <ellipse
+                cx="40"
+                cy="95"
+                rx="30"
+                ry="4"
+                fill="rgba(124,154,114,0.15)"
+              />
+              <rect
+                x="35"
+                y="45"
+                width="10"
+                height="50"
+                rx="5"
+                fill="#8B6F47"
+              />
+              <circle cx="28" cy="35" r="18" fill="#B8C9B3" opacity="0.5" />
+              <circle cx="55" cy="30" r="16" fill="#B8C9B3" opacity="0.5" />
+              <circle cx="40" cy="25" r="22" fill="#9AB895" />
+              <circle cx="40" cy="8" r="10" fill="#9AB895" />
+              <ellipse cx="40" cy="5" rx="8" ry="3" fill="#E8F0F5" />
+              <ellipse cx="30" cy="28" rx="6" ry="2" fill="#E8F0F5" />
+              <ellipse cx="52" cy="22" rx="5" ry="2" fill="#E8F0F5" />
+              <circle cx="20" cy="15" r="2" fill="#E8F0F5" opacity="0.7" />
+              <circle cx="60" cy="10" r="1.5" fill="#E8F0F5" opacity="0.7" />
+            </svg>
+            <h4>Snow-Covered ❄</h4>
+            <p>Recovery Mode</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+      <div class="section-inner">
+        <div class="section-label">⚙️ Fitur Inti</div>
+        <h2 class="section-title">Arsitektur yang Dirancang untuk Empati</h2>
+        <p class="section-desc">
+          Setiap fitur dibangun berdasarkan prinsip: kegagalan adalah data,
+          bukan hukuman.
+        </p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: rgba(124, 154, 114, 0.12)"
+            >
+              🌿
             </div>
-            <div class="screen-tab">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4h14v2H3zm0 5h14v2H3zm0 5h10v2H3z"/></svg>
-              Journal
+            <h3>Canopy Load System</h3>
+            <p>
+              Kapasitas harian terbatas (default 10 poin). Sistem mencegah
+              overload dengan soft enforcement — peringatan ramah, bukan hard
+              block. Automaticity Decay membebaskan ruang seiring waktu.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: rgba(107, 143, 158, 0.12)"
+            >
+              📋
             </div>
-            <div class="screen-tab">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 100 12 6 6 0 000-12zm0 2a4 4 0 110 8 4 4 0 010-8z"/></svg>
-              Settings
+            <h3>Action of the Day</h3>
+            <p>
+              Algoritma rule-based memprioritaskan 1 habit berdasarkan domain
+              terlemah. Priority Score = (domain_deficit × impact) / (friction +
+              energy). Tanpa AI, tanpa black box.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: rgba(212, 165, 116, 0.15)"
+            >
+              📝
+            </div>
+            <h3>Friction Journaling</h3>
+            <p>
+              Saat habit terlewat, bukan hukuman — justru dipandu memahami
+              hambatan. "Kurang Waktu?" → tawarkan versi mva_duration_min menit.
+              "Kelelahan?" → tawarkan Recovery Mode.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: rgba(232, 180, 184, 0.2)"
+            >
+              🛡️
+            </div>
+            <h3>
+              Keamanan Lokal & Enkripsi
+              <span
+                class="badge"
+                style="
+                  background: var(--amber);
+                  color: var(--white);
+                  font-size: 10px;
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  vertical-align: middle;
+                  margin-left: 6px;
+                "
+                >Roadmap</span
+              >
+            </h3>
+            <p>
+              Database saat ini tersimpan 100% lokal di perangkat Anda
+              (offline-first, tanpa akun server). Fitur enkripsi database
+              (SQLCipher) sedang dikembangkan untuk rilis fase berikutnya.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: rgba(124, 154, 114, 0.12)"
+            >
+              🔍
+            </div>
+            <h3>Life Audit & Radar</h3>
+            <p>
+              6 domain kehidupan (Tubuh, Keuangan, Hubungan, Emosi, Karir,
+              Rekreasi) dipetakan dalam Radar Keseimbangan. Domain terlemah
+              mendapat prioritas otomatis.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: rgba(107, 143, 158, 0.12)"
+            >
+              🆘
+            </div>
+            <h3>Passive Crisis Protocol</h3>
+            <p>
+              Mood ≤ 2 selama 3 hari → modal empatik + Safety Card (119/SEJIWA
+              hardcoded). Tidak ada AI/ML — false negative/false positive
+              terlalu berisiko. Recovery Mode tersedia kapan saja.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THINKING CANVAS -->
+    <section class="thinking-canvas" id="thinking">
+      <div class="section-inner">
+        <div class="section-label">🧠 Thinking Canvas</div>
+        <h2 class="section-title">
+          Thinking Canvas: Pilar Refleksi Berbasis Kertas
+        </h2>
+        <p class="section-desc">
+          Daoji tidak menggantikan buku catatanmu. Saat pikiran kabur, Thinking
+          Canvas menyarankan metode corat-coret di kertas asli — lalu membantumu
+          menyimpan ringkasan dan memilih satu aksi kecil.
+        </p>
+        <div class="thinking-shell">
+          <div>
+            <div class="method-picker" id="methodPicker">
+              <button
+                class="method-card active"
+                onclick="selectThinkingMethod('dump', this)"
+              >
+                <span class="emoji">🌫️</span>
+                <h4>Pikiran penuh</h4>
+                <p>Mind Dump + Cluster + Refine</p>
+              </button>
+              <button
+                class="method-card"
+                onclick="selectThinkingMethod('brainstorm', this)"
+              >
+                <span class="emoji">💡</span>
+                <h4>Belum punya ide</h4>
+                <p>Brainstorming Klasik</p>
+              </button>
+              <button
+                class="method-card"
+                onclick="selectThinkingMethod('score', this)"
+              >
+                <span class="emoji">⚖️</span>
+                <h4>Terlalu banyak opsi</h4>
+                <p>Skoring Ide Sederhana</p>
+              </button>
+              <button
+                class="method-card"
+                onclick="selectThinkingMethod('pmi', this)"
+              >
+                <span class="emoji">🔎</span>
+                <h4>Ragu pada ide</h4>
+                <p>PMI: Plus, Minus, Implications</p>
+              </button>
+              <button
+                class="method-card"
+                onclick="selectThinkingMethod('reverse', this)"
+              >
+                <span class="emoji">🛡️</span>
+                <h4>Takut gagal</h4>
+                <p>Reverse Brainstorming</p>
+              </button>
+              <button
+                class="method-card"
+                onclick="selectThinkingMethod('validate', this)"
+              >
+                <span class="emoji">🚪</span>
+                <h4>Mau uji nyata</h4>
+                <p>Validasi Ide 48 Jam–2 Minggu</p>
+              </button>
+            </div>
+          </div>
+          <div>
+            <div class="method-panel">
+              <h3 id="methodTitle">Mind Dump + Cluster + Refine</h3>
+              <p id="methodDesc">
+                Ambil buku/kertas. Gunakan metode ini untuk mengurai pikiran
+                penuh menjadi klaster, asumsi, dan satu langkah besok.
+              </p>
+              <div class="method-meta">
+                <span class="method-badge" id="methodDuration">15 menit</span>
+                <span class="method-badge" id="methodType">Harian ringan</span>
+                <span class="method-badge" id="methodOutput">1 aksi kecil</span>
+              </div>
+              <ul class="method-steps" id="methodSteps">
+                <li>
+                  Ambil buku/kertas, lalu dump bebas 5–10 menit tanpa sensor.
+                </li>
+                <li>Kelompokkan ide yang mirip.</li>
+                <li>Pilih 1 ide, catat asumsi, dan tulis langkah besok.</li>
+              </ul>
+              <div class="method-output" id="methodDaoji">
+                Paper-first: pikirkan di kertas, simpan ringkasannya di Daoji.
+                Hasil akhirnya bisa menjadi Action of the Day, catatan Friction
+                Journal, atau bahan Weekly Pulse.
+              </div>
+            </div>
+            <div class="thinking-workspace">
+              <label for="canvasTopic">Topik / pertanyaan hari ini</label>
+              <input
+                id="canvasTopic"
+                value="Apa satu aksi kecil yang paling realistis untuk besok?"
+              />
+              <label for="canvasDump">Ringkasan dari kertas</label>
+              <textarea
+                id="canvasDump"
+                rows="4"
+                placeholder="Setelah corat-coret di buku/kertas, tulis ringkasan temuanmu di sini..."
+              ></textarea>
+              <label for="canvasAction">Satu aksi berikutnya</label>
+              <input
+                id="canvasAction"
+                placeholder="Contoh: tanya 3 teman, buat contoh before-after, atau mulai 2 menit."
+              />
+              <div class="canvas-actions">
+                <button class="btn btn-primary" onclick="showThinkingModal()">
+                  Mulai sesi kertas
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  onclick="saveThinkingCanvas()"
+                >
+                  Simpan ringkasan
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <p style="margin-top:16px;font-size:0.78rem;color:var(--text-muted);">Ketuk pohon untuk mengubah state · Ketuk Action untuk menandai Done</p>
-  </div>
-</section>
+    </section>
 
-<!-- TREE VITALITY STATES -->
-<section class="tree-states" id="tree-states">
-  <div class="section-inner">
-    <div class="section-label">🌳 Tree Vitality</div>
-    <h2 class="section-title">Pohon Tumbuh, Tidak Pernah Mengecil</h2>
-    <p class="section-desc">Hard Rule Anti-Guilt: pohon hanya bisa tumbuh atau "istirahat" — tidak pernah mundur. Klik state untuk melihat visualisasi.</p>
-    <div class="states-grid">
-      <div class="state-card active" onclick="setHeroState('seedling')" role="button" tabindex="0">
-        <svg viewBox="0 0 80 100">
-          <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.2)"/>
-          <rect x="38" y="75" width="4" height="20" rx="2" fill="#8B6F47"/>
-          <circle cx="40" cy="72" r="6" fill="#7C9A72"/>
-          <line x1="40" y1="72" x2="34" y2="64" stroke="#7C9A72" stroke-width="2"/>
-          <line x1="40" y1="72" x2="46" y2="66" stroke="#7C9A72" stroke-width="2"/>
-        </svg>
-        <h4>Seedling</h4>
-        <p>0–7 hari</p>
-      </div>
-      <div class="state-card" onclick="setHeroState('sapling')" role="button" tabindex="0">
-        <svg viewBox="0 0 80 100">
-          <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.2)"/>
-          <rect x="37" y="60" width="6" height="35" rx="3" fill="#8B6F47"/>
-          <circle cx="34" cy="55" r="12" fill="#A3BC99" opacity="0.6"/>
-          <circle cx="48" cy="52" r="10" fill="#A3BC99" opacity="0.6"/>
-          <circle cx="40" cy="45" r="15" fill="#7C9A72"/>
-        </svg>
-        <h4>Sapling</h4>
-        <p>8–30 hari</p>
-      </div>
-      <div class="state-card" onclick="setHeroState('young')" role="button" tabindex="0">
-        <svg viewBox="0 0 80 100">
-          <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.2)"/>
-          <rect x="36" y="50" width="8" height="45" rx="4" fill="#8B6F47"/>
-          <circle cx="30" cy="42" r="16" fill="#A3BC99" opacity="0.5"/>
-          <circle cx="52" cy="38" r="14" fill="#A3BC99" opacity="0.5"/>
-          <circle cx="40" cy="32" r="20" fill="#7C9A72"/>
-          <circle cx="36" cy="24" r="12" fill="#7C9A72" opacity="0.8"/>
-          <circle cx="46" cy="22" r="10" fill="#7C9A72" opacity="0.8"/>
-        </svg>
-        <h4>Young Tree</h4>
-        <p>31–60 hari</p>
-      </div>
-      <div class="state-card" onclick="setHeroState('mature')" role="button" tabindex="0">
-        <svg viewBox="0 0 80 100">
-          <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.2)"/>
-          <rect x="35" y="45" width="10" height="50" rx="5" fill="#8B6F47"/>
-          <path d="M38 65 Q25 55 20 48" stroke="#8B6F47" stroke-width="3" fill="none"/>
-          <path d="M44 58 Q55 48 60 42" stroke="#8B6F47" stroke-width="2.5" fill="none"/>
-          <circle cx="28" cy="35" r="18" fill="#A3BC99" opacity="0.5"/>
-          <circle cx="55" cy="30" r="16" fill="#A3BC99" opacity="0.5"/>
-          <circle cx="40" cy="25" r="22" fill="#7C9A72"/>
-          <circle cx="35" cy="15" r="14" fill="#7C9A72" opacity="0.85"/>
-          <circle cx="50" cy="13" r="12" fill="#7C9A72" opacity="0.85"/>
-          <circle cx="40" cy="8" r="10" fill="#7C9A72"/>
-        </svg>
-        <h4>Mature Tree</h4>
-        <p>&gt; 60 hari</p>
-      </div>
-      <div class="state-card" onclick="setHeroState('blooming')" role="button" tabindex="0">
-        <svg viewBox="0 0 80 100">
-          <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.2)"/>
-          <rect x="35" y="45" width="10" height="50" rx="5" fill="#8B6F47"/>
-          <circle cx="28" cy="35" r="18" fill="#A3BC99" opacity="0.5"/>
-          <circle cx="55" cy="30" r="16" fill="#A3BC99" opacity="0.5"/>
-          <circle cx="40" cy="25" r="22" fill="#7C9A72"/>
-          <circle cx="40" cy="8" r="10" fill="#7C9A72"/>
-          <circle cx="22" cy="30" r="3.5" fill="#D4A574"/>
-          <circle cx="58" cy="24" r="3" fill="#E8B4B8"/>
-          <circle cx="35" cy="12" r="3.5" fill="#D4A574"/>
-          <circle cx="50" cy="10" r="2.5" fill="#E8B4B8"/>
-        </svg>
-        <h4>Blooming ✿</h4>
-        <p>Otomatis (Decay)</p>
-      </div>
-      <div class="state-card" onclick="setHeroState('snow')" role="button" tabindex="0">
-        <svg viewBox="0 0 80 100">
-          <ellipse cx="40" cy="95" rx="30" ry="4" fill="rgba(124,154,114,0.15)"/>
-          <rect x="35" y="45" width="10" height="50" rx="5" fill="#8B6F47"/>
-          <circle cx="28" cy="35" r="18" fill="#B8C9B3" opacity="0.5"/>
-          <circle cx="55" cy="30" r="16" fill="#B8C9B3" opacity="0.5"/>
-          <circle cx="40" cy="25" r="22" fill="#9AB895"/>
-          <circle cx="40" cy="8" r="10" fill="#9AB895"/>
-          <ellipse cx="40" cy="5" rx="8" ry="3" fill="#E8F0F5"/>
-          <ellipse cx="30" cy="28" rx="6" ry="2" fill="#E8F0F5"/>
-          <ellipse cx="52" cy="22" rx="5" ry="2" fill="#E8F0F5"/>
-          <circle cx="20" cy="15" r="2" fill="#E8F0F5" opacity="0.7"/>
-          <circle cx="60" cy="10" r="1.5" fill="#E8F0F5" opacity="0.7"/>
-        </svg>
-        <h4>Snow-Covered ❄</h4>
-        <p>Recovery Mode</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="features" id="features">
-  <div class="section-inner">
-    <div class="section-label">⚙️ Fitur Inti</div>
-    <h2 class="section-title">Arsitektur yang Dirancang untuk Empati</h2>
-    <p class="section-desc">Setiap fitur dibangun berdasarkan prinsip: kegagalan adalah data, bukan hukuman.</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon" style="background:rgba(124,154,114,0.12);">🌿</div>
-        <h3>Canopy Load System</h3>
-        <p>Kapasitas harian terbatas (default 10 poin). Sistem mencegah overload dengan soft enforcement — peringatan ramah, bukan hard block. Automaticity Decay membebaskan ruang seiring waktu.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:rgba(107,143,158,0.12);">📋</div>
-        <h3>Action of the Day</h3>
-        <p>Algoritma rule-based memprioritaskan 1 habit berdasarkan domain terlemah. Priority Score = (domain_deficit × impact) / (friction + energy). Tanpa AI, tanpa black box.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:rgba(212,165,116,0.15);">📝</div>
-        <h3>Friction Journaling</h3>
-        <p>Saat habit terlewat, bukan hukuman — justru dipandu memahami hambatan. "Kurang Waktu?" → tawarkan versi mva_duration_min menit. "Kelelahan?" → tawarkan Recovery Mode.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:rgba(232,180,184,0.2);">🛡️</div>
-        <h3>Keamanan Lokal & Enkripsi <span class="badge" style="background:var(--amber);color:var(--white);font-size:10px;padding:2px 6px;border-radius:4px;vertical-align:middle;margin-left:6px;">Roadmap</span></h3>
-        <p>Database saat ini tersimpan 100% lokal di perangkat Anda (offline-first, tanpa akun server). Fitur enkripsi database (SQLCipher) sedang dikembangkan untuk rilis fase berikutnya.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:rgba(124,154,114,0.12);">🔍</div>
-        <h3>Life Audit & Radar</h3>
-        <p>6 domain kehidupan (Tubuh, Keuangan, Hubungan, Emosi, Karir, Rekreasi) dipetakan dalam Radar Keseimbangan. Domain terlemah mendapat prioritas otomatis.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:rgba(107,143,158,0.12);">🆘</div>
-        <h3>Passive Crisis Protocol</h3>
-        <p>Mood ≤ 2 selama 3 hari → modal empatik + Safety Card (119/SEJIWA hardcoded). Tidak ada AI/ML — false negative/false positive terlalu berisiko. Recovery Mode tersedia kapan saja.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- THINKING CANVAS -->
-<section class="thinking-canvas" id="thinking">
-  <div class="section-inner">
-    <div class="section-label">🧠 Thinking Canvas</div>
-    <h2 class="section-title">Thinking Canvas: Pilar Refleksi Berbasis Kertas</h2>
-    <p class="section-desc">Daoji tidak menggantikan buku catatanmu. Saat pikiran kabur, Thinking Canvas menyarankan metode corat-coret di kertas asli — lalu membantumu menyimpan ringkasan dan memilih satu aksi kecil.</p>
-    <div class="thinking-shell">
-      <div>
-        <div class="method-picker" id="methodPicker">
-          <button class="method-card active" onclick="selectThinkingMethod('dump', this)">
-            <span class="emoji">🌫️</span><h4>Pikiran penuh</h4><p>Mind Dump + Cluster + Refine</p>
-          </button>
-          <button class="method-card" onclick="selectThinkingMethod('brainstorm', this)">
-            <span class="emoji">💡</span><h4>Belum punya ide</h4><p>Brainstorming Klasik</p>
-          </button>
-          <button class="method-card" onclick="selectThinkingMethod('score', this)">
-            <span class="emoji">⚖️</span><h4>Terlalu banyak opsi</h4><p>Skoring Ide Sederhana</p>
-          </button>
-          <button class="method-card" onclick="selectThinkingMethod('pmi', this)">
-            <span class="emoji">🔎</span><h4>Ragu pada ide</h4><p>PMI: Plus, Minus, Implications</p>
-          </button>
-          <button class="method-card" onclick="selectThinkingMethod('reverse', this)">
-            <span class="emoji">🛡️</span><h4>Takut gagal</h4><p>Reverse Brainstorming</p>
-          </button>
-          <button class="method-card" onclick="selectThinkingMethod('validate', this)">
-            <span class="emoji">🚪</span><h4>Mau uji nyata</h4><p>Validasi Ide 48 Jam–2 Minggu</p>
-          </button>
-        </div>
-      </div>
-      <div>
-        <div class="method-panel">
-          <h3 id="methodTitle">Mind Dump + Cluster + Refine</h3>
-          <p id="methodDesc">Ambil buku/kertas. Gunakan metode ini untuk mengurai pikiran penuh menjadi klaster, asumsi, dan satu langkah besok.</p>
-          <div class="method-meta">
-            <span class="method-badge" id="methodDuration">15 menit</span>
-            <span class="method-badge" id="methodType">Harian ringan</span>
-            <span class="method-badge" id="methodOutput">1 aksi kecil</span>
+    <!-- LIFE AUDIT INTERACTIVE -->
+    <section class="life-audit" id="audit">
+      <div class="section-inner">
+        <div class="section-label">🎯 Life Audit</div>
+        <h2 class="section-title">Seberapa Puas Anda dengan Hidup Anda?</h2>
+        <p class="section-desc">
+          Geser slider untuk mensimulasikan Life Audit onboarding. MVP Quick
+          Start: hanya domain Tubuh (1 pertanyaan).
+        </p>
+        <div class="audit-grid">
+          <div class="audit-card" style="border: 2px solid var(--sage-light)">
+            <div class="audit-domain">
+              <span>🏃</span>
+              <h4>Tubuh</h4>
+              <span
+                style="
+                  margin-left: auto;
+                  font-size: 0.68rem;
+                  background: var(--sage);
+                  color: #fff;
+                  padding: 2px 8px;
+                  border-radius: 8px;
+                "
+                >MVP</span
+              >
+            </div>
+            <div class="audit-question">
+              "Secara keseluruhan, seberapa puas kamu dengan kesehatan dan
+              kebugaran fisikmu?"
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value="5"
+              class="audit-slider"
+              id="audit1"
+              oninput="updateAudit(1)"
+              aria-label="Tingkat kepuasan domain Tubuh"
+            />
+            <div class="audit-value" id="auditVal1">5</div>
           </div>
-          <ul class="method-steps" id="methodSteps">
-            <li>Ambil buku/kertas, lalu dump bebas 5–10 menit tanpa sensor.</li>
-            <li>Kelompokkan ide yang mirip.</li>
-            <li>Pilih 1 ide, catat asumsi, dan tulis langkah besok.</li>
-          </ul>
-          <div class="method-output" id="methodDaoji">Paper-first: pikirkan di kertas, simpan ringkasannya di Daoji. Hasil akhirnya bisa menjadi Action of the Day, catatan Friction Journal, atau bahan Weekly Pulse.</div>
+          <div class="audit-card">
+            <div class="audit-domain">
+              <span>💰</span>
+              <h4>Keuangan</h4>
+            </div>
+            <div class="audit-question">
+              "Seberapa stabil dan aman kondisi keuanganmu saat ini?"
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value="5"
+              class="audit-slider"
+              id="audit2"
+              oninput="updateAudit(2)"
+              aria-label="Tingkat kepuasan domain Keuangan"
+            />
+            <div class="audit-value" id="auditVal2">5</div>
+          </div>
+          <div class="audit-card">
+            <div class="audit-domain">
+              <span>🤝</span>
+              <h4>Hubungan</h4>
+            </div>
+            <div class="audit-question">
+              "Seberapa puas kamu dengan kualitas hubunganmu dengan orang-orang
+              terdekat?"
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value="5"
+              class="audit-slider"
+              id="audit3"
+              oninput="updateAudit(3)"
+              aria-label="Tingkat kepuasan domain Hubungan"
+            />
+            <div class="audit-value" id="auditVal3">5</div>
+          </div>
+          <div class="audit-card">
+            <div class="audit-domain">
+              <span>💭</span>
+              <h4>Emosi</h4>
+            </div>
+            <div class="audit-question">
+              "Seberapa sering kamu merasa emosional seimbang dan tenang?"
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value="5"
+              class="audit-slider"
+              id="audit4"
+              oninput="updateAudit(4)"
+              aria-label="Tingkat kepuasan domain Emosi"
+            />
+            <div class="audit-value" id="auditVal4">5</div>
+          </div>
+          <div class="audit-card">
+            <div class="audit-domain">
+              <span>📚</span>
+              <h4>Karir/Belajar</h4>
+            </div>
+            <div class="audit-question">
+              "Seberapa puas kamu dengan perkembangan karir atau belajarmu?"
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value="5"
+              class="audit-slider"
+              id="audit5"
+              oninput="updateAudit(5)"
+              aria-label="Tingkat kepuasan domain Karir dan Belajar"
+            />
+            <div class="audit-value" id="auditVal5">5</div>
+          </div>
+          <div class="audit-card">
+            <div class="audit-domain">
+              <span>🎮</span>
+              <h4>Rekreasi</h4>
+            </div>
+            <div class="audit-question">
+              "Seberapa sering kamu punya waktu untuk kegiatan yang
+              menyenangkan?"
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value="5"
+              class="audit-slider"
+              id="audit6"
+              oninput="updateAudit(6)"
+              aria-label="Tingkat kepuasan domain Rekreasi"
+            />
+            <div class="audit-value" id="auditVal6">5</div>
+          </div>
         </div>
-        <div class="thinking-workspace">
-          <label for="canvasTopic">Topik / pertanyaan hari ini</label>
-          <input id="canvasTopic" value="Apa satu aksi kecil yang paling realistis untuk besok?">
-          <label for="canvasDump">Ringkasan dari kertas</label>
-          <textarea id="canvasDump" rows="4" placeholder="Setelah corat-coret di buku/kertas, tulis ringkasan temuanmu di sini..."></textarea>
-          <label for="canvasAction">Satu aksi berikutnya</label>
-          <input id="canvasAction" placeholder="Contoh: tanya 3 teman, buat contoh before-after, atau mulai 2 menit.">
+        <div style="margin-top: 24px; text-align: center">
+          <div
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              padding: 12px 24px;
+              background: var(--white);
+              border-radius: 12px;
+              border: 1px solid rgba(0, 0, 0, 0.06);
+              font-size: 0.88rem;
+            "
+          >
+            <span>📊 Domain Terlemah:</span>
+            <strong id="weakestDomain" style="color: var(--sage-dark)"
+              >—</strong
+            >
+            <span
+              id="weakestDeficit"
+              style="font-size: 0.78rem; color: var(--text-muted)"
+            ></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FRICTION FLOW -->
+    <section class="friction-demo" id="friction">
+      <div class="section-inner" style="text-align: center">
+        <div class="section-label">💬 Friction Intervention</div>
+        <h2 class="section-title">Kegagalan → Data Refleksi</h2>
+        <p class="section-desc" style="margin-left: auto; margin-right: auto">
+          Saat habit terlewat, Daoji tidak menghukum. Klik opsi untuk melihat
+          respons sistem.
+        </p>
+        <div class="friction-flow" style="margin-top: 32px">
+          <div class="friction-step">
+            <div class="step-dot">1</div>
+            <div class="step-content">
+              <h4>Habit Terlewat</h4>
+              <p>
+                "Olahraga 30 menit" terlewat 3x dalam 7 hari → threshold
+                tercapai
+              </p>
+            </div>
+          </div>
+          <div class="friction-step">
+            <div class="step-dot">2</div>
+            <div class="step-content">
+              <h4>Pop-up Empatik</h4>
+              <p>"Hari ini sepertinya berat. Apa hambatan terbesarmu?"</p>
+              <div class="step-options" id="frictionOptions">
+                <button class="step-opt" onclick="selectFriction(this, 'time')">
+                  ⏱ Kurang Waktu
+                </button>
+                <button
+                  class="step-opt"
+                  onclick="selectFriction(this, 'energy')"
+                >
+                  😮‍💨 Kelelahan
+                </button>
+                <button
+                  class="step-opt"
+                  onclick="selectFriction(this, 'forgot')"
+                >
+                  🤔 Lupa
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="friction-step">
+            <div class="step-dot">3</div>
+            <div class="step-content" id="frictionResult">
+              <h4>Intervensi</h4>
+              <p>Pilih hambatan di atas untuk melihat respons sistem...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="pricing" id="pricing">
+      <div class="section-inner" style="text-align: center">
+        <div class="section-label">💎 Harga</div>
+        <h2 class="section-title">Value-Based Freemium</h2>
+        <p class="section-desc" style="margin-left: auto; margin-right: auto">
+          Zero targeted ads. Zero data selling. Pendapatan murni dari langganan
+          dan kosmetik opsional.
+        </p>
+        <div class="pricing-grid" style="margin-top: 32px">
+          <div class="pricing-card">
+            <div class="pricing-tier">Dasar</div>
+            <div class="pricing-price">Rp 0</div>
+            <div class="pricing-period">Selamanya gratis</div>
+            <ul class="pricing-features">
+              <li>Jurnal, Habit, Radar Kehidupan</li>
+              <li>Local Encrypted Backup (1 perangkat) (Rencana)</li>
+              <li>Ekspor Lokal (JSON/CSV)</li>
+              <li>Dark Mode (aksesibilitas)</li>
+              <li>Friction Intervention & Safety Card</li>
+            </ul>
+            <button class="pricing-btn pricing-btn-secondary">
+              Mulai Gratis
+            </button>
+          </div>
+          <div class="pricing-card featured">
+            <div class="pricing-tier">Daoji Plus</div>
+            <div class="pricing-price">
+              Rp 29.000<span style="font-size: 0.9rem; font-weight: 400"
+                >/bln</span
+              >
+            </div>
+            <div class="pricing-period">atau Rp 249.000/thn (hemat ~29%)</div>
+            <ul class="pricing-features">
+              <li>E2EE Cloud Sync antar perangkat (Rencana)</li>
+              <li>On-Device Insights (non-AI)</li>
+              <li>PDF Export (jurnal → e-book)</li>
+              <li>Decision Journal & Life Compass</li>
+              <li>Recovery Contact (Shamir 2-of-3) (Rencana)</li>
+            </ul>
+            <button class="pricing-btn pricing-btn-primary">
+              Berlangganan
+            </button>
+          </div>
+          <div class="pricing-card">
+            <div class="pricing-tier">Student</div>
+            <div class="pricing-price">
+              Rp 19.000<span style="font-size: 0.9rem; font-weight: 400"
+                >/bln</span
+              >
+            </div>
+            <div class="pricing-period">Verifikasi email .ac.id</div>
+            <ul class="pricing-features">
+              <li>Semua fitur Plus</li>
+              <li>Verifikasi: self-declaration + .ac.id</li>
+              <li>Harga khusus mahasiswa</li>
+              <li>Target: mahasiswa tingkat akhir</li>
+            </ul>
+            <button class="pricing-btn pricing-btn-secondary">
+              Daftar Student
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPETITIVE -->
+    <section class="competitive" id="competitive">
+      <div class="section-inner">
+        <div class="section-label">📊 Analisis Kompetitif</div>
+        <h2 class="section-title">Mengapa Daoji Berbeda?</h2>
+        <p class="section-desc">
+          Satu-satunya yang menghapus streak punishment dari arsitektur.
+        </p>
+        <div
+          class="scroll-hint"
+          style="
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 12px;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 6px;
+            border-radius: 6px;
+          "
+        >
+          ← Geser tabel ke kanan untuk melihat semua kolom →
+        </div>
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Aplikasi</th>
+              <th>Streak</th>
+              <th>Anti-Guilt</th>
+              <th>Jurnal</th>
+              <th>Habit</th>
+              <th>Life Audit</th>
+              <th>E2EE</th>
+              <th>Child Safety</th>
+              <th>Harga</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight">
+              <td><strong>Daoji</strong></td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-partial">✓ (Rencana)</td>
+              <td class="comp-check">✓ (Fase 2)</td>
+              <td>Freemium Rp 29K</td>
+            </tr>
+            <tr>
+              <td>Fabulous</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td>~Rp 65K/bln</td>
+            </tr>
+            <tr>
+              <td>Habitica</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td>~Rp 65K/bln</td>
+            </tr>
+            <tr>
+              <td>Streaks</td>
+              <td class="comp-check">✓✓</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td>One-time Rp 65K</td>
+            </tr>
+            <tr>
+              <td>Day One</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-partial">Netral</td>
+              <td class="comp-check">✓✓</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-cross">✕</td>
+              <td>Rp 44K/bln</td>
+            </tr>
+            <tr>
+              <td>Finch</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-partial">Sebagian</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td>Rp 50K/bln</td>
+            </tr>
+            <tr>
+              <td>Daylio</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-partial">Sebagian</td>
+              <td class="comp-check">✓ (mood)</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td>Gratis + Premium</td>
+            </tr>
+            <tr>
+              <td>Notion Life OS</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-partial">Netral</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-check">✓</td>
+              <td class="comp-partial">Sebagian</td>
+              <td class="comp-cross">✕</td>
+              <td class="comp-cross">✕</td>
+              <td>Gratis + template</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" id="cta">
+      <h2>🌱 Mulai Menanam Pohonmu</h2>
+      <p>
+        Tanpa streak. Tanpa rasa bersalah. Hanya orientasi diri yang tenang dan
+        berkelanjutan.
+      </p>
+      <a
+        href="#"
+        class="btn btn-white"
+        onclick="
+          showToast(
+            '🌱 Terima kasih! Daoji belum tersedia — ini prototype konseptual.',
+          )
+        "
+        >Daftar Early Access</a
+      >
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+        <div>
+          © 2025 Fajar Kurnia — Daoji Personal OS ·
+          <a href="https://github.com/fajarkurnia0388/daoji">GitHub</a>
+        </div>
+        <div>Prototype v13.0 · Dibangun dengan 🌿 di Indonesia</div>
+      </div>
+    </footer>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- JOURNAL MODAL -->
+    <div
+      class="modal-overlay"
+      id="journalModal"
+      onclick="if (event.target === this) closeJournalModal();"
+    >
+      <div
+        class="modal-box"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="journalModalTitle"
+      >
+        <h3 id="journalModalTitle">📝 Quick Journaling</h3>
+        <p>Pilih mood Anda hari ini:</p>
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+          "
+          id="moodPicker"
+        >
+          <button
+            style="
+              font-size: 2rem;
+              background: none;
+              border: none;
+              cursor: pointer;
+              padding: 8px;
+              border-radius: 12px;
+              transition: var(--transition);
+            "
+            onclick="pickMood(this, 1)"
+            title="Sangat Buruk"
+          >
+            😟
+          </button>
+          <button
+            style="
+              font-size: 2rem;
+              background: none;
+              border: none;
+              cursor: pointer;
+              padding: 8px;
+              border-radius: 12px;
+              transition: var(--transition);
+            "
+            onclick="pickMood(this, 2)"
+            title="Buruk"
+          >
+            😕
+          </button>
+          <button
+            style="
+              font-size: 2rem;
+              background: none;
+              border: none;
+              cursor: pointer;
+              padding: 8px;
+              border-radius: 12px;
+              transition: var(--transition);
+            "
+            onclick="pickMood(this, 3)"
+            title="Biasa"
+          >
+            😐
+          </button>
+          <button
+            style="
+              font-size: 2rem;
+              background: none;
+              border: none;
+              cursor: pointer;
+              padding: 8px;
+              border-radius: 12px;
+              transition: var(--transition);
+            "
+            onclick="pickMood(this, 4)"
+            title="Baik"
+          >
+            🙂
+          </button>
+          <button
+            style="
+              font-size: 2rem;
+              background: none;
+              border: none;
+              cursor: pointer;
+              padding: 8px;
+              border-radius: 12px;
+              transition: var(--transition);
+            "
+            onclick="pickMood(this, 5)"
+            title="Sangat Baik"
+          >
+            😊
+          </button>
+        </div>
+        <div style="text-align: center">
+          <button class="modal-close" onclick="closeJournalModal()">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- THINKING CANVAS MODAL -->
+    <div
+      class="modal-overlay"
+      id="thinkingModal"
+      onclick="if (event.target === this) closeThinkingModal();"
+    >
+      <div
+        class="modal-box modal-wide"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="thinkingModalTitle"
+      >
+        <h3 id="thinkingModalTitle">🧠 Thinking Canvas</h3>
+        <p>
+          Pilih metode, ambil buku/kertas asli, lalu corat-coret 5–30 menit.
+          Daoji cukup menyimpan ringkasan dan satu aksi kecil. Ini simulasi
+          fitur — data belum benar-benar disimpan.
+        </p>
+        <div class="thinking-workspace" style="margin-top: 0">
+          <label for="modalTopic">Topik</label>
+          <input
+            id="modalTopic"
+            value="Apa yang sedang saya coba jelaskan ke diri sendiri?"
+          />
+          <label for="modalDump">Ringkasan hasil corat-coret di kertas</label>
+          <textarea
+            id="modalDump"
+            rows="5"
+            placeholder="Temuan utama saya setelah menulis di kertas adalah..."
+          ></textarea>
+          <label for="modalAction">Aksi kecil / asumsi yang perlu diuji</label>
+          <input id="modalAction" placeholder="Besok saya akan..." />
           <div class="canvas-actions">
-            <button class="btn btn-primary" onclick="showThinkingModal()">Mulai sesi kertas</button>
-            <button class="btn btn-secondary" onclick="saveThinkingCanvas()">Simpan ringkasan</button>
+            <button class="modal-close" onclick="closeThinkingModal()">
+              Simpan ringkasan
+            </button>
+            <button
+              class="btn btn-secondary"
+              onclick="document.getElementById('modalDump').value = ''"
+            >
+              Kosongkan
+            </button>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- LIFE AUDIT INTERACTIVE -->
-<section class="life-audit" id="audit">
-  <div class="section-inner">
-    <div class="section-label">🎯 Life Audit</div>
-    <h2 class="section-title">Seberapa Puas Anda dengan Hidup Anda?</h2>
-    <p class="section-desc">Geser slider untuk mensimulasikan Life Audit onboarding. MVP Quick Start: hanya domain Tubuh (1 pertanyaan).</p>
-    <div class="audit-grid">
-      <div class="audit-card" style="border:2px solid var(--sage-light);">
-        <div class="audit-domain"><span>🏃</span><h4>Tubuh</h4><span style="margin-left:auto;font-size:0.68rem;background:var(--sage);color:#fff;padding:2px 8px;border-radius:8px;">MVP</span></div>
-        <div class="audit-question">"Secara keseluruhan, seberapa puas kamu dengan kesehatan dan kebugaran fisikmu?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit1" oninput="updateAudit(1)" aria-label="Tingkat kepuasan domain Tubuh">
-        <div class="audit-value" id="auditVal1">5</div>
-      </div>
-      <div class="audit-card">
-        <div class="audit-domain"><span>💰</span><h4>Keuangan</h4></div>
-        <div class="audit-question">"Seberapa stabil dan aman kondisi keuanganmu saat ini?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit2" oninput="updateAudit(2)" aria-label="Tingkat kepuasan domain Keuangan">
-        <div class="audit-value" id="auditVal2">5</div>
-      </div>
-      <div class="audit-card">
-        <div class="audit-domain"><span>🤝</span><h4>Hubungan</h4></div>
-        <div class="audit-question">"Seberapa puas kamu dengan kualitas hubunganmu dengan orang-orang terdekat?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit3" oninput="updateAudit(3)" aria-label="Tingkat kepuasan domain Hubungan">
-        <div class="audit-value" id="auditVal3">5</div>
-      </div>
-      <div class="audit-card">
-        <div class="audit-domain"><span>💭</span><h4>Emosi</h4></div>
-        <div class="audit-question">"Seberapa sering kamu merasa emosional seimbang dan tenang?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit4" oninput="updateAudit(4)" aria-label="Tingkat kepuasan domain Emosi">
-        <div class="audit-value" id="auditVal4">5</div>
-      </div>
-      <div class="audit-card">
-        <div class="audit-domain"><span>📚</span><h4>Karir/Belajar</h4></div>
-        <div class="audit-question">"Seberapa puas kamu dengan perkembangan karir atau belajarmu?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit5" oninput="updateAudit(5)" aria-label="Tingkat kepuasan domain Karir dan Belajar">
-        <div class="audit-value" id="auditVal5">5</div>
-      </div>
-      <div class="audit-card">
-        <div class="audit-domain"><span>🎮</span><h4>Rekreasi</h4></div>
-        <div class="audit-question">"Seberapa sering kamu punya waktu untuk kegiatan yang menyenangkan?"</div>
-        <input type="range" min="1" max="10" value="5" class="audit-slider" id="audit6" oninput="updateAudit(6)" aria-label="Tingkat kepuasan domain Rekreasi">
-        <div class="audit-value" id="auditVal6">5</div>
-      </div>
-    </div>
-    <div style="margin-top:24px;text-align:center;">
-      <div style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--white);border-radius:12px;border:1px solid rgba(0,0,0,0.06);font-size:0.88rem;">
-        <span>📊 Domain Terlemah:</span>
-        <strong id="weakestDomain" style="color:var(--sage-dark);">—</strong>
-        <span id="weakestDeficit" style="font-size:0.78rem;color:var(--text-muted);"></span>
-      </div>
-    </div>
-  </div>
-</section>
+    <script>
+      (function () {
+        // ===== NAV SCROLL =====
+        window.addEventListener("scroll", () => {
+          document
+            .getElementById("nav")
+            .classList.toggle("scrolled", window.scrollY > 20);
+        });
 
-<!-- FRICTION FLOW -->
-<section class="friction-demo" id="friction">
-  <div class="section-inner" style="text-align:center;">
-    <div class="section-label">💬 Friction Intervention</div>
-    <h2 class="section-title">Kegagalan → Data Refleksi</h2>
-    <p class="section-desc" style="margin-left:auto;margin-right:auto;">Saat habit terlewat, Daoji tidak menghukum. Klik opsi untuk melihat respons sistem.</p>
-    <div class="friction-flow" style="margin-top:32px;">
-      <div class="friction-step">
-        <div class="step-dot">1</div>
-        <div class="step-content">
-          <h4>Habit Terlewat</h4>
-          <p>"Olahraga 30 menit" terlewat 3x dalam 7 hari → threshold tercapai</p>
-        </div>
-      </div>
-      <div class="friction-step">
-        <div class="step-dot">2</div>
-        <div class="step-content">
-          <h4>Pop-up Empatik</h4>
-          <p>"Hari ini sepertinya berat. Apa hambatan terbesarmu?"</p>
-          <div class="step-options" id="frictionOptions">
-            <button class="step-opt" onclick="selectFriction(this,'time')">⏱ Kurang Waktu</button>
-            <button class="step-opt" onclick="selectFriction(this,'energy')">😮‍💨 Kelelahan</button>
-            <button class="step-opt" onclick="selectFriction(this,'forgot')">🤔 Lupa</button>
-          </div>
-        </div>
-      </div>
-      <div class="friction-step">
-        <div class="step-dot">3</div>
-        <div class="step-content" id="frictionResult">
-          <h4>Intervensi</h4>
-          <p>Pilih hambatan di atas untuk melihat respons sistem...</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+        // ===== ANIMATE ON SCROLL =====
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) e.target.classList.add("visible");
+            });
+          },
+          { threshold: 0.1 },
+        );
+        document
+          .querySelectorAll(
+            ".feature-card,.compare-card,.pricing-card,.state-card,.audit-card,.friction-step,.method-card,.method-panel,.thinking-workspace",
+          )
+          .forEach((el) => {
+            el.classList.add("animate-in");
+            observer.observe(el);
+          });
 
-<!-- PRICING -->
-<section class="pricing" id="pricing">
-  <div class="section-inner" style="text-align:center;">
-    <div class="section-label">💎 Harga</div>
-    <h2 class="section-title">Value-Based Freemium</h2>
-    <p class="section-desc" style="margin-left:auto;margin-right:auto;">Zero targeted ads. Zero data selling. Pendapatan murni dari langganan dan kosmetik opsional.</p>
-    <div class="pricing-grid" style="margin-top:32px;">
-      <div class="pricing-card">
-        <div class="pricing-tier">Dasar</div>
-        <div class="pricing-price">Rp 0</div>
-        <div class="pricing-period">Selamanya gratis</div>
-        <ul class="pricing-features">
-          <li>Jurnal, Habit, Radar Kehidupan</li>
-          <li>Local Encrypted Backup (1 perangkat) (Rencana)</li>
-          <li>Ekspor Lokal (JSON/CSV)</li>
-          <li>Dark Mode (aksesibilitas)</li>
-          <li>Friction Intervention & Safety Card</li>
-        </ul>
-        <button class="pricing-btn pricing-btn-secondary">Mulai Gratis</button>
-      </div>
-      <div class="pricing-card featured">
-        <div class="pricing-tier">Daoji Plus</div>
-        <div class="pricing-price">Rp 29.000<span style="font-size:0.9rem;font-weight:400;">/bln</span></div>
-        <div class="pricing-period">atau Rp 249.000/thn (hemat ~29%)</div>
-        <ul class="pricing-features">
-          <li>E2EE Cloud Sync antar perangkat (Rencana)</li>
-          <li>On-Device Insights (non-AI)</li>
-          <li>PDF Export (jurnal → e-book)</li>
-          <li>Decision Journal & Life Compass</li>
-          <li>Recovery Contact (Shamir 2-of-3) (Rencana)</li>
-        </ul>
-        <button class="pricing-btn pricing-btn-primary">Berlangganan</button>
-      </div>
-      <div class="pricing-card">
-        <div class="pricing-tier">Student</div>
-        <div class="pricing-price">Rp 19.000<span style="font-size:0.9rem;font-weight:400;">/bln</span></div>
-        <div class="pricing-period">Verifikasi email .ac.id</div>
-        <ul class="pricing-features">
-          <li>Semua fitur Plus</li>
-          <li>Verifikasi: self-declaration + .ac.id</li>
-          <li>Harga khusus mahasiswa</li>
-          <li>Target: mahasiswa tingkat akhir</li>
-        </ul>
-        <button class="pricing-btn pricing-btn-secondary">Daftar Student</button>
-      </div>
-    </div>
-  </div>
-</section>
+        // ===== TREE STATE MANAGEMENT =====
+        let currentTreeState = "mature";
+        const treeStates = [
+          "seedling",
+          "sapling",
+          "young",
+          "mature",
+          "blooming",
+          "snow",
+        ];
+        const stateNames = {
+          seedling: "Seedling 🌱",
+          sapling: "Sapling 🌿",
+          young: "Young Tree 🌳",
+          mature: "Mature Tree 🌲",
+          blooming: "Blooming ✿",
+          snow: "Recovery ❄️",
+        };
+        const seasonMap = {
+          seedling: "🌱 Growth",
+          sapling: "🌱 Growth",
+          young: "🌱 Growth",
+          mature: "🌱 Growth",
+          blooming: "🌸 Blooming",
+          snow: "❄️ Recovery",
+        };
 
-<!-- COMPETITIVE -->
-<section class="competitive" id="competitive">
-  <div class="section-inner">
-    <div class="section-label">📊 Analisis Kompetitif</div>
-    <h2 class="section-title">Mengapa Daoji Berbeda?</h2>
-    <p class="section-desc">Satu-satunya yang menghapus streak punishment dari arsitektur.</p>
-    <div class="scroll-hint" style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-bottom:12px;background:rgba(0,0,0,0.03);padding:6px;border-radius:6px;">← Geser tabel ke kanan untuk melihat semua kolom →</div>
-    <table class="comp-table">
-      <thead>
-        <tr>
-          <th>Aplikasi</th>
-          <th>Streak</th>
-          <th>Anti-Guilt</th>
-          <th>Jurnal</th>
-          <th>Habit</th>
-          <th>Life Audit</th>
-          <th>E2EE</th>
-          <th>Child Safety</th>
-          <th>Harga</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="highlight">
-          <td><strong>Daoji</strong></td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-partial">✓ (Rencana)</td>
-          <td class="comp-check">✓ (Fase 2)</td>
-          <td>Freemium Rp 29K</td>
-        </tr>
-        <tr>
-          <td>Fabulous</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td>~Rp 65K/bln</td>
-        </tr>
-        <tr>
-          <td>Habitica</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td>~Rp 65K/bln</td>
-        </tr>
-        <tr>
-          <td>Streaks</td>
-          <td class="comp-check">✓✓</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td>One-time Rp 65K</td>
-        </tr>
-        <tr>
-          <td>Day One</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-partial">Netral</td>
-          <td class="comp-check">✓✓</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-cross">✕</td>
-          <td>Rp 44K/bln</td>
-        </tr>
-        <tr>
-          <td>Finch</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-partial">Sebagian</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td>Rp 50K/bln</td>
-        </tr>
-        <tr>
-          <td>Daylio</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-partial">Sebagian</td>
-          <td class="comp-check">✓ (mood)</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td>Gratis + Premium</td>
-        </tr>
-        <tr>
-          <td>Notion Life OS</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-partial">Netral</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-check">✓</td>
-          <td class="comp-partial">Sebagian</td>
-          <td class="comp-cross">✕</td>
-          <td class="comp-cross">✕</td>
-          <td>Gratis + template</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
+        function setHeroState(state) {
+          currentTreeState = state;
+          // Update state cards
+          document
+            .querySelectorAll(".state-card")
+            .forEach((c, i) =>
+              c.classList.toggle("active", treeStates[i] === state),
+            );
+          // Update screen tree
+          const screenTree = document.getElementById("screenTree");
+          const flowers = screenTree.querySelector(".screen-flowers");
+          const snow = screenTree.querySelector(".screen-snow");
+          flowers.style.opacity = state === "blooming" ? "1" : "0";
+          snow.style.opacity = state === "snow" ? "1" : "0";
+          // Update season badge
+          document.getElementById("seasonBadge").textContent = seasonMap[state];
+          // Update hero tree
+          const heroFlowers = document.querySelector("#heroTree .tree-flowers");
+          const heroSnow = document.querySelector("#heroTree .tree-snow-cap");
+          const heroSnowParticles = document.querySelector(
+            "#heroTree .snow-particles",
+          );
+          heroFlowers.style.opacity = state === "blooming" ? "1" : "0";
+          heroSnow.style.opacity = state === "snow" ? "1" : "0";
+          heroSnowParticles.style.opacity = state === "snow" ? "0.7" : "0";
+        }
 
-<!-- CTA -->
-<section class="cta-section" id="cta">
-  <h2>🌱 Mulai Menanam Pohonmu</h2>
-  <p>Tanpa streak. Tanpa rasa bersalah. Hanya orientasi diri yang tenang dan berkelanjutan.</p>
-  <a href="#" class="btn btn-white" onclick="showToast('🌱 Terima kasih! Daoji belum tersedia — ini prototype konseptual.')">Daftar Early Access</a>
-</section>
+        function cycleTreeState() {
+          const idx = treeStates.indexOf(currentTreeState);
+          const next = treeStates[(idx + 1) % treeStates.length];
+          setHeroState(next);
+          showToast("State: " + stateNames[next]);
+        }
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div>© 2025 Fajar Kurnia — Daoji Personal OS · <a href="https://github.com/fajarkurnia0388/daoji">GitHub</a></div>
-    <div>Prototype v13.0 · Dibangun dengan 🌿 di Indonesia</div>
-  </div>
-</footer>
+        // ===== ACTION DONE =====
+        let actionDone = false;
+        function markDone() {
+          const card = document.getElementById("actionCard");
+          const title = document.getElementById("actionTitle");
+          const meta = document.getElementById("actionMeta");
+          if (!actionDone) {
+            actionDone = true;
+            title.textContent = "🎉 Semua habit selesai!";
+            meta.textContent = "Hari ini milikmu. Pohonmu sedang tumbuh. 🌳";
+            card.style.background = "rgba(124,154,114,0.08)";
+            card.style.borderColor = "var(--sage-light)";
+            showToast("✅ Action of the Day selesai! Celebration State aktif.");
+          } else {
+            actionDone = false;
+            title.textContent = "Olahraga 30 menit";
+            meta.textContent = "🏃 Tubuh · Load: 8/10 · Impact: ★★★★★";
+            card.style.background = "var(--white)";
+            card.style.borderColor = "rgba(0,0,0,0.06)";
+          }
+        }
 
-<!-- TOAST -->
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+        // ===== THINKING CANVAS =====
+        const thinkingMethods = {
+          dump: {
+            title: "Mind Dump + Cluster + Refine",
+            duration: "15 menit",
+            type: "Harian ringan",
+            output: "1 aksi kecil",
+            desc: "Ambil buku/kertas. Gunakan metode ini untuk mengurai pikiran penuh menjadi klaster, asumsi, dan satu langkah besok.",
+            steps: [
+              "Ambil buku/kertas, lalu dump bebas 5–10 menit tanpa sensor.",
+              "Kelompokkan ide yang mirip.",
+              "Pilih 1 ide, catat asumsi, dan tulis langkah besok.",
+            ],
+            integration:
+              "Paper-first: pikirkan di kertas, simpan ringkasannya di Daoji. Hasil akhirnya bisa menjadi Action of the Day, catatan Friction Journal, atau bahan Weekly Pulse.",
+          },
+          brainstorm: {
+            title: "Brainstorming Klasik",
+            duration: "10–20 menit",
+            type: "Divergen",
+            output: "20–30 ide mentah",
+            desc: "Untuk membuka kemungkinan saat belum punya ide atau arah yang jelas.",
+            steps: [
+              "Tulis pertanyaan utama di buku/kertas asli.",
+              "Targetkan 20–30 ide tanpa menilai.",
+              "Baru setelah selesai, lanjutkan to Affinity Mapping atau Skoring Ide.",
+            ],
+            integration:
+              "Paper-first: ide dibuka di kertas; Daoji menyimpan kandidat yang bisa menjadi habit/proyek untuk domain terlemah.",
+          },
+          score: {
+            title: "Skoring Ide Sederhana",
+            duration: "10–20 menit",
+            type: "Alat bantu keputusan",
+            output: "2–3 kandidat",
+            desc: "Untuk memilih kandidat dari banyak opsi tanpa terlalu percaya pada feeling pertama.",
+            steps: [
+              "Pilih 5–10 ide dari hasil brainstorming di kertas.",
+              "Beri skor 1–5 untuk skill, modal, kecepatan uji, akses, dan minat.",
+              "Ambil 2–3 skor teratas untuk PMI atau validasi.",
+            ],
+            integration:
+              "Paper-first: skoring dilakukan di kertas; Daoji menyimpan 2–3 kandidat Action of the Day atau proyek kecil.",
+          },
+          pmi: {
+            title: "PMI — Plus, Minus, Implications",
+            duration: "15–25 menit",
+            type: "Konvergen",
+            output: "Keputusan awal",
+            desc: "Untuk mengevaluasi satu ide tanpa langsung jatuh cinta atau langsung menolak.",
+            steps: [
+              "Di kertas, isi kolom Plus, Minus, dan Implications.",
+              "Ubah minus menjadi risiko yang bisa dikelola.",
+              "Pilih keputusan: lanjut, ubah, butuh data, atau tunda.",
+            ],
+            integration:
+              "Paper-first: evaluasi dilakukan di kertas; Daoji menyimpan keputusan lanjut/ubah/butuh data/tunda.",
+          },
+          reverse: {
+            title: "Reverse Brainstorming",
+            duration: "15–25 menit",
+            type: "Risiko",
+            output: "3 pencegahan utama",
+            desc: "Untuk melihat cara gagal, lalu membaliknya menjadi langkah pencegahan.",
+            steps: [
+              "Di kertas, tulis: bagaimana cara membuat rencana ini gagal?",
+              "Buat 10 cara gagal, termasuk yang absurd.",
+              "Balik 3 risiko paling mungkin menjadi pencegahan minggu ini.",
+            ],
+            integration:
+              "Paper-first: rasa takut ditulis di kertas, lalu Daoji menyimpan 3 pencegahan utama sebagai data friction.",
+          },
+          validate: {
+            title: "Validasi Ide 48 Jam–2 Minggu",
+            duration: "48 jam–2 minggu",
+            type: "Jembatan ke aksi",
+            output: "Sinyal nyata",
+            desc: "Untuk membedakan ide yang terdengar bagus dari ide yang punya respons nyata.",
+            steps: [
+              "Tulis ide dalam satu kalimat dan daftar asumsi utama.",
+              "Buat tawaran sederhana atau pertanyaan validasi.",
+              "Tanyakan ke 10–20 target, catat tindakan nyata, bukan pujian.",
+            ],
+            integration:
+              "Paper-first: asumsi dan daftar target ditulis di kertas; Daoji menyimpan ringkasan validasi untuk keputusan lanjut/ubah/tunda.",
+          },
+        };
 
-<!-- JOURNAL MODAL -->
-<div class="modal-overlay" id="journalModal" onclick="if(event.target===this)closeJournalModal()">
-  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="journalModalTitle">
-    <h3 id="journalModalTitle">📝 Quick Journaling</h3>
-    <p>Pilih mood Anda hari ini:</p>
-    <div style="display:flex;justify-content:center;gap:12px;margin-bottom:20px;" id="moodPicker">
-      <button style="font-size:2rem;background:none;border:none;cursor:pointer;padding:8px;border-radius:12px;transition:var(--transition);" onclick="pickMood(this,1)" title="Sangat Buruk">😟</button>
-      <button style="font-size:2rem;background:none;border:none;cursor:pointer;padding:8px;border-radius:12px;transition:var(--transition);" onclick="pickMood(this,2)" title="Buruk">😕</button>
-      <button style="font-size:2rem;background:none;border:none;cursor:pointer;padding:8px;border-radius:12px;transition:var(--transition);" onclick="pickMood(this,3)" title="Biasa">😐</button>
-      <button style="font-size:2rem;background:none;border:none;cursor:pointer;padding:8px;border-radius:12px;transition:var(--transition);" onclick="pickMood(this,4)" title="Baik">🙂</button>
-      <button style="font-size:2rem;background:none;border:none;cursor:pointer;padding:8px;border-radius:12px;transition:var(--transition);" onclick="pickMood(this,5)" title="Sangat Baik">😊</button>
-    </div>
-    <div style="text-align:center;">
-      <button class="modal-close" onclick="closeJournalModal()">Simpan</button>
-    </div>
-  </div>
-</div>
+        function selectThinkingMethod(key, el) {
+          const m = thinkingMethods[key];
+          document
+            .querySelectorAll(".method-card")
+            .forEach((c) => c.classList.remove("active"));
+          if (el) el.classList.add("active");
+          document.getElementById("methodTitle").textContent = m.title;
+          document.getElementById("methodDesc").textContent = m.desc;
+          document.getElementById("methodDuration").textContent = m.duration;
+          document.getElementById("methodType").textContent = m.type;
+          document.getElementById("methodOutput").textContent = m.output;
 
-<!-- THINKING CANVAS MODAL -->
-<div class="modal-overlay" id="thinkingModal" onclick="if(event.target===this)closeThinkingModal()">
-  <div class="modal-box modal-wide" role="dialog" aria-modal="true" aria-labelledby="thinkingModalTitle">
-    <h3 id="thinkingModalTitle">🧠 Thinking Canvas</h3>
-    <p>Pilih metode, ambil buku/kertas asli, lalu corat-coret 5–30 menit. Daoji cukup menyimpan ringkasan dan satu aksi kecil. Ini simulasi fitur — data belum benar-benar disimpan.</p>
-    <div class="thinking-workspace" style="margin-top:0;">
-      <label for="modalTopic">Topik</label>
-      <input id="modalTopic" value="Apa yang sedang saya coba jelaskan ke diri sendiri?">
-      <label for="modalDump">Ringkasan hasil corat-coret di kertas</label>
-      <textarea id="modalDump" rows="5" placeholder="Temuan utama saya setelah menulis di kertas adalah..."></textarea>
-      <label for="modalAction">Aksi kecil / asumsi yang perlu diuji</label>
-      <input id="modalAction" placeholder="Besok saya akan...">
-      <div class="canvas-actions">
-        <button class="modal-close" onclick="closeThinkingModal()">Simpan ringkasan</button>
-        <button class="btn btn-secondary" onclick="document.getElementById('modalDump').value=''">Kosongkan</button>
-      </div>
-    </div>
-  </div>
-</div>
+          // Safe list item creation to avoid XSS (no innerHTML)
+          const stepsContainer = document.getElementById("methodSteps");
+          stepsContainer.textContent = "";
+          m.steps.forEach((stepText) => {
+            const li = document.createElement("li");
+            li.textContent = stepText;
+            stepsContainer.appendChild(li);
+          });
 
-<script>
-(function() {
-// ===== NAV SCROLL =====
-window.addEventListener('scroll', () => {
-  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
-});
+          document.getElementById("methodDaoji").textContent = m.integration;
+          showToast("🧠 Metode dipilih: " + m.title);
+        }
 
-// ===== ANIMATE ON SCROLL =====
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold:0.1 });
-document.querySelectorAll('.feature-card,.compare-card,.pricing-card,.state-card,.audit-card,.friction-step,.method-card,.method-panel,.thinking-workspace').forEach(el => {
-  el.classList.add('animate-in');
-  observer.observe(el);
-});
+        let lastActiveElement = null;
 
-// ===== TREE STATE MANAGEMENT =====
-let currentTreeState = 'mature';
-const treeStates = ['seedling','sapling','young','mature','blooming','snow'];
-const stateNames = { seedling:'Seedling 🌱', sapling:'Sapling 🌿', young:'Young Tree 🌳', mature:'Mature Tree 🌲', blooming:'Blooming ✿', snow:'Recovery ❄️' };
-const seasonMap = { seedling:'🌱 Growth', sapling:'🌱 Growth', young:'🌱 Growth', mature:'🌱 Growth', blooming:'🌸 Blooming', snow:'❄️ Recovery' };
+        function showThinkingModal() {
+          lastActiveElement = document.activeElement;
+          document.getElementById("thinkingModal").classList.add("show");
+          setTimeout(() => {
+            const topicInput = document.getElementById("modalTopic");
+            if (topicInput) topicInput.focus();
+          }, 100);
+        }
 
-function setHeroState(state) {
-  currentTreeState = state;
-  // Update state cards
-  document.querySelectorAll('.state-card').forEach((c,i) => c.classList.toggle('active', treeStates[i]===state));
-  // Update screen tree
-  const screenTree = document.getElementById('screenTree');
-  const flowers = screenTree.querySelector('.screen-flowers');
-  const snow = screenTree.querySelector('.screen-snow');
-  flowers.style.opacity = state==='blooming'?'1':'0';
-  snow.style.opacity = state==='snow'?'1':'0';
-  // Update season badge
-  document.getElementById('seasonBadge').textContent = seasonMap[state];
-  // Update hero tree
-  const heroFlowers = document.querySelector('#heroTree .tree-flowers');
-  const heroSnow = document.querySelector('#heroTree .tree-snow-cap');
-  const heroSnowParticles = document.querySelector('#heroTree .snow-particles');
-  heroFlowers.style.opacity = state==='blooming'?'1':'0';
-  heroSnow.style.opacity = state==='snow'?'1':'0';
-  heroSnowParticles.style.opacity = state==='snow'?'0.7':'0';
-}
+        function closeThinkingModal() {
+          document.getElementById("thinkingModal").classList.remove("show");
+          showToast("🧠 Ringkasan sesi kertas tersimpan (simulasi)");
+          if (lastActiveElement) lastActiveElement.focus();
+        }
 
-function cycleTreeState() {
-  const idx = treeStates.indexOf(currentTreeState);
-  const next = treeStates[(idx+1)%treeStates.length];
-  setHeroState(next);
-  showToast('State: ' + stateNames[next]);
-}
+        function saveThinkingCanvas() {
+          const action = document.getElementById("canvasAction").value.trim();
+          showToast(
+            action
+              ? "🌱 Aksi kecil dari sesi kertas disimpan: " + action
+              : "🧠 Ringkasan sesi kertas disimpan (simulasi)",
+          );
+        }
 
-// ===== ACTION DONE =====
-let actionDone = false;
-function markDone() {
-  const card = document.getElementById('actionCard');
-  const title = document.getElementById('actionTitle');
-  const meta = document.getElementById('actionMeta');
-  if (!actionDone) {
-    actionDone = true;
-    title.textContent = '🎉 Semua habit selesai!';
-    meta.textContent = 'Hari ini milikmu. Pohonmu sedang tumbuh. 🌳';
-    card.style.background = 'rgba(124,154,114,0.08)';
-    card.style.borderColor = 'var(--sage-light)';
-    showToast('✅ Action of the Day selesai! Celebration State aktif.');
-  } else {
-    actionDone = false;
-    title.textContent = 'Olahraga 30 menit';
-    meta.textContent = '🏃 Tubuh · Load: 8/10 · Impact: ★★★★★';
-    card.style.background = 'var(--white)';
-    card.style.borderColor = 'rgba(0,0,0,0.06)';
-  }
-}
+        // ===== JOURNAL MODAL =====
+        function showJournalModal() {
+          lastActiveElement = document.activeElement;
+          document.getElementById("journalModal").classList.add("show");
+          setTimeout(() => {
+            const firstMood = document.querySelector("#moodPicker button");
+            if (firstMood) firstMood.focus();
+          }, 100);
+        }
 
-// ===== THINKING CANVAS =====
-const thinkingMethods = {
-  dump: {
-    title:'Mind Dump + Cluster + Refine', duration:'15 menit', type:'Harian ringan', output:'1 aksi kecil',
-    desc:'Ambil buku/kertas. Gunakan metode ini untuk mengurai pikiran penuh menjadi klaster, asumsi, dan satu langkah besok.',
-    steps:['Ambil buku/kertas, lalu dump bebas 5–10 menit tanpa sensor.','Kelompokkan ide yang mirip.','Pilih 1 ide, catat asumsi, dan tulis langkah besok.'],
-    integration:'Paper-first: pikirkan di kertas, simpan ringkasannya di Daoji. Hasil akhirnya bisa menjadi Action of the Day, catatan Friction Journal, atau bahan Weekly Pulse.'
-  },
-  brainstorm: {
-    title:'Brainstorming Klasik', duration:'10–20 menit', type:'Divergen', output:'20–30 ide mentah',
-    desc:'Untuk membuka kemungkinan saat belum punya ide atau arah yang jelas.',
-    steps:['Tulis pertanyaan utama di buku/kertas asli.','Targetkan 20–30 ide tanpa menilai.','Baru setelah selesai, lanjutkan to Affinity Mapping atau Skoring Ide.'],
-    integration:'Paper-first: ide dibuka di kertas; Daoji menyimpan kandidat yang bisa menjadi habit/proyek untuk domain terlemah.'
-  },
-  score: {
-    title:'Skoring Ide Sederhana', duration:'10–20 menit', type:'Alat bantu keputusan', output:'2–3 kandidat',
-    desc:'Untuk memilih kandidat dari banyak opsi tanpa terlalu percaya pada feeling pertama.',
-    steps:['Pilih 5–10 ide dari hasil brainstorming di kertas.','Beri skor 1–5 untuk skill, modal, kecepatan uji, akses, dan minat.','Ambil 2–3 skor teratas untuk PMI atau validasi.'],
-    integration:'Paper-first: skoring dilakukan di kertas; Daoji menyimpan 2–3 kandidat Action of the Day atau proyek kecil.'
-  },
-  pmi: {
-    title:'PMI — Plus, Minus, Implications', duration:'15–25 menit', type:'Konvergen', output:'Keputusan awal',
-    desc:'Untuk mengevaluasi satu ide tanpa langsung jatuh cinta atau langsung menolak.',
-    steps:['Di kertas, isi kolom Plus, Minus, dan Implications.','Ubah minus menjadi risiko yang bisa dikelola.','Pilih keputusan: lanjut, ubah, butuh data, atau tunda.'],
-    integration:'Paper-first: evaluasi dilakukan di kertas; Daoji menyimpan keputusan lanjut/ubah/butuh data/tunda.'
-  },
-  reverse: {
-    title:'Reverse Brainstorming', duration:'15–25 menit', type:'Risiko', output:'3 pencegahan utama',
-    desc:'Untuk melihat cara gagal, lalu membaliknya menjadi langkah pencegahan.',
-    steps:['Di kertas, tulis: bagaimana cara membuat rencana ini gagal?' ,'Buat 10 cara gagal, termasuk yang absurd.','Balik 3 risiko paling mungkin menjadi pencegahan minggu ini.'],
-    integration:'Paper-first: rasa takut ditulis di kertas, lalu Daoji menyimpan 3 pencegahan utama sebagai data friction.'
-  },
-  validate: {
-    title:'Validasi Ide 48 Jam–2 Minggu', duration:'48 jam–2 minggu', type:'Jembatan ke aksi', output:'Sinyal nyata',
-    desc:'Untuk membedakan ide yang terdengar bagus dari ide yang punya respons nyata.',
-    steps:['Tulis ide dalam satu kalimat dan daftar asumsi utama.','Buat tawaran sederhana atau pertanyaan validasi.','Tanyakan ke 10–20 target, catat tindakan nyata, bukan pujian.'],
-    integration:'Paper-first: asumsi dan daftar target ditulis di kertas; Daoji menyimpan ringkasan validasi untuk keputusan lanjut/ubah/tunda.'
-  }
-};
+        function closeJournalModal() {
+          document.getElementById("journalModal").classList.remove("show");
+          showToast("📝 Journal entry tersimpan (simulasi)");
+          if (lastActiveElement) lastActiveElement.focus();
+        }
 
-function selectThinkingMethod(key, el) {
-  const m = thinkingMethods[key];
-  document.querySelectorAll('.method-card').forEach(c => c.classList.remove('active'));
-  if (el) el.classList.add('active');
-  document.getElementById('methodTitle').textContent = m.title;
-  document.getElementById('methodDesc').textContent = m.desc;
-  document.getElementById('methodDuration').textContent = m.duration;
-  document.getElementById('methodType').textContent = m.type;
-  document.getElementById('methodOutput').textContent = m.output;
-  
-  // Safe list item creation to avoid XSS (no innerHTML)
-  const stepsContainer = document.getElementById('methodSteps');
-  stepsContainer.textContent = '';
-  m.steps.forEach(stepText => {
-    const li = document.createElement('li');
-    li.textContent = stepText;
-    stepsContainer.appendChild(li);
-  });
+        let selectedMood = null;
+        function pickMood(btn, score) {
+          selectedMood = score;
+          document
+            .querySelectorAll("#moodPicker button")
+            .forEach((b) => (b.style.background = "none"));
+          btn.style.background = "rgba(124,154,114,0.15)";
+        }
 
-  document.getElementById('methodDaoji').textContent = m.integration;
-  showToast('🧠 Metode dipilih: ' + m.title);
-}
+        // ===== FRICTION INTERVENTION =====
+        function selectFriction(el, type) {
+          document
+            .querySelectorAll(".step-opt")
+            .forEach((o) => o.classList.remove("selected"));
+          el.classList.add("selected");
+          const result = document.getElementById("frictionResult");
+          result.textContent = "";
 
-let lastActiveElement = null;
+          const h4 = document.createElement("h4");
+          const p = document.createElement("p");
 
-function showThinkingModal() {
-  lastActiveElement = document.activeElement;
-  document.getElementById('thinkingModal').classList.add('show');
-  setTimeout(() => {
-    const topicInput = document.getElementById('modalTopic');
-    if (topicInput) topicInput.focus();
-  }, 100);
-}
+          if (type === "time") {
+            h4.textContent = "⏱ Versi Ringan";
+            p.textContent = '"Mau potong durasi jadi ';
+            const strong = document.createElement("strong");
+            strong.textContent = "2 menit";
+            p.appendChild(strong);
+            p.appendChild(
+              document.createTextNode(
+                ' saja besok?" — Sistem menawarkan one-time override ke ',
+              ),
+            );
+            const code = document.createElement("code");
+            code.textContent = "mva_duration_min";
+            p.appendChild(code);
+            p.appendChild(
+              document.createTextNode(
+                " menit. Durasi aktual dicatat di HabitLog.",
+              ),
+            );
+          } else if (type === "energy") {
+            h4.textContent = "😮‍💨 Recovery Mode";
+            p.textContent =
+              '"Tidak apa-apa untuk istirahat." — Semua notifikasi di-pause. Pohon bersalju lembut (Snow-Covered). Journaling tetap aktif. Pilih durasi: 1/3/7 hari.';
+          } else if (type === "forgot") {
+            h4.textContent = "🤔 Routine Stacking";
+            p.textContent =
+              '"Mau tumpuk habit ini ke rutinitas yang sudah ada?" — Saran berbasis Implementation Intention (Gollwitzer, 1999) dan Habit Loop (Duhigg, 2012).';
+          }
 
-function closeThinkingModal() {
-  document.getElementById('thinkingModal').classList.remove('show');
-  showToast('🧠 Ringkasan sesi kertas tersimpan (simulasi)');
-  if (lastActiveElement) lastActiveElement.focus();
-}
+          result.appendChild(h4);
+          result.appendChild(p);
+        }
 
-function saveThinkingCanvas() {
-  const action = document.getElementById('canvasAction').value.trim();
-  showToast(action ? '🌱 Aksi kecil dari sesi kertas disimpan: ' + action : '🧠 Ringkasan sesi kertas disimpan (simulasi)');
-}
+        // ===== LIFE AUDIT =====
+        function updateAudit(n) {
+          const val = document.getElementById("audit" + n).value;
+          document.getElementById("auditVal" + n).textContent = val;
+          updateWeakest();
+        }
 
-// ===== JOURNAL MODAL =====
-function showJournalModal() {
-  lastActiveElement = document.activeElement;
-  document.getElementById('journalModal').classList.add('show');
-  setTimeout(() => {
-    const firstMood = document.querySelector('#moodPicker button');
-    if (firstMood) firstMood.focus();
-  }, 100);
-}
+        function updateWeakest() {
+          const domains = [
+            {
+              name: "🏃 Tubuh",
+              score: parseInt(document.getElementById("audit1").value),
+            },
+            {
+              name: "💰 Keuangan",
+              score: parseInt(document.getElementById("audit2").value),
+            },
+            {
+              name: "🤝 Hubungan",
+              score: parseInt(document.getElementById("audit3").value),
+            },
+            {
+              name: "💭 Emosi",
+              score: parseInt(document.getElementById("audit4").value),
+            },
+            {
+              name: "📚 Karir/Belajar",
+              score: parseInt(document.getElementById("audit5").value),
+            },
+            {
+              name: "🎮 Rekreasi",
+              score: parseInt(document.getElementById("audit6").value),
+            },
+          ];
+          const weakest = domains.reduce((a, b) => (a.score < b.score ? a : b));
+          const deficit = 10 - weakest.score;
+          document.getElementById("weakestDomain").textContent =
+            weakest.name + " (skor: " + weakest.score + ")";
+          document.getElementById("weakestDeficit").textContent =
+            "domain_deficit = " + deficit;
+        }
 
-function closeJournalModal() {
-  document.getElementById('journalModal').classList.remove('show');
-  showToast('📝 Journal entry tersimpan (simulasi)');
-  if (lastActiveElement) lastActiveElement.focus();
-}
+        // ===== TOAST =====
+        let toastTimer;
+        function showToast(msg) {
+          const t = document.getElementById("toast");
+          t.textContent = msg;
+          t.classList.add("show");
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(() => t.classList.remove("show"), 3000);
+        }
 
-let selectedMood = null;
-function pickMood(btn, score) {
-  selectedMood = score;
-  document.querySelectorAll('#moodPicker button').forEach(b => b.style.background='none');
-  btn.style.background = 'rgba(124,154,114,0.15)';
-}
+        // ===== NAVIGATION MENU TOGGLE =====
+        function toggleNavMenu(btn) {
+          const navLinks = document.querySelector(".nav-links");
+          const isOpen = navLinks.classList.toggle("open");
+          btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        }
 
-// ===== FRICTION INTERVENTION =====
-function selectFriction(el, type) {
-  document.querySelectorAll('.step-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  const result = document.getElementById('frictionResult');
-  result.textContent = '';
+        // ===== ACCESSIBILITY HANDLERS =====
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            const journalModal = document.getElementById("journalModal");
+            const thinkingModal = document.getElementById("thinkingModal");
+            if (journalModal.classList.contains("show")) {
+              closeJournalModal();
+            }
+            if (thinkingModal.classList.contains("show")) {
+              closeThinkingModal();
+            }
+          }
+        });
 
-  const h4 = document.createElement('h4');
-  const p = document.createElement('p');
-  
-  if (type === 'time') {
-    h4.textContent = '⏱ Versi Ringan';
-    p.textContent = '"Mau potong durasi jadi ';
-    const strong = document.createElement('strong');
-    strong.textContent = '2 menit';
-    p.appendChild(strong);
-    p.appendChild(document.createTextNode(' saja besok?" — Sistem menawarkan one-time override ke '));
-    const code = document.createElement('code');
-    code.textContent = 'mva_duration_min';
-    p.appendChild(code);
-    p.appendChild(document.createTextNode(' menit. Durasi aktual dicatat di HabitLog.'));
-  } else if (type === 'energy') {
-    h4.textContent = '😮‍💨 Recovery Mode';
-    p.textContent = '"Tidak apa-apa untuk istirahat." — Semua notifikasi di-pause. Pohon bersalju lembut (Snow-Covered). Journaling tetap aktif. Pilih durasi: 1/3/7 hari.';
-  } else if (type === 'forgot') {
-    h4.textContent = '🤔 Routine Stacking';
-    p.textContent = '"Mau tumpuk habit ini ke rutinitas yang sudah ada?" — Saran berbasis Implementation Intention (Gollwitzer, 1999) dan Habit Loop (Duhigg, 2012).';
-  }
-  
-  result.appendChild(h4);
-  result.appendChild(p);
-}
+        document.addEventListener("keydown", (e) => {
+          if (e.target && e.target.getAttribute("role") === "button") {
+            if (e.key === " " || e.key === "Enter") {
+              e.preventDefault();
+              e.target.click();
+            }
+          }
+        });
 
-// ===== LIFE AUDIT =====
-function updateAudit(n) {
-  const val = document.getElementById('audit'+n).value;
-  document.getElementById('auditVal'+n).textContent = val;
-  updateWeakest();
-}
+        // ===== INIT =====
+        updateWeakest();
+        setHeroState("mature");
 
-function updateWeakest() {
-  const domains = [
-    {name:'🏃 Tubuh', score:parseInt(document.getElementById('audit1').value)},
-    {name:'💰 Keuangan', score:parseInt(document.getElementById('audit2').value)},
-    {name:'🤝 Hubungan', score:parseInt(document.getElementById('audit3').value)},
-    {name:'💭 Emosi', score:parseInt(document.getElementById('audit4').value)},
-    {name:'📚 Karir/Belajar', score:parseInt(document.getElementById('audit5').value)},
-    {name:'🎮 Rekreasi', score:parseInt(document.getElementById('audit6').value)}
-  ];
-  const weakest = domains.reduce((a,b) => a.score<b.score?a:b);
-  const deficit = 10 - weakest.score;
-  document.getElementById('weakestDomain').textContent = weakest.name + ' (skor: ' + weakest.score + ')';
-  document.getElementById('weakestDeficit').textContent = 'domain_deficit = ' + deficit;
-}
-
-// ===== TOAST =====
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-// ===== NAVIGATION MENU TOGGLE =====
-function toggleNavMenu(btn) {
-  const navLinks = document.querySelector('.nav-links');
-  const isOpen = navLinks.classList.toggle('open');
-  btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-}
-
-// ===== ACCESSIBILITY HANDLERS =====
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    const journalModal = document.getElementById('journalModal');
-    const thinkingModal = document.getElementById('thinkingModal');
-    if (journalModal.classList.contains('show')) {
-      closeJournalModal();
-    }
-    if (thinkingModal.classList.contains('show')) {
-      closeThinkingModal();
-    }
-  }
-});
-
-document.addEventListener('keydown', (e) => {
-  if (e.target && e.target.getAttribute('role') === 'button') {
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      e.target.click();
-    }
-  }
-});
-
-// ===== INIT =====
-updateWeakest();
-setHeroState('mature');
-
-// ===== EXPOSE TO GLOBAL WINDOW NAMESPACE =====
-window.setHeroState = setHeroState;
-window.cycleTreeState = cycleTreeState;
-window.markDone = markDone;
-window.selectThinkingMethod = selectThinkingMethod;
-window.showThinkingModal = showThinkingModal;
-window.closeThinkingModal = closeThinkingModal;
-window.saveThinkingCanvas = saveThinkingCanvas;
-window.showJournalModal = showJournalModal;
-window.closeJournalModal = closeJournalModal;
-window.pickMood = pickMood;
-window.selectFriction = selectFriction;
-window.updateAudit = updateAudit;
-window.toggleNavMenu = toggleNavMenu;
-})();
-</script>
-</body>
+        // ===== EXPOSE TO GLOBAL WINDOW NAMESPACE =====
+        window.setHeroState = setHeroState;
+        window.cycleTreeState = cycleTreeState;
+        window.markDone = markDone;
+        window.selectThinkingMethod = selectThinkingMethod;
+        window.showThinkingModal = showThinkingModal;
+        window.closeThinkingModal = closeThinkingModal;
+        window.saveThinkingCanvas = saveThinkingCanvas;
+        window.showJournalModal = showJournalModal;
+        window.closeJournalModal = closeJournalModal;
+        window.pickMood = pickMood;
+        window.selectFriction = selectFriction;
+        window.updateAudit = updateAudit;
+        window.toggleNavMenu = toggleNavMenu;
+      })();
+    </script>
+  </body>
 </html>

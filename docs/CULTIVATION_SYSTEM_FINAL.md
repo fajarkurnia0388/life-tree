@@ -38,12 +38,12 @@
 
 _Jiǔ Liàn Guī Dào_
 
-| Karakter | Makna |
-|----------|-------|
-| **九** (Jiǔ) | Sembilan — jumlah penyulingan, bukan jumlah realm |
-| **炼** (Liàn) | Menempa, memurnikan, menyuling |
-| **归** (Guī) | Kembali — bukan naik level, tapi kembali ke hakikat diri |
-| **道** (Dào) | Jalan, hukum terdalam realita |
+| Karakter      | Makna                                                    |
+| ------------- | -------------------------------------------------------- |
+| **九** (Jiǔ)  | Sembilan — jumlah penyulingan, bukan jumlah realm        |
+| **炼** (Liàn) | Menempa, memurnikan, menyuling                           |
+| **归** (Guī)  | Kembali — bukan naik level, tapi kembali ke hakikat diri |
+| **道** (Dào)  | Jalan, hukum terdalam realita                            |
 
 ### Nama Produk
 
@@ -53,15 +53,15 @@ _Jiǔ Liàn Guī Dào_
 
 > **Dao Tree / Inner World Tree**
 
-| Bagian Pohon | Makna Kultivasi | Fitur Produk |
-|-------------|-----------------|--------------|
-| **Akar** | Dao Heart, nilai inti | Life Compass, Value Mirror |
-| **Batang** | Fondasi hidup | Ritme, habits, canopy load |
-| **Cabang** | Domain kehidupan | 6 Palace |
-| **Daun** | Practice harian | Habit / Action of the Day |
-| **Bunga** | Stabil habit | Automaticity / pattern |
-| **Buah** | Kebijaksanaan | Decision Journal, insights |
-| **Musim** | Fase energi | Season / State |
+| Bagian Pohon | Makna Kultivasi       | Fitur Produk               |
+| ------------ | --------------------- | -------------------------- |
+| **Akar**     | Dao Heart, nilai inti | Life Compass, Value Mirror |
+| **Batang**   | Fondasi hidup         | Ritme, habits, canopy load |
+| **Cabang**   | Domain kehidupan      | 6 Palace                   |
+| **Daun**     | Practice harian       | Habit / Action of the Day  |
+| **Bunga**    | Stabil habit          | Automaticity / pattern     |
+| **Buah**     | Kebijaksanaan         | Decision Journal, insights |
+| **Musim**    | Fase energi           | Season / State             |
 
 ### Spirit Produk
 
@@ -184,13 +184,13 @@ Yang tertinggi bukan yang paling sibuk — melainkan yang paling jernih, utuh, d
 
 ### Kenapa Orthogonal?
 
-| Sistem Linear (Lama) | Sistem Orthogonal (Final) |
-|----------------------|---------------------------|
-| "Aku di Ranah 3" | "Realm Foundation, state Growth, Body Palace tinggi, Heart Sea rendah, dominan Formation Path" |
-| Progresi kaku, 1 dimensi | Potret multidimensi, kaya |
-| Judgment: "masih rendah" | Pemahaman: "ini polaku" |
-| Game-like ladder | Reflective portrait |
-| Membosankan setelah puncak | Selalu ada dimensi baru |
+| Sistem Linear (Lama)       | Sistem Orthogonal (Final)                                                                      |
+| -------------------------- | ---------------------------------------------------------------------------------------------- |
+| "Aku di Ranah 3"           | "Realm Foundation, state Growth, Body Palace tinggi, Heart Sea rendah, dominan Formation Path" |
+| Progresi kaku, 1 dimensi   | Potret multidimensi, kaya                                                                      |
+| Judgment: "masih rendah"   | Pemahaman: "ini polaku"                                                                        |
+| Game-like ladder           | Reflective portrait                                                                            |
+| Membosankan setelah puncak | Selalu ada dimensi baru                                                                        |
 
 ### Contoh Pembacaan
 
@@ -216,15 +216,15 @@ Yang tertinggi bukan yang paling sibuk — melainkan yang paling jernih, utuh, d
 
 ### Indikator Realm (Multi-Sinyal)
 
-| Sinyal | Sumber Data | Bobot |
-|--------|-------------|-------|
-| Cumulative days | `countUniqueDoneDates` | 40% |
-| Consistency | `completionRate90d` | 25% |
-| Domain balance | `latestDomainScores` | — |
-| Reflection depth | `JournalEntries`, `ThinkingCanvasSessions` | 20% |
-| Values clarity | `ValueDilemmaResponses`, `coreValues` | 15% |
-| Recovery literacy | `WellnessPromptLogs`, `recoveryEndDate` | — |
-| Decision maturity | `DecisionEntries` | — |
+| Sinyal            | Sumber Data                                | Bobot |
+| ----------------- | ------------------------------------------ | ----- |
+| Cumulative days   | `countUniqueDoneDates`                     | 40%   |
+| Consistency       | `completionRate90d`                        | 25%   |
+| Domain balance    | `latestDomainScores`                       | —     |
+| Reflection depth  | `JournalEntries`, `ThinkingCanvasSessions` | 20%   |
+| Values clarity    | `ValueDilemmaResponses`, `coreValues`      | 15%   |
+| Recovery literacy | `WellnessPromptLogs`, `recoveryEndDate`    | —     |
+| Decision maturity | `DecisionEntries`                          | —     |
 
 ### Tiga Lingkaran Pertumbuhan
 
@@ -248,91 +248,91 @@ Lingkaran III — Menyatu dengan Jalan
 
 #### R1: Body Tempering (炼体) — Penempaan Raga
 
-| Aspek | Deskripsi |
-|-------|-----------|
-| **Hakikat** | Tubuh berhenti menjadi beban dan mulai menjadi bejana |
-| **Fokus** | Tidur, nutrisi, gerak, napas, ritme sirkadian |
-| **Indikator** | Tidur lebih konsisten, energi dasar tidak ambruk |
-| **Bahaya** | Begadang kronis, tubuh dikorbankan demi produktivitas |
+| Aspek             | Deskripsi                                                 |
+| ----------------- | --------------------------------------------------------- |
+| **Hakikat**       | Tubuh berhenti menjadi beban dan mulai menjadi bejana     |
+| **Fokus**         | Tidur, nutrisi, gerak, napas, ritme sirkadian             |
+| **Indikator**     | Tidur lebih konsisten, energi dasar tidak ambruk          |
+| **Bahaya**        | Begadang kronis, tubuh dikorbankan demi produktivitas     |
 | **Padanan Fitur** | Domain Tubuh, habit body care, Recovery Mode, Canopy Load |
-| **Mindset** | _"Tubuhku adalah bejana pertama perjalananku."_ |
+| **Mindset**       | _"Tubuhku adalah bejana pertama perjalananku."_           |
 
 #### R2: Qi Gathering (聚气) — Pengumpulan Qi
 
-| Aspek | Deskripsi |
-|-------|-----------|
-| **Hakikat** | Qi = perhatian + kemauan + kapasitas hadir |
-| **Fokus** | Fokus, pengelolaan distraksi, satu aksi kecil yang dituntaskan |
-| **Indikator** | Bisa fokus sebentar, bisa menjalankan practice kecil dengan sadar |
-| **Bahaya** | Doomscrolling, multitasking kompulsif |
+| Aspek             | Deskripsi                                                              |
+| ----------------- | ---------------------------------------------------------------------- |
+| **Hakikat**       | Qi = perhatian + kemauan + kapasitas hadir                             |
+| **Fokus**         | Fokus, pengelolaan distraksi, satu aksi kecil yang dituntaskan         |
+| **Indikator**     | Bisa fokus sebentar, bisa menjalankan practice kecil dengan sadar      |
+| **Bahaya**        | Doomscrolling, multitasking kompulsif                                  |
 | **Padanan Fitur** | Action of the Day, micro practice, Journal Lite, Friction Intervention |
-| **Mindset** | _"Masalahku bukan kurang niat — qi-ku tercerai-berai."_ |
+| **Mindset**       | _"Masalahku bukan kurang niat — qi-ku tercerai-berai."_                |
 
 #### R3: Foundation Establishment (筑基) — Pendirian Fondasi
 
-| Aspek | Deskripsi |
-|-------|-----------|
-| **Hakikat** | Energi yang tadinya liar kini punya struktur |
-| **Fokus** | Kebiasaan stabil, jadwal tidak kacau, sistem hidup yang bisa diandalkan |
-| **Indikator** | Habit kecil mulai otomatis, bisa kembali ke jalur setelah tergelincir |
-| **Bahaya** | Terlalu banyak target, menambah habit tanpa daya tampung |
-| **Padanan Fitur** | Canopy Load, habit scheduling, Growth Map, anti-overload |
-| **Mindset** | _"Perubahan tidak lagi bergantung pada semangat sesaat."_ |
+| Aspek             | Deskripsi                                                               |
+| ----------------- | ----------------------------------------------------------------------- |
+| **Hakikat**       | Energi yang tadinya liar kini punya struktur                            |
+| **Fokus**         | Kebiasaan stabil, jadwal tidak kacau, sistem hidup yang bisa diandalkan |
+| **Indikator**     | Habit kecil mulai otomatis, bisa kembali ke jalur setelah tergelincir   |
+| **Bahaya**        | Terlalu banyak target, menambah habit tanpa daya tampung                |
+| **Padanan Fitur** | Canopy Load, habit scheduling, Growth Map, anti-overload                |
+| **Mindset**       | _"Perubahan tidak lagi bergantung pada semangat sesaat."_               |
 
 #### R4: Core Formation (结丹) — Pembentukan Inti
 
-| Aspek | Deskripsi |
-|-------|-----------|
-| **Hakikat** | Segala latihan mulai mengkristal menjadi prinsip hidup. Dao Heart lahir. |
-| **Fokus** | Nilai inti, prioritas hidup, batas sehat, keputusan selaras dengan diri |
-| **Indikator** | Mampu jawab "apa yang penting buatku?", keputusan lebih konsisten |
-| **Bahaya** | Pencitraan sebagai pengganti identitas, ambisi pinjaman, FOMO |
-| **Padanan Fitur** | Life Compass, Core Values, Value Mirror |
-| **Mindset** | _"Aku tidak lagi hidup dari validasi eksternal."_ |
+| Aspek             | Deskripsi                                                                |
+| ----------------- | ------------------------------------------------------------------------ |
+| **Hakikat**       | Segala latihan mulai mengkristal menjadi prinsip hidup. Dao Heart lahir. |
+| **Fokus**         | Nilai inti, prioritas hidup, batas sehat, keputusan selaras dengan diri  |
+| **Indikator**     | Mampu jawab "apa yang penting buatku?", keputusan lebih konsisten        |
+| **Bahaya**        | Pencitraan sebagai pengganti identitas, ambisi pinjaman, FOMO            |
+| **Padanan Fitur** | Life Compass, Core Values, Value Mirror                                  |
+| **Mindset**       | _"Aku tidak lagi hidup dari validasi eksternal."_                        |
 
 #### R5: Nascent Soul (元婴) — Kelahiran Jiwa Pengamat
 
-| Aspek | Deskripsi |
-|-------|-----------|
-| **Hakikat** | Lahir kesadaran yang dapat menyaksikan diri sendiri |
-| **Fokus** | Metakognisi, kesadaran emosi, jeda sebelum reaksi |
-| **Indikator** | Bisa berkata "aku sadar aku sedang terpicu", tidak semua emosi jadi tindakan |
-| **Bahaya** | Intelektualisasi berlebihan, merasa sadar hanya karena bisa menjelaskan |
-| **Padanan Fitur** | Journal Lite / Deep Reflection, Thinking Canvas |
-| **Mindset** | _"Diri tidak lagi sepenuhnya tenggelam di dalam pikirannya."_ |
+| Aspek             | Deskripsi                                                                    |
+| ----------------- | ---------------------------------------------------------------------------- |
+| **Hakikat**       | Lahir kesadaran yang dapat menyaksikan diri sendiri                          |
+| **Fokus**         | Metakognisi, kesadaran emosi, jeda sebelum reaksi                            |
+| **Indikator**     | Bisa berkata "aku sadar aku sedang terpicu", tidak semua emosi jadi tindakan |
+| **Bahaya**        | Intelektualisasi berlebihan, merasa sadar hanya karena bisa menjelaskan      |
+| **Padanan Fitur** | Journal Lite / Deep Reflection, Thinking Canvas                              |
+| **Mindset**       | _"Diri tidak lagi sepenuhnya tenggelam di dalam pikirannya."_                |
 
 #### R6: Spirit Transformation (化神) — Transformasi Spirit
 
-| Aspek | Deskripsi |
-|-------|-----------|
-| **Hakikat** | Setelah melewati tribulasi, diri berubah kualitasnya |
-| **Fokus** | Integrasi luka, respons lebih matang, ketenangan tanpa mati rasa |
-| **Indikator** | Lebih sedikit reaktivitas, kejernihan dalam konflik |
-| **Bahaya** | Superioritas spiritual, identitas "aku sudah sembuh" |
-| **Padanan Fitur** | Long-form reflection, decision review |
-| **Mindset** | _"Luka tidak hilang, tapi tidak lagi menjadi pusat identitas."_ |
+| Aspek             | Deskripsi                                                        |
+| ----------------- | ---------------------------------------------------------------- |
+| **Hakikat**       | Setelah melewati tribulasi, diri berubah kualitasnya             |
+| **Fokus**         | Integrasi luka, respons lebih matang, ketenangan tanpa mati rasa |
+| **Indikator**     | Lebih sedikit reaktivitas, kejernihan dalam konflik              |
+| **Bahaya**        | Superioritas spiritual, identitas "aku sudah sembuh"             |
+| **Padanan Fitur** | Long-form reflection, decision review                            |
+| **Mindset**       | _"Luka tidak hilang, tapi tidak lagi menjadi pusat identitas."_  |
 
 #### R7: Dao Comprehension (悟道) — Pemahaman Dao
 
-| Aspek | Deskripsi |
-|-------|-----------|
-| **Hakikat** | Mulai memahami hukum-hukum realita, bukan hanya menjalani teknik |
-| **Fokus** | Sebab-akibat, ritme, leverage, hubungan tindakan kecil dan arah hidup |
-| **Indikator** | Keputusan lebih presisi, tidak mudah panik, wisdom dari pengalaman |
-| **Bahaya** | Kebijaksanaan palsu, teori tanpa embodiment |
-| **Padanan Fitur** | Weekly Pulse synthesis, Decision Journal review, Value Mirror |
-| **Mindset** | _"Aku tidak lagi sekadar berusaha keras — aku mulai melihat pola."_ |
+| Aspek             | Deskripsi                                                             |
+| ----------------- | --------------------------------------------------------------------- |
+| **Hakikat**       | Mulai memahami hukum-hukum realita, bukan hanya menjalani teknik      |
+| **Fokus**         | Sebab-akibat, ritme, leverage, hubungan tindakan kecil dan arah hidup |
+| **Indikator**     | Keputusan lebih presisi, tidak mudah panik, wisdom dari pengalaman    |
+| **Bahaya**        | Kebijaksanaan palsu, teori tanpa embodiment                           |
+| **Padanan Fitur** | Weekly Pulse synthesis, Decision Journal review, Value Mirror         |
+| **Mindset**       | _"Aku tidak lagi sekadar berusaha keras — aku mulai melihat pola."_   |
 
 #### R8: World Bearing (合道载世) — Menyangga Dunia
 
-| Aspek | Deskripsi |
-|-------|-----------|
-| **Hakikat** | Puncak kultivasi bukan predator puncak, tapi penyangga keteraturan |
-| **Fokus** | Kontribusi, bimbingan, sistem yang menopang orang lain |
-| **Indikator** | Struktur hidup membantu orang lain tumbuh |
-| **Bahaya** | Mesianic ego, merasa harus jadi guru untuk semua orang |
-| **Padanan Fitur** | Marketplace contribution, mentoring/sharing loops |
-| **Mindset** | _"Hidup tidak lagi berputar di sekitar 'aku'."_ |
+| Aspek             | Deskripsi                                                          |
+| ----------------- | ------------------------------------------------------------------ |
+| **Hakikat**       | Puncak kultivasi bukan predator puncak, tapi penyangga keteraturan |
+| **Fokus**         | Kontribusi, bimbingan, sistem yang menopang orang lain             |
+| **Indikator**     | Struktur hidup membantu orang lain tumbuh                          |
+| **Bahaya**        | Mesianic ego, merasa harus jadi guru untuk semua orang             |
+| **Padanan Fitur** | Marketplace contribution, mentoring/sharing loops                  |
+| **Mindset**       | _"Hidup tidak lagi berputar di sekitar 'aku'."_                    |
 
 ---
 
@@ -347,23 +347,23 @@ Lingkaran III — Menyatu dengan Jalan
 
 ### Daftar State
 
-| State | Visual Pohon | Makna | Intervensi Sistem |
-|-------|-------------|-------|-------------------|
-| **Growth** 🌱 | Normal, kanopi penuh | Mode aktif, practice berjalan | Action of the Day, Habits aktif |
-| **Recovery** ❄️ | Snow-covered, lembut | Pemulihan energi | Notif pause, journal only, Safety Card |
-| **Dormant** 🍂 | Daun redup, tenang | Istirahat panjang | Weekly check-in ringan (max 1x/14 hari) |
-| **Tribulation** ⚡ | Aura biru redup, getaran halus | Ujian/krisis aktif | Safety Card + Friction + Bottleneck Inquiry |
-| **Quiet Integration** 🌙 | Night mode, bintang | Pemrosesan diam-diam | Deep Reflection prompt, Decision Journal |
+| State                    | Visual Pohon                   | Makna                         | Intervensi Sistem                           |
+| ------------------------ | ------------------------------ | ----------------------------- | ------------------------------------------- |
+| **Growth** 🌱            | Normal, kanopi penuh           | Mode aktif, practice berjalan | Action of the Day, Habits aktif             |
+| **Recovery** ❄️          | Snow-covered, lembut           | Pemulihan energi              | Notif pause, journal only, Safety Card      |
+| **Dormant** 🍂           | Daun redup, tenang             | Istirahat panjang             | Weekly check-in ringan (max 1x/14 hari)     |
+| **Tribulation** ⚡       | Aura biru redup, getaran halus | Ujian/krisis aktif            | Safety Card + Friction + Bottleneck Inquiry |
+| **Quiet Integration** 🌙 | Night mode, bintang            | Pemrosesan diam-diam          | Deep Reflection prompt, Decision Journal    |
 
 ### Triggers State
 
-| State | Trigger |
-|-------|---------|
-| **Growth** | Default — tidak ada sinyal negatif |
-| **Recovery** | User memilih Recovery Mode ATAU mood ≤3 selama 3 hari ATAU burnout flag |
-| **Dormant** | Tidak buka app > 7 hari |
-| **Tribulation** | Friction threshold terlewati ATAU user menandai "krisis" ATAU Value Dilemma unresolved |
-| **Quiet Integration** | Setelah Recovery selesai — masa transisi 3-7 hari |
+| State                 | Trigger                                                                                |
+| --------------------- | -------------------------------------------------------------------------------------- |
+| **Growth**            | Default — tidak ada sinyal negatif                                                     |
+| **Recovery**          | User memilih Recovery Mode ATAU mood ≤3 selama 3 hari ATAU burnout flag                |
+| **Dormant**           | Tidak buka app > 7 hari                                                                |
+| **Tribulation**       | Friction threshold terlewati ATAU user menandai "krisis" ATAU Value Dilemma unresolved |
+| **Quiet Integration** | Setelah Recovery selesai — masa transisi 3-7 hari                                      |
 
 ### Aturan State
 
@@ -379,14 +379,14 @@ Lingkaran III — Menyatu dengan Jalan
 
 6 Palace adalah peta domain kehidupan — menjadi **6 cabang pohon**.
 
-| Palace | Domain Daoji | Elemen | Warna | Practice Utama |
-|--------|----------------|--------|-------|----------------|
-| **Body Palace** 🏃 | Tubuh | Tanah (土) | Hijau Sage | Tidur, olahraga, napas, hidrasi |
-| **Resource Palace** 💰 | Keuangan | Logam (金) | Emas | Catat pengeluaran, budget, dana darurat |
-| **Bond Palace** 🤝 | Hubungan | Api (火) | Pink | Koneksi, quality time, perbaikan konflik |
-| **Heart Sea** 💭 | Emosi | Air (水) | Biru | Journaling, meditasi, grounding |
-| **Craft Palace** 📚 | Karir | Kayu (木) | Nila/Ungu | Skill, deep work, review pembelajaran |
-| **Joy Garden** 🎮 | Rekreasi | Angin (风) | Amber | Hobi, seni, bermain, istirahat sadar |
+| Palace                 | Domain Daoji | Elemen     | Warna      | Practice Utama                           |
+| ---------------------- | ------------ | ---------- | ---------- | ---------------------------------------- |
+| **Body Palace** 🏃     | Tubuh        | Tanah (土) | Hijau Sage | Tidur, olahraga, napas, hidrasi          |
+| **Resource Palace** 💰 | Keuangan     | Logam (金) | Emas       | Catat pengeluaran, budget, dana darurat  |
+| **Bond Palace** 🤝     | Hubungan     | Api (火)   | Pink       | Koneksi, quality time, perbaikan konflik |
+| **Heart Sea** 💭       | Emosi        | Air (水)   | Biru       | Journaling, meditasi, grounding          |
+| **Craft Palace** 📚    | Karir        | Kayu (木)  | Nila/Ungu  | Skill, deep work, review pembelajaran    |
+| **Joy Garden** 🎮      | Rekreasi     | Angin (风) | Amber      | Hobi, seni, bermain, istirahat sadar     |
 
 ### Prinsip Palace
 
@@ -406,14 +406,14 @@ Heart Sea ──── Semua Palace      (pusat keseimbangan)
 
 ### Mapping Domain Key → Palace
 
-| Domain Key (kode) | Palace Name |
-|-------------------|-------------|
-| `Tubuh` | Body Palace |
-| `Keuangan` | Resource Palace |
-| `Hubungan` | Bond Palace |
-| `Emosi` | Heart Sea |
-| `Karir` | Craft Palace |
-| `Rekreasi` | Joy Garden |
+| Domain Key (kode) | Palace Name     |
+| ----------------- | --------------- |
+| `Tubuh`           | Body Palace     |
+| `Keuangan`        | Resource Palace |
+| `Hubungan`        | Bond Palace     |
+| `Emosi`           | Heart Sea       |
+| `Karir`           | Craft Palace    |
+| `Rekreasi`        | Joy Garden      |
 
 ---
 
@@ -421,14 +421,14 @@ Heart Sea ──── Semua Palace      (pusat keseimbangan)
 
 Paths adalah personalisasi — bagaimana seseorang cenderung bertumbuh. Bukan kasta, tapi kecenderungan energi.
 
-| Path | Inti | Kekuatan | Risiko Bayangan | Praktik Khas |
-|------|------|----------|-----------------|-------------|
-| **Sword Path** ⚔️ | Kejelasan, pemotongan ilusi | Fokus tajam, tegas | Kaku, dingin relasional | Decision Journal |
-| **Alchemist Path** 🧪 | Penyulingan, transformasi halus | Sabar, integratif | Sulit tegas | Deep Reflection, Value Mirror |
-| **Formation Path** 🏛️ | Sistem, struktur, desain kehidupan | Teratur, stabil | Over-control | Habit scheduling, Canopy Load |
-| **Body Path** 💪 | Ketahanan, eksekusi, disiplin fisik | Action-oriented | Mengabaikan emosi | Action of the Day, micro practice |
-| **Word Path** 📖 | Makna, bahasa, cerita | Komunikatif | Retorika tanpa aksi | Journaling, Thinking Canvas |
-| **Shadow Path** 🌑 | Masuk ke area sulit: trauma, chaos | Transformasi mendalam | Terjebak kegelapan | Friction Journal, Bottleneck Inquiry |
+| Path                  | Inti                                | Kekuatan              | Risiko Bayangan         | Praktik Khas                         |
+| --------------------- | ----------------------------------- | --------------------- | ----------------------- | ------------------------------------ |
+| **Sword Path** ⚔️     | Kejelasan, pemotongan ilusi         | Fokus tajam, tegas    | Kaku, dingin relasional | Decision Journal                     |
+| **Alchemist Path** 🧪 | Penyulingan, transformasi halus     | Sabar, integratif     | Sulit tegas             | Deep Reflection, Value Mirror        |
+| **Formation Path** 🏛️ | Sistem, struktur, desain kehidupan  | Teratur, stabil       | Over-control            | Habit scheduling, Canopy Load        |
+| **Body Path** 💪      | Ketahanan, eksekusi, disiplin fisik | Action-oriented       | Mengabaikan emosi       | Action of the Day, micro practice    |
+| **Word Path** 📖      | Makna, bahasa, cerita               | Komunikatif           | Retorika tanpa aksi     | Journaling, Thinking Canvas          |
+| **Shadow Path** 🌑    | Masuk ke area sulit: trauma, chaos  | Transformasi mendalam | Terjebak kegelapan      | Friction Journal, Bottleneck Inquiry |
 
 ### Catatan Path
 
@@ -443,12 +443,12 @@ Paths adalah personalisasi — bagaimana seseorang cenderung bertumbuh. Bukan ka
 
 ### Konsep Qi
 
-| Jenis Qi | Definisi Daoji | Representasi Data |
-|----------|-------------------|-------------------|
-| **先天 Qi (Xiantian)** | Energi bawaan — kapasitas dasar harian | `canopyLoadCapacity` (default: 10) |
-| **后天 Qi (Houtian)** | Energi yang diperoleh — habit yang sudah otomatis | `automaticityDecay` |
-| **Qi Kotor** | Beban mental — distraksi, stres | `frictionReasonSelected = Kelelahan` |
-| **Qi Murni** | Fokus, energi positif | Mood score tinggi, journaling teratur |
+| Jenis Qi               | Definisi Daoji                                    | Representasi Data                     |
+| ---------------------- | ------------------------------------------------- | ------------------------------------- |
+| **先天 Qi (Xiantian)** | Energi bawaan — kapasitas dasar harian            | `canopyLoadCapacity` (default: 10)    |
+| **后天 Qi (Houtian)**  | Energi yang diperoleh — habit yang sudah otomatis | `automaticityDecay`                   |
+| **Qi Kotor**           | Beban mental — distraksi, stres                   | `frictionReasonSelected = Kelelahan`  |
+| **Qi Murni**           | Fokus, energi positif                             | Mood score tinggi, journaling teratur |
 
 ### Formula Qi Harian (Canopy Load)
 
@@ -464,11 +464,11 @@ Jika `loadRatio > 1.0` → **OVERLOAD** → peringatan ramah.
 
 ### Dantian — Dashboard sebagai Pusat Energi
 
-| Dantian Xianxia | Daoji | Fungsi |
-|-----------------|----------|--------|
-| **Dantian Bawah** | Home Dashboard | Energi fisik, habit harian, rutinitas |
-| **Dantian Tengah** | Life Audit / Palaces | Energi emosional, domain, keseimbangan |
-| **Dantian Atas** | Life Compass / Dao Heart | Energi spiritual, nilai, visi |
+| Dantian Xianxia    | Daoji                    | Fungsi                                 |
+| ------------------ | ------------------------ | -------------------------------------- |
+| **Dantian Bawah**  | Home Dashboard           | Energi fisik, habit harian, rutinitas  |
+| **Dantian Tengah** | Life Audit / Palaces     | Energi emosional, domain, keseimbangan |
+| **Dantian Atas**   | Life Compass / Dao Heart | Energi spiritual, nilai, visi          |
 
 ---
 
@@ -478,13 +478,13 @@ Jika `loadRatio > 1.0` → **OVERLOAD** → peringatan ramah.
 
 Hambatan psikologis yang menghalangi pertumbuhan sejati.
 
-| Heart Demon | Manifestasi | Deteksi Sistem | Intervensi |
-|-------------|-------------|----------------|------------|
-| **Perfection Demon** | "Harus sempurna" → berhenti total setelah 1 missed | Friction: missed + mood drop | "Pohonmu sedang beristirahat" |
-| **Comparison Demon** | "Orang lain lebih baik" → demotivasi | Sering cek Marketplace, jarang praktik | Tidak ada leaderboard |
-| **Impatience Demon** | "Kenapa belum berubah?" → frustrasi | Frequent habit change, banyak arsip | Growth Map kumulatif |
-| **Denial Demon** | "Aku tidak butuh ini" → resistensi | Skip onboarding, jarang journal | Onboarding bertahap |
-| **Attachment Demon** | "Tidak bisa lepas" → over-attachment | Habit overdue, tidak pernah diarsip | "Arsipkan dengan damai" |
+| Heart Demon          | Manifestasi                                        | Deteksi Sistem                         | Intervensi                    |
+| -------------------- | -------------------------------------------------- | -------------------------------------- | ----------------------------- |
+| **Perfection Demon** | "Harus sempurna" → berhenti total setelah 1 missed | Friction: missed + mood drop           | "Pohonmu sedang beristirahat" |
+| **Comparison Demon** | "Orang lain lebih baik" → demotivasi               | Sering cek Marketplace, jarang praktik | Tidak ada leaderboard         |
+| **Impatience Demon** | "Kenapa belum berubah?" → frustrasi                | Frequent habit change, banyak arsip    | Growth Map kumulatif          |
+| **Denial Demon**     | "Aku tidak butuh ini" → resistensi                 | Skip onboarding, jarang journal        | Onboarding bertahap           |
+| **Attachment Demon** | "Tidak bisa lepas" → over-attachment               | Habit overdue, tidak pernah diarsip    | "Arsipkan dengan damai"       |
 
 ### Heart Demon Severing (Pemotongan Iblis Hati)
 
@@ -498,11 +498,11 @@ Hambatan psikologis yang menghalangi pertumbuhan sejati.
 
 **Usaha mendapatkan hasil besar tanpa penyulingan diri yang setara.**
 
-| Bentuk | Contoh | Deteksi Sistem |
-|--------|--------|----------------|
-| Hustle tanpa fondasi | Begadang kerja, skip tidur | Body Palace rendah × Craft tinggi |
-| Stimulasi tanpa istirahat | Doomscrolling, binge-watching | Joy Garden kompulsif × Heart Sea rendah |
-| Performa tanpa makna | Mengejar target orang lain | Core Values kosong × Craft tinggi |
+| Bentuk                         | Contoh                        | Deteksi Sistem                             |
+| ------------------------------ | ----------------------------- | ------------------------------------------ |
+| Hustle tanpa fondasi           | Begadang kerja, skip tidur    | Body Palace rendah × Craft tinggi          |
+| Stimulasi tanpa istirahat      | Doomscrolling, binge-watching | Joy Garden kompulsif × Heart Sea rendah    |
+| Performa tanpa makna           | Mengejar target orang lain    | Core Values kosong × Craft tinggi          |
 | Produktivitas sebagai pelarian | Sibuk terus agar tidak merasa | Friction "Kelelahan" berulang × tetap push |
 
 **Bukan judgment.** Demonic Cultivation di Daoji untuk:
@@ -519,20 +519,20 @@ Hambatan psikologis yang menghalangi pertumbuhan sejati.
 
 ### Micro Tribulation
 
-| Pemicu | Respon Sistem |
-|--------|---------------|
-| 3x missed dalam 7 hari | Friction Intervention pop-up |
-| Mood ≤ 2 selama 3 hari | Safety Card + tawaran Recovery |
-| Overload canopy | Peringatan ramah + tawaran versi ringan |
-| Conflict: nilai × tindakan | Value Mirror prompt |
+| Pemicu                     | Respon Sistem                           |
+| -------------------------- | --------------------------------------- |
+| 3x missed dalam 7 hari     | Friction Intervention pop-up            |
+| Mood ≤ 2 selama 3 hari     | Safety Card + tawaran Recovery          |
+| Overload canopy            | Peringatan ramah + tawaran versi ringan |
+| Conflict: nilai × tindakan | Value Mirror prompt                     |
 
 ### Major Tribulation (三灾)
 
-| Bencana | Padanan Daoji | Respon |
-|---------|-----------------|--------|
-| **雷劫 (Petir)** | Burnout — energi habis tiba-tiba | Recovery Mode, semua di-pause |
-| **火劫 (Api)** | Konflik hubungan | Friction Journal + Bond Palace check |
-| **风劫 (Angin)** | Kehilangan arah — hampa | Life Compass + Dao Heart review |
+| Bencana          | Padanan Daoji                    | Respon                               |
+| ---------------- | -------------------------------- | ------------------------------------ |
+| **雷劫 (Petir)** | Burnout — energi habis tiba-tiba | Recovery Mode, semua di-pause        |
+| **火劫 (Api)**   | Konflik hubungan                 | Friction Journal + Bond Palace check |
+| **风劫 (Angin)** | Kehilangan arah — hampa          | Life Compass + Dao Heart review      |
 
 ### Siklus Tribulasi
 
@@ -569,64 +569,64 @@ Bukan membuat keduanya identik sempurna, tetapi membantu pengguna melihat:
 
 ### Tiga Tingkat
 
-| Level | Target | Default? |
-|-------|--------|----------|
-| **Plain** | User umum — bahasa sehari-hari | Tidak |
-| **Hybrid** | Perpaduan natural — istilah cultivation ringan | **Ya (default)** |
-| **Full Cultivation** | Penggemar Xianxia — immersion penuh | Tidak |
+| Level                | Target                                         | Default?         |
+| -------------------- | ---------------------------------------------- | ---------------- |
+| **Plain**            | User umum — bahasa sehari-hari                 | Tidak            |
+| **Hybrid**           | Perpaduan natural — istilah cultivation ringan | **Ya (default)** |
+| **Full Cultivation** | Penggemar Xianxia — immersion penuh            | Tidak            |
 
 ### Contoh Lengkap per Komponen
 
 #### Dashboard
 
-| Konteks | Plain | Hybrid (Default) | Full |
-|---------|-------|-------------------|------|
-| Title | 🌳 Pohonmu | ☯️ Dao Tree | ☯️ Inner World Tree |
-| Hari | Hari ke-45 | Realm Foundation — Hari 45 | 九炼·筑基 — Hari 45 |
-| State: Recovery | Mode Istirahat | Seclusion Aktif | Closed-Door Seclusion |
+| Konteks         | Plain          | Hybrid (Default)           | Full                  |
+| --------------- | -------------- | -------------------------- | --------------------- |
+| Title           | 🌳 Pohonmu     | ☯️ Dao Tree                | ☯️ Inner World Tree   |
+| Hari            | Hari ke-45     | Realm Foundation — Hari 45 | 九炼·筑基 — Hari 45   |
+| State: Recovery | Mode Istirahat | Seclusion Aktif            | Closed-Door Seclusion |
 
 #### Action of the Day
 
-| Konteks | Plain | Hybrid | Full |
-|---------|-------|--------|------|
-| Label | 📋 Prioritas Hari Ini | ⚔️ Breakthrough Hari Ini | 🧘 One Practice |
-| Subtitle | Domain terlemah | Palace butuh Qi | Meridian redup |
-| Selesai | ✅ Selesai! | ✅ Practice selesai, +Qi | ✅ Teknik dikuasai |
+| Konteks  | Plain                 | Hybrid                   | Full               |
+| -------- | --------------------- | ------------------------ | ------------------ |
+| Label    | 📋 Prioritas Hari Ini | ⚔️ Breakthrough Hari Ini | 🧘 One Practice    |
+| Subtitle | Domain terlemah       | Palace butuh Qi          | Meridian redup     |
+| Selesai  | ✅ Selesai!           | ✅ Practice selesai, +Qi | ✅ Teknik dikuasai |
 
 #### Friction Intervention
 
-| Konteks | Plain | Hybrid | Full |
-|---------|-------|--------|------|
-| Pop-up | "Hambatan apa?" | "Bottleneck apa?" | "Heart Demon macam apa?" |
-| Opsi 1 | Kurang Waktu | Qi belum terkumpul | Qi-mu bocor |
-| Opsi 2 | Kelelahan | Energi habis | Shen-mu lelah |
-| Opsi 3 | Lupa | Fokus buyar | Pikiranmu tercerai |
+| Konteks | Plain           | Hybrid             | Full                     |
+| ------- | --------------- | ------------------ | ------------------------ |
+| Pop-up  | "Hambatan apa?" | "Bottleneck apa?"  | "Heart Demon macam apa?" |
+| Opsi 1  | Kurang Waktu    | Qi belum terkumpul | Qi-mu bocor              |
+| Opsi 2  | Kelelahan       | Energi habis       | Shen-mu lelah            |
+| Opsi 3  | Lupa            | Fokus buyar        | Pikiranmu tercerai       |
 
 #### Growth Map
 
-| Konteks | Plain | Hybrid | Full |
-|---------|-------|--------|------|
-| Root | Akar Diri | Dao Heart | Dao Heart (道心) |
-| Branch | Domain | Palace | Palace (殿) |
-| Leaf | Kebiasaan | Practice | Cultivation Technique |
-| Flower | Stabil | Pattern Mengakar | Automaticity (自动化) |
-| Fruit | Keputusan | Wisdom Fruit | Dao Fruit (道果) |
+| Konteks | Plain     | Hybrid           | Full                  |
+| ------- | --------- | ---------------- | --------------------- |
+| Root    | Akar Diri | Dao Heart        | Dao Heart (道心)      |
+| Branch  | Domain    | Palace           | Palace (殿)           |
+| Leaf    | Kebiasaan | Practice         | Cultivation Technique |
+| Flower  | Stabil    | Pattern Mengakar | Automaticity (自动化) |
+| Fruit   | Keputusan | Wisdom Fruit     | Dao Fruit (道果)      |
 
 #### Journal
 
-| Konteks | Plain | Hybrid | Full |
-|---------|-------|--------|------|
-| Title | 📝 Catatan Harian | 📝 Qi Log | 📜 Heart Scripture (心记) |
-| Lite | Cepat | Journal Ringan | Meditasi Cepat |
-| Deep | Refleksi | Deep Reflection | Pemurnian Shen (炼神) |
+| Konteks | Plain             | Hybrid          | Full                      |
+| ------- | ----------------- | --------------- | ------------------------- |
+| Title   | 📝 Catatan Harian | 📝 Qi Log       | 📜 Heart Scripture (心记) |
+| Lite    | Cepat             | Journal Ringan  | Meditasi Cepat            |
+| Deep    | Refleksi          | Deep Reflection | Pemurnian Shen (炼神)     |
 
 #### Settings
 
-| Konteks | Plain | Hybrid | Full |
-|---------|-------|--------|------|
-| Language | Bahasa | Gaya Bahasa | Language Level |
-| Option | Sehari-hari | Paduan Tenang | Nuansa Kultivasi |
-| Dark Mode | Gelap | Mode Malam | Mode Meditasi |
+| Konteks   | Plain       | Hybrid        | Full             |
+| --------- | ----------- | ------------- | ---------------- |
+| Language  | Bahasa      | Gaya Bahasa   | Language Level   |
+| Option    | Sehari-hari | Paduan Tenang | Nuansa Kultivasi |
+| Dark Mode | Gelap       | Mode Malam    | Mode Meditasi    |
 
 ### Aturan Pemakaian
 
@@ -639,39 +639,39 @@ Bukan membuat keduanya identik sempurna, tetapi membantu pengguna melihat:
 
 ## 13. Mapping Fitur → Cultivation
 
-| Fitur Daoji | Nama Cultivation (Hybrid) | Sumbu | Catatan |
-|----------------|--------------------------|-------|---------|
-| Tree Vitality | Dao Tree | Realm + State | Pusat visual |
-| Canopy Load | Daily Qi Capacity | State | Kapasitas harian |
-| Action of the Day | Breakthrough Hari Ini | Palace + State | Practice prioritas |
-| Habit | Practice | Palace + Path | Teknik kultivasi |
-| Habit Logs | Practice Record | Realm | Catatan latihan |
-| Friction Intervention | Bottleneck Inquiry | Tribulation/State | Hambatan = data |
-| Journal Lite | Qi Log | State + Heart Sea | Sangat cocok |
-| Deep Reflection | Inner Chamber Reflection | Realm | Optional hybrid/full |
-| Weekly Pulse | Meridian Check / Resonance Check | Palace + Realm | Cek keseimbangan |
-| Life Compass | Dao Heart | Realm | Pusat nilai inti |
-| Value Mirror | Dao Heart Mirror | Realm + Tribulation | Declared vs lived |
-| Decision Journal | Forked Path Journal | Realm | Keputusan besar |
-| Marketplace | Sutra Pavilion / Heritage Archive | Path + World Bearing | Kosmetik/branding |
-| Recovery Mode | Seclusion Mode | State | Wajib dimuliakan |
-| Safety Card | Safety Card / Talisman Keselamatan | State | Dual label |
-| Radar Chart | Six Palace Resonance | Palace | Tetap fungsional |
+| Fitur Daoji           | Nama Cultivation (Hybrid)          | Sumbu                | Catatan              |
+| --------------------- | ---------------------------------- | -------------------- | -------------------- |
+| Tree Vitality         | Dao Tree                           | Realm + State        | Pusat visual         |
+| Canopy Load           | Daily Qi Capacity                  | State                | Kapasitas harian     |
+| Action of the Day     | Breakthrough Hari Ini              | Palace + State       | Practice prioritas   |
+| Habit                 | Practice                           | Palace + Path        | Teknik kultivasi     |
+| Habit Logs            | Practice Record                    | Realm                | Catatan latihan      |
+| Friction Intervention | Bottleneck Inquiry                 | Tribulation/State    | Hambatan = data      |
+| Journal Lite          | Qi Log                             | State + Heart Sea    | Sangat cocok         |
+| Deep Reflection       | Inner Chamber Reflection           | Realm                | Optional hybrid/full |
+| Weekly Pulse          | Meridian Check / Resonance Check   | Palace + Realm       | Cek keseimbangan     |
+| Life Compass          | Dao Heart                          | Realm                | Pusat nilai inti     |
+| Value Mirror          | Dao Heart Mirror                   | Realm + Tribulation  | Declared vs lived    |
+| Decision Journal      | Forked Path Journal                | Realm                | Keputusan besar      |
+| Marketplace           | Sutra Pavilion / Heritage Archive  | Path + World Bearing | Kosmetik/branding    |
+| Recovery Mode         | Seclusion Mode                     | State                | Wajib dimuliakan     |
+| Safety Card           | Safety Card / Talisman Keselamatan | State                | Dual label           |
+| Radar Chart           | Six Palace Resonance               | Palace               | Tetap fungsional     |
 
 ### Mapping Database → Cultivation
 
-| Tabel Daoji | Konsep Cultivation | Fungsi |
-|----------------|-------------------|--------|
-| `UserProfiles` | Spirit Root / Jati Diri | Identitas kultivator, Dao Heart |
-| `Habits` | Teknik Kultivasi (Practice) | Metode latihan harian |
-| `HabitLogs` | Catatan Latihan | Bukti pelaksanaan |
-| `LifeAudits` | Inspeksi Diri (Neiguan) | Evaluasi 6 Palace |
-| `WeeklyPulses` | Resonance Check | Refleksi periodik |
-| `JournalEntries` | Heart Scripture | Pemurnian Shen |
-| `ThinkingCanvasSessions` | Sesi Pemahaman (Wudao) | Metode berpikir |
-| `DecisionEntries` | Persimpangan Jalan | Momen penentu arah Dao |
-| `ValueDilemmaResponses` | Ujian Moral / Heart Demon | Dilema integritas |
-| `MarketplaceTemplates` | Warisan Teknik (Heritage) | Sharing antar kultivator |
+| Tabel Daoji              | Konsep Cultivation          | Fungsi                          |
+| ------------------------ | --------------------------- | ------------------------------- |
+| `UserProfiles`           | Spirit Root / Jati Diri     | Identitas kultivator, Dao Heart |
+| `Habits`                 | Teknik Kultivasi (Practice) | Metode latihan harian           |
+| `HabitLogs`              | Catatan Latihan             | Bukti pelaksanaan               |
+| `LifeAudits`             | Inspeksi Diri (Neiguan)     | Evaluasi 6 Palace               |
+| `WeeklyPulses`           | Resonance Check             | Refleksi periodik               |
+| `JournalEntries`         | Heart Scripture             | Pemurnian Shen                  |
+| `ThinkingCanvasSessions` | Sesi Pemahaman (Wudao)      | Metode berpikir                 |
+| `DecisionEntries`        | Persimpangan Jalan          | Momen penentu arah Dao          |
+| `ValueDilemmaResponses`  | Ujian Moral / Heart Demon   | Dilema integritas               |
+| `MarketplaceTemplates`   | Warisan Teknik (Heritage)   | Sharing antar kultivator        |
 
 ---
 
@@ -693,6 +693,7 @@ Bukan membuat keduanya identik sempurna, tetapi membantu pengguna melihat:
 5. **Habit list** → **Scheduled Practices** — daftar latihan hari ini
 
 **Yang harus dihindari:**
+
 - Menampilkan rank secara agresif
 - Mem-frame hari buruk sebagai "kultivasi rusak"
 
@@ -840,14 +841,14 @@ class CultivationStrings {
 
 **Fase 1 — Tidak perlu migrasi schema:**
 
-| Data Existing | Interpretasi Cultivation |
-|---------------|-------------------------|
-| `latestDomainScores` | Palace resonance |
-| `coreValues` | Dao Heart declaration |
-| `ValueDilemmaResponses` | Dao Heart Mirror input |
-| `HabitLogs` | Practice records |
-| `cumulativeDays` | Salah satu sinyal realm |
-| `supportMode` | State / seclusion |
+| Data Existing           | Interpretasi Cultivation |
+| ----------------------- | ------------------------ |
+| `latestDomainScores`    | Palace resonance         |
+| `coreValues`            | Dao Heart declaration    |
+| `ValueDilemmaResponses` | Dao Heart Mirror input   |
+| `HabitLogs`             | Practice records         |
+| `cumulativeDays`        | Salah satu sinyal realm  |
+| `supportMode`           | State / seclusion        |
 
 **Fase lanjutan (opsional):** field baru `cultivationThemeEnabled`, `vocabularyMode`.
 
@@ -859,74 +860,74 @@ class CultivationStrings {
 
 _Tambahkan lapisan kultivasi 4 sumbu di atas data yang sudah ada, tanpa mengubah database._
 
-| Task | Detail | Prioritas |
-|------|--------|-----------|
-| 0.1 | Buat `CultivationLayer` class dengan 4 sumbu | 🔴 P0 |
-| 0.2 | Kalkulasi realm dari multi-sinyal | 🔴 P0 |
-| 0.3 | Buat 5 state trigger logic | 🔴 P0 |
-| 0.4 | Buat `CultivationStrings` — 50+ method 3 level | 🔴 P0 |
-| 0.5 | Buat `cultivationProvider` + `languageLevelProvider` | 🔴 P0 |
-| 0.6 | Unit test — semua test lama tetap lulus | 🔴 P0 |
-| 0.7 | Integrasikan dengan `GrowthMapViewModel` | 🔴 P0 |
+| Task | Detail                                               | Prioritas |
+| ---- | ---------------------------------------------------- | --------- |
+| 0.1  | Buat `CultivationLayer` class dengan 4 sumbu         | 🔴 P0     |
+| 0.2  | Kalkulasi realm dari multi-sinyal                    | 🔴 P0     |
+| 0.3  | Buat 5 state trigger logic                           | 🔴 P0     |
+| 0.4  | Buat `CultivationStrings` — 50+ method 3 level       | 🔴 P0     |
+| 0.5  | Buat `cultivationProvider` + `languageLevelProvider` | 🔴 P0     |
+| 0.6  | Unit test — semua test lama tetap lulus              | 🔴 P0     |
+| 0.7  | Integrasikan dengan `GrowthMapViewModel`             | 🔴 P0     |
 
 **Output:** CultivationLayer bisa di-query dari dashboardDataProvider. 3-Level Language resolver siap pakai. Tidak ada perubahan database.
 
 ### Fase 1: Narasi & Bahasa (Minggu 3-4) — 3-Level Language
 
-| Task | Detail | Prioritas |
-|------|--------|-----------|
-| 1.1 | Implementasi `CultivationStrings` penuh | 🟡 P1 |
-| 1.2 | Settings: 3-Level Language picker (radio button) | 🟡 P1 |
-| 1.3 | Replace copy Dashboard (Tree Vitality, Action of the Day) | 🟡 P1 |
-| 1.4 | Replace copy Growth Map (nodes, labels, semantic) | 🟡 P1 |
-| 1.5 | Replace copy Friction Intervention | 🟡 P1 |
-| 1.6 | Replace copy Journal & Thinking Canvas | 🟡 P1 |
-| 1.7 | Replace copy Settings & Onboarding | 🟡 P1 |
-| 1.8 | Test aksesibilitas screen reader di 3 level | 🟡 P1 |
+| Task | Detail                                                    | Prioritas |
+| ---- | --------------------------------------------------------- | --------- |
+| 1.1  | Implementasi `CultivationStrings` penuh                   | 🟡 P1     |
+| 1.2  | Settings: 3-Level Language picker (radio button)          | 🟡 P1     |
+| 1.3  | Replace copy Dashboard (Tree Vitality, Action of the Day) | 🟡 P1     |
+| 1.4  | Replace copy Growth Map (nodes, labels, semantic)         | 🟡 P1     |
+| 1.5  | Replace copy Friction Intervention                        | 🟡 P1     |
+| 1.6  | Replace copy Journal & Thinking Canvas                    | 🟡 P1     |
+| 1.7  | Replace copy Settings & Onboarding                        | 🟡 P1     |
+| 1.8  | Test aksesibilitas screen reader di 3 level               | 🟡 P1     |
 
 ### Fase 2: Visual & UI (Minggu 5-8) — Kosmetik Cultivation
 
-| Task | Detail | Prioritas |
-|------|--------|-----------|
-| 2.1 | 5 State-based visual pohon (Growth, Recovery, Dormant, Tribulation, Integration) | 🟡 P1 |
-| 2.2 | Realm indicator badge + progress bar | 🟡 P1 |
-| 2.3 | Palace aura di Growth Map | 🟡 P1 |
-| 2.4 | Skin pohon: "Bamboo Immortal", "Peach Blossom", "Ancient Pine" | 🟢 P2 |
-| 2.5 | Panel status kultivasi (ringkasan 4 sumbu) | 🟡 P1 |
-| 2.6 | Test di device low-end (no jank) | 🟡 P1 |
+| Task | Detail                                                                           | Prioritas |
+| ---- | -------------------------------------------------------------------------------- | --------- |
+| 2.1  | 5 State-based visual pohon (Growth, Recovery, Dormant, Tribulation, Integration) | 🟡 P1     |
+| 2.2  | Realm indicator badge + progress bar                                             | 🟡 P1     |
+| 2.3  | Palace aura di Growth Map                                                        | 🟡 P1     |
+| 2.4  | Skin pohon: "Bamboo Immortal", "Peach Blossom", "Ancient Pine"                   | 🟢 P2     |
+| 2.5  | Panel status kultivasi (ringkasan 4 sumbu)                                       | 🟡 P1     |
+| 2.6  | Test di device low-end (no jank)                                                 | 🟡 P1     |
 
 ### Fase 3: Depth (Minggu 9-12) — Achievement, Path & Heart Demon
 
-| Task | Detail | Prioritas |
-|------|--------|-----------|
-| 3.1 | Achievement system (5 milestone) | 🟡 P1 |
-| 3.2 | 6 Paths detection algorithm | 🟢 P2 |
-| 3.3 | Path profile UI | 🟢 P2 |
-| 3.4 | Heart Demon Detection | 🟡 P1 |
-| 3.5 | Heart Demon Severing flow | 🟢 P2 |
-| 3.6 | Demonic Cultivation warning | 🟡 P1 |
-| 3.7 | Test: tidak ada streak requirement | 🟡 P1 |
+| Task | Detail                             | Prioritas |
+| ---- | ---------------------------------- | --------- |
+| 3.1  | Achievement system (5 milestone)   | 🟡 P1     |
+| 3.2  | 6 Paths detection algorithm        | 🟢 P2     |
+| 3.3  | Path profile UI                    | 🟢 P2     |
+| 3.4  | Heart Demon Detection              | 🟡 P1     |
+| 3.5  | Heart Demon Severing flow          | 🟢 P2     |
+| 3.6  | Demonic Cultivation warning        | 🟡 P1     |
+| 3.7  | Test: tidak ada streak requirement | 🟡 P1     |
 
 **5 Achievement Awal (Anti-Guilt):**
 
-| Achievement | Trigger | Copy Hybrid |
-|-------------|---------|-------------|
-| Realm Breakthrough | Pertama kali masuk Realm baru | "Selamat, Dao Heart-mu semakin kokoh!" |
-| Qi Milestone | 100 practice selesai | "Qi-mu mulai terkumpul — 100 practice!" |
-| Tribulation Survivor | Pertama kali selesai Recovery | "Kamu melewati tribulation dan bangkit lebih kuat." |
-| Dao Comprehension | 1 tahun berkultivasi | "Setahun dalam Dao — bijaksana dalam setiap langkah." |
-| Legacy Builder | Bagikan template di Marketplace | "Warisan teknikmu membantu kultivator lain." |
+| Achievement          | Trigger                         | Copy Hybrid                                           |
+| -------------------- | ------------------------------- | ----------------------------------------------------- |
+| Realm Breakthrough   | Pertama kali masuk Realm baru   | "Selamat, Dao Heart-mu semakin kokoh!"                |
+| Qi Milestone         | 100 practice selesai            | "Qi-mu mulai terkumpul — 100 practice!"               |
+| Tribulation Survivor | Pertama kali selesai Recovery   | "Kamu melewati tribulation dan bangkit lebih kuat."   |
+| Dao Comprehension    | 1 tahun berkultivasi            | "Setahun dalam Dao — bijaksana dalam setiap langkah." |
+| Legacy Builder       | Bagikan template di Marketplace | "Warisan teknikmu membantu kultivator lain."          |
 
 ### Fase 4: Ekspansi (Minggu 13+)
 
-| Task | Detail | Prioritas |
-|------|--------|-----------|
-| 4.1 | Cultivation Journal Mode | 🟢 P2 |
-| 4.2 | Palace Resonance Visualization (radar chart) | 🟢 P2 |
-| 4.3 | Mind Demon Diary | 🟢 P2 |
-| 4.4 | Dao Alignment Score | 🟢 P2 |
-| 4.5 | Sekte (Social Mode — tanpa kompetisi) | 🔵 P3 |
-| 4.6 | User Guide — Cultivation Mode | 🟢 P2 |
+| Task | Detail                                       | Prioritas |
+| ---- | -------------------------------------------- | --------- |
+| 4.1  | Cultivation Journal Mode                     | 🟢 P2     |
+| 4.2  | Palace Resonance Visualization (radar chart) | 🟢 P2     |
+| 4.3  | Mind Demon Diary                             | 🟢 P2     |
+| 4.4  | Dao Alignment Score                          | 🟢 P2     |
+| 4.5  | Sekte (Social Mode — tanpa kompetisi)        | 🔵 P3     |
+| 4.6  | User Guide — Cultivation Mode                | 🟢 P2     |
 
 ---
 
@@ -934,25 +935,25 @@ _Tambahkan lapisan kultivasi 4 sumbu di atas data yang sudah ada, tanpa mengubah
 
 ### Test yang Harus Lolos
 
-| Test | Deskripsi | Kritis? |
-|------|-----------|---------|
-| CultivationLayer from existing data | Semua 4 sumbu bisa dihitung tanpa data baru | ✅ Ya |
-| No DB migration needed | Tidak ada perubahan schema database | ✅ Ya |
-| 3-Level Language consistency | Semua komponen punya string di 3 level | ✅ Ya |
-| Screen reader compatibility | Semantic label tidak hilang di level manapun | ✅ Ya |
-| Anti-Guilt compliance | Tidak ada streak punishment, tidak ada judgment | ✅ Ya |
-| State transition logic | State berganti sesuai trigger yang benar | ✅ Ya |
-| Multi-sinyal realm calculation | Realm tidak hanya dari hari | ✅ Ya |
-| Visual accessibility | Aura/warna tidak mengandalkan warna saja | ✅ Ya |
-| Performance impact | Animasi cultivation tidak menyebabkan jank | ✅ Ya |
+| Test                                | Deskripsi                                       | Kritis? |
+| ----------------------------------- | ----------------------------------------------- | ------- |
+| CultivationLayer from existing data | Semua 4 sumbu bisa dihitung tanpa data baru     | ✅ Ya   |
+| No DB migration needed              | Tidak ada perubahan schema database             | ✅ Ya   |
+| 3-Level Language consistency        | Semua komponen punya string di 3 level          | ✅ Ya   |
+| Screen reader compatibility         | Semantic label tidak hilang di level manapun    | ✅ Ya   |
+| Anti-Guilt compliance               | Tidak ada streak punishment, tidak ada judgment | ✅ Ya   |
+| State transition logic              | State berganti sesuai trigger yang benar        | ✅ Ya   |
+| Multi-sinyal realm calculation      | Realm tidak hanya dari hari                     | ✅ Ya   |
+| Visual accessibility                | Aura/warna tidak mengandalkan warna saja        | ✅ Ya   |
+| Performance impact                  | Animasi cultivation tidak menyebabkan jank      | ✅ Ya   |
 
 ### Metrik Produk
 
-| Metrik | Target 3 Bulan | Cara Ukur |
-|--------|----------------|-----------|
-| Adoption | ≥ 40% user menggunakan Hybrid/Full | Language level analytics |
-| Retention | Tidak ada penurunan retention | Cohort comparison |
-| Session Length | Tetap atau naik (+5-10%) | Session tracking |
+| Metrik            | Target 3 Bulan                           | Cara Ukur                 |
+| ----------------- | ---------------------------------------- | ------------------------- |
+| Adoption          | ≥ 40% user menggunakan Hybrid/Full       | Language level analytics  |
+| Retention         | Tidak ada penurunan retention            | Cohort comparison         |
+| Session Length    | Tetap atau naik (+5-10%)                 | Session tracking          |
 | Realm progression | 30% user mencapai Realm 3+ dalam 3 bulan | CultivationLayer provider |
 
 ### Boundary Conditions
@@ -982,16 +983,16 @@ BOUNDARY: Tidak ada "kematian" dalam sistem
 
 ### Hal yang TIDAK BOLEH Dilakukan
 
-| ❌ | Alasan |
-|----|--------|
-| Memaksa level bahasa tertentu | Alienasi user — harus bisa dipilih |
-| Mengubah database untuk cultivation layer | Memperbesar risiko migrasi |
-| Leaderboard "Level Kultivasi" | Melanggar Anti-Guilt |
-| Streak "Latihan Harian" | Kembali ke streak punishment |
-| Judgment "Demonic Cultivation" pada user | Demonic = pola, bukan label user |
-| Mikrotransaksi "Pil Peningkat Qi" | Predatory monetization |
-| State "mati" atau "gagal" | Tidak ada visual kematian |
-| Realm sebagai ranking sosial | Realm interpretatif, bukan prestise |
+| ❌                                        | Alasan                              |
+| ----------------------------------------- | ----------------------------------- |
+| Memaksa level bahasa tertentu             | Alienasi user — harus bisa dipilih  |
+| Mengubah database untuk cultivation layer | Memperbesar risiko migrasi          |
+| Leaderboard "Level Kultivasi"             | Melanggar Anti-Guilt                |
+| Streak "Latihan Harian"                   | Kembali ke streak punishment        |
+| Judgment "Demonic Cultivation" pada user  | Demonic = pola, bukan label user    |
+| Mikrotransaksi "Pil Peningkat Qi"         | Predatory monetization              |
+| State "mati" atau "gagal"                 | Tidak ada visual kematian           |
+| Realm sebagai ranking sosial              | Realm interpretatif, bukan prestise |
 
 ---
 
@@ -999,37 +1000,37 @@ BOUNDARY: Tidak ada "kematian" dalam sistem
 
 ### Istilah Kunci
 
-| Istilah | Arti | Level Bahasa |
-|---------|------|-------------|
-| **九炼归道** | Jalan Sembilan Penyulingan | Full |
-| **Realm** | Tingkat perkembangan jangka panjang | Hybrid |
-| **Palace** | Domain kehidupan | Hybrid |
-| **Path** | Gaya bertumbuh personal | Hybrid |
-| **State/Season** | Kondisi saat ini | Plain |
-| **Dao Heart** | Nilai inti yang memandu hidup | Hybrid |
-| **Qi** | Energi perhatian dan kapasitas harian | Hybrid |
-| **Practice** | Kebiasaan/habit | Hybrid |
-| **Breakthrough** | Aksi prioritas harian | Hybrid |
-| **Tribulation** | Ujian/krisis yang menguji fondasi | Hybrid |
-| **Heart Demon** | Hambatan psikologis batin | Hybrid |
-| **Demonic Cultivation** | Pola tumbuh tidak sehat | Hybrid |
-| **Seclusion** | Recovery/Mode Istirahat | Full |
-| **Heritage** | Marketplace template | Full |
-| **Resonance** | Weekly Pulse | Full |
+| Istilah                 | Arti                                  | Level Bahasa |
+| ----------------------- | ------------------------------------- | ------------ |
+| **九炼归道**            | Jalan Sembilan Penyulingan            | Full         |
+| **Realm**               | Tingkat perkembangan jangka panjang   | Hybrid       |
+| **Palace**              | Domain kehidupan                      | Hybrid       |
+| **Path**                | Gaya bertumbuh personal               | Hybrid       |
+| **State/Season**        | Kondisi saat ini                      | Plain        |
+| **Dao Heart**           | Nilai inti yang memandu hidup         | Hybrid       |
+| **Qi**                  | Energi perhatian dan kapasitas harian | Hybrid       |
+| **Practice**            | Kebiasaan/habit                       | Hybrid       |
+| **Breakthrough**        | Aksi prioritas harian                 | Hybrid       |
+| **Tribulation**         | Ujian/krisis yang menguji fondasi     | Hybrid       |
+| **Heart Demon**         | Hambatan psikologis batin             | Hybrid       |
+| **Demonic Cultivation** | Pola tumbuh tidak sehat               | Hybrid       |
+| **Seclusion**           | Recovery/Mode Istirahat               | Full         |
+| **Heritage**            | Marketplace template                  | Full         |
+| **Resonance**           | Weekly Pulse                          | Full         |
 
 ### Perbandingan Tema Lama → Baru
 
 | Tema Pohon (Lama) | Tema Cultivation (Baru) |
-|-------------------|------------------------|
-| Seed → Mature | 8 Realm |
-| 6 Domain | 6 Palace |
-| Tree Vitality | 5 State/Season |
-| Akar Diri | Dao Heart |
-| Daun Aktif | Practice |
-| Bunga | Automaticity |
-| Buah | Decision/Kebijaksanaan |
-| Musim | State |
-| Canopy Load | Qi Capacity |
+| ----------------- | ----------------------- |
+| Seed → Mature     | 8 Realm                 |
+| 6 Domain          | 6 Palace                |
+| Tree Vitality     | 5 State/Season          |
+| Akar Diri         | Dao Heart               |
+| Daun Aktif        | Practice                |
+| Bunga             | Automaticity            |
+| Buah              | Decision/Kebijaksanaan  |
+| Musim             | State                   |
+| Canopy Load       | Qi Capacity             |
 
 ---
 

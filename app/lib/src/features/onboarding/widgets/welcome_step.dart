@@ -9,10 +9,7 @@ class WelcomeStep extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          '🌳',
-          style: TextStyle(fontSize: 80),
-        ),
+        const Text('🌳', style: TextStyle(fontSize: 80)),
         const SizedBox(height: 24),
         Text(
           'Selamat Datang di Daoji',
