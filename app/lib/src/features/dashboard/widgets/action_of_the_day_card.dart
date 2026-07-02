@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../../core/domain/app_constants.dart';
 import '../../../core/services/error_handler_service.dart';
+import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
 import '../dashboard_provider.dart';
 
@@ -147,12 +148,10 @@ class ActionOfTheDayCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 OutlinedButton(
                   onPressed: isRecovery ? null : onNotCapablePressed,
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(88, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  style: AppButtonStyles.habitSecondary(context).copyWith(
+                    side: WidgetStateProperty.all(
+                      const BorderSide(color: Colors.redAccent, width: 1),
                     ),
-                    side: const BorderSide(color: Colors.redAccent, width: 1),
                   ),
                   child: const Text(
                     'Tidak Sanggup',

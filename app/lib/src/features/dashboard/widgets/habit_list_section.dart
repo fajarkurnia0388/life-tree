@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/app_constants.dart';
+import '../../../core/widgets/empty_state_widget.dart';import '../../../core/animations/dialog_animations.dart';import 'package:drift/drift.dart' as drift;
 import 'package:go_router/go_router.dart';
 import '../../../data/local_db/database.dart';
+import '../../../core/providers/db_provider.dart';
 import '../dashboard_provider.dart';
 
 /// Widget untuk menampilkan daftar kebiasaan hari ini
@@ -58,7 +60,11 @@ class HabitListSection extends ConsumerWidget {
         ),
         const SizedBox(height: 10),
         if (habitsWithLogs.isEmpty)
-          _buildEmptyDomainHabitsCard(theme, context, selectedDomainFilter)
+          const EmptyStateWidget(
+            icon: Icons.favorite_border,
+            title: 'Belum Ada Kebiasaan',
+            message: 'Mulai bangun kebiasaan positif untuk domain ini',
+          )
         else
           ListView.builder(
             shrinkWrap: true,
@@ -71,34 +77,6 @@ class HabitListSection extends ConsumerWidget {
             },
           ),
       ],
-    );
-  }
-
-  Widget _buildEmptyDomainHabitsCard(ThemeData theme, BuildContext context, String selectedDomain) {
-    return Card(
-      child: InkWell(
-        onTap: () => context.push('/add-habit'),
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
-          child: Column(
-            children: [
-              Icon(Icons.add_circle_outline_rounded, size: 40, color: theme.colorScheme.primary),
-              const SizedBox(height: 12),
-              const Text(
-                'Belum ada kebiasaan aktif',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Ketuk untuk membuat kebiasaan pertamamu di domain $selectedDomain.',
-                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -120,24 +98,68 @@ class HabitListSection extends ConsumerWidget {
     return Semantics(
       label: semanticsLabel,
       button: !paused,
-      child: Opacity(
-        opacity: paused ? 0.55 : 1.0,
-        child: Card(
+      child: Dismissible(
+        key: Key(item.habit.habitId),
+        direction: DismissDirection.endToStart,
+        background: Container(
           margin: const EdgeInsets.symmetric(vertical: 6.0),
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
+          decoration: BoxDecoration(
+            color: Colors.red,
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-              color: isDone ? domainColor : theme.colorScheme.onSurface.withValues(alpha: 0.08),
-              width: isDone ? 2 : 1,
-            ),
           ),
-          child: InkWell(
-            onTap: (isDone || paused) ? null : () => onHabitToggle(context, item.habit, item.log),
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 20),
+          child: const Icon(Icons.delete, color: Colors.white),
+        ),
+        confirmDismiss: (direction) async {
+          return await showAnimatedDialog<bool>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Hapus Kebiasaan?'),
+                content: Text('Yakin ingin menghapus "${item.habit.title}"?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('Batal'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: TextButton.styleFrom(foregroundColor: Colors.red),
+                    child: const Text('Hapus'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        onDismissed: (direction) async {
+          final db = ref.read(dbProvider);
+          await (db.update(db.habits)
+            ..where((tbl) => tbl.habitId.equals(item.habit.habitId)))
+            .write(HabitsCompanion(
+              deletedAt: drift.Value(DateTime.now()),
+            ));
+          ref.invalidate(dashboardDataProvider);
+        },
+        child: Opacity(
+          opacity: paused ? 0.55 : 1.0,
+          child: Card(
+            margin: const EdgeInsets.symmetric(vertical: 6.0),
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(
+                color: isDone ? domainColor : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                width: isDone ? 2 : 1,
+              ),
+            ),
+            child: InkWell(
+              onTap: (isDone || paused) ? null : () => onHabitToggle(context, item.habit, item.log),
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
                 children: [
                   Container(
                     width: 32,
@@ -240,6 +262,7 @@ class HabitListSection extends ConsumerWidget {
                 ],
               ),
             ),
+          ),
           ),
         ),
       ),

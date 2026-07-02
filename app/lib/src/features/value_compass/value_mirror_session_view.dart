@@ -3,9 +3,11 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/services.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
 import '../../core/theme/theme.dart';
+import '../../core/theme/button_theme.dart';
 import '../../core/widgets/error_state_widget.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import 'domain/value_dilemma.dart';
@@ -29,6 +31,9 @@ class _ValueMirrorSessionViewState
   final _pageController = PageController();
   int _currentIndex = 0;
   bool _isSaving = false;
+  
+  // Track session progress for draft
+  final Set<String> _answeredKeys = {};
 
   @override
   void initState() {
@@ -92,6 +97,9 @@ class _ValueMirrorSessionViewState
       ref.invalidate(revealedValuesProvider);
       ref.invalidate(dashboardDataProvider);
 
+      // Track answered question
+      _answeredKeys.add(dilemma.key);
+
       _nextPage(totalCards);
     } catch (e) {
       if (mounted) {
@@ -131,6 +139,9 @@ class _ValueMirrorSessionViewState
           text: text,
         );
       }
+
+      // Track answered question
+      _answeredKeys.add(question.key);
 
       _nextPage(totalCards);
     } catch (e) {
@@ -241,12 +252,15 @@ class _ValueMirrorSessionViewState
                 builder: (context) {
                   return AlertDialog(
                     title: const Text('Keluar dari Sesi?'),
-                    content: const Text(
-                      'Jawaban yang sudah tersimpan tidak akan hilang, tapi sesi ini akan dihentikan.',
+                    content: Text(
+                      _answeredKeys.isEmpty
+                          ? 'Anda belum menjawab pertanyaan apapun. Yakin ingin keluar?'
+                          : 'Anda telah menjawab ${_answeredKeys.length} pertanyaan. Progres sudah tersimpan otomatis. Yakin ingin keluar?',
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
+                        style: AppButtonStyles.text(context),
                         child: const Text('Lanjutkan'),
                       ),
                       ElevatedButton(
@@ -254,13 +268,11 @@ class _ValueMirrorSessionViewState
                           Navigator.pop(context); // Close dialog
                           context.go('/');
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: CalmTheme.alertMutedRed,
+                        style: AppButtonStyles.destructive(context).copyWith(
+                          backgroundColor: WidgetStateProperty.all(CalmTheme.alertMutedRed),
+                          foregroundColor: WidgetStateProperty.all(Colors.white),
                         ),
-                        child: const Text(
-                          'Keluar',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        child: const Text('Keluar'),
                       ),
                     ],
                   );
@@ -300,7 +312,12 @@ class _ValueMirrorSessionViewState
             children: [
               PageView.builder(
                 controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
                 itemCount: cards.length,
                 itemBuilder: (context, index) {
                   final cardData = cards[index];
@@ -339,6 +356,55 @@ class _ValueMirrorSessionViewState
                   }
                   return const SizedBox();
                 },
+              ),
+              // Navigation buttons
+              Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Previous button
+                      if (_currentIndex > 0)
+                        FloatingActionButton.small(
+                          heroTag: 'prev_btn',
+                          onPressed: _isSaving ? null : () {
+                            HapticFeedback.lightImpact();
+                            _pageController.previousPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                          child: const Icon(Icons.arrow_back),
+                        )
+                      else
+                        const SizedBox(width: 48),
+                      // Progress indicator
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${_currentIndex + 1} / ${cards.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      // Next button (disabled, use swipe or answer)
+                      const SizedBox(width: 48),
+                    ],
+                  ),
+                ),
               ),
               if (_isSaving)
                 Container(

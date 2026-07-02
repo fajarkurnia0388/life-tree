@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/providers/db_provider.dart';
+import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
 
 class CreateDecisionSheet extends ConsumerStatefulWidget {
@@ -337,13 +338,8 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
               ),
               const SizedBox(height: 24),
               ElevatedButton(
+                style: AppButtonStyles.primary(context),
                 onPressed: _isSaving ? null : _saveDecision,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
-                  minimumSize: const Size(88, 52),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
                 child: _isSaving
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text(

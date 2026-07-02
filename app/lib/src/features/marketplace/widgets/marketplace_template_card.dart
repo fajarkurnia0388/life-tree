@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/button_theme.dart';
 import '../marketplace_service.dart';
 
 class MarketplaceTemplateCard extends StatelessWidget {
@@ -163,11 +164,8 @@ class MarketplaceTemplateCard extends StatelessWidget {
               children: [
                 OutlinedButton(
                   onPressed: onRate,
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(88, 44),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                  style: AppButtonStyles.secondary(context).copyWith(
+                    minimumSize: WidgetStateProperty.all(const Size(88, 44)),
                   ),
                   child: const Text(
                     'Beri Rating',
@@ -177,13 +175,8 @@ class MarketplaceTemplateCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 ElevatedButton(
                   onPressed: onDownload,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    minimumSize: const Size(88, 44),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                  style: AppButtonStyles.primary(context).copyWith(
+                    minimumSize: WidgetStateProperty.all(const Size(88, 44)),
                   ),
                   child: const Text(
                     'Gunakan',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
 import '../../../core/providers/db_provider.dart';
 
@@ -166,14 +167,12 @@ class _TreeSkinShopBottomSheetState
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
+                  style: AppButtonStyles.secondary(context),
                   child: const Text('Batal'),
                 ),
                 ElevatedButton(
+                  style: AppButtonStyles.primary(context),
                   onPressed: () => Navigator.pop(context, true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  ),
                   child: const Text('Bayar Sekarang'),
                 ),
               ],

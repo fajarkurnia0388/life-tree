@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
@@ -46,6 +47,12 @@ class _ThinkingCanvasLiteViewState
 
   List<MindMapNode> _mindMapNodes = [];
   String _customWorkspaceValue = '';
+  
+  // Autosave functionality
+  Timer? _autosaveTimer;
+  bool _isSavingDraft = false;
+  DateTime? _lastDraftSaved;
+  String? _currentDraftId;
 
   void _onMethodChanged(String methodKey) {
     // Reset visual workspace variables
@@ -399,6 +406,9 @@ class _ThinkingCanvasLiteViewState
 
     ref.invalidate(dashboardDataProvider);
 
+    // Clear draft after successful save
+    await _clearDraft();
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -407,6 +417,192 @@ class _ThinkingCanvasLiteViewState
         ),
       );
       context.pop();
+    }
+  }
+
+  void _startAutosaveTimer() {
+    _autosaveTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      _saveDraft();
+    });
+  }
+
+  Future<void> _saveDraft() async {
+    // Don't save empty drafts
+    if (_topicController.text.trim().isEmpty && 
+        _summaryController.text.trim().isEmpty &&
+        _actionController.text.trim().isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _isSavingDraft = true;
+    });
+
+    try {
+      final db = ref.read(dbProvider);
+      final profiles = await db.select(db.userProfiles).get();
+      if (profiles.isEmpty) return;
+      final userId = profiles.first.userId;
+
+      _currentDraftId ??= const Uuid().v4();
+
+      // Prepare draft data
+      final draftData = {
+        'method': _selectedMethod,
+        'topic': _topicController.text.trim(),
+        'summary': _summaryController.text.trim(),
+        'action': _actionController.text.trim(),
+        'ref': _refController.text.trim(),
+        'addToHabits': _addToHabits,
+        'habitDomain': _habitDomain,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+
+      // Add dynamic controllers data
+      if (_dynamicControllers.isNotEmpty) {
+        final dynamicData = <String, String>{};
+        _dynamicControllers.forEach((key, controller) {
+          dynamicData[key] = controller.text.trim();
+        });
+        draftData['dynamicFields'] = dynamicData;
+      }
+
+      // Save to database as a draft session
+      final draftSession = ThinkingCanvasSessionsCompanion.insert(
+        sessionId: _currentDraftId!,
+        userId: userId,
+        methodKey: _selectedMethod,
+        topic: drift.Value(_topicController.text.trim().isEmpty ? null : _topicController.text.trim()),
+        summaryText: drift.Value(jsonEncode(draftData)),
+        nextAction: drift.Value(_actionController.text.trim().isEmpty ? null : _actionController.text.trim()),
+        paperArtifactRef: drift.Value(_refController.text.trim().isEmpty ? null : _refController.text.trim()),
+        paperSession: const drift.Value(false), // Mark as draft
+        createdAt: DateTime.now(),
+      );
+
+      // Check if draft already exists
+      final existing = await (db.select(db.thinkingCanvasSessions)
+        ..where((tbl) => tbl.sessionId.equals(_currentDraftId!)))
+        .getSingleOrNull();
+
+      if (existing != null) {
+        // Update existing draft
+        await (db.update(db.thinkingCanvasSessions)
+          ..where((tbl) => tbl.sessionId.equals(_currentDraftId!)))
+          .write(draftSession);
+      } else {
+        // Insert new draft
+        await db.into(db.thinkingCanvasSessions).insert(draftSession);
+      }
+
+      setState(() {
+        _lastDraftSaved = DateTime.now();
+      });
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'ThinkingCanvasLiteView.saveDraft',
+      );
+    } finally {
+      setState(() {
+        _isSavingDraft = false;
+      });
+    }
+  }
+
+  Future<void> _loadDraft() async {
+    try {
+      final db = ref.read(dbProvider);
+      final profiles = await db.select(db.userProfiles).get();
+      if (profiles.isEmpty) return;
+      final userId = profiles.first.userId;
+
+      // Find most recent draft (paperSession = false)
+      final drafts = await (db.select(db.thinkingCanvasSessions)
+        ..where((tbl) => tbl.userId.equals(userId) & tbl.paperSession.equals(false))
+        ..orderBy([(tbl) => drift.OrderingTerm.desc(tbl.createdAt)])
+        ..limit(1))
+        .get();
+
+      if (drafts.isEmpty) return;
+
+      final draft = drafts.first;
+      _currentDraftId = draft.sessionId;
+
+      // Parse draft data
+      if (draft.summaryText != null) {
+        try {
+          final draftData = jsonDecode(draft.summaryText!) as Map<String, dynamic>;
+          
+          setState(() {
+            _selectedMethod = draftData['method'] as String? ?? 'MindDump';
+            _topicController.text = draftData['topic'] as String? ?? '';
+            _summaryController.text = draftData['summary'] as String? ?? '';
+            _actionController.text = draftData['action'] as String? ?? '';
+            _refController.text = draftData['ref'] as String? ?? '';
+            _addToHabits = draftData['addToHabits'] as bool? ?? false;
+            _habitDomain = draftData['habitDomain'] as String? ?? 'Tubuh';
+          });
+
+          // Restore dynamic fields if present
+          if (draftData.containsKey('dynamicFields')) {
+            final dynamicData = draftData['dynamicFields'] as Map<String, dynamic>;
+            dynamicData.forEach((key, value) {
+              if (_dynamicControllers.containsKey(key)) {
+                _dynamicControllers[key]!.text = value as String;
+              }
+            });
+          }
+
+          _lastDraftSaved = DateTime.parse(draftData['timestamp'] as String);
+
+          // Show restoration message
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Draft terakhir berhasil dipulihkan'),
+                backgroundColor: Colors.blue,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        } catch (e, stackTrace) {
+          ErrorHandlerService().logError(
+            e,
+            stackTrace,
+            context: 'ThinkingCanvasLiteView.loadDraft.parse',
+          );
+        }
+      }
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'ThinkingCanvasLiteView.loadDraft',
+      );
+    }
+  }
+
+  Future<void> _clearDraft() async {
+    if (_currentDraftId == null) return;
+
+    try {
+      final db = ref.read(dbProvider);
+      await (db.delete(db.thinkingCanvasSessions)
+        ..where((tbl) => tbl.sessionId.equals(_currentDraftId!)))
+        .go();
+      
+      setState(() {
+        _currentDraftId = null;
+        _lastDraftSaved = null;
+      });
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'ThinkingCanvasLiteView.clearDraft',
+      );
     }
   }
 
@@ -495,7 +691,9 @@ class _ThinkingCanvasLiteViewState
   @override
   void initState() {
     super.initState();
+    _startAutosaveTimer();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadDraft();
       _checkFirstTimeUsage();
       _loadPremiumStatus();
     });
@@ -1041,6 +1239,7 @@ class _ThinkingCanvasLiteViewState
   @override
   void dispose() {
     _canvasTimer?.cancel();
+    _autosaveTimer?.cancel();
     _topicController.dispose();
     _summaryController.dispose();
     _actionController.dispose();
@@ -1063,6 +1262,31 @@ class _ThinkingCanvasLiteViewState
       appBar: AppBar(
         title: const Text('Thinking Canvas'),
         actions: [
+          // Draft status indicator
+          if (_lastDraftSaved != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _isSavingDraft ? Icons.sync : Icons.check_circle,
+                      size: 16,
+                      color: _isSavingDraft ? Colors.orange : Colors.green,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _isSavingDraft ? 'Menyimpan...' : 'Draft tersimpan',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.help_outline_rounded),
             tooltip: 'Panduan Metode',
@@ -1303,7 +1527,10 @@ class _ThinkingCanvasLiteViewState
 
               // Save Button
               ElevatedButton(
-                onPressed: _saveCanvasSession,
+                onPressed: () {
+                  HapticFeedback.mediumImpact();
+                  _saveCanvasSession();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: theme.colorScheme.onPrimary,

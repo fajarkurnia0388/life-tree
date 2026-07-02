@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/theme.dart';
+import '../../core/theme/button_theme.dart';
 
 class ValueMirrorIntroView extends StatelessWidget {
   const ValueMirrorIntroView({super.key});
@@ -94,15 +95,13 @@ class ValueMirrorIntroView extends StatelessWidget {
                     'Memulai sesi Value Mirror untuk refleksi nilai hidup Anda',
                 button: true,
                 child: ElevatedButton(
-                  onPressed: () => context.push('/value-mirror/session'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: CalmTheme.secondaryBlue,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                  style: AppButtonStyles.primary(context).copyWith(
+                    backgroundColor: WidgetStateProperty.all(CalmTheme.secondaryBlue),
+                    padding: WidgetStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 16),
                     ),
                   ),
+                  onPressed: () => context.push('/value-mirror/session'),
                   child: const Text(
                     'Mulai Sesi',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -115,6 +114,7 @@ class ValueMirrorIntroView extends StatelessWidget {
                 hint: 'Kembali ke halaman sebelumnya',
                 button: true,
                 child: TextButton(
+                  style: AppButtonStyles.text(context),
                   onPressed: () => context.pop(),
                   child: Text(
                     'Kembali',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../domain/value_dilemma.dart';
 
 class ValueDilemmaCard extends StatelessWidget {
@@ -70,7 +71,10 @@ class ValueDilemmaCard extends StatelessWidget {
             const Spacer(),
             // Option A Button
             ElevatedButton(
-              onPressed: () => onSelected('A', dilemma.optionAValueTag),
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                onSelected('A', dilemma.optionAValueTag);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: isDark ? 0.3 : 0.6),
                 foregroundColor: theme.colorScheme.onSurface,
@@ -90,7 +94,10 @@ class ValueDilemmaCard extends StatelessWidget {
             const SizedBox(height: 12),
             // Option B Button
             ElevatedButton(
-              onPressed: () => onSelected('B', dilemma.optionBValueTag),
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                onSelected('B', dilemma.optionBValueTag);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: isDark ? 0.3 : 0.6),
                 foregroundColor: theme.colorScheme.onSurface,

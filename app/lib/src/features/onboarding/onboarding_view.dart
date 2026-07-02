@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/theme/button_theme.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'widgets/welcome_step.dart';
@@ -252,17 +253,12 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                   else
                     const SizedBox(width: 88),
                   ElevatedButton(
+                    style: AppButtonStyles.primary(context).copyWith(
+                      minimumSize: WidgetStateProperty.all(const Size(120, 48)),
+                    ),
                     onPressed: _currentPage == 3
                         ? (_disclaimerComplete ? _completeOnboarding : null)
                         : _nextPage,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: theme.colorScheme.onPrimary,
-                      minimumSize: const Size(120, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                    ),
                     child: Text(_currentPage == 3 ? 'Mulai' : 'Lanjut'),
                   ),
                 ],

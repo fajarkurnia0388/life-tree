@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/theme/form_theme.dart';
+import '../../core/theme/button_theme.dart';
 import '../../data/local_db/database.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
@@ -378,6 +379,7 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                   context.pop(); // Go back to dashboard
                 }
               },
+              style: AppButtonStyles.text(context),
               child: const Text('Mengerti'),
             ),
             ElevatedButton(

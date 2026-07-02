@@ -6,6 +6,8 @@ import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/theme/form_theme.dart';
+import '../../core/theme/button_theme.dart';
+import '../../core/animations/dialog_animations.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'widgets/habit_templates.dart';
@@ -79,7 +81,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   Future<void> _deleteHabit() async {
     if (_existingHabit == null) return;
 
-    final proceed = await showDialog<bool>(
+    final proceed = await showAnimatedDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -90,9 +92,11 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
+              style: AppButtonStyles.secondary(context),
               child: const Text('Batal'),
             ),
             TextButton(
+              style: AppButtonStyles.text(context),
               onPressed: () => Navigator.pop(context, true),
               child: const Text('Hapus', style: TextStyle(color: Colors.red)),
             ),
@@ -637,15 +641,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               const SizedBox(height: 32),
 
               ElevatedButton(
+                style: AppButtonStyles.primary(context),
                 onPressed: _saveHabit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
-                  minimumSize: const Size(88, 52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
                 child: Text(
                   _isEditing ? 'Perbarui Kebiasaan' : 'Simpan Kebiasaan',
                   style: const TextStyle(

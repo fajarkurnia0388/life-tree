@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/domain/app_constants.dart';
 import '../../../core/providers/db_provider.dart';
+import '../../../core/theme/button_theme.dart';
 import '../../../core/widgets/loading_state_widget.dart';
 import '../../../data/local_db/database.dart';
 import '../marketplace_service.dart';
@@ -150,6 +151,7 @@ class _ShareTemplateBottomSheetState
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
+                    style: AppButtonStyles.secondary(context),
                     child: const Text('Tutup'),
                   ),
                 ],

@@ -7,6 +7,8 @@ import 'dart:io';
 import 'dart:convert';
 import '../../../core/providers/db_provider.dart';
 import '../../../core/theme/theme.dart';
+import '../../../core/theme/button_theme.dart';
+import '../../../core/animations/dialog_animations.dart';
 import '../../../data/local_db/database.dart';
 import '../dashboard_provider.dart';
 
@@ -78,7 +80,7 @@ class SettingsBottomSheet extends ConsumerWidget {
     final db = ref.read(dbProvider);
 
     // Confirm reset
-    final confirm = await showDialog<bool>(
+    final confirm = await showAnimatedDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Reset Aplikasi'),
@@ -86,11 +88,15 @@ class SettingsBottomSheet extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
+            style: AppButtonStyles.secondary(context),
             child: const Text('Batal'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: AppButtonStyles.destructive(context).copyWith(
+              backgroundColor: WidgetStateProperty.all(Colors.red),
+              foregroundColor: WidgetStateProperty.all(Colors.white),
+            ),
             child: const Text('Hapus Semua'),
           ),
         ],

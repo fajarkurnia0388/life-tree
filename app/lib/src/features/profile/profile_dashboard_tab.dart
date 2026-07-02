@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/theme/button_theme.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
@@ -171,9 +172,11 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
+              style: AppButtonStyles.secondary(context),
               child: const Text('Batal'),
             ),
             ElevatedButton(
+              style: AppButtonStyles.primary(context),
               onPressed: () async {
                 final val1 = controller1.text.trim();
                 final val2 = controller2.text.trim();

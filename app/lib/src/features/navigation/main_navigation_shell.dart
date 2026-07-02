@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../dashboard/dashboard_view.dart';
 import '../journal/journal_dashboard_tab.dart';
@@ -36,6 +37,8 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: (index) {
+          // Add haptic feedback on tab switch
+          HapticFeedback.lightImpact();
           ref.read(navigationIndexProvider.notifier).state = index;
         },
         destinations: const [

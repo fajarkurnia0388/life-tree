@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/widgets/loading_state_widget.dart';
+import '../../core/widgets/empty_state_widget.dart';
 import '../../core/services/error_handler_service.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
@@ -130,30 +131,14 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView>
     final theme = Theme.of(context);
 
     if (list.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                isPending ? '⚖️✨' : '📝✅',
-                style: const TextStyle(fontSize: 48),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                isPending
-                    ? 'Tidak ada keputusan yang menunggu review.'
-                    : 'Belum ada keputusan yang selesai ditinjau.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+      return EmptyStateWidget(
+        icon: isPending ? Icons.pending_actions : Icons.check_circle_outline,
+        title: isPending ? 'Tidak Ada Keputusan Pending' : 'Belum Ada Keputusan Selesai',
+        message: isPending
+            ? 'Keputusan yang perlu ditinjau akan muncul di sini'
+            : 'Keputusan yang sudah direview akan muncul di sini',
+        actionLabel: isPending ? 'Buat Keputusan Baru' : null,
+        onAction: isPending ? () => _showCreateDecisionDialog(context) : null,
       );
     }
 

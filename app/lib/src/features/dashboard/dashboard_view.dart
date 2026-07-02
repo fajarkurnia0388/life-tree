@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/domain/priority_helper.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/services/error_handler_service.dart';
@@ -356,7 +357,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         hint: 'Buka menu untuk menambah jurnal, kebiasaan, atau refleksi',
         button: true,
         child: FloatingActionButton(
-          onPressed: () => _showQuickActionsBottomSheet(context),
+          onPressed: () {
+            HapticFeedback.mediumImpact();
+            _showQuickActionsBottomSheet(context);
+          },
           child: const Icon(Icons.add),
         ),
       ),

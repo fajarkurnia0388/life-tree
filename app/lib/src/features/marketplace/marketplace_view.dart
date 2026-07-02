@@ -6,6 +6,9 @@ import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/button_theme.dart';
+import '../../core/animations/dialog_animations.dart';
+import '../../core/widgets/empty_state_widget.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'marketplace_service.dart';
@@ -136,7 +139,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
     final service = ref.read(marketplaceServiceProvider);
     int selectedStars = 5;
 
-    final proceed = await showDialog<bool>(
+    final proceed = await showAnimatedDialog<bool>(
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -180,14 +183,12 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
+                  style: AppButtonStyles.secondary(context),
                   child: const Text('Batal'),
                 ),
                 ElevatedButton(
+                  style: AppButtonStyles.primary(context),
                   onPressed: () => Navigator.pop(context, true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  ),
                   child: const Text('Kirim Rating'),
                 ),
               ],
@@ -361,18 +362,14 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
 
                 final list = snapshot.data ?? [];
                 if (list.isEmpty) {
-                  return const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('😔', style: TextStyle(fontSize: 48)),
-                        SizedBox(height: 12),
-                        Text(
-                          'Tidak ada template kebiasaan yang cocok.',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
+                  return EmptyStateWidget(
+                    icon: Icons.inventory_2_outlined,
+                    title: 'Tidak Ada Template',
+                    message: _searchController.text.isNotEmpty
+                        ? 'Tidak ada template yang cocok dengan pencarian Anda'
+                        : 'Belum ada template kebiasaan di kategori ini',
+                    actionLabel: 'Bagikan Kebiasaan Anda',
+                    onAction: _showShareDialog,
                   );
                 }
 
