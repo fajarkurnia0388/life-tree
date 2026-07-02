@@ -6,10 +6,14 @@ import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/domain/app_constants.dart';
 import '../../../core/services/error_handler_service.dart';
 import '../../../core/theme/theme.dart';
+import '../../cultivation/cultivation_constants.dart';
+import '../../cultivation/cultivation_provider.dart';
+import '../../cultivation/cultivation_strings.dart';
 import 'growth_map/growth_map_widget.dart';
 
 /// Displays the conceptual tree view for the current growth state.
@@ -23,6 +27,7 @@ class TreeDisplayWidget extends StatelessWidget {
   final String? selectedDomain;
   final void Function(String domain)? onDomainNavigate;
   final VoidCallback? onDomainReset;
+  final CultivationSeason? cultivationSeason;
 
   const TreeDisplayWidget({
     super.key,
@@ -34,11 +39,16 @@ class TreeDisplayWidget extends StatelessWidget {
     this.selectedDomain,
     this.onDomainNavigate,
     this.onDomainReset,
+    this.cultivationSeason,
   });
 
   @override
   Widget build(BuildContext context) {
     final isRecovery = season == Season.recovery;
+    final isDormant = season == Season.dormant;
+    final isTribulation = cultivationSeason == CultivationSeason.tribulation;
+    final isQuietIntegration =
+        cultivationSeason == CultivationSeason.quietIntegration;
 
     // ── Wrap everything in a rounded clip ──
     return ClipRRect(
@@ -143,6 +153,58 @@ class TreeDisplayWidget extends StatelessWidget {
                 ),
               ),
 
+            // ── Quiet Integration state: night sky with stars, stable soft glow ──
+            if (isQuietIntegration)
+              Positioned.fill(
+                child: IgnorePointer(child: QuietIntegrationOverlay()),
+              ),
+
+            // ── Tribulation state: blue aura with subtle pulse, not harsh/violent ──
+            if (isTribulation)
+              Positioned.fill(
+                child: IgnorePointer(child: TribulationAuraWidget()),
+              ),
+
+            // ── Dormant state: dim/restful, never death/decay language ──
+            if (isDormant)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.center,
+                        radius: 0.8,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.08),
+                          Colors.black.withValues(alpha: 0.22),
+                          Colors.black.withValues(alpha: 0.12),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+            // ── Soft recovery veil: gentle rest visual, never death/decay language ──
+            if (isRecovery)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          CalmTheme.secondaryBlue.withValues(alpha: 0.18),
+                          Colors.white.withValues(alpha: 0.06),
+                          CalmTheme.secondaryBlue.withValues(alpha: 0.12),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
             // ── Snow overlay (Recovery mode) ──
             if (isRecovery)
               const Positioned.fill(
@@ -156,7 +218,7 @@ class TreeDisplayWidget extends StatelessWidget {
 }
 
 /// A card widget wrapping the tree display with progress bar and status label.
-class TreeVitalityCard extends StatefulWidget {
+class TreeVitalityCard extends ConsumerStatefulWidget {
   final int cumulativeDays;
   final String season;
   final Color? activeDomainColor;
@@ -177,10 +239,10 @@ class TreeVitalityCard extends StatefulWidget {
   });
 
   @override
-  State<TreeVitalityCard> createState() => _TreeVitalityCardState();
+  ConsumerState<TreeVitalityCard> createState() => _TreeVitalityCardState();
 }
 
-class _TreeVitalityCardState extends State<TreeVitalityCard> {
+class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
   final GlobalKey _repaintBoundaryKey = GlobalKey();
   bool _isCapturing = false;
 
@@ -445,14 +507,23 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final label = widget.season == Season.recovery
-        ? 'Rest & Recovery Map ❄️'
-        : 'Vitality Map';
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+    final cultivation = ref.watch(cultivationProvider).valueOrNull;
+    final currentRealm = CultivationConstants.realms.firstWhere(
+      (realm) => realm.level == (cultivation?.realm ?? 1),
+      orElse: () => CultivationConstants.realms.first,
+    );
+    final label = CultivationStrings.dashboardTitle(languageLevel);
     final progress = widget.balanceIndex ?? 1.0;
     final isRecovery = widget.season == Season.recovery;
     final progressColor = isRecovery
         ? CalmTheme.secondaryBlue
         : theme.colorScheme.primary;
+    final journeyLabel = CultivationStrings.realmDisplay(
+      languageLevel,
+      currentRealm.indonesianName,
+      widget.cumulativeDays,
+    );
 
     return Card(
       child: Padding(
@@ -480,15 +551,34 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
               children: [
                 RepaintBoundary(
                   key: _repaintBoundaryKey,
-                  child: TreeDisplayWidget(
-                    cumulativeDays: widget.cumulativeDays,
-                    season: widget.season,
-                    width: double.infinity,
-                    height: 220,
-                    activeDomainColor: widget.activeDomainColor,
-                    selectedDomain: widget.selectedDomain,
-                    onDomainNavigate: widget.onDomainNavigate,
-                    onDomainReset: widget.onDomainReset,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 420),
+                    curve: Curves.easeOutCubic,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: progress >= 0.8 && !isRecovery
+                          ? [
+                              BoxShadow(
+                                color: theme.colorScheme.primary.withValues(
+                                  alpha: 0.22,
+                                ),
+                                blurRadius: 24,
+                                spreadRadius: 2,
+                              ),
+                            ]
+                          : const [],
+                    ),
+                    child: TreeDisplayWidget(
+                      cumulativeDays: widget.cumulativeDays,
+                      season: widget.season,
+                      width: double.infinity,
+                      height: 220,
+                      activeDomainColor: widget.activeDomainColor,
+                      selectedDomain: widget.selectedDomain,
+                      onDomainNavigate: widget.onDomainNavigate,
+                      onDomainReset: widget.onDomainReset,
+                      cultivationSeason: cultivation?.season,
+                    ),
                   ),
                 ),
                 // Floating minimal capture button at top-right (outside RepaintBoundary so it's not captured)
@@ -546,7 +636,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Status Vitalitas',
+                        label,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
@@ -574,13 +664,25 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${widget.cumulativeDays} Hari Perjalanan Refleksi & Aksi',
+                  journeyLabel,
                   style: TextStyle(
                     fontSize: 12,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
-                _StageBadge(isRecovery: isRecovery),
+                Row(
+                  children: [
+                    if (progress >= 0.8 && !isRecovery)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: _FullCanopyBadge(languageLevel: languageLevel),
+                      ),
+                    _StageBadge(
+                      isRecovery: isRecovery,
+                      languageLevel: languageLevel,
+                    ),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -605,7 +707,8 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
 /// Small pill badge showing the current tree status.
 class _StageBadge extends StatelessWidget {
   final bool isRecovery;
-  const _StageBadge({required this.isRecovery});
+  final CultivationLanguageLevel languageLevel;
+  const _StageBadge({required this.isRecovery, required this.languageLevel});
 
   @override
   Widget build(BuildContext context) {
@@ -613,7 +716,9 @@ class _StageBadge extends StatelessWidget {
     final color = isRecovery
         ? CalmTheme.secondaryBlue
         : theme.colorScheme.primary;
-    final label = isRecovery ? 'Istirahat' : 'Aktif';
+    final label = isRecovery
+        ? CultivationStrings.seasonRecovery(languageLevel)
+        : CultivationStrings.seasonGrowth(languageLevel);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
@@ -633,12 +738,187 @@ class _StageBadge extends StatelessWidget {
   }
 }
 
+/// Badge shown when balance index >= 0.8, indicating full canopy / optimal state.
+class _FullCanopyBadge extends StatelessWidget {
+  final CultivationLanguageLevel languageLevel;
+  const _FullCanopyBadge({required this.languageLevel});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Colors.amber;
+    final label = switch (languageLevel) {
+      CultivationLanguageLevel.plain => 'Kanopi Penuh',
+      CultivationLanguageLevel.hybrid => 'Full Canopy',
+      CultivationLanguageLevel.full => 'Full Canopy (满载)',
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.star, size: 10, color: color),
+          const SizedBox(width: 3),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: color.shade700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Stateful widget for animated falling snow in Recovery mode.
 class SnowOverlayWidget extends StatefulWidget {
   const SnowOverlayWidget({super.key});
 
   @override
   State<SnowOverlayWidget> createState() => _SnowOverlayWidgetState();
+}
+
+/// Stable night-sky overlay for Quiet Integration mode.
+class QuietIntegrationOverlay extends StatelessWidget {
+  const QuietIntegrationOverlay({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: const [
+        Positioned.fill(child: _QuietIntegrationGradient()),
+        Positioned(left: 48, top: 56, child: _SoftStar(size: 3.5, alpha: 0.42)),
+        Positioned(
+          right: 72,
+          top: 92,
+          child: _SoftStar(size: 2.5, alpha: 0.36),
+        ),
+        Positioned(
+          left: 96,
+          bottom: 84,
+          child: _SoftStar(size: 2.8, alpha: 0.32),
+        ),
+        Positioned(
+          right: 44,
+          bottom: 64,
+          child: _SoftStar(size: 3.2, alpha: 0.38),
+        ),
+      ],
+    );
+  }
+}
+
+class _QuietIntegrationGradient extends StatelessWidget {
+  const _QuietIntegrationGradient();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            CalmTheme.secondaryBlue.withValues(alpha: 0.12),
+            CalmTheme.secondaryBlue.withValues(alpha: 0.05),
+            Colors.transparent,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SoftStar extends StatelessWidget {
+  final double size;
+  final double alpha;
+
+  const _SoftStar({required this.size, required this.alpha});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white.withValues(alpha: alpha),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withValues(alpha: alpha * 0.55),
+            blurRadius: size * 2.8,
+            spreadRadius: size * 0.8,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Stateful widget for subtle pulsing blue aura in Tribulation mode.
+class TribulationAuraWidget extends StatefulWidget {
+  const TribulationAuraWidget({super.key});
+
+  @override
+  State<TribulationAuraWidget> createState() => _TribulationAuraWidgetState();
+}
+
+class _TribulationAuraWidgetState extends State<TribulationAuraWidget>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+
+    _pulseAnimation = Tween<double>(
+      begin: 0.08,
+      end: 0.18,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _pulseAnimation,
+      builder: (context, child) {
+        return Container(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.center,
+              radius: 0.9,
+              colors: [
+                Colors.blue.shade700.withValues(alpha: _pulseAnimation.value),
+                Colors.blue.shade300.withValues(
+                  alpha: _pulseAnimation.value * 0.5,
+                ),
+                Colors.transparent,
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class _SnowOverlayWidgetState extends State<SnowOverlayWidget>

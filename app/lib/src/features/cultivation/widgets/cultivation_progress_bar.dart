@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../cultivation_constants.dart';
 import '../cultivation_provider.dart';
 
 /// Shows progress through the current realm.
 ///
 /// Phase 0 uses cumulative days as a simple progress signal. Later phases can
 /// replace this with the full multi-signal realm progress calculation.
+///
+/// Anti-aggressive: Shows realm name instead of numeric rank to avoid competitive feel.
 class CultivationProgressBar extends ConsumerWidget {
   const CultivationProgressBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cultivationAsync = ref.watch(cultivationProvider);
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
 
     return cultivationAsync.when(
       data: (cultivation) {
@@ -20,6 +24,9 @@ class CultivationProgressBar extends ConsumerWidget {
           cultivation.cumulativeDays,
         );
 
+        final realmInfo = CultivationConstants.realmForLevel(cultivation.realm);
+        final realmLabel = _getRealmLabel(realmInfo, languageLevel);
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -27,9 +34,14 @@ class CultivationProgressBar extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Realm ${cultivation.realm}',
-                  style: Theme.of(context).textTheme.labelMedium,
+                Expanded(
+                  child: Text(
+                    realmLabel,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 Text(
                   '${(progress * 100).toStringAsFixed(0)}%',
@@ -49,6 +61,17 @@ class CultivationProgressBar extends ConsumerWidget {
       loading: () => const SizedBox.shrink(),
       error: (_, __) => const SizedBox.shrink(),
     );
+  }
+
+  String _getRealmLabel(
+    CultivationRealm realm,
+    CultivationLanguageLevel level,
+  ) {
+    return switch (level) {
+      CultivationLanguageLevel.plain => realm.indonesianName,
+      CultivationLanguageLevel.hybrid => realm.name,
+      CultivationLanguageLevel.full => '${realm.name} (${realm.chineseName})',
+    };
   }
 
   double _calculateRealmProgress(int realm, int cumulativeDays) {

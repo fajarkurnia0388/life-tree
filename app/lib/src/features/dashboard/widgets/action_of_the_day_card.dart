@@ -1,14 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/app_constants.dart';
 import '../../../core/services/error_handler_service.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
+import '../../cultivation/cultivation_provider.dart';
+import '../../cultivation/cultivation_strings.dart';
 import '../dashboard_provider.dart';
 
 /// Card widget untuk Action of the Day
-class ActionOfTheDayCard extends StatelessWidget {
+class ActionOfTheDayCard extends ConsumerWidget {
   const ActionOfTheDayCard({
     super.key,
     required this.habit,
@@ -23,7 +26,8 @@ class ActionOfTheDayCard extends StatelessWidget {
   final VoidCallback onNotCapablePressed;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
     final domainColor = DomainColors.forDomain(habit.domainTag);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -60,9 +64,11 @@ class ActionOfTheDayCard extends StatelessWidget {
                         size: 16,
                       ),
                       const SizedBox(width: 6),
-                      const Text(
-                        'ACTION OF THE DAY',
-                        style: TextStyle(
+                      Text(
+                        CultivationStrings.actionOfTheDayTitle(
+                          languageLevel,
+                        ).toUpperCase(),
+                        style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -109,6 +115,13 @@ class ActionOfTheDayCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(habit.title, style: theme.textTheme.headlineMedium),
+            const SizedBox(height: 4),
+            Text(
+              CultivationStrings.actionOfTheDaySubtitle(languageLevel),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
+              ),
+            ),
             const SizedBox(height: 8),
             Row(
               children: [

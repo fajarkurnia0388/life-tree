@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/domain/app_constants.dart';
 import '../../../../core/widgets/error_state_widget.dart';
+import '../../../cultivation/cultivation_provider.dart';
+import '../../../cultivation/cultivation_strings.dart';
 import '../../dashboard_provider.dart';
 import '../../growth_map_provider.dart';
 import '../../../habit/services/habit_log_service.dart';
@@ -76,6 +78,7 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
     final growthMapAsync = ref.watch(growthMapProvider);
 
     return growthMapAsync.when(
@@ -150,6 +153,7 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                   final offset = node.position;
                   final String semanticLabel = GrowthMapSemantics.buildLabel(
                     node,
+                    languageLevel,
                   );
 
                   if (node is RootNode) {
@@ -172,10 +176,14 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
+                              final rootLabel =
+                                  CultivationStrings.growthMapRoot(
+                                    languageLevel,
+                                  );
                               showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: const Text('Kompas Nilai Inti 🧭'),
+                                  title: Text('$rootLabel 🧭'),
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: node.coreValues.isEmpty

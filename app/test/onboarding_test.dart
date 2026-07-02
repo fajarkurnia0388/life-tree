@@ -13,9 +13,7 @@ void main() {
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     container = ProviderContainer(
-      overrides: [
-        dbProvider.overrideWithValue(db),
-      ],
+      overrides: [dbProvider.overrideWithValue(db)],
     );
   });
 
@@ -24,18 +22,23 @@ void main() {
     container.dispose();
   });
 
-  testWidgets('Onboarding completes flow and creates profile in DB', (tester) async {
+  testWidgets('Onboarding completes flow and creates profile in DB', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const MaterialApp(
-          home: OnboardingView(),
-        ),
+        child: const MaterialApp(home: OnboardingView()),
       ),
     );
 
     // Initial page - Welcome page
     expect(find.text('Selamat Datang di Daoji'), findsOneWidget);
+    await tester.tap(find.text('Lanjut'));
+    await tester.pumpAndSettle();
+
+    // Cultivation theme step
+    expect(find.text('Pilih gaya bahasa aplikasi'), findsOneWidget);
     await tester.tap(find.text('Lanjut'));
     await tester.pumpAndSettle();
 

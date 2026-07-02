@@ -9,6 +9,8 @@ import '../../core/theme/form_theme.dart';
 import '../../core/theme/button_theme.dart';
 import '../../core/animations/dialog_animations.dart';
 import '../../data/local_db/database.dart';
+import '../cultivation/cultivation_provider.dart';
+import '../cultivation/cultivation_strings.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'widgets/habit_templates.dart';
 
@@ -84,10 +86,11 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     final proceed = await showAnimatedDialog<bool>(
       context: context,
       builder: (context) {
+        final languageLevel = ref.read(cultivationLanguageLevelProvider);
         return AlertDialog(
-          title: const Text('Hapus Kebiasaan'),
-          content: const Text(
-            'Apakah Anda yakin ingin menghapus kebiasaan ini? Tindakan ini tidak dapat dibatalkan.',
+          title: Text('Hapus ${CultivationStrings.habitLabel(languageLevel)}'),
+          content: Text(
+            'Apakah Anda yakin ingin menghapus ${CultivationStrings.habitLabel(languageLevel).toLowerCase()} ini? Tindakan ini tidak dapat dibatalkan.',
           ),
           actions: [
             TextButton(
@@ -276,14 +279,20 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Kebiasaan' : 'Kebiasaan Baru'),
+        title: Text(
+          _isEditing
+              ? 'Edit ${CultivationStrings.habitLabel(languageLevel)}'
+              : CultivationStrings.addHabit(languageLevel),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.storefront_outlined),
-            tooltip: 'Marketplace Kebiasaan',
+            tooltip:
+                'Marketplace ${CultivationStrings.habitLabel(languageLevel)}',
             onPressed: () => context.push('/marketplace'),
           ),
         ],
@@ -296,7 +305,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                _isEditing ? 'Edit Kebiasaan ✏️' : 'Buat Kebiasaan Baru 🌱',
+                _isEditing
+                    ? 'Edit ${CultivationStrings.habitLabel(languageLevel)} ✏️'
+                    : '${CultivationStrings.addHabit(languageLevel)} 🌱',
                 style: theme.textTheme.headlineMedium,
               ),
               const SizedBox(height: 8),
@@ -312,9 +323,12 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Gunakan Template Kebiasaan (Opsional)',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  Text(
+                    'Gunakan Template ${CultivationStrings.habitLabel(languageLevel)} (Opsional)',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                   IconButton(
                     icon: Icon(

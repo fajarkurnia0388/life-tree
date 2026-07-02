@@ -9,6 +9,9 @@ class TreeSkinConfig {
     TreeSkin.sakura,
     TreeSkin.maple,
     TreeSkin.bonsai,
+    TreeSkin.bambooImmortal,
+    TreeSkin.peachBlossom,
+    TreeSkin.ancientPine,
   };
 
   static String normalizeSkinId(String? skinId) {

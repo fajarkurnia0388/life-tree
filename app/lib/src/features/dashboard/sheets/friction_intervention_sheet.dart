@@ -5,6 +5,8 @@ import '../../../core/domain/app_constants.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
+import '../../cultivation/cultivation_provider.dart';
+import '../../cultivation/cultivation_strings.dart';
 import '../../habit/services/habit_log_service.dart';
 
 /// Bottom sheet for friction intervention — shown when user taps "Tidak Sanggup".
@@ -40,13 +42,17 @@ class _FrictionInterventionSheetState
     if (_selectedReason == FrictionReason.kelelahan) {
       final profiles = await db.select(db.userProfiles).get();
       if (profiles.isNotEmpty) {
-        await (db.update(db.userProfiles)
-              ..where((tbl) => tbl.userId.equals(profiles.first.userId)))
-            .write(UserProfilesCompanion(
-              supportMode: const drift.Value(SupportMode.recovery),
-              recoveryEndDate: drift.Value(now.add(Duration(days: _recoveryDays))),
-              updatedAt: drift.Value(now),
-            ));
+        await (db.update(
+          db.userProfiles,
+        )..where((tbl) => tbl.userId.equals(profiles.first.userId))).write(
+          UserProfilesCompanion(
+            supportMode: const drift.Value(SupportMode.recovery),
+            recoveryEndDate: drift.Value(
+              now.add(Duration(days: _recoveryDays)),
+            ),
+            updatedAt: drift.Value(now),
+          ),
+        );
       }
     }
 
@@ -58,6 +64,7 @@ class _FrictionInterventionSheetState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
 
     return Container(
       decoration: BoxDecoration(
@@ -86,7 +93,7 @@ class _FrictionInterventionSheetState
           ),
           const SizedBox(height: 20),
           Text(
-            'Ada apa hari ini?',
+            CultivationStrings.frictionInterventionTitle(languageLevel),
             style: theme.textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
@@ -95,26 +102,27 @@ class _FrictionInterventionSheetState
             'Jangan merasa bersalah. Menghadapi rintangan adalah bagian dari proses pembentukan kebiasaan.',
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: 13,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+              fontSize: 13,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
           ),
           const SizedBox(height: 24),
           _buildReasonTile(
             value: FrictionReason.kurangWaktu,
             icon: Icons.timer_outlined,
-            title: 'Kurang Waktu',
+            title: CultivationStrings.frictionOptionTime(languageLevel),
             desc: 'Saya hanya punya sedikit waktu hari ini.',
           ),
           _buildReasonTile(
             value: FrictionReason.kelelahan,
             icon: Icons.battery_alert_rounded,
-            title: 'Kelelahan / Sakit',
+            title: CultivationStrings.frictionOptionEnergy(languageLevel),
             desc: 'Energi saya benar-benar terkuras hari ini.',
           ),
           _buildReasonTile(
             value: FrictionReason.lupa,
             icon: Icons.notifications_off_outlined,
-            title: 'Lupa / Kurang Fokus',
+            title: CultivationStrings.frictionOptionForgot(languageLevel),
             desc: 'Saya terlewat karena tidak ingat jadwalnya.',
           ),
           const SizedBox(height: 16),
@@ -125,10 +133,13 @@ class _FrictionInterventionSheetState
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Text('💡 Tips Ringan',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: CalmTheme.primarySage)),
+                    Text(
+                      '💡 Tips Ringan',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: CalmTheme.primarySage,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       'Bagaimana jika kita kurangi target besok ke versi ringkas (${widget.habit.mvaDurationMin} menit) saja?',
@@ -146,10 +157,13 @@ class _FrictionInterventionSheetState
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Text('❄️ Masuk Mode Istirahat',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: CalmTheme.secondaryBlue)),
+                    Text(
+                      '❄️ Masuk Mode Istirahat',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: CalmTheme.secondaryBlue,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     const Text(
                       'Pohon Anda akan diselimuti salju dan notifikasi akan dijeda sementara.',
@@ -175,7 +189,9 @@ class _FrictionInterventionSheetState
                                 materialTapTargetSize:
                                     MaterialTapTargetSize.padded,
                                 labelPadding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0, vertical: 6.0),
+                                  horizontal: 8.0,
+                                  vertical: 6.0,
+                                ),
                                 onSelected: (selected) {
                                   if (selected) {
                                     setState(() => _recoveryDays = days);
@@ -198,10 +214,13 @@ class _FrictionInterventionSheetState
                 padding: EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Text('🔗 Routine Stacking',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.amber)),
+                    Text(
+                      '🔗 Routine Stacking',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.amber,
+                      ),
+                    ),
                     SizedBox(height: 8),
                     Text(
                       'Coba kaitkan kebiasaan ini tepat setelah aktivitas harian yang pasti Anda lakukan (misal: setelah minum kopi pagi).',
@@ -220,7 +239,8 @@ class _FrictionInterventionSheetState
               foregroundColor: theme.colorScheme.onPrimary,
               minimumSize: const Size(88, 52),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('Simpan & Refleksikan'),
           ),
@@ -253,7 +273,7 @@ class _FrictionInterventionSheetState
                   : theme.colorScheme.onSurface.withValues(alpha: 0.08),
               width: isSelected ? 1.5 : 1,
             ),
-            color: isSelected 
+            color: isSelected
                 ? theme.colorScheme.primary.withValues(alpha: 0.05)
                 : Colors.transparent,
           ),
@@ -270,7 +290,10 @@ class _FrictionInterventionSheetState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      title,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(height: 4),
                     Text(desc, style: const TextStyle(fontSize: 12)),
                   ],

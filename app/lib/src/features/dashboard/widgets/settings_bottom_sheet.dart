@@ -10,11 +10,30 @@ import '../../../core/theme/theme.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../core/animations/dialog_animations.dart';
 import '../../../data/local_db/database.dart';
+import '../../cultivation/cultivation_constants.dart';
+import '../../cultivation/cultivation_provider.dart';
+import '../../cultivation/cultivation_strings.dart';
 import '../dashboard_provider.dart';
 
 /// Bottom Sheet untuk Settings (Export, Reset, Theme)
 class SettingsBottomSheet extends ConsumerWidget {
   const SettingsBottomSheet({super.key});
+
+  Future<void> _toggleCultivationTheme(WidgetRef ref, bool enabled) async {
+    final db = ref.read(dbProvider);
+    final profile = await (db.select(
+      db.userProfiles,
+    )..limit(1)).getSingleOrNull();
+    if (profile == null) return;
+
+    await (db.update(
+      db.userProfiles,
+    )..where((tbl) => tbl.userId.equals(profile.userId))).write(
+      UserProfilesCompanion(cultivationThemeEnabled: drift.Value(enabled)),
+    );
+
+    ref.invalidate(dashboardDataProvider);
+  }
 
   Future<void> _exportDataAsJson(BuildContext context, WidgetRef ref) async {
     final db = ref.read(dbProvider);
@@ -158,9 +177,20 @@ class SettingsBottomSheet extends ConsumerWidget {
     ref.invalidate(dashboardDataProvider);
   }
 
+  String _languageDescription(CultivationLanguageLevel level) {
+    return switch (level) {
+      CultivationLanguageLevel.plain => 'Istilah sehari-hari, paling jelas.',
+      CultivationLanguageLevel.hybrid =>
+        'Default: paduan Daoji dan bahasa praktis.',
+      CultivationLanguageLevel.full =>
+        'Nuansa kultivasi penuh untuk pengalaman imersif.',
+    };
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
 
     return Container(
       padding: const EdgeInsets.all(20.0),
@@ -198,6 +228,84 @@ class SettingsBottomSheet extends ConsumerWidget {
                   ref.watch(appThemeModeProvider).valueOrNull == ThemeMode.dark,
               onChanged: (value) => _toggleThemeMode(ref, value),
             ),
+          ),
+          const SizedBox(height: 8),
+          FutureBuilder<UserProfile?>(
+            future:
+                (ref.read(dbProvider).select(ref.read(dbProvider).userProfiles)
+                      ..limit(1))
+                    .getSingleOrNull(),
+            builder: (context, snapshot) {
+              final profile = snapshot.data;
+              final themeEnabled = profile?.cultivationThemeEnabled ?? true;
+
+              return Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.auto_awesome_outlined),
+                    title: const Text('Tema Kultivasi'),
+                    subtitle: Text(
+                      themeEnabled
+                          ? 'Menggunakan istilah kultivasi seperti Qi, Realm, Dao'
+                          : 'Menggunakan bahasa sederhana dan praktis',
+                    ),
+                    trailing: Switch(
+                      value: themeEnabled,
+                      onChanged: (value) => _toggleCultivationTheme(ref, value),
+                    ),
+                  ),
+                  if (themeEnabled) ...[
+                    const SizedBox(height: 8),
+                    ListTile(
+                      leading: const Icon(Icons.language_outlined),
+                      title: Text(
+                        CultivationStrings.settingsLanguageLevelTitle(
+                          languageLevel,
+                        ),
+                      ),
+                      subtitle: Text(_languageDescription(languageLevel)),
+                      trailing: DropdownButton<CultivationLanguageLevel>(
+                        value: languageLevel,
+                        underline: const SizedBox.shrink(),
+                        items: [
+                          DropdownMenuItem(
+                            value: CultivationLanguageLevel.plain,
+                            child: Text(
+                              CultivationStrings.languageLevelPlain(
+                                languageLevel,
+                              ),
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: CultivationLanguageLevel.hybrid,
+                            child: Text(
+                              CultivationStrings.languageLevelHybrid(
+                                languageLevel,
+                              ),
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: CultivationLanguageLevel.full,
+                            child: Text(
+                              CultivationStrings.languageLevelFull(
+                                languageLevel,
+                              ),
+                            ),
+                          ),
+                        ],
+                        onChanged: (newLevel) {
+                          if (newLevel != null) {
+                            ref
+                                .read(cultivationLanguageLevelProvider.notifier)
+                                .setLevel(newLevel);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ],
+              );
+            },
           ),
         ],
       ),

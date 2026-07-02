@@ -5,6 +5,8 @@ import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
+import '../cultivation/cultivation_provider.dart';
+import '../cultivation/cultivation_strings.dart';
 import '../dashboard/dashboard_provider.dart';
 
 final _moodHistoryProvider = StreamProvider<List<JournalEntry>>((ref) {
@@ -142,13 +144,16 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
     final moodHistoryAsync = ref.watch(_moodHistoryProvider);
     final decisionSummaryAsync = ref.watch(_decisionSummaryProvider);
     final todayMoodAsync = ref.watch(_todayMoodProvider);
     final currentMood = _selectedMoodOverride ?? todayMoodAsync.valueOrNull;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Jurnal & Mood 📝')),
+      appBar: AppBar(
+        title: Text(CultivationStrings.journalTitle(languageLevel)),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -310,8 +315,8 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                         ref.invalidate(_moodHistoryProvider);
                       }),
                       icon: const Icon(Icons.edit_note_rounded),
-                      label: const Text(
-                        'Tulis Jurnal Lengkap / Refleksi Mendalam',
+                      label: Text(
+                        CultivationStrings.journalDeep(languageLevel),
                       ),
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -349,9 +354,9 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                         color: Colors.amber,
                       ),
                     ),
-                    title: const Text(
-                      'Jurnal Keputusan (Decision Journal) ⚖️',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    title: Text(
+                      '${CultivationStrings.decisionJournalTitle(languageLevel)} ⚖️',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 4.0),

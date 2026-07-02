@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/services/error_handler_service.dart';
 import '../../../data/local_db/database.dart';
+import '../../cultivation/cultivation_provider.dart';
+import '../../cultivation/cultivation_strings.dart';
 import 'compass_comparison_dialog.dart';
 
-class LifeCompassSection extends StatelessWidget {
+class LifeCompassSection extends ConsumerWidget {
   final UserProfile profile;
   final VoidCallback onEdit;
 
@@ -17,8 +20,9 @@ class LifeCompassSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
     final isDark = theme.brightness == Brightness.dark;
 
     // 1. Parse declared values (Versi Dipilih)
@@ -86,7 +90,7 @@ class LifeCompassSection extends StatelessWidget {
                 const Icon(Icons.explore_rounded, color: Colors.teal, size: 24),
                 const SizedBox(width: 10),
                 Text(
-                  'Kompas Hidup 🧭',
+                  '${CultivationStrings.lifeCompassTitle(languageLevel)} 🧭',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -204,7 +208,9 @@ class LifeCompassSection extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () => context.push('/value-mirror'),
                     icon: const Icon(Icons.balance_rounded, size: 16),
-                    label: const Text('Mulai Cermin Nilai 🪞'),
+                    label: Text(
+                      '${CultivationStrings.valueMirrorTitle(languageLevel)} 🪞',
+                    ),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(

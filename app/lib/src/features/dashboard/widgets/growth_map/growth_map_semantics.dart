@@ -1,19 +1,34 @@
+import '../../../cultivation/cultivation_constants.dart';
+import '../../../cultivation/cultivation_strings.dart';
 import 'growth_map_node.dart';
 
 class GrowthMapSemantics {
-  static String buildLabel(GrowthMapNode node) {
+  static String buildLabel(
+    GrowthMapNode node,
+    CultivationLanguageLevel languageLevel,
+  ) {
     if (node is RootNode) {
-      final valuesStr = node.coreValues.isEmpty ? 'belum diisi' : node.coreValues.join(', ');
-      return 'Akar Diri. Nilai Inti: $valuesStr. Ketuk untuk melihat ringkasan nilai.';
+      final rootLabel = CultivationStrings.growthMapRoot(languageLevel);
+      final valuesStr = node.coreValues.isEmpty
+          ? 'belum diisi'
+          : node.coreValues.join(', ');
+      return '$rootLabel. Nilai Inti: $valuesStr. Ketuk untuk melihat ringkasan nilai.';
     } else if (node is BranchNode) {
-      return 'Dahan ${node.label}. Status: ${node.statusLabel} (Skor ${node.score.toStringAsFixed(0)} dari 10). Ketuk untuk melihat wawasan.';
+      final branchLabel = CultivationStrings.growthMapBranch(languageLevel);
+      return '$branchLabel ${node.label}. Status: ${node.statusLabel} (Skor ${node.score.toStringAsFixed(0)} dari 10). Ketuk untuk melihat wawasan.';
     } else if (node is LeafNode) {
-      final status = node.isDone ? 'Sudah diselesaikan' : 'Belum aktif hari ini';
-      return 'Daun Kebiasaan: ${node.label}. Status: $status. Ketuk untuk mengubah status kebiasaan.';
+      final leafLabel = CultivationStrings.growthMapLeaf(languageLevel);
+      final status = node.isDone
+          ? 'Sudah diselesaikan'
+          : 'Belum aktif hari ini';
+      return '$leafLabel: ${node.label}. Status: $status. Ketuk untuk mengubah status.';
     } else if (node is FlowerNode) {
-      return 'Bunga Kebiasaan Stabil: ${node.label}. Streak: ${node.streakDays} hari.';
+      final flowerLabel = CultivationStrings.growthMapFlower(languageLevel);
+      final leafLabel = CultivationStrings.growthMapLeaf(languageLevel);
+      return '$flowerLabel $leafLabel: ${node.label}. Streak: ${node.streakDays} hari.';
     } else if (node is FruitNode) {
-      return 'Buah Keputusan: ${node.label}. Ketuk untuk melihat jurnal keputusan.';
+      final fruitLabel = CultivationStrings.growthMapFruit(languageLevel);
+      return '$fruitLabel: ${node.label}. Ketuk untuk melihat jurnal.';
     }
     return node.label;
   }

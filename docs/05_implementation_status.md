@@ -11,13 +11,13 @@ Laporan ini menyajikan status pencapaian pengembangan aplikasi **Daoji** (Person
 ---
 
 ## 1. Ringkasan Status Proyek
-*   **Tanggal Pembaruan:** 30 Juni 2026
+*   **Tanggal Pembaruan:** 2 Juli 2026
 *   **Target Platform:** Windows Desktop, Android, iOS (Cross-Platform)
 *   **Penyimpanan Data:** Offline-First (SQLite Local Database via Drift Generator)
-*   **Versi Skema Database Saat Ini:** `8` (Mendukung target goals, kustomisasi review period, kompas hidup, marketplace template, dan respons dilema nilai tersirat)
+*   **Versi Skema Database Saat Ini:** `9` (Mendukung target goals, kustomisasi review period, kompas hidup, marketplace template, respons dilema nilai tersirat, dan preferensi tema kultivasi)
 *   **Status Analisis & Tes:**
     *   `flutter analyze` → **Lolos 100%** (Bersih dari error, warning, lints)
-    *   `flutter test` → **44/44 Tests Passed** (Unit/widget test: Onboarding, Decision, Weekly Pulse, Safety, Profile, HabitLog, Scheduling, Value Compass)
+    *   `flutter test` → **65/65 Tests Passed** (Unit/widget test: Onboarding, Decision, Weekly Pulse, Safety, Profile, HabitLog, Scheduling, Value Compass, Cultivation Layer)
 
 ---
 
@@ -27,7 +27,7 @@ Laporan ini menyajikan status pencapaian pengembangan aplikasi **Daoji** (Person
 
 | Fitur | Status | Maturity | Catatan |
 |---|---|---|---|
-| Onboarding & Life Audit | ✅ SELESAI | 🟡 Implemented | Berfungsi, belum ada test onboarding flow |
+| Onboarding & Life Audit | ✅ SELESAI | � Production-Ready | Berfungsi, tervalidasi test onboarding flow; kini menyertakan pilihan bahasa sederhana vs tema kultivasi |
 | Journal Lite | ✅ SELESAI | 🟢 Production-Ready | Pre-fill hari ini, low mood 3 hari berturut-turut (tervalidasi test) |
 | Deep Reflection | ✅ SELESAI | 🟡 Implemented | Sakelar ekspansi + Gratitude chips |
 | Thinking Canvas Lite | ✅ SELESAI | 🟡 Implemented | PMI/Mind Dump/Reverse Brainstorming, domain tag |
@@ -69,7 +69,20 @@ Laporan ini menyajikan status pencapaian pengembangan aplikasi **Daoji** (Person
 | Habit Template Marketplace | ✅ SELESAI | 🟢 Production-Ready | Persistensi SQLite lokal via LocalMarketplaceService (tervalidasi unit test) |
 | Tree Skin Shop | 🔶 PROTOTYPE | 🟠 Prototype | Simulasi payment (GPay/VA/QRIS), bukan integrasi payment nyata |
 | Developer Mode Toggle | ✅ SELESAI | 🟡 Implemented | Debug-only — untuk bypass skin payment saat testing |
+### ☯️ Cultivation System — Migrasi Konsep Daoji
 
+| Fitur | Status | Maturity | Catatan |
+|---|---|---|---|
+| Cultivation Interpretive Layer | ✅ SELESAI | 🟢 Production-Ready | `CultivationLayer` membaca data existing tanpa migrasi database |
+| Realm Multi-Signal Calculation | ✅ SELESAI | 🟢 Production-Ready | Realm dihitung dari hari, konsistensi, refleksi, keseimbangan domain, dan compass |
+| Season/State Detection | ✅ SELESAI | 🟢 Production-Ready | Growth, Recovery, Dormant, Tribulation, Quiet Integration |
+| Palace Mapping | ✅ SELESAI | 🟢 Production-Ready | 6 domain dipetakan ke 6 Palace |
+| Cultivation Providers | ✅ SELESAI | 🟢 Production-Ready | Riverpod provider untuk layer, realm, season, dan qi |
+| 3-Level Language Foundation | ✅ SELESAI | 🟡 Implemented | Plain, Hybrid, Full Cultivation tersedia via `CultivationStrings` |
+| Language Picker Settings | ✅ SELESAI | � Production-Ready | Toggle Tema Kultivasi tersimpan di SQLite; jika disabled UI dipaksa Plain, jika enabled tersedia Plain/Hybrid/Full |
+| UI Copy Integration | ✅ SELESAI | ✅ Complete | Dashboard, Action of Day, Habit list, Growth Map, Friction, Journal, Reflection, Profile — semua UI utama responsif terhadap 3 level bahasa |
+| Cultivation Visual UI | ✅ SELESAI | 🟢 Production-Ready | **Fase 2 Selesai**: Badge, progress bar, status panel terpasang; 5 cultivation states (growth/full-canopy, recovery, dormant, tribulation, quiet integration) punya visual non-punitive; palace aura di Growth Map; 3 cultivation skins (Bamboo Immortal, Peach Blossom, Ancient Pine); accessibility audit passed (multi-cue visuals, semantic labels) |
+| Achievement/Path/Heart Demon | ⬜ BACKLOG | ⚪ Backlog | Model awal ada, detection logic belum diimplementasikan |
 ### ⚙️ Utilitas & Keamanan
 
 | Fitur | Status | Maturity | Catatan |

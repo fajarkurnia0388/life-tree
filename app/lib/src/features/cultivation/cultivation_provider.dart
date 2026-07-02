@@ -5,12 +5,55 @@ import 'cultivation_layer.dart';
 
 /// Provides the active 3-level language setting for cultivation terminology.
 ///
-/// Phase 0 keeps this in memory. A later phase can persist it in UserProfiles
-/// with a vocabularyMode field.
+/// Reads from user profile's cultivationThemeEnabled flag. When theme is
+/// disabled, forces Plain level. When enabled, allows user to cycle between
+/// Plain/Hybrid/Full via settings (defaults to Hybrid).
 final cultivationLanguageLevelProvider =
-    StateProvider<CultivationLanguageLevel>(
-      (ref) => CultivationLanguageLevel.hybrid,
-    );
+    StateNotifierProvider<
+      CultivationLanguageLevelNotifier,
+      CultivationLanguageLevel
+    >((ref) {
+      final dashboardAsync = ref.watch(dashboardDataProvider);
+
+      // If user disabled cultivation theme entirely, force Plain
+      final themeEnabled =
+          dashboardAsync.whenOrNull(
+            data: (data) => data.profile.cultivationThemeEnabled,
+          ) ??
+          true;
+
+      return CultivationLanguageLevelNotifier(themeEnabled: themeEnabled);
+    });
+
+/// Notifier for cultivation language level that respects the theme toggle.
+class CultivationLanguageLevelNotifier
+    extends StateNotifier<CultivationLanguageLevel> {
+  final bool themeEnabled;
+
+  CultivationLanguageLevelNotifier({required this.themeEnabled})
+    : super(
+        themeEnabled
+            ? CultivationLanguageLevel.hybrid
+            : CultivationLanguageLevel.plain,
+      );
+
+  /// Cycle to next level (only if theme is enabled).
+  void cycleLevel() {
+    if (!themeEnabled) return;
+
+    state = switch (state) {
+      CultivationLanguageLevel.plain => CultivationLanguageLevel.hybrid,
+      CultivationLanguageLevel.hybrid => CultivationLanguageLevel.full,
+      CultivationLanguageLevel.full => CultivationLanguageLevel.plain,
+    };
+  }
+
+  /// Set specific level (only if theme is enabled).
+  void setLevel(CultivationLanguageLevel level) {
+    if (!themeEnabled) return;
+    state = level;
+  }
+}
 
 /// Main cultivation layer provider.
 ///

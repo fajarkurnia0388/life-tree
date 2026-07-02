@@ -7,6 +7,8 @@ import 'package:drift/drift.dart' as drift;
 import 'package:go_router/go_router.dart';
 import '../../../data/local_db/database.dart';
 import '../../../core/providers/db_provider.dart';
+import '../../cultivation/cultivation_provider.dart';
+import '../../cultivation/cultivation_strings.dart';
 import '../dashboard_provider.dart';
 
 /// Widget untuk menampilkan daftar kebiasaan hari ini
@@ -33,6 +35,7 @@ class HabitListSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -41,7 +44,7 @@ class HabitListSection extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Jadwal Kebiasaan Hari Ini',
+              CultivationStrings.habitListTitle(languageLevel),
               style: theme.textTheme.titleLarge,
             ),
             if (selectedDomainFilter != 'Semua')

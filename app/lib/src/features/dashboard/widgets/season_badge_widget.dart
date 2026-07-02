@@ -5,6 +5,8 @@ import '../../../core/domain/app_constants.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
+import '../../cultivation/cultivation_provider.dart';
+import '../../cultivation/cultivation_strings.dart';
 import '../dashboard_provider.dart';
 
 /// Displays the current season badge (Growth / Recovery / Dormant).
@@ -33,6 +35,8 @@ class SeasonBadgeWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+
     Color badgeColor;
     String label;
     IconData icon;
@@ -42,21 +46,22 @@ class SeasonBadgeWidget extends ConsumerWidget {
       case Season.recovery:
         badgeColor = CalmTheme.secondaryBlue;
         final daysLeft = _recoveryDaysLeft;
+        final recoveryLabel = CultivationStrings.seasonRecovery(languageLevel);
         label = daysLeft != null
-            ? 'Mode Istirahat Aktif ($daysLeft hari lagi)'
-            : 'Musim Istirahat (Recovery Mode)';
+            ? '$recoveryLabel ($daysLeft hari lagi)'
+            : recoveryLabel;
         icon = Icons.ac_unit_rounded;
-        message = 'Notifikasi dijeda. Anda sedang memulihkan energi.';
+        message = CultivationStrings.recoveryModeDescription(languageLevel);
         break;
       case Season.dormant:
         badgeColor = Colors.blueGrey;
-        label = 'Musim Hening (Dormant Mode)';
+        label = CultivationStrings.seasonDormant(languageLevel);
         icon = Icons.blur_on_rounded;
         message = 'Lama tidak aktif. Waktunya mengevaluasi kebiasaan.';
         break;
       default:
         badgeColor = CalmTheme.primarySage;
-        label = 'Musim Aktif & Seimbang (Active Mode)';
+        label = CultivationStrings.seasonGrowth(languageLevel);
         icon = Icons.wb_sunny_outlined;
         message = 'Keseimbangan energi hidup terjaga.';
     }

@@ -11,6 +11,8 @@ import '../../core/services/error_handler_service.dart';
 import '../../core/theme/button_theme.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../data/local_db/database.dart';
+import '../cultivation/cultivation_provider.dart';
+import '../cultivation/cultivation_strings.dart';
 import '../dashboard/dashboard_provider.dart';
 import '../onboarding/onboarding_view.dart';
 import 'package:go_router/go_router.dart';
@@ -28,6 +30,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
   bool _isExporting = false;
 
   void _showCoreValuesDialog(BuildContext context, UserProfile profile) {
+    final languageLevel = ref.read(cultivationLanguageLevelProvider);
     List<String> currentValues = ['', '', ''];
     try {
       final jsonStr = profile.coreValues;
@@ -57,7 +60,9 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text('Tentukan Kompas Hidup 🧭'),
+          title: Text(
+            '${CultivationStrings.lifeCompassTitle(languageLevel)} 🧭',
+          ),
           content: SingleChildScrollView(
             child: Form(
               key: formKey,
@@ -200,8 +205,10 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                   if (context.mounted) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Kompas hidup berhasil disimpan!'),
+                      SnackBar(
+                        content: Text(
+                          '${CultivationStrings.lifeCompassTitle(languageLevel)} berhasil disimpan!',
+                        ),
                         backgroundColor: Colors.green,
                       ),
                     );

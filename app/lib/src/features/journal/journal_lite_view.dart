@@ -8,6 +8,8 @@ import '../../core/theme/button_theme.dart';
 import '../../data/local_db/database.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
+import '../cultivation/cultivation_provider.dart';
+import '../cultivation/cultivation_strings.dart';
 
 class JournalLiteView extends ConsumerStatefulWidget {
   const JournalLiteView({super.key});
@@ -409,9 +411,12 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Jurnal Lite')),
+      appBar: AppBar(
+        title: Text(CultivationStrings.journalLite(languageLevel)),
+      ),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -420,7 +425,7 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Bagaimana perasaan Anda hari ini?',
+                CultivationStrings.journalMoodPrompt(languageLevel),
                 style: theme.textTheme.headlineMedium,
                 textAlign: TextAlign.center,
               ),

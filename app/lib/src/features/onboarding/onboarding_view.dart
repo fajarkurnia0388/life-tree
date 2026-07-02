@@ -11,6 +11,7 @@ import '../../core/theme/button_theme.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'widgets/welcome_step.dart';
+import 'widgets/cultivation_theme_step.dart';
 import 'widgets/age_step.dart';
 import 'widgets/audit_step.dart';
 import 'widgets/disclaimer_step.dart';
@@ -27,6 +28,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
   int _currentPage = 0;
 
   // Form states
+  bool _cultivationThemeEnabled = true;
   String _selectedAgeBand = '18-24';
   double _bodyScore = 5.0;
   bool _disclaimerAccepted = false;
@@ -51,7 +53,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
   };
 
   void _nextPage() {
-    if (_currentPage < 3) {
+    if (_currentPage < 4) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -76,6 +78,12 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
         }
       });
     });
+  }
+
+  void _startReadGateIfNeeded() {
+    if (_currentPage == 4) {
+      _startReadGate();
+    }
   }
 
   void _previousPage() {
@@ -125,6 +133,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
       latestDomainScores: drift.Value(domainScoresJson),
       canopyLoadCapacity: const drift.Value(10),
       wellnessDisclaimerAcknowledged: const drift.Value(true),
+      cultivationThemeEnabled: drift.Value(_cultivationThemeEnabled),
       unlockedSkins: drift.Value(
         _devMode ? 'Default,Sakura,Maple,Bonsai' : 'Default',
       ),
@@ -173,7 +182,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(4, (index) {
+                children: List.generate(5, (index) {
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -196,13 +205,19 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                     setState(() {
                       _currentPage = page;
                     });
-                    if (page == 3) {
-                      _startReadGate();
-                    }
+                    _startReadGateIfNeeded();
                   },
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
                     const WelcomeStep(),
+                    CultivationThemeStep(
+                      cultivationThemeEnabled: _cultivationThemeEnabled,
+                      onChanged: (enabled) {
+                        setState(() {
+                          _cultivationThemeEnabled = enabled;
+                        });
+                      },
+                    ),
                     AgeStep(
                       selectedAgeBand: _selectedAgeBand,
                       onAgeBandSelected: (band) {
@@ -269,10 +284,10 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                     style: AppButtonStyles.primary(context).copyWith(
                       minimumSize: WidgetStateProperty.all(const Size(120, 48)),
                     ),
-                    onPressed: _currentPage == 3
+                    onPressed: _currentPage == 4
                         ? (_disclaimerComplete ? _completeOnboarding : null)
                         : _nextPage,
-                    child: Text(_currentPage == 3 ? 'Mulai' : 'Lanjut'),
+                    child: Text(_currentPage == 4 ? 'Mulai' : 'Lanjut'),
                   ),
                 ],
               ),

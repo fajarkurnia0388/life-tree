@@ -51,6 +51,9 @@ class TreeSkin {
   static const String sakura = 'Sakura';
   static const String maple = 'Maple';
   static const String bonsai = 'Bonsai';
+  static const String bambooImmortal = 'Bamboo_Immortal';
+  static const String peachBlossom = 'Peach_Blossom';
+  static const String ancientPine = 'Ancient_Pine';
 }
 
 class WellnessPromptTrigger {

@@ -57,6 +57,30 @@ class _TreeSkinShopBottomSheetState
       'price': 25000,
       'preview': '🪴🌱 🪴🌿 🪴🌳 🪴🌲',
     },
+    {
+      'id': 'Bamboo_Immortal',
+      'name': 'Bamboo Immortal 🎋',
+      'description':
+          'Bambu abadi dengan aura kultivasi. Melambangkan ketahanan dan fleksibilitas jiwa.',
+      'price': 30000,
+      'preview': '🎋🌱 🎋🌿 🎋🌳 🎋🌲',
+    },
+    {
+      'id': 'Peach_Blossom',
+      'name': 'Peach Blossom Paradise 🌺',
+      'description':
+          'Pohon persik abadi dari surga kultivator. Melambangkan umur panjang dan ketenangan jiwa.',
+      'price': 30000,
+      'preview': '🌺🌱 🌺🌿 🌺🌳 🌺🌲',
+    },
+    {
+      'id': 'Ancient_Pine',
+      'name': 'Ancient Pine 🌲',
+      'description':
+          'Pinus kuno yang berdiri ribuan tahun. Melambangkan ketekunan, stabilitas, dan kebijaksanaan.',
+      'price': 35000,
+      'preview': '🌲🌱 🌲🌿 🌲🌳 🌲',
+    },
   ];
 
   Future<void> _selectSkin(String skinId) async {

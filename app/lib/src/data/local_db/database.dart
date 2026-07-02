@@ -40,6 +40,8 @@ class UserProfiles extends Table {
   DateTimeColumn get recoveryEndDate => dateTime().nullable()();
   TextColumn get revealedValueScores => text().nullable()();
   DateTimeColumn get revealedValueLastUpdatedAt => dateTime().nullable()();
+  BoolColumn get cultivationThemeEnabled =>
+      boolean().withDefault(const Constant(true))();
 
   @override
   Set<Column> get primaryKey => {userId};
@@ -305,7 +307,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -404,6 +406,9 @@ class AppDatabase extends _$AppDatabase {
         await customStatement(
           'CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC);',
         );
+      }
+      if (from < 9) {
+        await m.addColumn(userProfiles, userProfiles.cultivationThemeEnabled);
       }
     },
   );
