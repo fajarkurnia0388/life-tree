@@ -247,6 +247,23 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             }
           }
 
+          // Calculate balance index (average domain score / 10.0)
+          double balanceIndex = 0.5; // default fallback
+          if (data.profile.latestDomainScores != null) {
+            try {
+              final Map<String, dynamic> scores = jsonDecode(
+                data.profile.latestDomainScores!,
+              );
+              if (scores.isNotEmpty) {
+                final total = scores.values.fold<double>(
+                  0.0,
+                  (sum, val) => sum + (val as num).toDouble(),
+                );
+                balanceIndex = (total / scores.length) / 10.0;
+              }
+            } catch (_) {}
+          }
+
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(dashboardDataProvider);
@@ -284,6 +301,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         _selectedDomainFilter = 'Semua';
                       });
                     },
+                    balanceIndex: balanceIndex,
                   ),
                   const SizedBox(height: 16),
 

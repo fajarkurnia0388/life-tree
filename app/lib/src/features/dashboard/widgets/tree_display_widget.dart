@@ -163,6 +163,7 @@ class TreeVitalityCard extends StatefulWidget {
   final String? selectedDomain;
   final void Function(String domain)? onDomainNavigate;
   final VoidCallback? onDomainReset;
+  final double? balanceIndex;
 
   const TreeVitalityCard({
     super.key,
@@ -172,6 +173,7 @@ class TreeVitalityCard extends StatefulWidget {
     this.selectedDomain,
     this.onDomainNavigate,
     this.onDomainReset,
+    this.balanceIndex,
   });
 
   @override
@@ -444,9 +446,9 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final label = widget.season == Season.recovery
-        ? 'Pohon Istirahat dan Pemulihan ❄️'
-        : 'Kesehatan & Pertumbuhan Pohon';
-    final progress = 1.0;
+        ? 'Rest & Recovery Map ❄️'
+        : 'Vitality Map';
+    final progress = widget.balanceIndex ?? 1.0;
     final isRecovery = widget.season == Season.recovery;
     final progressColor = isRecovery
         ? CalmTheme.secondaryBlue
@@ -457,6 +459,22 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            // Header for the vitality map section
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    label,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Icon(Icons.terrain, size: 24, color: progressColor),
+              ],
+            ),
+            const SizedBox(height: 16),
             // Full-width Panorama Tree Scene wrapped in RepaintBoundary for capture feature
             Stack(
               children: [
@@ -528,7 +546,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Status Pohon',
+                        'Status Vitalitas',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
@@ -556,7 +574,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${widget.cumulativeDays} Hari Keberhasilan Kumulatif',
+                  '${widget.cumulativeDays} Hari Perjalanan Refleksi & Aksi',
                   style: TextStyle(
                     fontSize: 12,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),

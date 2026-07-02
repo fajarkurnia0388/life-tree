@@ -39,7 +39,7 @@ class DevToolbarWidget extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     const Text(
-                      'SIMULASI PERTUMBUHAN',
+                      'SIMULASI HARI VIRTUAL',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -81,7 +81,7 @@ class DevToolbarWidget extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     const Text(
-                      'Pertumbuhan',
+                      'Hari Perjalanan',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

@@ -137,7 +137,7 @@ class RadarChartWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Radar Keseimbangan Hidup 🎡',
+                    'Vitality Radar',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),

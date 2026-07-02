@@ -11,13 +11,21 @@ import '../dashboard_provider.dart';
 class SeasonBadgeWidget extends ConsumerWidget {
   final String season;
   final DateTime? recoveryEndDate;
-  const SeasonBadgeWidget({super.key, required this.season, this.recoveryEndDate});
+  const SeasonBadgeWidget({
+    super.key,
+    required this.season,
+    this.recoveryEndDate,
+  });
 
   /// Whole days remaining until recovery ends (>= 0). Returns null when unknown.
   int? get _recoveryDaysLeft {
     if (recoveryEndDate == null) return null;
     final now = DateTime.now();
-    final endDay = DateTime(recoveryEndDate!.year, recoveryEndDate!.month, recoveryEndDate!.day);
+    final endDay = DateTime(
+      recoveryEndDate!.year,
+      recoveryEndDate!.month,
+      recoveryEndDate!.day,
+    );
     final today = DateTime(now.year, now.month, now.day);
     final diff = endDay.difference(today).inDays;
     return diff < 0 ? 0 : diff;
@@ -48,9 +56,9 @@ class SeasonBadgeWidget extends ConsumerWidget {
         break;
       default:
         badgeColor = CalmTheme.primarySage;
-        label = 'Musim Tumbuh (Growth Mode)';
+        label = 'Musim Aktif & Seimbang (Active Mode)';
         icon = Icons.wb_sunny_outlined;
-        message = 'Laju pertumbuhan normal.';
+        message = 'Keseimbangan energi hidup terjaga.';
     }
 
     return Card(
@@ -71,7 +79,10 @@ class SeasonBadgeWidget extends ConsumerWidget {
                 children: [
                   Text(
                     label,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: badgeColor),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: badgeColor,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(message, style: const TextStyle(fontSize: 12)),
@@ -81,10 +92,11 @@ class SeasonBadgeWidget extends ConsumerWidget {
             if (season == Season.recovery)
               TextButton(
                 onPressed: () => _endRecoveryMode(ref),
-                style: TextButton.styleFrom(
-                  minimumSize: const Size(64, 44),
+                style: TextButton.styleFrom(minimumSize: const Size(64, 44)),
+                child: const Text(
+                  'Akhiri',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                child: const Text('Akhiri', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
           ],
         ),
@@ -96,12 +108,14 @@ class SeasonBadgeWidget extends ConsumerWidget {
     final db = ref.read(dbProvider);
     final profiles = await db.select(db.userProfiles).get();
     if (profiles.isNotEmpty) {
-      await (db.update(db.userProfiles)
-            ..where((tbl) => tbl.userId.equals(profiles.first.userId)))
-          .write(const UserProfilesCompanion(
-            supportMode: drift.Value('Normal'),
-            recoveryEndDate: drift.Value(null),
-          ));
+      await (db.update(
+        db.userProfiles,
+      )..where((tbl) => tbl.userId.equals(profiles.first.userId))).write(
+        const UserProfilesCompanion(
+          supportMode: drift.Value('Normal'),
+          recoveryEndDate: drift.Value(null),
+        ),
+      );
       ref.invalidate(dashboardDataProvider);
     }
   }
