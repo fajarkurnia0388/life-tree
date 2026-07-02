@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Helper class untuk standardisasi button hierarchy di aplikasi
-/// 
+///
 /// Hierarchy:
 /// - Primary Action: ElevatedButton dengan brand color (sage green)
 /// - Secondary Action: OutlinedButton atau TextButton
@@ -18,9 +18,7 @@ class AppButtonStyles {
       foregroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       minimumSize: const Size(120, 48),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
     );
   }
@@ -37,9 +35,7 @@ class AppButtonStyles {
         color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
         width: 1.5,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
 
@@ -50,13 +46,8 @@ class AppButtonStyles {
       foregroundColor: Colors.red,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       minimumSize: const Size(100, 48),
-      side: const BorderSide(
-        color: Colors.red,
-        width: 1.5,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      side: const BorderSide(color: Colors.red, width: 1.5),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
 
@@ -68,9 +59,7 @@ class AppButtonStyles {
       foregroundColor: theme.colorScheme.primary,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       minimumSize: const Size(80, 44),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
   }
 
@@ -82,9 +71,7 @@ class AppButtonStyles {
       foregroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       minimumSize: const Size(100, 48),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
     );
   }
@@ -100,9 +87,7 @@ class AppButtonStyles {
         color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
         width: 1,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
   }
 
@@ -138,12 +123,7 @@ extension ButtonStyleExtension on Widget {
     String? hint,
     bool isButton = true,
   }) {
-    return Semantics(
-      label: label,
-      hint: hint,
-      button: isButton,
-      child: this,
-    );
+    return Semantics(label: label, hint: hint, button: isButton, child: this);
   }
 }
 

@@ -31,7 +31,7 @@ class _ValueMirrorSessionViewState
   final _pageController = PageController();
   int _currentIndex = 0;
   bool _isSaving = false;
-  
+
   // Track session progress for draft
   final Set<String> _answeredKeys = {};
 
@@ -269,8 +269,12 @@ class _ValueMirrorSessionViewState
                           context.go('/');
                         },
                         style: AppButtonStyles.destructive(context).copyWith(
-                          backgroundColor: WidgetStateProperty.all(CalmTheme.alertMutedRed),
-                          foregroundColor: WidgetStateProperty.all(Colors.white),
+                          backgroundColor: WidgetStateProperty.all(
+                            CalmTheme.alertMutedRed,
+                          ),
+                          foregroundColor: WidgetStateProperty.all(
+                            Colors.white,
+                          ),
                         ),
                         child: const Text('Keluar'),
                       ),
@@ -371,13 +375,15 @@ class _ValueMirrorSessionViewState
                       if (_currentIndex > 0)
                         FloatingActionButton.small(
                           heroTag: 'prev_btn',
-                          onPressed: _isSaving ? null : () {
-                            HapticFeedback.lightImpact();
-                            _pageController.previousPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          },
+                          onPressed: _isSaving
+                              ? null
+                              : () {
+                                  HapticFeedback.lightImpact();
+                                  _pageController.previousPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
                           child: const Icon(Icons.arrow_back),
                         )
                       else

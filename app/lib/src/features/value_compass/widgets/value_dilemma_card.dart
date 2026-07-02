@@ -54,8 +54,12 @@ class ValueDilemmaCard extends StatelessWidget {
             LinearProgressIndicator(
               value: (index + 1) / total,
               borderRadius: BorderRadius.circular(4),
-              backgroundColor: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-              valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+              backgroundColor: theme.colorScheme.outlineVariant.withValues(
+                alpha: 0.3,
+              ),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                theme.colorScheme.primary,
+              ),
             ),
             const Spacer(),
             // Dilemma Prompt
@@ -76,18 +80,29 @@ class ValueDilemmaCard extends StatelessWidget {
                 onSelected('A', dilemma.optionAValueTag);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: isDark ? 0.3 : 0.6),
+                backgroundColor: theme.colorScheme.surfaceContainerHighest
+                    .withValues(alpha: isDark ? 0.3 : 0.6),
                 foregroundColor: theme.colorScheme.onSurface,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 18,
+                  horizontal: 16,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                  side: BorderSide(
+                    color: theme.colorScheme.outlineVariant.withValues(
+                      alpha: 0.5,
+                    ),
+                  ),
                 ),
               ),
               child: Text(
                 dilemma.optionALabel,
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -99,18 +114,29 @@ class ValueDilemmaCard extends StatelessWidget {
                 onSelected('B', dilemma.optionBValueTag);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: isDark ? 0.3 : 0.6),
+                backgroundColor: theme.colorScheme.surfaceContainerHighest
+                    .withValues(alpha: isDark ? 0.3 : 0.6),
                 foregroundColor: theme.colorScheme.onSurface,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 18,
+                  horizontal: 16,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                  side: BorderSide(
+                    color: theme.colorScheme.outlineVariant.withValues(
+                      alpha: 0.5,
+                    ),
+                  ),
                 ),
               ),
               child: Text(
                 dilemma.optionBLabel,
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),

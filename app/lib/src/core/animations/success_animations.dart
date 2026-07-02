@@ -35,16 +35,17 @@ class SuccessAnimations {
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ],
         ),
         backgroundColor: const Color(0xFF4CAF50), // Material Green 500
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: duration,
         margin: const EdgeInsets.all(16),
       ),
@@ -71,10 +72,7 @@ class SuccessAnimations {
     required Widget child,
     required VoidCallback onTap,
   }) {
-    return _SuccessRippleButton(
-      onTap: onTap,
-      child: child,
-    );
+    return _SuccessRippleButton(onTap: onTap, child: child);
   }
 }
 
@@ -85,7 +83,8 @@ class _SuccessCheckmarkOverlay extends StatefulWidget {
   const _SuccessCheckmarkOverlay({this.message});
 
   @override
-  State<_SuccessCheckmarkOverlay> createState() => _SuccessCheckmarkOverlayState();
+  State<_SuccessCheckmarkOverlay> createState() =>
+      _SuccessCheckmarkOverlayState();
 }
 
 class _SuccessCheckmarkOverlayState extends State<_SuccessCheckmarkOverlay>
@@ -259,10 +258,7 @@ class _ConfettiPainter extends CustomPainter {
       canvas.rotate(rotation);
 
       paint.color = color.withValues(alpha: 1.0 - progress);
-      canvas.drawRect(
-        const Rect.fromLTWH(-5, -5, 10, 10),
-        paint,
-      );
+      canvas.drawRect(const Rect.fromLTWH(-5, -5, 10, 10), paint);
 
       canvas.restore();
     }
@@ -279,10 +275,7 @@ class _SuccessRippleButton extends StatefulWidget {
   final Widget child;
   final VoidCallback onTap;
 
-  const _SuccessRippleButton({
-    required this.child,
-    required this.onTap,
-  });
+  const _SuccessRippleButton({required this.child, required this.onTap});
 
   @override
   State<_SuccessRippleButton> createState() => _SuccessRippleButtonState();

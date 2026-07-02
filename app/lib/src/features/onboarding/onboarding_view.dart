@@ -98,7 +98,9 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     if (!_disclaimerAccepted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Anda harus menyetujui pernyataan persetujuan keselamatan sebelum melanjutkan.'),
+          content: Text(
+            'Anda harus menyetujui pernyataan persetujuan keselamatan sebelum melanjutkan.',
+          ),
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -123,7 +125,9 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
       latestDomainScores: drift.Value(domainScoresJson),
       canopyLoadCapacity: const drift.Value(10),
       wellnessDisclaimerAcknowledged: const drift.Value(true),
-      unlockedSkins: drift.Value(_devMode ? 'Default,Sakura,Maple,Bonsai' : 'Default'),
+      unlockedSkins: drift.Value(
+        _devMode ? 'Default,Sakura,Maple,Bonsai' : 'Default',
+      ),
       isDeveloperMode: drift.Value(_devMode),
       createdAt: now,
       updatedAt: now,
@@ -176,7 +180,9 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                     height: 8,
                     width: _currentPage == index ? 24 : 8,
                     decoration: BoxDecoration(
-                      color: _currentPage == index ? theme.colorScheme.primary : theme.colorScheme.primary.withValues(alpha: 0.2),
+                      color: _currentPage == index
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   );
@@ -248,7 +254,14 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                       style: TextButton.styleFrom(
                         minimumSize: const Size(88, 48),
                       ),
-                      child: Text('Kembali', style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                      child: Text(
+                        'Kembali',
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
+                        ),
+                      ),
                     )
                   else
                     const SizedBox(width: 88),

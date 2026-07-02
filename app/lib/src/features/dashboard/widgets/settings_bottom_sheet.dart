@@ -14,31 +14,41 @@ import '../dashboard_provider.dart';
 
 /// Bottom Sheet untuk Settings (Export, Reset, Theme)
 class SettingsBottomSheet extends ConsumerWidget {
-  const SettingsBottomSheet({
-    super.key,
-  });
+  const SettingsBottomSheet({super.key});
 
   Future<void> _exportDataAsJson(BuildContext context, WidgetRef ref) async {
     final db = ref.read(dbProvider);
-    final profile = await (db.select(db.userProfiles)..limit(1)).getSingleOrNull();
+    final profile = await (db.select(
+      db.userProfiles,
+    )..limit(1)).getSingleOrNull();
     if (profile == null) return;
 
     // Gather all data scoped to the current user
-    final habits = await (db.select(db.habits)
-          ..where((tbl) => tbl.userId.equals(profile.userId) & tbl.deletedAt.isNull()))
-        .get();
+    final habits =
+        await (db.select(db.habits)..where(
+              (tbl) =>
+                  tbl.userId.equals(profile.userId) & tbl.deletedAt.isNull(),
+            ))
+            .get();
     final habitIds = habits.map((h) => h.habitId).toList();
     final habitLogs = habitIds.isEmpty
         ? <HabitLog>[]
-        : await (db.select(db.habitLogs)
-              ..where((tbl) => tbl.habitId.isIn(habitIds) & tbl.deletedAt.isNull()))
+        : await (db.select(db.habitLogs)..where(
+                (tbl) => tbl.habitId.isIn(habitIds) & tbl.deletedAt.isNull(),
+              ))
+              .get();
+    final journalEntries =
+        await (db.select(db.journalEntries)..where(
+              (tbl) =>
+                  tbl.userId.equals(profile.userId) & tbl.deletedAt.isNull(),
+            ))
             .get();
-    final journalEntries = await (db.select(db.journalEntries)
-          ..where((tbl) => tbl.userId.equals(profile.userId) & tbl.deletedAt.isNull()))
-        .get();
-    final weeklyPulses = await (db.select(db.weeklyPulses)
-          ..where((tbl) => tbl.userId.equals(profile.userId) & tbl.deletedAt.isNull()))
-        .get();
+    final weeklyPulses =
+        await (db.select(db.weeklyPulses)..where(
+              (tbl) =>
+                  tbl.userId.equals(profile.userId) & tbl.deletedAt.isNull(),
+            ))
+            .get();
 
     final Map<String, dynamic> exportData = {
       'export_date': DateTime.now().toIso8601String(),
@@ -58,7 +68,9 @@ class SettingsBottomSheet extends ConsumerWidget {
 
     try {
       final tempDir = await getTemporaryDirectory();
-      final file = File('${tempDir.path}/lifetree_export_${DateTime.now().millisecondsSinceEpoch}.json');
+      final file = File(
+        '${tempDir.path}/lifetree_export_${DateTime.now().millisecondsSinceEpoch}.json',
+      );
       await file.writeAsString(jsonString);
 
       await SharePlus.instance.share(
@@ -70,7 +82,10 @@ class SettingsBottomSheet extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal mengekspor data: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Gagal mengekspor data: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -84,7 +99,9 @@ class SettingsBottomSheet extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Reset Aplikasi'),
-        content: const Text('Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.'),
+        content: const Text(
+          'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -129,10 +146,15 @@ class SettingsBottomSheet extends ConsumerWidget {
 
   Future<void> _toggleThemeMode(WidgetRef ref, bool isDark) async {
     final db = ref.read(dbProvider);
-    final profile = await (db.select(db.userProfiles)..limit(1)).getSingleOrNull();
+    final profile = await (db.select(
+      db.userProfiles,
+    )..limit(1)).getSingleOrNull();
     if (profile == null) return;
-    await (db.update(db.userProfiles)..where((tbl) => tbl.userId.equals(profile.userId)))
-        .write(UserProfilesCompanion(themeMode: drift.Value(isDark ? 'Dark' : 'Light')));
+    await (db.update(
+      db.userProfiles,
+    )..where((tbl) => tbl.userId.equals(profile.userId))).write(
+      UserProfilesCompanion(themeMode: drift.Value(isDark ? 'Dark' : 'Light')),
+    );
     ref.invalidate(dashboardDataProvider);
   }
 
@@ -172,7 +194,8 @@ class SettingsBottomSheet extends ConsumerWidget {
             leading: const Icon(Icons.dark_mode_outlined),
             title: const Text('Dark Mode'),
             trailing: Switch(
-              value: ref.watch(appThemeModeProvider).valueOrNull == ThemeMode.dark,
+              value:
+                  ref.watch(appThemeModeProvider).valueOrNull == ThemeMode.dark,
               onChanged: (value) => _toggleThemeMode(ref, value),
             ),
           ),

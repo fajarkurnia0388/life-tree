@@ -46,7 +46,9 @@ class QuickActionsPanel extends StatelessWidget {
             foregroundColor: theme.colorScheme.primary,
             elevation: 0,
             minimumSize: const Size(88, 48),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
       ],
@@ -79,7 +81,11 @@ class QuickActionsPanel extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 label,
-                style: TextStyle(fontWeight: FontWeight.w600, color: color, fontSize: 13),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                  fontSize: 13,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],

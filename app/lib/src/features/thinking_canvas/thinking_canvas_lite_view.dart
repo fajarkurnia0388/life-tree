@@ -47,7 +47,7 @@ class _ThinkingCanvasLiteViewState
 
   List<MindMapNode> _mindMapNodes = [];
   String _customWorkspaceValue = '';
-  
+
   // Autosave functionality
   Timer? _autosaveTimer;
   bool _isSavingDraft = false;
@@ -428,7 +428,7 @@ class _ThinkingCanvasLiteViewState
 
   Future<void> _saveDraft() async {
     // Don't save empty drafts
-    if (_topicController.text.trim().isEmpty && 
+    if (_topicController.text.trim().isEmpty &&
         _summaryController.text.trim().isEmpty &&
         _actionController.text.trim().isEmpty) {
       return;
@@ -472,24 +472,37 @@ class _ThinkingCanvasLiteViewState
         sessionId: _currentDraftId!,
         userId: userId,
         methodKey: _selectedMethod,
-        topic: drift.Value(_topicController.text.trim().isEmpty ? null : _topicController.text.trim()),
+        topic: drift.Value(
+          _topicController.text.trim().isEmpty
+              ? null
+              : _topicController.text.trim(),
+        ),
         summaryText: drift.Value(jsonEncode(draftData)),
-        nextAction: drift.Value(_actionController.text.trim().isEmpty ? null : _actionController.text.trim()),
-        paperArtifactRef: drift.Value(_refController.text.trim().isEmpty ? null : _refController.text.trim()),
+        nextAction: drift.Value(
+          _actionController.text.trim().isEmpty
+              ? null
+              : _actionController.text.trim(),
+        ),
+        paperArtifactRef: drift.Value(
+          _refController.text.trim().isEmpty
+              ? null
+              : _refController.text.trim(),
+        ),
         paperSession: const drift.Value(false), // Mark as draft
         createdAt: DateTime.now(),
       );
 
       // Check if draft already exists
-      final existing = await (db.select(db.thinkingCanvasSessions)
-        ..where((tbl) => tbl.sessionId.equals(_currentDraftId!)))
-        .getSingleOrNull();
+      final existing =
+          await (db.select(db.thinkingCanvasSessions)
+                ..where((tbl) => tbl.sessionId.equals(_currentDraftId!)))
+              .getSingleOrNull();
 
       if (existing != null) {
         // Update existing draft
         await (db.update(db.thinkingCanvasSessions)
-          ..where((tbl) => tbl.sessionId.equals(_currentDraftId!)))
-          .write(draftSession);
+              ..where((tbl) => tbl.sessionId.equals(_currentDraftId!)))
+            .write(draftSession);
       } else {
         // Insert new draft
         await db.into(db.thinkingCanvasSessions).insert(draftSession);
@@ -519,11 +532,16 @@ class _ThinkingCanvasLiteViewState
       final userId = profiles.first.userId;
 
       // Find most recent draft (paperSession = false)
-      final drafts = await (db.select(db.thinkingCanvasSessions)
-        ..where((tbl) => tbl.userId.equals(userId) & tbl.paperSession.equals(false))
-        ..orderBy([(tbl) => drift.OrderingTerm.desc(tbl.createdAt)])
-        ..limit(1))
-        .get();
+      final drafts =
+          await (db.select(db.thinkingCanvasSessions)
+                ..where(
+                  (tbl) =>
+                      tbl.userId.equals(userId) &
+                      tbl.paperSession.equals(false),
+                )
+                ..orderBy([(tbl) => drift.OrderingTerm.desc(tbl.createdAt)])
+                ..limit(1))
+              .get();
 
       if (drafts.isEmpty) return;
 
@@ -533,8 +551,9 @@ class _ThinkingCanvasLiteViewState
       // Parse draft data
       if (draft.summaryText != null) {
         try {
-          final draftData = jsonDecode(draft.summaryText!) as Map<String, dynamic>;
-          
+          final draftData =
+              jsonDecode(draft.summaryText!) as Map<String, dynamic>;
+
           setState(() {
             _selectedMethod = draftData['method'] as String? ?? 'MindDump';
             _topicController.text = draftData['topic'] as String? ?? '';
@@ -547,7 +566,8 @@ class _ThinkingCanvasLiteViewState
 
           // Restore dynamic fields if present
           if (draftData.containsKey('dynamicFields')) {
-            final dynamicData = draftData['dynamicFields'] as Map<String, dynamic>;
+            final dynamicData =
+                draftData['dynamicFields'] as Map<String, dynamic>;
             dynamicData.forEach((key, value) {
               if (_dynamicControllers.containsKey(key)) {
                 _dynamicControllers[key]!.text = value as String;
@@ -589,10 +609,10 @@ class _ThinkingCanvasLiteViewState
 
     try {
       final db = ref.read(dbProvider);
-      await (db.delete(db.thinkingCanvasSessions)
-        ..where((tbl) => tbl.sessionId.equals(_currentDraftId!)))
-        .go();
-      
+      await (db.delete(
+        db.thinkingCanvasSessions,
+      )..where((tbl) => tbl.sessionId.equals(_currentDraftId!))).go();
+
       setState(() {
         _currentDraftId = null;
         _lastDraftSaved = null;
@@ -1280,7 +1300,9 @@ class _ThinkingCanvasLiteViewState
                       _isSavingDraft ? 'Menyimpan...' : 'Draft tersimpan',
                       style: TextStyle(
                         fontSize: 12,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.7,
+                        ),
                       ),
                     ),
                   ],

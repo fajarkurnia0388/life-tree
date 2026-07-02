@@ -96,7 +96,9 @@ class ValueMirrorIntroView extends StatelessWidget {
                 button: true,
                 child: ElevatedButton(
                   style: AppButtonStyles.primary(context).copyWith(
-                    backgroundColor: WidgetStateProperty.all(CalmTheme.secondaryBlue),
+                    backgroundColor: WidgetStateProperty.all(
+                      CalmTheme.secondaryBlue,
+                    ),
                     padding: WidgetStateProperty.all(
                       const EdgeInsets.symmetric(vertical: 16),
                     ),

@@ -11,6 +11,7 @@
 
 **Total Alpha Values Found:** 185 instances across 38 files  
 **Common Alpha Values:**
+
 - `0.08` - 12 instances (subtle backgrounds)
 - `0.1` - 15 instances (emphasized backgrounds)
 - `0.2` - 18 instances (borders)
@@ -24,15 +25,18 @@
 ## ✅ PASS - Accessible Alpha Values
 
 ### Text Colors (on surface background)
+
 - ✅ **1.0 (100%)** - Primary text - Contrast: ~21:1 (excellent)
 - ✅ **0.7 (70%)** - Secondary text - Contrast: ~5.5:1 (PASS AA)
 - ✅ **0.6 (60%)** - Hint text - Contrast: ~4.7:1 (PASS AA)
 
 ### Borders & Dividers
+
 - ✅ **0.2 (20%)** - Default borders - Sufficient for decorative elements
 - ✅ **0.12 (12%)** - Subtle borders - Decorative, not relying on color alone
 
 ### Backgrounds
+
 - ✅ **0.1 (10%)** - Emphasized backgrounds - Good contrast with text
 - ✅ **0.08 (8%)** - Subtle backgrounds - Minimal tint, safe
 
@@ -41,12 +45,14 @@
 ## ⚠️ WARNING - Borderline Cases
 
 ### Text Colors
+
 - ⚠️ **0.5 (50%)** - Used in 14 places
   - Contrast: ~4.1:1 (BORDERLINE - slightly below AA)
   - **Recommendation:** Increase to 0.6 (60%) for guaranteed AA compliance
   - **Files affected:** growth_map_painter.dart, radar_chart_widget.dart, tree_display_widget.dart
 
 ### Interactive States
+
 - ⚠️ **0.4 (40%)** - Used for some indicators
   - Contrast: ~3.5:1 (FAIL for normal text, PASS for large text)
   - **Recommendation:** Only use for large text (18pt+) or non-text elements
@@ -57,12 +63,14 @@
 ## ❌ FAIL - Non-Accessible (By Design)
 
 ### Disabled States
+
 - ❌ **0.38 (38%)** - Disabled text
   - Contrast: ~3.2:1 (FAIL - intentional)
   - **Note:** WCAG allows lower contrast for disabled elements
   - **Status:** Acceptable per WCAG 2.1
 
 ### Decorative Elements
+
 - ❌ **0.04 (4%)** - Hover states
 - ❌ **0.06 (6%)** - Subtle surface variants
   - **Note:** These are decorative and don't rely on color alone
@@ -85,6 +93,7 @@ color: theme.colorScheme.onSurface.withValues(alpha: 0.6)
 ```
 
 **Files to update:**
+
 1. `growth_map_painter.dart` - Connector lines labels
 2. `radar_chart_widget.dart` - Chart labels
 3. `tree_display_widget.dart` - Tree state indicators
@@ -105,6 +114,7 @@ color: AccessibleColors.onSurfaceText(context, emphasis: TextEmphasis.low)
 ```
 
 **Benefits:**
+
 - Centralized alpha values
 - Guaranteed WCAG compliance
 - Self-documenting code
@@ -115,6 +125,7 @@ color: AccessibleColors.onSurfaceText(context, emphasis: TextEmphasis.low)
 ## 📋 Implementation Checklist
 
 ### Immediate Actions (P2.3)
+
 - [x] Create `accessible_colors.dart` with semantic helpers
 - [x] Document alpha value standards
 - [ ] Update 14 instances of 0.5 → 0.6 for text
@@ -122,6 +133,7 @@ color: AccessibleColors.onSurfaceText(context, emphasis: TextEmphasis.low)
 - [ ] Test with color blind simulators
 
 ### Future Improvements (P3)
+
 - [ ] Migrate all alpha values to semantic helpers
 - [ ] Add contrast ratio tests to CI/CD
 - [ ] Create automated contrast checker tool
@@ -132,12 +144,14 @@ color: AccessibleColors.onSurfaceText(context, emphasis: TextEmphasis.low)
 ## 🎨 Color Blind Considerations
 
 ### Current Status
+
 - ✅ Domain colors distinguishable by labels
 - ✅ Habit status uses icons + colors
 - ⚠️ Growth map relies heavily on color
 - ⚠️ Radar chart needs icon alternatives
 
 ### Recommendations
+
 1. **Growth Map:** Add shape variations (circle, square, triangle) per node type
 2. **Radar Chart:** Add pattern fills (diagonal lines, dots, solid)
 3. **Domain Indicators:** Already has emoji + text labels (good!)
@@ -147,15 +161,16 @@ color: AccessibleColors.onSurfaceText(context, emphasis: TextEmphasis.low)
 
 ## 📊 Contrast Ratio Reference
 
-| Ratio | Rating | Use Case |
-|-------|--------|----------|
-| 21:1 | AAA | Maximum possible (black on white) |
-| 7:1 | AAA | Large text |
-| 4.5:1 | AA | Normal text (minimum) |
-| 3:1 | AA | Large text (18pt+), UI components |
-| <3:1 | FAIL | Not accessible |
+| Ratio | Rating | Use Case                          |
+| ----- | ------ | --------------------------------- |
+| 21:1  | AAA    | Maximum possible (black on white) |
+| 7:1   | AAA    | Large text                        |
+| 4.5:1 | AA     | Normal text (minimum)             |
+| 3:1   | AA     | Large text (18pt+), UI components |
+| <3:1  | FAIL   | Not accessible                    |
 
 **Current LifeTree Status:**
+
 - Primary text (1.0): ~21:1 ✅ AAA
 - Secondary text (0.7): ~5.5:1 ✅ AA
 - Hint text (0.6): ~4.7:1 ✅ AA

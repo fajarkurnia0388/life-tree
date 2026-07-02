@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/app_constants.dart';
-import '../../../core/widgets/empty_state_widget.dart';import '../../../core/animations/dialog_animations.dart';import 'package:drift/drift.dart' as drift;
+import '../../../core/widgets/empty_state_widget.dart';
+import '../../../core/animations/dialog_animations.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:go_router/go_router.dart';
 import '../../../data/local_db/database.dart';
 import '../../../core/providers/db_provider.dart';
@@ -27,8 +29,6 @@ class HabitListSection extends ConsumerWidget {
   final Function(BuildContext, Habit) onFrictionIntervention;
   final Habit? activeActionOfTheDay;
   final bool isRecoveryActive;
-
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -72,7 +72,8 @@ class HabitListSection extends ConsumerWidget {
             itemCount: habitsWithLogs.length,
             itemBuilder: (context, index) {
               final item = habitsWithLogs[index];
-              final isAction = activeActionOfTheDay?.habitId == item.habit.habitId;
+              final isAction =
+                  activeActionOfTheDay?.habitId == item.habit.habitId;
               return _buildHabitItemTile(context, ref, theme, item, isAction);
             },
           ),
@@ -136,10 +137,8 @@ class HabitListSection extends ConsumerWidget {
         onDismissed: (direction) async {
           final db = ref.read(dbProvider);
           await (db.update(db.habits)
-            ..where((tbl) => tbl.habitId.equals(item.habit.habitId)))
-            .write(HabitsCompanion(
-              deletedAt: drift.Value(DateTime.now()),
-            ));
+                ..where((tbl) => tbl.habitId.equals(item.habit.habitId)))
+              .write(HabitsCompanion(deletedAt: drift.Value(DateTime.now())));
           ref.invalidate(dashboardDataProvider);
         },
         child: Opacity(
@@ -150,119 +149,175 @@ class HabitListSection extends ConsumerWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(
-                color: isDone ? domainColor : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                color: isDone
+                    ? domainColor
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.08),
                 width: isDone ? 2 : 1,
               ),
             ),
             child: InkWell(
-              onTap: (isDone || paused) ? null : () => onHabitToggle(context, item.habit, item.log),
+              onTap: (isDone || paused)
+                  ? null
+                  : () => onHabitToggle(context, item.habit, item.log),
               borderRadius: BorderRadius.circular(12),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
-                children: [
-                  Container(
-                    width: 32,
-                    height: 32,
-                    margin: const EdgeInsets.only(right: 12),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isDone ? domainColor : Colors.transparent,
-                    ),
-                    child: Center(
-                      child: isDone
-                          ? const Icon(Icons.check, size: 18, color: Colors.white)
-                          : Icon(
-                              paused ? Icons.ac_unit_rounded : Icons.circle_outlined,
-                              size: 18,
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                            ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.habit.title,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: isAction ? FontWeight.bold : FontWeight.normal,
-                            decoration: isDone ? TextDecoration.lineThrough : TextDecoration.none,
-                            color: isDone ? theme.colorScheme.onSurface.withValues(alpha: 0.4) : theme.colorScheme.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: domainColor.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                item.habit.domainTag ?? 'Tubuh',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: domainColor,
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      margin: const EdgeInsets.only(right: 12),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDone ? domainColor : Colors.transparent,
+                      ),
+                      child: Center(
+                        child: isDone
+                            ? const Icon(
+                                Icons.check,
+                                size: 18,
+                                color: Colors.white,
+                              )
+                            : Icon(
+                                paused
+                                    ? Icons.ac_unit_rounded
+                                    : Icons.circle_outlined,
+                                size: 18,
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.4,
                                 ),
                               ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.habit.title,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: isAction
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              decoration: isDone
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none,
+                              color: isDone
+                                  ? theme.colorScheme.onSurface.withValues(
+                                      alpha: 0.4,
+                                    )
+                                  : theme.colorScheme.onSurface,
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Beban: ${beban}pt',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: domainColor.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  item.habit.domainTag ?? 'Tubuh',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: domainColor,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 8),
+                              Text(
+                                'Beban: ${beban}pt',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (paused) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
                         ),
-                      ],
+                        constraints: const BoxConstraints(minHeight: 44),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.06,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '⏸ Dijeda',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.6,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ] else if (!isDone && item.log == null) ...[
+                      OutlinedButton(
+                        onPressed: () =>
+                            onFrictionIntervention(context, item.habit),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(64, 44),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          side: BorderSide(
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.1,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'Tidak Sanggup',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.6,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit_outlined,
+                        size: 20,
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.5,
+                        ),
+                      ),
+                      onPressed: () => context.push(
+                        '/add-habit?habitId=${item.habit.habitId}',
+                      ),
+                      constraints: const BoxConstraints(),
+                      padding: const EdgeInsets.all(8),
+                      tooltip: 'Edit Kebiasaan',
                     ),
-                  ),
-                  if (paused) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                      constraints: const BoxConstraints(minHeight: 44),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '⏸ Dijeda',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ] else if (!isDone && item.log == null) ...[
-                    OutlinedButton(
-                      onPressed: () => onFrictionIntervention(context, item.habit),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(64, 44),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
-                      ),
-                      child: Text(
-                        'Tidak Sanggup',
-                        style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
                   ],
-                  IconButton(
-                    icon: Icon(Icons.edit_outlined, size: 20, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
-                    onPressed: () => context.push('/add-habit?habitId=${item.habit.habitId}'),
-                    constraints: const BoxConstraints(),
-                    padding: const EdgeInsets.all(8),
-                    tooltip: 'Edit Kebiasaan',
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
           ),
         ),
       ),

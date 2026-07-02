@@ -27,14 +27,8 @@ class _AnimatedHighlightCardState extends State<AnimatedHighlightCard>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
 
     if (widget.isHighlighted) {
       _controller.forward();
@@ -61,7 +55,8 @@ class _AnimatedHighlightCardState extends State<AnimatedHighlightCard>
 
   @override
   Widget build(BuildContext context) {
-    final highlightColor = widget.highlightColor ?? 
+    final highlightColor =
+        widget.highlightColor ??
         Theme.of(context).colorScheme.primary.withValues(alpha: 0.1);
 
     return AnimatedBuilder(
@@ -113,18 +108,12 @@ class _PulseAnimationState extends State<PulseAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _animation = Tween<double>(
       begin: widget.minScale,
       end: widget.maxScale,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     if (widget.repeat) {
       _controller.repeat(reverse: true);
@@ -141,10 +130,7 @@ class _PulseAnimationState extends State<PulseAnimation>
 
   @override
   Widget build(BuildContext context) {
-    return ScaleTransition(
-      scale: _animation,
-      child: widget.child,
-    );
+    return ScaleTransition(scale: _animation, child: widget.child);
   }
 }
 
@@ -181,13 +167,17 @@ class _HabitToggleAnimationState extends State<HabitToggleAnimation>
 
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.1)
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween<double>(
+          begin: 1.0,
+          end: 1.1,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 50,
       ),
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.1, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeIn)),
+        tween: Tween<double>(
+          begin: 1.1,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeIn)),
         weight: 50,
       ),
     ]).animate(_controller);
@@ -228,10 +218,7 @@ class _HabitToggleAnimationState extends State<HabitToggleAnimation>
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: _scaleAnimation,
-      child: FadeTransition(
-        opacity: _opacityAnimation,
-        child: widget.child,
-      ),
+      child: FadeTransition(opacity: _opacityAnimation, child: widget.child),
     );
   }
 }
@@ -257,15 +244,9 @@ class SlideAndFadeTransition extends StatelessWidget {
       position: Tween<Offset>(
         begin: begin,
         end: end,
-      ).animate(CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeOut,
-      )),
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
       child: FadeTransition(
-        opacity: CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeIn,
-        ),
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeIn),
         child: child,
       ),
     );

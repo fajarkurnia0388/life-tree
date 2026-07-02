@@ -133,7 +133,9 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView>
     if (list.isEmpty) {
       return EmptyStateWidget(
         icon: isPending ? Icons.pending_actions : Icons.check_circle_outline,
-        title: isPending ? 'Tidak Ada Keputusan Pending' : 'Belum Ada Keputusan Selesai',
+        title: isPending
+            ? 'Tidak Ada Keputusan Pending'
+            : 'Belum Ada Keputusan Selesai',
         message: isPending
             ? 'Keputusan yang perlu ditinjau akan muncul di sini'
             : 'Keputusan yang sudah direview akan muncul di sini',
