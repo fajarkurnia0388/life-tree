@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/widgets/loading_state_widget.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import '../onboarding/onboarding_view.dart';
@@ -43,6 +44,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
       );
     }
 
+    final formKey = GlobalKey<FormState>();
     final controller1 = TextEditingController(text: currentValues[0]);
     final controller2 = TextEditingController(text: currentValues[1]);
     final controller3 = TextEditingController(text: currentValues[2]);
@@ -56,80 +58,110 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
           ),
           title: const Text('Tentukan Kompas Hidup 🧭'),
           content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'Pilih 3 nilai inti hidup Anda (misal: Disiplin, Kebebasan, Kreativitas, Kesehatan, Cinta).',
-                  style: TextStyle(fontSize: 12),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Nilai Cepat (Ketuk untuk isi):',
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 6),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children:
-                      [
-                        'Kesehatan 🏃',
-                        'Kebebasan 🗽',
-                        'Keluarga 👨‍👩‍👧',
-                        'Belajar 📚',
-                        'Karir 💼',
-                        'Kreativitas 🎨',
-                        'Kedamaian ☮️',
-                        'Disiplin 🛡️',
-                      ].map((val) {
-                        return ActionChip(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 2,
-                          ),
-                          label: Text(
-                            val,
-                            style: const TextStyle(fontSize: 10),
-                          ),
-                          onPressed: () {
-                            if (controller1.text.trim().isEmpty) {
-                              controller1.text = val;
-                            } else if (controller2.text.trim().isEmpty) {
-                              controller2.text = val;
-                            } else if (controller3.text.trim().isEmpty) {
-                              controller3.text = val;
-                            }
-                          },
-                        );
-                      }).toList(),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: controller1,
-                  decoration: const InputDecoration(
-                    labelText: 'Nilai 1',
-                    hintText: 'Misal: Kesehatan',
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'Pilih 3 nilai inti hidup Anda (misal: Disiplin, Kebebasan, Kreativitas, Kesehatan, Cinta).',
+                    style: TextStyle(fontSize: 12),
                   ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: controller2,
-                  decoration: const InputDecoration(
-                    labelText: 'Nilai 2',
-                    hintText: 'Misal: Kebebasan',
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Nilai Cepat (Ketuk untuk isi):',
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                   ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: controller3,
-                  decoration: const InputDecoration(
-                    labelText: 'Nilai 3',
-                    hintText: 'Misal: Belajar',
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children:
+                        [
+                          'Kesehatan 🏃',
+                          'Kebebasan 🗽',
+                          'Keluarga 👨‍👩‍👧',
+                          'Belajar 📚',
+                          'Karir 💼',
+                          'Kreativitas 🎨',
+                          'Kedamaian ☮️',
+                          'Disiplin 🛡️',
+                        ].map((val) {
+                          return ActionChip(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 2,
+                            ),
+                            label: Text(
+                              val,
+                              style: const TextStyle(fontSize: 10),
+                            ),
+                            onPressed: () {
+                              if (controller1.text.trim().isEmpty) {
+                                controller1.text = val;
+                              } else if (controller2.text.trim().isEmpty) {
+                                controller2.text = val;
+                              } else if (controller3.text.trim().isEmpty) {
+                                controller3.text = val;
+                              }
+                            },
+                          );
+                        }).toList(),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: controller1,
+                    decoration: const InputDecoration(
+                      labelText: 'Nilai 1',
+                      hintText: 'Misal: Kesehatan',
+                    ),
+                    maxLength: 50,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Minimal isi 1 nilai inti';
+                      }
+                      if (value.trim().length < 2) {
+                        return 'Minimal 2 karakter';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: controller2,
+                    decoration: const InputDecoration(
+                      labelText: 'Nilai 2 (opsional)',
+                      hintText: 'Misal: Kebebasan',
+                    ),
+                    maxLength: 50,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value != null && value.trim().isNotEmpty && value.trim().length < 2) {
+                        return 'Minimal 2 karakter';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: controller3,
+                    decoration: const InputDecoration(
+                      labelText: 'Nilai 3 (opsional)',
+                      hintText: 'Misal: Belajar',
+                    ),
+                    maxLength: 50,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value != null && value.trim().isNotEmpty && value.trim().length < 2) {
+                        return 'Minimal 2 karakter';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [
@@ -565,7 +597,11 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(
+          child: LoadingStateWidget(
+            message: 'Memuat profil...',
+          ),
+        ),
         error: (err, _) => Center(child: Text('Gagal memuat profil: $err')),
       ),
     );

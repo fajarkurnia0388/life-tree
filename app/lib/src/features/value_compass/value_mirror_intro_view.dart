@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/theme/theme.dart';
 
 class ValueMirrorIntroView extends StatelessWidget {
@@ -22,7 +23,7 @@ class ValueMirrorIntroView extends StatelessWidget {
               const Spacer(),
               Center(
                 child: Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(AppSpacing.xxl),
                   decoration: BoxDecoration(
                     color: CalmTheme.secondaryBlue.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
@@ -54,7 +55,7 @@ class ValueMirrorIntroView extends StatelessWidget {
               const SizedBox(height: 24),
               // Panduan Anti-Guilt
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(16),
@@ -71,25 +72,35 @@ class ValueMirrorIntroView extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              ElevatedButton(
-                onPressed: () => context.push('/value-mirror/session'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: CalmTheme.secondaryBlue,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                ),
-                child: const Text(
-                  'Mulai Sesi',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Semantics(
+                label: 'Mulai sesi refleksi nilai',
+                hint: 'Memulai sesi Value Mirror untuk refleksi nilai hidup Anda',
+                button: true,
+                child: ElevatedButton(
+                  onPressed: () => context.push('/value-mirror/session'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: CalmTheme.secondaryBlue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text(
+                    'Mulai Sesi',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
-              TextButton(
-                onPressed: () => context.pop(),
-                child: Text(
-                  'Kembali',
-                  style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              Semantics(
+                label: 'Kembali',
+                hint: 'Kembali ke halaman sebelumnya',
+                button: true,
+                child: TextButton(
+                  onPressed: () => context.pop(),
+                  child: Text(
+                    'Kembali',
+                    style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                  ),
                 ),
               ),
             ],

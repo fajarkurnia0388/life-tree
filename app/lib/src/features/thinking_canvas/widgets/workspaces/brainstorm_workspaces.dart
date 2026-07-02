@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_spacing.dart';
 
 // ==========================================
 // 1. RAPID BRAINSTORM WORKSPACE (ANIMATED BUBBLES)
@@ -57,6 +58,7 @@ class _RapidBrainstormWorkspaceState extends State<RapidBrainstormWorkspace> {
         TextField(
           controller: _inputController,
           decoration: InputDecoration(
+            labelText: 'Tambah Ide Baru',
             hintText: 'Ketik ide baru di sini lalu tekan Enter 🚀...',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
@@ -220,6 +222,7 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
         TextField(
           controller: _inputController,
           decoration: InputDecoration(
+            labelText: 'Tambah Pertanyaan',
             hintText: 'Ketik pertanyaan kritis Anda lalu tekan Enter...',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
@@ -358,7 +361,7 @@ class _RandomWordWorkspaceState extends State<RandomWordWorkspace> {
         ),
         const SizedBox(height: 12),
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           decoration: BoxDecoration(
             color: theme.colorScheme.primary.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(16),
@@ -414,6 +417,13 @@ class _RandomWordWorkspaceState extends State<RandomWordWorkspace> {
             hintText: 'Tuliskan asosiasi atau analogi ide Anda di sini...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (val) {
+            if (val == null || val.trim().isEmpty) {
+              return 'Harap tuliskan ide atau asosiasi Anda';
+            }
+            return null;
+          },
         ),
       ],
     );
@@ -838,7 +848,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
         ),
         const SizedBox(height: 12),
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
             color: theme.colorScheme.primary.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
@@ -883,6 +893,13 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
             hintText: 'Tuliskan analisis atau pemikiran dari sudut pandang ini...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (val) {
+            if (val == null || val.trim().isEmpty) {
+              return 'Harap tuliskan pemikiran dari sudut pandang ${persona.name}';
+            }
+            return null;
+          },
         ),
       ],
     );

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/domain/app_constants.dart';
 import '../../../core/providers/db_provider.dart';
+import '../../../core/widgets/loading_state_widget.dart';
 import '../../../data/local_db/database.dart';
 import '../marketplace_service.dart';
 
@@ -113,7 +114,14 @@ class _ShareTemplateBottomSheetState extends ConsumerState<ShareTemplateBottomSh
       ),
       padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(context).viewInsets.bottom + 24),
       child: _isLoading
-          ? const SizedBox(height: 200, child: Center(child: CircularProgressIndicator()))
+          ? SizedBox(
+              height: 200,
+              child: Center(
+                child: LoadingStateWidget(
+                  message: 'Memuat kebiasaan...',
+                ),
+              ),
+            )
           : _localHabits.isEmpty
               ? SizedBox(
                   height: 200,
@@ -194,9 +202,13 @@ class _ShareTemplateBottomSheetState extends ConsumerState<ShareTemplateBottomSh
                             hintText: 'Tulis tips Anda: Kapan mengerjakannya? Di mana ditumpuk? dll.',
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (val) {
                             if (val == null || val.trim().isEmpty) {
                               return 'Harap berikan sedikit deskripsi atau panduan';
+                            }
+                            if (val.trim().length < 10) {
+                              return 'Deskripsi minimal 10 karakter';
                             }
                             return null;
                           },
@@ -205,11 +217,19 @@ class _ShareTemplateBottomSheetState extends ConsumerState<ShareTemplateBottomSh
 
                         TextFormField(
                           controller: _penNameController,
+                          maxLength: 30,
                           decoration: InputDecoration(
                             labelText: 'Nama Pena (Opsional)',
                             hintText: 'Misal: SehatSelalu (Default: Anonim)',
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (val) {
+                            if (val != null && val.trim().isNotEmpty && val.trim().length < 2) {
+                              return 'Nama pena minimal 2 karakter';
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 24),
 

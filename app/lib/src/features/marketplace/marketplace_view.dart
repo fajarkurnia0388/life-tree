@@ -4,6 +4,8 @@ import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/widgets/loading_state_widget.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'marketplace_service.dart';
@@ -234,6 +236,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
+                labelText: 'Cari Template',
                 hintText: 'Cari template kebiasaan...',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: IconButton(
@@ -320,7 +323,11 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
               future: _templatesFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: LoadingStateWidget(
+                      message: 'Memuat template...',
+                    ),
+                  );
                 }
 
                 if (snapshot.hasError) {
@@ -347,7 +354,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                 }
 
                 return ListView.builder(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   itemCount: list.length,
                   itemBuilder: (context, index) {
                     final t = list[index];

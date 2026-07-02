@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/widgets/loading_state_widget.dart';
 import '../../core/services/error_handler_service.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
@@ -106,7 +107,11 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView>
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(
+          child: LoadingStateWidget(
+            message: 'Memuat jurnal keputusan...',
+          ),
+        ),
         error: (err, stack) => Center(child: Text('Gagal memuat jurnal: $err')),
       ),
       floatingActionButton: FloatingActionButton.extended(

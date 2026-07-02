@@ -7,6 +7,7 @@ import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
 import '../../core/theme/theme.dart';
 import '../../core/widgets/error_state_widget.dart';
+import '../../core/widgets/loading_state_widget.dart';
 import 'domain/value_dilemma.dart';
 import 'services/value_compass_service.dart';
 import 'widgets/value_dilemma_card.dart';
@@ -228,47 +229,56 @@ class _ValueMirrorSessionViewState
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cermin Nilai 🪞'),
-        leading: IconButton(
-          icon: const Icon(Icons.close_rounded),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('Keluar dari Sesi?'),
-                  content: const Text(
-                    'Jawaban yang sudah tersimpan tidak akan hilang, tapi sesi ini akan dihentikan.',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Lanjutkan'),
+        leading: Semantics(
+          label: 'Keluar dari sesi',
+          hint: 'Menutup sesi refleksi Value Mirror',
+          button: true,
+          child: IconButton(
+            icon: const Icon(Icons.close_rounded),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Keluar dari Sesi?'),
+                    content: const Text(
+                      'Jawaban yang sudah tersimpan tidak akan hilang, tapi sesi ini akan dihentikan.',
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Close dialog
-                        context.go('/');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: CalmTheme.alertMutedRed,
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Lanjutkan'),
                       ),
-                      child: const Text(
-                        'Keluar',
-                        style: TextStyle(color: Colors.white),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Close dialog
+                          context.go('/');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: CalmTheme.alertMutedRed,
+                        ),
+                        child: const Text(
+                          'Keluar',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
+                    ],
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
       body: FutureBuilder<List<dynamic>>(
         future: _sessionFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: LoadingStateWidget(
+                message: 'Memuat sesi refleksi...',
+              ),
+            );
           }
           if (snapshot.hasError) {
             return ErrorStateWidget(
@@ -335,7 +345,11 @@ class _ValueMirrorSessionViewState
               if (_isSaving)
                 Container(
                   color: Colors.black.withValues(alpha: 0.1),
-                  child: const Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: LoadingStateWidget(
+                      message: 'Menyimpan jawaban...',
+                    ),
+                  ),
                 ),
             ],
           );

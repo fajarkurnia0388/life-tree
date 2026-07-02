@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'package:drift/drift.dart' as drift;
@@ -115,7 +116,7 @@ class _ThinkingCanvasLiteViewState
 
     return Container(
       margin: const EdgeInsets.only(top: 12),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
@@ -778,6 +779,7 @@ class _ThinkingCanvasLiteViewState
                 method.placeholder ?? 'Tuliskan hasil berpikir Anda di sini...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (val) {
             if (val == null || val.trim().isEmpty) {
               return 'Harap masukkan hasil berpikir Anda';
@@ -811,6 +813,7 @@ class _ThinkingCanvasLiteViewState
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (val) {
                     if (val == null || val.trim().isEmpty) {
                       return 'Kolom $col tidak boleh kosong';
@@ -850,6 +853,7 @@ class _ThinkingCanvasLiteViewState
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (val) {
                     if (val == null || val.trim().isEmpty) {
                       return 'Langkah ini tidak boleh kosong';
@@ -915,6 +919,7 @@ class _ThinkingCanvasLiteViewState
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
                               validator: (val) {
                                 if (val == null || val.trim().isEmpty) {
                                   return 'Nama opsi ide tidak boleh kosong';
@@ -1168,6 +1173,13 @@ class _ThinkingCanvasLiteViewState
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (val) {
+                  if (val == null || val.trim().isEmpty) {
+                    return 'Harap masukkan topik yang sedang dipikirkan';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 24),
 
@@ -1201,6 +1213,7 @@ class _ThinkingCanvasLiteViewState
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (val) {
                   if (val == null || val.trim().isEmpty) {
                     return 'Harap tentukan satu aksi kecil berikutnya';

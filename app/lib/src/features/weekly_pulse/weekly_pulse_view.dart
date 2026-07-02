@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'package:drift/drift.dart' as drift;
@@ -432,7 +433,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   child: Text(
                     'Langkah ${_currentStep + 1} dari $totalSteps',
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -458,7 +459,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                 ),
                 // Navigation buttons
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(AppSpacing.xl),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

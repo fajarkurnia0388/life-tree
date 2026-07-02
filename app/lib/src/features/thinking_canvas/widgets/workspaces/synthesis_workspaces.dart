@@ -71,6 +71,7 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
         TextField(
           controller: _inputController,
           decoration: InputDecoration(
+            labelText: 'Tambah Item',
             hintText: 'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
@@ -236,6 +237,7 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
         TextField(
           controller: _inputController,
           decoration: InputDecoration(
+            labelText: 'Tambah Gagasan',
             hintText: 'Ketik gagasan/ide Anda lalu tekan Enter...',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
@@ -410,6 +412,13 @@ class _FiveWhysWorkspaceState extends State<FiveWhysWorkspace> {
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (val) {
+                    if (val == null || val.trim().isEmpty) {
+                      return 'Harap isi analisis sebab';
+                    }
+                    return null;
+                  },
                 ),
               ),
             ],
@@ -510,6 +519,7 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ],
             ),
@@ -659,6 +669,13 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
             labelText: 'Catatan untuk Fase ${_phases[_activeTab]['title']!.split(' ')[1]}',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (val) {
+            if (val == null || val.trim().isEmpty) {
+              return 'Harap isi catatan untuk fase ini';
+            }
+            return null;
+          },
         ),
       ],
     );
@@ -779,6 +796,13 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
             hintText: 'Misal: Pengguna bersedia membayar langganan bulanan...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (val) {
+            if (val == null || val.trim().isEmpty) {
+              return 'Harap masukkan asumsi yang ingin divalidasi';
+            }
+            return null;
+          },
         ),
         const SizedBox(height: 12),
         Container(
@@ -827,6 +851,7 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                     controller: _supportInput,
                     style: const TextStyle(fontSize: 11),
                     decoration: InputDecoration(
+                      labelText: 'Bukti Pendukung',
                       hintText: 'Ketik bukti...',
                       suffixIcon: GestureDetector(
                         onTap: _addSupport,
@@ -867,6 +892,7 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                     controller: _opposeInput,
                     style: const TextStyle(fontSize: 11),
                     decoration: InputDecoration(
+                      labelText: 'Bukti Pembantah',
                       hintText: 'Ketik bukti...',
                       suffixIcon: GestureDetector(
                         onTap: _addOppose,

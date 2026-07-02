@@ -66,7 +66,10 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
           content: TextField(
             controller: controller,
             autofocus: true,
-            decoration: const InputDecoration(border: OutlineInputBorder()),
+            decoration: const InputDecoration(
+              labelText: 'Teks',
+              border: OutlineInputBorder(),
+            ),
           ),
           actions: [
             TextButton(

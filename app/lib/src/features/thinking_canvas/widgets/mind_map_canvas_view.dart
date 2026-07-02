@@ -134,6 +134,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
             autofocus: true,
             maxLines: 2,
             decoration: const InputDecoration(
+              labelText: 'Gagasan',
               hintText: 'Tuliskan gagasan Anda...',
               border: OutlineInputBorder(),
             ),

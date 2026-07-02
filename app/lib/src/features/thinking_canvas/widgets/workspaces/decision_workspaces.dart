@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_spacing.dart';
 
 // ==========================================
 // 1. SIX THINKING HATS WORKSPACE
@@ -145,7 +146,7 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
         ),
         const SizedBox(height: 16),
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
             color: (activeHat['color'] as Color).withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(12),
@@ -179,6 +180,13 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
             hintText: 'Tuliskan analisis kognitif Anda di sini...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (val) {
+            if (val == null || val.trim().isEmpty) {
+              return 'Harap tuliskan analisis untuk ${activeHat['name']}';
+            }
+            return null;
+          },
         ),
       ],
     );
@@ -332,6 +340,13 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
             hintText: 'Tuliskan poin-poin ide Anda di sini...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (val) {
+            if (val == null || val.trim().isEmpty) {
+              return 'Harap tuliskan ide untuk ${room['label']}';
+            }
+            return null;
+          },
         ),
       ],
     );
@@ -463,6 +478,13 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                             hintText: 'Tulis ide SCAMPER Anda di sini...',
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                           ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return 'Harap tuliskan ide untuk ${p['key']}';
+                            }
+                            return null;
+                          },
                         ),
                       ],
                     ),
@@ -589,6 +611,7 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
               ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
           ),
         ],
@@ -729,6 +752,13 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
             hintText: 'Tuliskan draf pertanyaan di sini...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (val) {
+            if (val == null || val.trim().isEmpty) {
+              return 'Harap tuliskan pertanyaan untuk ${activePoint['key']}';
+            }
+            return null;
+          },
         ),
       ],
     );

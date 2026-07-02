@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../../core/theme/app_spacing.dart';
 import '../../../data/local_db/database.dart';
 import '../../../core/providers/db_provider.dart';
 
@@ -201,7 +202,7 @@ class _TreeSkinShopBottomSheetState extends ConsumerState<TreeSkinShopBottomShee
         color: theme.scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AppSpacing.xxl),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

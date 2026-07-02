@@ -200,6 +200,7 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace> with Single
                     hintText: 'Mulai menulis apa saja di sini, jangan biarkan jari Anda berhenti mengetik...',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (val) {
                     if (val == null || val.trim().isEmpty) {
                       return 'Tuliskan pemikiran Freewriting Anda';

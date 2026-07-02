@@ -213,6 +213,7 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _titleController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
                   labelText: 'Judul Keputusan',
                   hintText: 'Misal: Membeli mobil baru atau langganan taksi online',
@@ -224,6 +225,7 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
               TextFormField(
                 controller: _descController,
                 maxLines: 2,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
                   labelText: 'Konteks & Deskripsi',
                   hintText: 'Tuliskan detail latar belakang kenapa keputusan ini sulit...',
@@ -237,6 +239,7 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
                   Expanded(
                     child: TextFormField(
                       controller: _optAController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       decoration: InputDecoration(
                         labelText: 'Opsi A',
                         hintText: 'Misal: Beli Mobil',
@@ -249,6 +252,7 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
                   Expanded(
                     child: TextFormField(
                       controller: _optBController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       decoration: InputDecoration(
                         labelText: 'Opsi B',
                         hintText: 'Misal: Taksi Online',
@@ -283,6 +287,7 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
                       Expanded(
                         child: TextFormField(
                           controller: _assumptionsControllers[index],
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           decoration: InputDecoration(
                             hintText: 'Asumsi ${index + 1}',
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -322,6 +327,7 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
               TextFormField(
                 controller: _expectationsController,
                 maxLines: 2,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
                   labelText: 'Ekspektasi Hasil Akhir (Hasil 90 Hari)',
                   hintText: 'Misal: Saya berharap bisa menghemat Rp 1.5jt per bulan dan tidak lelah menyetir...',

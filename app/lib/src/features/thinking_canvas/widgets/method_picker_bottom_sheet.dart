@@ -333,6 +333,7 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
           TextField(
             onChanged: (val) => setState(() => _searchQuery = val),
             decoration: InputDecoration(
+              labelText: 'Cari Metode',
               hintText: 'Cari metode (misal: SWOT, 5 Whys)...',
               prefixIcon: const Icon(Icons.search_rounded),
               isDense: true,

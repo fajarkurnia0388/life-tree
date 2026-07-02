@@ -4,6 +4,7 @@ import '../../core/domain/priority_helper.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/services/error_handler_service.dart';
 import '../../core/widgets/error_state_widget.dart';
+import '../../core/widgets/loading_state_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/local_db/database.dart';
@@ -339,7 +340,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(
+          child: LoadingStateWidget(
+            message: 'Memuat data dashboard...',
+          ),
+        ),
         error: (err, stack) => ErrorStateWidget(
           message: 'Gagal memuat dashboard',
           error: err.toString(),
@@ -397,38 +402,48 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                ListTile(
-                  leading: const CircleAvatar(
-                    backgroundColor: Color(0xFFE8F5E9),
-                    child: Icon(Icons.add_rounded, color: Color(0xFF2E7D32)),
+                Semantics(
+                  label: 'Tambah kebiasaan baru',
+                  hint: 'Buka halaman untuk membuat kebiasaan baru',
+                  button: true,
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: Color(0xFFE8F5E9),
+                      child: Icon(Icons.add_rounded, color: Color(0xFF2E7D32)),
+                    ),
+                    title: const Text(
+                      'Tambah Kebiasaan Baru',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: const Text(
+                      'Buat kebiasaan baru di domain kehidupan Anda',
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.push('/add-habit');
+                    },
                   ),
-                  title: const Text(
-                    'Tambah Kebiasaan Baru',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: const Text(
-                    'Buat kebiasaan baru di domain kehidupan Anda',
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push('/add-habit');
-                  },
                 ),
                 const Divider(),
-                ListTile(
-                  leading: const CircleAvatar(
-                    backgroundColor: Color(0xFFE3F2FD),
-                    child: Icon(Icons.book_rounded, color: Color(0xFF1E88E5)),
+                Semantics(
+                  label: 'Tulis jurnal hari ini',
+                  hint: 'Buka halaman jurnal untuk mencatat mood dan refleksi harian',
+                  button: true,
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: Color(0xFFE3F2FD),
+                      child: Icon(Icons.book_rounded, color: Color(0xFF1E88E5)),
+                    ),
+                    title: const Text(
+                      'Tulis Jurnal Hari Ini',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: const Text('Catat mood & jurnal harian Anda'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.push('/journal');
+                    },
                   ),
-                  title: const Text(
-                    'Tulis Jurnal Hari Ini',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: const Text('Catat mood & jurnal harian Anda'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push('/journal');
-                  },
                 ),
               ],
             ),

@@ -272,7 +272,14 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
             borderRadius: BorderRadius.circular(16),
           ),
           title: Text('Tambah Opsi di "$dimension"'),
-          content: TextField(controller: controller, autofocus: true),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: 'Opsi',
+              border: OutlineInputBorder(),
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -306,7 +313,14 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
             borderRadius: BorderRadius.circular(16),
           ),
           title: const Text('Tambah Dimensi Baru'),
-          content: TextField(controller: controller, autofocus: true),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: 'Nama Dimensi',
+              border: OutlineInputBorder(),
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
