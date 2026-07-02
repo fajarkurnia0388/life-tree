@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/theme/form_theme.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'widgets/habit_templates.dart';
@@ -421,12 +422,12 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
               TextFormField(
                 controller: _titleController,
-                decoration: InputDecoration(
+                decoration: AppFormTheme.inputDecoration(
                   labelText: 'Nama Kebiasaan',
                   hintText: 'Misal: Jalan kaki pagi',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                validator: (v) => v == null || v.trim().isEmpty ? 'Nama kebiasaan tidak boleh kosong' : null,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: AppFormTheme.habitTitleValidator,
               ),
               const SizedBox(height: 20),
 
@@ -434,14 +435,13 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _goalTagController,
-                decoration: InputDecoration(
+                decoration: AppFormTheme.inputDecoration(
                   labelText: 'Nama Target / Goal',
                   hintText: 'Misal: Menurunkan berat badan 5kg',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                   prefixIcon: const Icon(Icons.track_changes_rounded),
                 ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (v) => AppFormTheme.optionalTextValidator(v, maxLength: 100),
               ),
               const SizedBox(height: 24),
 

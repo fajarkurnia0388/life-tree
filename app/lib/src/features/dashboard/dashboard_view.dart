@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/domain/priority_helper.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/widgets/error_state_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/local_db/database.dart';
@@ -339,11 +340,22 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Terjadi kesalahan: $err')),
+        error: (err, stack) => ErrorStateWidget(
+          message: 'Gagal memuat dashboard',
+          error: err.toString(),
+          onRetry: () {
+            ref.invalidate(dashboardDataProvider);
+          },
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showQuickActionsBottomSheet(context),
-        child: const Icon(Icons.add),
+      floatingActionButton: Semantics(
+        label: 'Tambah aktivitas baru',
+        hint: 'Buka menu untuk menambah jurnal, kebiasaan, atau refleksi',
+        button: true,
+        child: FloatingActionButton(
+          onPressed: () => _showQuickActionsBottomSheet(context),
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/domain/app_constants.dart';
+import '../../../../core/widgets/error_state_widget.dart';
 import '../../dashboard_provider.dart';
 import '../../growth_map_provider.dart';
 import '../../../habit/services/habit_log_service.dart';
@@ -79,8 +80,13 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
 
     return growthMapAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) =>
-          Center(child: Text('Gagal memuat peta pertumbuhan: $err')),
+      error: (err, stack) => ErrorStateWidget(
+        message: 'Gagal memuat peta pertumbuhan',
+        error: err.toString(),
+        onRetry: () {
+          ref.invalidate(growthMapProvider);
+        },
+      ),
       data: (viewModel) {
         return LayoutBuilder(
           builder: (context, constraints) {

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/theme/form_theme.dart';
 import '../../data/local_db/database.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
@@ -473,13 +474,13 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _keywordController,
-                decoration: InputDecoration(
+                decoration: AppFormTheme.inputDecoration(
+                  labelText: 'Kata Kunci',
                   hintText: 'Misal: bersyukur, lelah, produktif, santai',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                   prefixIcon: const Icon(Icons.tag_rounded),
                 ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (v) => AppFormTheme.optionalTextValidator(v, maxLength: 20),
                 maxLength: 20,
               ),
               const SizedBox(height: 16),
@@ -514,11 +515,14 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                         TextFormField(
                           controller: _q1Controller,
                           maxLines: 2,
-                          decoration: InputDecoration(
+                          decoration: AppFormTheme.inputDecoration(
+                            labelText: 'Fokus Pikiran',
                             hintText: 'Tuliskan unek-unek atau fokus pikiran Anda...',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                           ),
-                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) ? 'Harap isi kolom ini' : null,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) 
+                              ? 'Harap isi kolom ini' 
+                              : null,
                         ),
                         const SizedBox(height: 16),
 
@@ -530,11 +534,14 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                         TextFormField(
                           controller: _q2Controller,
                           maxLines: 2,
-                          decoration: InputDecoration(
+                          decoration: AppFormTheme.inputDecoration(
+                            labelText: 'Respons Anda',
                             hintText: 'Tindakan atau sikap mental yang Anda ambil...',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                           ),
-                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) ? 'Harap isi kolom ini' : null,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) 
+                              ? 'Harap isi kolom ini' 
+                              : null,
                         ),
                         const SizedBox(height: 16),
 
@@ -571,11 +578,14 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                         TextFormField(
                           controller: _q3Controller,
                           maxLines: 2,
-                          decoration: InputDecoration(
+                          decoration: AppFormTheme.inputDecoration(
+                            labelText: 'Rasa Syukur',
                             hintText: 'Misal: Secangkir kopi hangat, senyum rekan kerja...',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                           ),
-                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) ? 'Harap isi kolom ini' : null,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (v) => _showDeepReflection && (v == null || v.trim().isEmpty) 
+                              ? 'Harap isi kolom ini' 
+                              : null,
                         ),
                       ],
                     ),
