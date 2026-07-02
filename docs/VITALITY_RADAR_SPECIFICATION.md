@@ -21,6 +21,7 @@ The Vitality Radar is a dashboard feature that converts domain balance data into
 ## Scope
 
 The feature includes:
+
 - signal detection service (`VitalityRadarService`)
 - Riverpod provider (`vitalityRadarProvider`)
 - UI badge and signal summary on the dashboard (`RadarChartWidget`)
@@ -137,12 +138,14 @@ class DashboardData {
 Each signal represents a condition detected in the user's life data.
 
 Signal types:
+
 - `lowDomain` — one or more domains are trending too low
 - `imbalance` — domain scores are too uneven across the radar
 - `burnoutWarning` — canopy load is too high relative to capacity
 - `growthOpportunity` — stable domains are ready for new habits
 
 Each signal includes:
+
 - `title`
 - `description`
 - `severity` (low, medium, high)
@@ -154,6 +157,7 @@ Each signal includes:
 ### Data Inputs
 
 Data sources for detection:
+
 - `Map<String, double> domainScores` — blended domain scores from `RadarChartWidget`
 - `List<Habit> activeHabits` — habits with `status == 'Active'` and `deletedAt == null`
 - `int canopyCapacity` — from `UserProfile.canopyLoadCapacity`
@@ -196,7 +200,7 @@ class RadarSignal {
 
 ### VitalityRadarState
 
-```dart
+````dart
 class VitalityRadarState {
   final List<RadarSignal> signals;
   final double balanceIndex;        // 0.0–1.0, average of all domain scores / 10
@@ -251,18 +255,18 @@ List<RadarSignal> _detectLowDomains(Map<String, double> scores) {
   }
   return signals;
 }
-```
+````
 
 **Per-domain recommendations (hard-coded for MVP):**
 
-| Domain     | Recommendation examples |
-|------------|------------------------|
-| Tubuh      | Add a 5-min movement habit · Prioritize sleep tonight |
-| Keuangan   | Review one expense this week · Set a small savings goal |
-| Hubungan   | Reach out to one person today · Schedule a catch-up |
-| Emosi      | Write 3 lines in your journal · Try a breathing exercise |
-| Karir      | Block 30 min for focused work · Review your weekly goal |
-| Rekreasi   | Take a proper break today · Do one thing just for fun |
+| Domain   | Recommendation examples                                  |
+| -------- | -------------------------------------------------------- |
+| Tubuh    | Add a 5-min movement habit · Prioritize sleep tonight    |
+| Keuangan | Review one expense this week · Set a small savings goal  |
+| Hubungan | Reach out to one person today · Schedule a catch-up      |
+| Emosi    | Write 3 lines in your journal · Try a breathing exercise |
+| Karir    | Block 30 min for focused work · Review your weekly goal  |
+| Rekreasi | Take a proper break today · Do one thing just for fun    |
 
 ---
 
@@ -273,6 +277,7 @@ List<RadarSignal> _detectLowDomains(Map<String, double> scores) {
 **Inputs:** `Map<String, double> domainScores`
 
 **Logic:**
+
 - find `maxScore` and `minScore` across all domains
 - if `maxScore - minScore >= 5.0`, signal imbalance
 - severity: `high` if gap >= 6.0, `medium` if gap >= 5.0
@@ -327,6 +332,7 @@ loadRatio  = canopyLoad / canopyCapacity
 ```
 
 **Logic:**
+
 - compute `loadRatio`
 - if `loadRatio >= 0.85`, severity `high`
 - if `loadRatio >= 0.75`, severity `medium`
@@ -378,6 +384,7 @@ List<RadarSignal> _detectBurnout(
 **Inputs:** `Map<String, double> domainScores`, `List<Habit> activeHabits`
 
 **Logic:**
+
 - for each domain, check if score is in the stable range `7.0 <= score <= 8.5`
 - check if no active habit with that `domainTag` was created in the last 30 days
 - if both conditions met, create a `growthOpportunity` signal
@@ -386,7 +393,7 @@ List<RadarSignal> _detectBurnout(
 
 **Pseudocode:**
 
-```dart
+````dart
 List<RadarSignal> _detectGrowthOpportunity(
   Map<String, double> scores,
   List<Habit> activeHabits,
@@ -456,7 +463,7 @@ class VitalityRadarService {
 
   // private detection methods (see algorithms above)
 }
-```
+````
 
 ### Riverpod Provider
 
@@ -503,21 +510,22 @@ final vitalityRadarProvider = FutureProvider<VitalityRadarState>((ref) async {
 
 ### Integration Points
 
-| Component | Change needed |
-|-----------|--------------|
-| `RadarChartWidget` | Accept `VitalityRadarState?` and show badge |
-| `dashboard_view.dart` | Watch `vitalityRadarProvider` and pass state to widget |
-| `DashboardData` | No change needed — provider reads from it |
-| `UserProfile` | No change needed — `canopyLoadCapacity` already exists |
-| New: `VitalityRadarService` | New file in `dashboard/services/` |
-| New: `vitalityRadarProvider` | New file in `dashboard/providers/` |
-| New: `RadarSignalSheet` | New bottom sheet widget |
+| Component                    | Change needed                                          |
+| ---------------------------- | ------------------------------------------------------ |
+| `RadarChartWidget`           | Accept `VitalityRadarState?` and show badge            |
+| `dashboard_view.dart`        | Watch `vitalityRadarProvider` and pass state to widget |
+| `DashboardData`              | No change needed — provider reads from it              |
+| `UserProfile`                | No change needed — `canopyLoadCapacity` already exists |
+| New: `VitalityRadarService`  | New file in `dashboard/services/`                      |
+| New: `vitalityRadarProvider` | New file in `dashboard/providers/`                     |
+| New: `RadarSignalSheet`      | New bottom sheet widget                                |
 
 ## UI Design
 
 ### RadarChartWidget — Updated Layout
 
 Current structure (existing):
+
 ```
 Card
   └─ Column
@@ -529,6 +537,7 @@ Card
 ```
 
 Updated structure (with signals):
+
 ```
 Card
   └─ Column
@@ -572,11 +581,11 @@ Bottom Sheet
 
 ### Severity Color Mapping
 
-| Severity | Color | Icon |
-|----------|-------|------|
-| high     | `Colors.red[400]` | `Icons.warning_amber_rounded` |
-| medium   | `Colors.amber[600]` | `Icons.info_outline` |
-| low (growth) | `Colors.green[500]` | `Icons.trending_up` |
+| Severity     | Color               | Icon                          |
+| ------------ | ------------------- | ----------------------------- |
+| high         | `Colors.red[400]`   | `Icons.warning_amber_rounded` |
+| medium       | `Colors.amber[600]` | `Icons.info_outline`          |
+| low (growth) | `Colors.green[500]` | `Icons.trending_up`           |
 
 ## Implementation Plan
 
@@ -584,24 +593,26 @@ Bottom Sheet
 
 **New files to create:**
 
-| File | Purpose |
-|------|---------|
-| `app/lib/src/features/dashboard/services/vitality_radar_service.dart` | Detection logic |
+| File                                                                    | Purpose           |
+| ----------------------------------------------------------------------- | ----------------- |
+| `app/lib/src/features/dashboard/services/vitality_radar_service.dart`   | Detection logic   |
 | `app/lib/src/features/dashboard/providers/vitality_radar_provider.dart` | Riverpod provider |
-| `app/lib/src/features/dashboard/widgets/radar_signal_sheet.dart` | Bottom sheet UI |
+| `app/lib/src/features/dashboard/widgets/radar_signal_sheet.dart`        | Bottom sheet UI   |
 
 **Files to modify:**
 
-| File | Change |
-|------|--------|
+| File                                                             | Change                                     |
+| ---------------------------------------------------------------- | ------------------------------------------ |
 | `app/lib/src/features/dashboard/widgets/radar_chart_widget.dart` | Add `radarState` param, badge, tap handler |
-| `app/lib/src/features/dashboard/dashboard_view.dart` | Watch `vitalityRadarProvider`, pass state |
+| `app/lib/src/features/dashboard/dashboard_view.dart`             | Watch `vitalityRadarProvider`, pass state  |
 
 **Detection rules in MVP:**
+
 1. Low Domain Detection
 2. Balance Anomaly Detection
 
 **Success criteria:**
+
 - dashboard shows signal count badge on Vitality Radar card
 - tapping badge opens `RadarSignalSheet`
 - signals update when domain scores change
@@ -611,11 +622,10 @@ Bottom Sheet
 
 ### Phase 2: Strengthen Analytics
 
-**Additional detection rules:**
-3. Burnout Early Warning (canopy load ratio)
-4. Growth Opportunity Detection (stable domain + no recent habit)
+**Additional detection rules:** 3. Burnout Early Warning (canopy load ratio) 4. Growth Opportunity Detection (stable domain + no recent habit)
 
 **Additional improvements:**
+
 - use `JournalEntry.moodScore` trend for mood-aware signals
 - add habit coverage check (domains with no active habit)
 - rate-limit growth signals (max 1 per domain per 7 days)
@@ -625,6 +635,7 @@ Bottom Sheet
 ### Phase 3: Personalization
 
 **Future additions:**
+
 - user feedback on signals (helpful / not helpful)
 - adaptive thresholds based on user history
 - signal history table in Drift database
@@ -681,16 +692,16 @@ See dedicated **Testing Strategy** section below.
 
 File: `app/test/vitality_radar_service_test.dart`
 
-| Test case | Expected result |
-|-----------|----------------|
-| score = 3.5 for Tubuh | returns `lowDomain` signal, severity `medium` |
-| score = 2.5 for Emosi | returns `lowDomain` signal, severity `high` |
-| max-min gap = 5.5 | returns `imbalance` signal |
-| load ratio = 0.9, season = Growth | returns `burnoutWarning`, severity `high` |
-| load ratio = 0.9, season = Recovery | no `burnoutWarning` signal |
-| stable score 7.5, no habit in 30d | returns `growthOpportunity` |
-| stable score 7.5, season = Dormant | no `growthOpportunity` signal |
-| all scores 5.0, load ratio 0.5 | returns empty signal list |
+| Test case                           | Expected result                               |
+| ----------------------------------- | --------------------------------------------- |
+| score = 3.5 for Tubuh               | returns `lowDomain` signal, severity `medium` |
+| score = 2.5 for Emosi               | returns `lowDomain` signal, severity `high`   |
+| max-min gap = 5.5                   | returns `imbalance` signal                    |
+| load ratio = 0.9, season = Growth   | returns `burnoutWarning`, severity `high`     |
+| load ratio = 0.9, season = Recovery | no `burnoutWarning` signal                    |
+| stable score 7.5, no habit in 30d   | returns `growthOpportunity`                   |
+| stable score 7.5, season = Dormant  | no `growthOpportunity` signal                 |
+| all scores 5.0, load ratio 0.5      | returns empty signal list                     |
 
 ### Widget Tests
 

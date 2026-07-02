@@ -1,4 +1,5 @@
 """Finalize VITALITY_RADAR_SPECIFICATION.md accuracy fixes."""
+
 import pathlib
 
 spec = pathlib.Path("docs/VITALITY_RADAR_SPECIFICATION.md")
@@ -33,7 +34,9 @@ old_testing = (
     "- simulate score updates and confirm new signals appear\n"
     "- verify recovery mode or season state changes affect signal generation"
 )
-new_testing_placeholder = "### Testing Strategy\n\nSee dedicated **Testing Strategy** section below."
+new_testing_placeholder = (
+    "### Testing Strategy\n\nSee dedicated **Testing Strategy** section below."
+)
 content = content.replace(old_testing, new_testing_placeholder)
 
 # Add proper Testing Strategy section before Open Questions

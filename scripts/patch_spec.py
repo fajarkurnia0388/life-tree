@@ -1,4 +1,5 @@
 """Patch the VITALITY_RADAR_SPECIFICATION.md implementation plan section."""
+
 import pathlib
 
 spec = pathlib.Path("docs/VITALITY_RADAR_SPECIFICATION.md")
@@ -9,7 +10,11 @@ lines = content.split("\n")
 
 # Find start and end indices
 start = next(i for i, l in enumerate(lines) if l.strip() == "### Phase 1: MVP")
-end = next(i for i, l in enumerate(lines) if "system can surface" in l and "recommended next action" in l)
+end = next(
+    i
+    for i, l in enumerate(lines)
+    if "system can surface" in l and "recommended next action" in l
+)
 
 new_section = [
     "### Phase 1: MVP",
@@ -63,6 +68,6 @@ new_section = [
     '- "recommended next action" surfaced on dashboard home',
 ]
 
-updated_lines = lines[:start] + new_section + lines[end + 1:]
+updated_lines = lines[:start] + new_section + lines[end + 1 :]
 spec.write_text("\n".join(updated_lines), encoding="utf-8")
 print(f"SUCCESS: replaced lines {start}–{end}")

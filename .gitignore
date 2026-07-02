@@ -2,7 +2,7 @@
 .kiro
 evaluasi/
 life_tree_codebase.pdf
-scripts/export_lib_to_pdf.py
+scripts/
 
 # IDE / Editor configuration
 .idea/
