@@ -110,8 +110,11 @@ class CultivationLayer {
 
     // Signal 1: Cumulative days (bobot 40%)
     // Max at 730 days (2 years) → realm 8
-    final daysSignal = (cumulativeDays / CultivationConstants.maxRealmSignalDays)
-        .clamp(0.0, 1.0);
+    final daysSignal =
+        (cumulativeDays / CultivationConstants.maxRealmSignalDays).clamp(
+          0.0,
+          1.0,
+        );
     signal += daysSignal * 0.4;
 
     // Signal 2: Consistency (bobot 25%)
@@ -121,7 +124,8 @@ class CultivationLayer {
         .where((hwl) => hwl.habit.completionRate90d != null)
         .toList();
     if (habitsWithRate.isNotEmpty) {
-      final avgRate = habitsWithRate
+      final avgRate =
+          habitsWithRate
               .map((hwl) => hwl.habit.completionRate90d!)
               .reduce((a, b) => a + b) /
           habitsWithRate.length;
@@ -185,10 +189,12 @@ class CultivationLayer {
     // Tribulation detection: multiple missed habits + low mood indicators
     // For now, simplified: if many habits missed today
     final missedCount = data.habitsToday
-        .where((hwl) =>
-            hwl.log != null &&
-            (hwl.log!.status == 'Missed' ||
-                hwl.log!.frictionReasonSelected != null))
+        .where(
+          (hwl) =>
+              hwl.log != null &&
+              (hwl.log!.status == 'Missed' ||
+                  hwl.log!.frictionReasonSelected != null),
+        )
         .length;
 
     if (missedCount >= 3) {
@@ -197,8 +203,9 @@ class CultivationLayer {
 
     // Quiet Integration: just exited recovery
     if (data.profile.recoveryEndDate != null) {
-      final daysSinceRecovery =
-          DateTime.now().difference(data.profile.recoveryEndDate!).inDays;
+      final daysSinceRecovery = DateTime.now()
+          .difference(data.profile.recoveryEndDate!)
+          .inDays;
       if (daysSinceRecovery >= 0 && daysSinceRecovery <= 7) {
         return CultivationSeason.quietIntegration;
       }
@@ -307,9 +314,7 @@ class CultivationLayer {
 
   /// Get lowest palace score (for Action of the Day targeting)
   CultivationPalace getLowestPalace() {
-    return palaceScores.entries
-        .reduce((a, b) => a.value < b.value ? a : b)
-        .key;
+    return palaceScores.entries.reduce((a, b) => a.value < b.value ? a : b).key;
   }
 
   /// Check if in overload state

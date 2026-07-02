@@ -9,8 +9,8 @@ import 'cultivation_layer.dart';
 /// with a vocabularyMode field.
 final cultivationLanguageLevelProvider =
     StateProvider<CultivationLanguageLevel>(
-  (ref) => CultivationLanguageLevel.hybrid,
-);
+      (ref) => CultivationLanguageLevel.hybrid,
+    );
 
 /// Main cultivation layer provider.
 ///
@@ -23,7 +23,9 @@ final cultivationProvider = Provider<AsyncValue<CultivationLayer>>((ref) {
 });
 
 /// Convenience provider for the current cultivation season.
-final cultivationSeasonProvider = Provider<AsyncValue<CultivationSeason>>((ref) {
+final cultivationSeasonProvider = Provider<AsyncValue<CultivationSeason>>((
+  ref,
+) {
   final cultivationAsync = ref.watch(cultivationProvider);
   return cultivationAsync.whenData((layer) => layer.season);
 });

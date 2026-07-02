@@ -5,10 +5,7 @@ import '../cultivation_constants.dart';
 ///
 /// Phase 0 defines the reusable UI. Unlock logic is planned for Phase 3.
 class RealmBreakthroughDialog extends StatelessWidget {
-  const RealmBreakthroughDialog({
-    super.key,
-    required this.realm,
-  });
+  const RealmBreakthroughDialog({super.key, required this.realm});
 
   final CultivationRealm realm;
 
@@ -23,18 +20,18 @@ class RealmBreakthroughDialog extends StatelessWidget {
         children: [
           Text(
             '${realm.name} (${realm.chineseName})',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(realm.indonesianName),
           const SizedBox(height: 12),
           Text(
             realm.mindset,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontStyle: FontStyle.italic,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic),
           ),
         ],
       ),

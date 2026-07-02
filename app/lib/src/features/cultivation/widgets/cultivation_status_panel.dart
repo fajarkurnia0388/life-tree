@@ -29,8 +29,8 @@ class CultivationStatusPanel extends ConsumerWidget {
                 Text(
                   'Cultivation Status',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 16),
 
@@ -119,14 +119,8 @@ class CultivationStatusPanel extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
-              Text(
-                value,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+              Text(label, style: Theme.of(context).textTheme.labelSmall),
+              Text(value, style: Theme.of(context).textTheme.bodyMedium),
             ],
           ),
         ),
@@ -192,10 +186,7 @@ class CultivationStatusPanel extends ConsumerWidget {
     return Container(
       width: 12,
       height: 12,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 
@@ -217,8 +208,9 @@ class CultivationStatusPanel extends ConsumerWidget {
       CultivationSeason.growth => CultivationStrings.seasonGrowth(level),
       CultivationSeason.recovery => CultivationStrings.seasonRecovery(level),
       CultivationSeason.dormant => CultivationStrings.seasonDormant(level),
-      CultivationSeason.tribulation =>
-        CultivationStrings.seasonTribulation(level),
+      CultivationSeason.tribulation => CultivationStrings.seasonTribulation(
+        level,
+      ),
       CultivationSeason.quietIntegration =>
         CultivationStrings.seasonQuietIntegration(level),
     };

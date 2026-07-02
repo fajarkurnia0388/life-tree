@@ -16,9 +16,7 @@ void main() {
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     container = ProviderContainer(
-      overrides: [
-        dbProvider.overrideWithValue(db),
-      ],
+      overrides: [dbProvider.overrideWithValue(db)],
     );
   });
 
@@ -33,21 +31,27 @@ void main() {
       final now = DateTime.now();
 
       // Setup minimal profile
-      await db.into(db.userProfiles).insert(
+      await db
+          .into(db.userProfiles)
+          .insert(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
               latestDomainScores: drift.Value(
                 '{"Tubuh":8.0,"Keuangan":6.0,"Hubungan":7.0,"Emosi":5.0,"Karir":6.5,"Rekreasi":7.5}',
               ),
-              coreValues: const drift.Value('Kejujuran, Kesehatan, Kreativitas'),
+              coreValues: const drift.Value(
+                'Kejujuran, Kesehatan, Kreativitas',
+              ),
               createdAt: now,
               updatedAt: now,
             ),
           );
 
       // Add a habit to generate dashboard data
-      await db.into(db.habits).insert(
+      await db
+          .into(db.habits)
+          .insert(
             HabitsCompanion.insert(
               habitId: 'habit-1',
               userId: userId,
@@ -79,7 +83,9 @@ void main() {
       final userId = 'user-palace-1';
       final now = DateTime.now();
 
-      await db.into(db.userProfiles).insert(
+      await db
+          .into(db.userProfiles)
+          .insert(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
@@ -96,15 +102,9 @@ void main() {
 
       // Verify palace mapping
       expect(cultivation.palaceScores[CultivationPalace.body], equals(8.0));
-      expect(
-        cultivation.palaceScores[CultivationPalace.resource],
-        equals(3.0),
-      );
+      expect(cultivation.palaceScores[CultivationPalace.resource], equals(3.0));
       expect(cultivation.palaceScores[CultivationPalace.bond], equals(9.0));
-      expect(
-        cultivation.palaceScores[CultivationPalace.heartSea],
-        equals(4.0),
-      );
+      expect(cultivation.palaceScores[CultivationPalace.heartSea], equals(4.0));
       expect(cultivation.palaceScores[CultivationPalace.craft], equals(7.0));
       expect(cultivation.palaceScores[CultivationPalace.joy], equals(6.0));
     });
@@ -113,7 +113,9 @@ void main() {
       final userId = 'user-lowest-1';
       final now = DateTime.now();
 
-      await db.into(db.userProfiles).insert(
+      await db
+          .into(db.userProfiles)
+          .insert(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
@@ -128,10 +130,7 @@ void main() {
       final dashboardData = await container.read(dashboardDataProvider.future);
       final cultivation = CultivationLayer.fromDashboard(dashboardData);
 
-      expect(
-        cultivation.getLowestPalace(),
-        equals(CultivationPalace.resource),
-      );
+      expect(cultivation.getLowestPalace(), equals(CultivationPalace.resource));
     });
 
     test('determines season from support mode', () async {
@@ -139,7 +138,9 @@ void main() {
       final now = DateTime.now();
 
       // User in recovery mode
-      await db.into(db.userProfiles).insert(
+      await db
+          .into(db.userProfiles)
+          .insert(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
@@ -159,7 +160,9 @@ void main() {
       final userId = 'user-qi-1';
       final now = DateTime.now();
 
-      await db.into(db.userProfiles).insert(
+      await db
+          .into(db.userProfiles)
+          .insert(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
@@ -170,7 +173,9 @@ void main() {
           );
 
       // Add habits with known friction and energy
-      await db.into(db.habits).insert(
+      await db
+          .into(db.habits)
+          .insert(
             HabitsCompanion.insert(
               habitId: 'habit-qi-1',
               userId: userId,
@@ -181,7 +186,9 @@ void main() {
             ),
           );
 
-      await db.into(db.habits).insert(
+      await db
+          .into(db.habits)
+          .insert(
             HabitsCompanion.insert(
               habitId: 'habit-qi-2',
               userId: userId,
@@ -206,7 +213,9 @@ void main() {
       final now = DateTime.now();
 
       // Early stage profile (no values, low days)
-      await db.into(db.userProfiles).insert(
+      await db
+          .into(db.userProfiles)
+          .insert(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
@@ -222,19 +231,25 @@ void main() {
       expect(earlyRealm, inInclusiveRange(1, 3)); // Should be early realm
 
       // Simulate progression: add core values and recovery history
-      await db.update(db.userProfiles).replace(
+      await db
+          .update(db.userProfiles)
+          .replace(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
               coreValues: const drift.Value('Integrity, Growth, Balance'),
-              recoveryEndDate: drift.Value(now.subtract(const Duration(days: 30))),
+              recoveryEndDate: drift.Value(
+                now.subtract(const Duration(days: 30)),
+              ),
               createdAt: now,
               updatedAt: now,
             ),
           );
 
       // Add consistent habits
-      await db.into(db.habits).insert(
+      await db
+          .into(db.habits)
+          .insert(
             HabitsCompanion.insert(
               habitId: 'habit-realm-1',
               userId: userId,
@@ -266,11 +281,15 @@ void main() {
       final now = DateTime.now();
 
       // User just finished recovery 3 days ago
-      await db.into(db.userProfiles).insert(
+      await db
+          .into(db.userProfiles)
+          .insert(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
-              recoveryEndDate: drift.Value(now.subtract(const Duration(days: 3))),
+              recoveryEndDate: drift.Value(
+                now.subtract(const Duration(days: 3)),
+              ),
               supportMode: const drift.Value('Normal'),
               createdAt: now,
               updatedAt: now,
@@ -287,7 +306,9 @@ void main() {
       final userId = 'user-overload-1';
       final now = DateTime.now();
 
-      await db.into(db.userProfiles).insert(
+      await db
+          .into(db.userProfiles)
+          .insert(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
@@ -299,7 +320,9 @@ void main() {
 
       // Add many high-friction habits
       for (var i = 0; i < 5; i++) {
-        await db.into(db.habits).insert(
+        await db
+            .into(db.habits)
+            .insert(
               HabitsCompanion.insert(
                 habitId: 'habit-overload-$i',
                 userId: userId,
@@ -322,7 +345,9 @@ void main() {
       final now = DateTime.now();
 
       // Balanced profile
-      await db.into(db.userProfiles).insert(
+      await db
+          .into(db.userProfiles)
+          .insert(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
@@ -346,7 +371,9 @@ void main() {
       final userId = 'user-provider-1';
       final now = DateTime.now();
 
-      await db.into(db.userProfiles).insert(
+      await db
+          .into(db.userProfiles)
+          .insert(
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
@@ -361,10 +388,7 @@ void main() {
       // Now cultivation provider should have data
       final cultivationAsync = container.read(cultivationProvider);
 
-      expect(
-        cultivationAsync,
-        isA<AsyncValue<CultivationLayer>>(),
-      );
+      expect(cultivationAsync, isA<AsyncValue<CultivationLayer>>());
 
       cultivationAsync.when(
         data: (cultivation) {
@@ -381,10 +405,12 @@ void main() {
     });
 
     test('language level can be changed', () {
-      final notifier = container.read(cultivationLanguageLevelProvider.notifier);
-      
+      final notifier = container.read(
+        cultivationLanguageLevelProvider.notifier,
+      );
+
       notifier.state = CultivationLanguageLevel.full;
-      
+
       final languageLevel = container.read(cultivationLanguageLevelProvider);
       expect(languageLevel, equals(CultivationLanguageLevel.full));
     });

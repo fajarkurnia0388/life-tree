@@ -336,8 +336,7 @@ class CultivationStrings {
     return switch (level) {
       CultivationLanguageLevel.plain =>
         'Semua kebiasaan dipause. Fokus pemulihan.',
-      CultivationLanguageLevel.hybrid =>
-        'Practices paused. Focus on recovery.',
+      CultivationLanguageLevel.hybrid => 'Practices paused. Focus on recovery.',
       CultivationLanguageLevel.full =>
         'Techniques suspended. Inner healing prioritized.',
     };
@@ -386,35 +385,35 @@ class CultivationStrings {
   ) {
     return switch (palace) {
       CultivationPalace.body => switch (level) {
-          CultivationLanguageLevel.plain => 'Tubuh',
-          CultivationLanguageLevel.hybrid => 'Body Palace',
-          CultivationLanguageLevel.full => 'Body Palace (体殿)',
-        },
+        CultivationLanguageLevel.plain => 'Tubuh',
+        CultivationLanguageLevel.hybrid => 'Body Palace',
+        CultivationLanguageLevel.full => 'Body Palace (体殿)',
+      },
       CultivationPalace.resource => switch (level) {
-          CultivationLanguageLevel.plain => 'Keuangan',
-          CultivationLanguageLevel.hybrid => 'Resource Palace',
-          CultivationLanguageLevel.full => 'Resource Palace (财殿)',
-        },
+        CultivationLanguageLevel.plain => 'Keuangan',
+        CultivationLanguageLevel.hybrid => 'Resource Palace',
+        CultivationLanguageLevel.full => 'Resource Palace (财殿)',
+      },
       CultivationPalace.bond => switch (level) {
-          CultivationLanguageLevel.plain => 'Hubungan',
-          CultivationLanguageLevel.hybrid => 'Bond Palace',
-          CultivationLanguageLevel.full => 'Bond Palace (缘殿)',
-        },
+        CultivationLanguageLevel.plain => 'Hubungan',
+        CultivationLanguageLevel.hybrid => 'Bond Palace',
+        CultivationLanguageLevel.full => 'Bond Palace (缘殿)',
+      },
       CultivationPalace.heartSea => switch (level) {
-          CultivationLanguageLevel.plain => 'Emosi',
-          CultivationLanguageLevel.hybrid => 'Heart Sea',
-          CultivationLanguageLevel.full => 'Heart Sea (心海)',
-        },
+        CultivationLanguageLevel.plain => 'Emosi',
+        CultivationLanguageLevel.hybrid => 'Heart Sea',
+        CultivationLanguageLevel.full => 'Heart Sea (心海)',
+      },
       CultivationPalace.craft => switch (level) {
-          CultivationLanguageLevel.plain => 'Karir',
-          CultivationLanguageLevel.hybrid => 'Craft Palace',
-          CultivationLanguageLevel.full => 'Craft Palace (技殿)',
-        },
+        CultivationLanguageLevel.plain => 'Karir',
+        CultivationLanguageLevel.hybrid => 'Craft Palace',
+        CultivationLanguageLevel.full => 'Craft Palace (技殿)',
+      },
       CultivationPalace.joy => switch (level) {
-          CultivationLanguageLevel.plain => 'Rekreasi',
-          CultivationLanguageLevel.hybrid => 'Joy Garden',
-          CultivationLanguageLevel.full => 'Joy Garden (乐园)',
-        },
+        CultivationLanguageLevel.plain => 'Rekreasi',
+        CultivationLanguageLevel.hybrid => 'Joy Garden',
+        CultivationLanguageLevel.full => 'Joy Garden (乐园)',
+      },
     };
   }
 

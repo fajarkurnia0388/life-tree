@@ -11,29 +11,11 @@ enum CultivationSeason {
   quietIntegration,
 }
 
-enum CultivationPath {
-  sword,
-  alchemist,
-  formation,
-  body,
-  word,
-  shadow,
-}
+enum CultivationPath { sword, alchemist, formation, body, word, shadow }
 
-enum CultivationLanguageLevel {
-  plain,
-  hybrid,
-  full,
-}
+enum CultivationLanguageLevel { plain, hybrid, full }
 
-enum CultivationPalace {
-  body,
-  resource,
-  bond,
-  heartSea,
-  craft,
-  joy,
-}
+enum CultivationPalace { body, resource, bond, heartSea, craft, joy }
 
 class CultivationRealm {
   const CultivationRealm({
@@ -146,7 +128,8 @@ class CultivationConstants {
       chineseName: '悟道',
       indonesianName: 'Pemahaman Dao',
       focus: 'Sebab-akibat, ritme, leverage, dan pola hidup',
-      mindset: 'Aku tidak lagi sekadar berusaha keras — aku mulai melihat pola.',
+      mindset:
+          'Aku tidak lagi sekadar berusaha keras — aku mulai melihat pola.',
     ),
     CultivationRealm(
       level: 8,

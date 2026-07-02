@@ -19,7 +19,7 @@ class CultivationBadge extends ConsumerWidget {
     return cultivationAsync.when(
       data: (cultivation) {
         final realmInfo = CultivationConstants.realmForLevel(cultivation.realm);
-        
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
@@ -36,16 +36,16 @@ class CultivationBadge extends ConsumerWidget {
               Text(
                 '${cultivation.realm}',
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(width: 6),
               Text(
                 _getRealmDisplayName(realmInfo, languageLevel),
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
               ),
             ],
           ),
