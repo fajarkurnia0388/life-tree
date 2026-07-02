@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "id.lifetree" "\0"
-            VALUE "FileDescription", "life_tree" "\0"
+            VALUE "CompanyName", "id.daoji" "\0"
+            VALUE "FileDescription", "daoji" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "life_tree" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 id.lifetree. All rights reserved." "\0"
-            VALUE "OriginalFilename", "life_tree.exe" "\0"
-            VALUE "ProductName", "life_tree" "\0"
+            VALUE "InternalName", "daoji" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 id.daoji. All rights reserved." "\0"
+            VALUE "OriginalFilename", "daoji.exe" "\0"
+            VALUE "ProductName", "daoji" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

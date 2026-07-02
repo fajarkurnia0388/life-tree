@@ -1329,7 +1329,7 @@ class _ThinkingCanvasLiteViewState
               ),
               const SizedBox(height: 8),
               Text(
-                'Prinsip LifeTree: Paper-First. Tulislah coretan Anda di buku atau kertas asli terlebih dahulu untuk mengurangi screen fatigue.',
+                'Prinsip Daoji: Paper-First. Tulislah coretan Anda di buku atau kertas asli terlebih dahulu untuk mengurangi screen fatigue.',
                 style: TextStyle(
                   fontSize: 13,
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.7),

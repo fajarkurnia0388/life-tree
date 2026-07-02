@@ -31,7 +31,7 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
   final List<Map<String, String>> _steps = [
     {
       'title': '1. Ambil Kertas Fisik 📝',
-      'desc': 'Prinsip LifeTree adalah Paper-First. Jauhkan layar Anda sejenak. Ambillah buku catatan, pulpen, atau kertas coretan kosong.',
+      'desc': 'Prinsip Daoji adalah Paper-First. Jauhkan layar Anda sejenak. Ambillah buku catatan, pulpen, atau kertas coretan kosong.',
     },
     {
       'title': '2. Pilih Metode Berpikir 🧠',

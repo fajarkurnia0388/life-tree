@@ -1,6 +1,6 @@
 # Color Contrast Audit Report
 
-**Project:** LifeTree UI/UX Enhancement  
+**Project:** Daoji UI/UX Enhancement  
 **Date:** 2026-07-02  
 **Standard:** WCAG 2.1 AA  
 **Target Contrast Ratio:** 4.5:1 (normal text), 3:1 (large text 18pt+)
@@ -104,7 +104,7 @@ color: theme.colorScheme.onSurface.withValues(alpha: 0.6)
 
 ```dart
 // Import helper
-import 'package:life_tree/src/core/theme/accessible_colors.dart';
+import 'package:daoji/src/core/theme/accessible_colors.dart';
 
 // OLD - Manual alpha values
 color: theme.colorScheme.onSurface.withValues(alpha: 0.6)
@@ -169,7 +169,7 @@ color: AccessibleColors.onSurfaceText(context, emphasis: TextEmphasis.low)
 | 3:1   | AA     | Large text (18pt+), UI components |
 | <3:1  | FAIL   | Not accessible                    |
 
-**Current LifeTree Status:**
+**Current Daoji Status:**
 
 - Primary text (1.0): ~21:1 ✅ AAA
 - Secondary text (0.7): ~5.5:1 ✅ AA

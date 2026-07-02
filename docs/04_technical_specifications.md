@@ -1,4 +1,4 @@
-# Engineering & Technical Specifications: LifeTree
+# Engineering & Technical Specifications: Daoji
 
 **Dokumen Spesifikasi Teknis - Untuk Software Engineers & Developers**
 
@@ -33,9 +33,9 @@
 Project Flutter dibuat di folder `app/` agar root repo tetap menjadi documentation hub.
 
 ```powershell
-cd D:\LAB\git\life-tree
+cd D:\LAB\git\daoji
 flutter doctor -v
-flutter create app --project-name life_tree --org id.lifetree --platforms android,ios
+flutter create app --project-name daoji --org id.daoji --platforms android,ios
 cd app
 flutter run
 ```
@@ -236,7 +236,7 @@ Aturan fase MVP:
 
 > **Paper-first privacy note:** Foto halaman kertas tidak masuk MVP karena risiko privasi dan storage. Jika kelak ditambahkan, attachment harus opt-in, local-first/E2EE, dan memiliki kontrol hapus/export eksplisit.
 
-### `CoreValue` (LifeTree Plus)
+### `CoreValue` (Daoji Plus)
 | Kolom | Tipe | Constraint | Keterangan |
 |-------|------|-----------|------------|
 | `value_id` | UUID | PK | |
@@ -245,7 +245,7 @@ Aturan fase MVP:
 | `deleted_at` | TIMESTAMP | NULLABLE | Tombstone |
 | `created_at` | TIMESTAMP | NOT NULL | |
 
-### `DecisionJournal` (LifeTree Plus — Iterasi 2)
+### `DecisionJournal` (Daoji Plus — Iterasi 2)
 | Kolom | Tipe | Constraint | Keterangan |
 |-------|------|-----------|------------|
 | `decision_id` | UUID | PK | |
@@ -258,7 +258,7 @@ Aturan fase MVP:
 | `reviewed` | BOOLEAN | DEFAULT FALSE | |
 | `deleted_at` | TIMESTAMP | NULLABLE | Tombstone |
 
-### `GoalHierarchy` (LifeTree Plus)
+### `GoalHierarchy` (Daoji Plus)
 | Kolom | Tipe | Constraint | Keterangan |
 |-------|------|-----------|------------|
 | `goal_id` | UUID | PK | |

@@ -1,4 +1,4 @@
-# 08 — Konsep Pohon Pertumbuhan LifeTree (Growth Map)
+# 08 — Konsep Pohon Pertumbuhan Daoji (Growth Map)
 
 > **Status:** Iterasi 2 / Advanced Visual System — *Bukan scope MVP Core.*
 > MVP tetap menggunakan Tree Vitality Card + Action of the Day + Journal.
@@ -48,7 +48,7 @@ Dokumen ini hanya mendefinisikan **Iterasi 2**. Iterasi sebelumnya tetap berlaku
 
 ## 3. Metafora Pohon: Mapping Konseptual
 
-Pertumbuhan diri dalam LifeTree dianalogikan sebagai struktur pohon hidup dengan empat lapisan yang saling terhubung.
+Pertumbuhan diri dalam Daoji dianalogikan sebagai struktur pohon hidup dengan empat lapisan yang saling terhubung.
 
 ### Diagram Struktur (Top-Down)
 

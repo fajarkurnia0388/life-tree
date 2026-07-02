@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:life_tree/src/features/profile/widgets/compass_comparison_dialog.dart';
+import 'package:daoji/src/features/profile/widgets/compass_comparison_dialog.dart';
 
 void main() {
   group('Compass Comparison Tests', () {

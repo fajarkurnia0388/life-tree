@@ -208,7 +208,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
       final pngBytes = byteData.buffer.asUint8List();
 
       final fileName =
-          'lifetree_${widget.cumulativeDays}d_${DateTime.now().millisecondsSinceEpoch}.png';
+          'daoji_${widget.cumulativeDays}d_${DateTime.now().millisecondsSinceEpoch}.png';
 
       // 1. Always save to temp directory so it can be shared reliably on mobile/web
       final tempDir = await getTemporaryDirectory();
@@ -363,7 +363,7 @@ class _TreeVitalityCardState extends State<TreeVitalityCard> {
                                   XFile(tempFile.path, mimeType: 'image/png'),
                                 ],
                                 text:
-                                    'Lihat keindahan pohon LifeTree saya! 🌲✨ Hari ke-${widget.cumulativeDays}. #LifeTree',
+                                    'Lihat keindahan pohon Daoji saya! 🌲✨ Hari ke-${widget.cumulativeDays}. #Daoji',
                               ),
                             );
                           },

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-/// Centralized error handling service for LifeTree application.
+/// Centralized error handling service for Daoji application.
 ///
 /// This service provides consistent error logging and user feedback
 /// across the entire application. It serves as the single source of

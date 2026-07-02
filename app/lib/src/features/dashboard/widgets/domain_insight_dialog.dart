@@ -148,7 +148,7 @@ class _DomainInsightDialogState extends State<DomainInsightDialog>
       case 'Rekreasi':
         return 'Ovid';
       default:
-        return 'LifeTree';
+        return 'Daoji';
     }
   }
 

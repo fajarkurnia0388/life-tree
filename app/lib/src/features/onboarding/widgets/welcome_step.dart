@@ -15,7 +15,7 @@ class WelcomeStep extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Selamat Datang di LifeTree',
+          'Selamat Datang di Daoji',
           style: theme.textTheme.headlineMedium,
           textAlign: TextAlign.center,
         ),

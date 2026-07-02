@@ -1,4 +1,4 @@
-# Rencana Implementasi Reframing Konsep Pertumbuhan LifeTree
+# Rencana Implementasi Reframing Konsep Pertumbuhan Daoji
 
 Dokumen ini merinci langkah-langkah untuk menyelaraskan istilah dan visualisasi di dalam aplikasi agar sepenuhnya konsisten dengan konsep **Peta Pertumbuhan Konseptual (Growth Map / Skill Tree)**, menggantikan sisa-sisa metafora pertumbuhan pohon fisik-linear yang lama.
 

@@ -1,9 +1,9 @@
-# Product Requirements Document (PRD): LifeTree
+# Product Requirements Document (PRD): Daoji
 
 **Dokumen Spesifikasi Desain - Untuk Product Manager & Desainer UI/UX**
 
 ## 1. Visi Produk & Scope MVP
-LifeTree adalah aplikasi yang memadukan jurnal, *habit tracker*, dan peta tujuan hidup. MVP **HANYA** ditujukan untuk pengguna Dewasa (18-35 tahun). Semua desain layar untuk mode anak, remaja, dan *parental control* TIDAK dimasukkan di MVP.
+Daoji adalah aplikasi yang memadukan jurnal, *habit tracker*, dan peta tujuan hidup. MVP **HANYA** ditujukan untuk pengguna Dewasa (18-35 tahun). Semua desain layar untuk mode anak, remaja, dan *parental control* TIDAK dimasukkan di MVP.
 
 ## 2. Struktur Layar Utama (Central Command Dashboard)
 Saat pengguna membuka aplikasi, layar "Home" menampilkan **3 elemen** di MVP Lean (Radar ditambahkan di Iterasi 1):
@@ -51,7 +51,7 @@ Saat pengguna membuka aplikasi, layar "Home" menampilkan **3 elemen** di MVP Lea
 | **Welcome Screen** | Hari 1 | Jelaskan filosofi Anti-Guilt. Tanya 1 pertanyaan *Life Audit* (pertanyaan #1 Tubuh). | Rendah |
 | **Privasi Lokal** | Hari 1 | Jelaskan bahwa MVP Core menyimpan data di perangkat, tanpa akun dan tanpa cloud sync. | Rendah |
 | **Full Audit** | Akhir Minggu 1 | Sisa pertanyaan audit diselesaikan saat *Weekly Pulse* pertama. | Sedang |
-| **Medical Disclaimer** | Hari 1 | Scroll + checkbox: *"LifeTree adalah alat refleksi diri, BUKAN pengganti konseling profesional."* | Rendah |
+| **Medical Disclaimer** | Hari 1 | Scroll + checkbox: *"Daoji adalah alat refleksi diri, BUKAN pengganti konseling profesional."* | Rendah |
 
 ### B. Friction Intervention (Flow Saat Gagal Habit)
 Trigger intervensi **bervariasi berdasarkan frekuensi habit**:
@@ -107,7 +107,7 @@ Trigger intervensi **bervariasi berdasarkan frekuensi habit**:
 
 ### E. Thinking Canvas — Pilar Refleksi Berbasis Kertas
 
-Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 LifeTree. Mode ini muncul saat pengguna buntu, terlalu banyak opsi, ragu pada rencana, takut gagal, atau perlu mengubah ide menjadi aksi kecil. Prinsip utamanya: **LifeTree tidak menggantikan buku catatan**. LifeTree menyarankan pengguna membangun kebiasaan corat-coret di buku/kertas asli, lalu menyimpan ringkasan hasilnya di aplikasi.
+Thinking Canvas adalah pilar refleksi berbasis kertas dalam Lapis 0 Daoji. Mode ini muncul saat pengguna buntu, terlalu banyak opsi, ragu pada rencana, takut gagal, atau perlu mengubah ide menjadi aksi kecil. Prinsip utamanya: **Daoji tidak menggantikan buku catatan**. Daoji menyarankan pengguna membangun kebiasaan corat-coret di buku/kertas asli, lalu menyimpan ringkasan hasilnya di aplikasi.
 
 Untuk mempermudah penggunaan awal, disediakan **Panduan Interaktif (Onboarding Tour)** berupa dialog 4-langkah. Pada langkah pemilihan metode, disediakan tombol pilihan interaktif berdasarkan kondisi kognitif pengguna saat ini (misalnya: Pikiran Penuh → Mind Dump, Ragu → PMI) yang secara dinamis memperbarui pilihan Dropdown formulir di halaman utama secara real-time. Panduan ini juga dapat diakses ulang melalui tombol bantuan di AppBar.
 
@@ -122,7 +122,7 @@ Untuk mempermudah penggunaan awal, disediakan **Panduan Interaktif (Onboarding T
 
 #### Paper-First Interaction Model
 
-1. LifeTree menyarankan metode berdasarkan kondisi pengguna.
+1. Daoji menyarankan metode berdasarkan kondisi pengguna.
 2. Pengguna dianjurkan mengambil buku/kertas asli.
 3. Pengguna melakukan sesi corat-coret 5–30 menit: mind dump, mind map, skoring ide, PMI, reverse brainstorming, atau validasi asumsi.
 4. Setelah selesai, pengguna hanya memasukkan ringkasan:
@@ -132,7 +132,7 @@ Untuk mempermudah penggunaan awal, disediakan **Panduan Interaktif (Onboarding T
    - satu aksi kecil.
 5. Aksi kecil dapat dikirim ke Action of the Day atau disimpan untuk Weekly Pulse.
 
-**MVP copy principle:** *“Gunakan kertas untuk berpikir. Gunakan LifeTree untuk memilih metode, menyimpan ringkasan, dan menentukan aksi kecil.”*
+**MVP copy principle:** *“Gunakan kertas untuk berpikir. Gunakan Daoji untuk memilih metode, menyimpan ringkasan, dan menentukan aksi kecil.”*
 
 #### Thinking Canvas Integration Contract
 
@@ -146,7 +146,7 @@ Untuk mempermudah penggunaan awal, disediakan **Panduan Interaktif (Onboarding T
 | Scope | Thinking Canvas Lite masuk MVP Lean P0; Thinking Canvas Full masuk Iterasi 1 P1. Bukan Plus-gated untuk mode ringan. Export/PDF bisa menjadi Plus value later |
 | Algorithmic effect | Tidak otomatis mengubah rekomendasi tanpa konfirmasi user. `next_action` bisa ditawarkan menjadi Action of the Day |
 
-**Integrasi LifeTree:**
+**Integrasi Daoji:**
 - Hasil Thinking Canvas dapat diubah menjadi **Action of the Day**.
 - Hambatan yang muncul dapat masuk ke **Friction Journal**.
 - Keputusan penting dapat dikirim ke **Decision Journal** (Iterasi 2).
@@ -235,8 +235,8 @@ MVP Core tetap membawa visi **Personal OS**, tetapi implementasinya dipangkas me
 | Notification | Out-of-App Wellness Check | P1 |
 | Lapis 1 | Automaticity Decay (recency-weighted) | P1 |
 | Privacy | SQLCipher/local encrypted backup + app-level biometric lock | P1 |
-| Monetisasi | LifeTree Plus (Insights non-AI, PDF Export, Life Compass, Decision Journal preview) | P1 |
-| Monetisasi | LifeTree Student (self-declaration + `.ac.id`) | P1 |
+| Monetisasi | Daoji Plus (Insights non-AI, PDF Export, Life Compass, Decision Journal preview) | P1 |
+| Monetisasi | Daoji Student (self-declaration + `.ac.id`) | P1 |
 | Monetisasi | Annual Plan Rp 249K/thn | P1 |
 | Lapis 3 | Life Compass (3 Core Values) | P1 |
 | Lapis 1 | Goal Hierarchy (2 level: Project → Habit) | P1 |

@@ -1,6 +1,6 @@
-# Status Implementasi Aplikasi LifeTree
+# Status Implementasi Aplikasi Daoji
 
-Laporan ini menyajikan status pencapaian pengembangan aplikasi **LifeTree** (Personal Life OS) hingga saat ini, membandingkan realisasi fitur dengan rancangan master blueprint, serta memetakan sisa backlog pekerjaan.
+Laporan ini menyajikan status pencapaian pengembangan aplikasi **Daoji** (Personal Life OS) hingga saat ini, membandingkan realisasi fitur dengan rancangan master blueprint, serta memetakan sisa backlog pekerjaan.
 
 > **Keterangan Maturity Level:**
 > - 🟢 **Production-Ready** — Stabil, tervalidasi unit test, aman untuk beta

@@ -1,4 +1,4 @@
-# Business & Strategy Whitepaper: LifeTree
+# Business & Strategy Whitepaper: Daoji
 
 **Dokumen Konfidensial - Untuk Investor, Stakeholders, & Tim Marketing**
 
@@ -7,7 +7,7 @@
 | | |
 |---|---|
 | **Masalah** | Pasar aplikasi produktivitas dan *habit tracker* saat ini (senilai miliaran dolar) memiliki masalah fundamental: *Churn rate* (pengguna berhenti) yang sangat tinggi. Hal ini disebabkan oleh "Toxic Productivity" di mana aplikasi mengandalkan fitur *streak* (hari beruntun) yang memicu rasa bersalah (*guilt*) dan kelelahan mental (*burnout*) saat pengguna melewatkan 1 hari saja. |
-| **Solusi** | LifeTree adalah **Personal OS (Sistem Orientasi Diri)** yang dirancang secara eksplisit dengan filosofi **Anti-Guilt**. LifeTree mengonversi "kegagalan" menjadi data refleksi (*Friction Journaling*), menyediakan **Thinking Canvas** sebagai pilar refleksi berbasis kertas untuk menjernihkan pikiran dan memilih aksi kecil, serta membantu pengguna memetakan kembali arah hidup mereka secara holistik. |
+| **Solusi** | Daoji adalah **Personal OS (Sistem Orientasi Diri)** yang dirancang secara eksplisit dengan filosofi **Anti-Guilt**. Daoji mengonversi "kegagalan" menjadi data refleksi (*Friction Journaling*), menyediakan **Thinking Canvas** sebagai pilar refleksi berbasis kertas untuk menjernihkan pikiran dan memilih aksi kecil, serta membantu pengguna memetakan kembali arah hidup mereka secara holistik. |
 | **Differentiator** | Dirancang secara eksplisit untuk menghapus mekanisme *punishment loop* dari arsitektur, dengan inspirasi dari behavioral science dan privacy-by-design. |
 
 ## 2. Target Pasar & Strategi Peluncuran (Go-to-Market)
@@ -23,13 +23,13 @@
 - Bahasa Inggris & ekspansi regional.
 
 ## 3. Strategi Monetisasi (Value-Based Freemium)
-LifeTree **TIDAK** menjual data pengguna dan **TIDAK** menampilkan iklan (*Zero Targeted Ads*). Monetisasi tidak masuk MVP Core; paid tier dibuka setelah loop harian terbukti dipakai. Privacy/E2EE penuh ditunda karena mahal secara teknis dan harus dibangun sebagai fase terpisah.
+Daoji **TIDAK** menjual data pengguna dan **TIDAK** menampilkan iklan (*Zero Targeted Ads*). Monetisasi tidak masuk MVP Core; paid tier dibuka setelah loop harian terbukti dipakai. Privacy/E2EE penuh ditunda karena mahal secara teknis dan harus dibangun sebagai fase terpisah.
 
 | Tier | Harga | Fitur |
 |------|-------|-------|
 | **Tier Dasar (Gratis)** | Rp 0 | Daily Orientation Loop: Journal Lite, Habit Tubuh, Action of the Day, Friction Intervention, Recovery Mode, Thinking Canvas Lite, Safety Card, Ekspor Lokal (JSON/CSV), dan Dark Mode |
-| **LifeTree Plus** | Rp 29.000/bln | On-Device Insights non-AI, PDF Export (jurnal → e-book estetik), Life Compass, Decision Journal, dan kosmetik premium. Cloud Sync/E2EE tidak menjadi janji Plus sampai Privacy/E2EE Phase siap. |
-| **LifeTree Student** | Rp 19.000/bln | Sama dengan Plus, dengan verifikasi status mahasiswa (self-declaration honor system + verifikasi email `.ac.id` di Fase 1; bisa ditingkatkan ke third-party verification di kemudian hari). |
+| **Daoji Plus** | Rp 29.000/bln | On-Device Insights non-AI, PDF Export (jurnal → e-book estetik), Life Compass, Decision Journal, dan kosmetik premium. Cloud Sync/E2EE tidak menjadi janji Plus sampai Privacy/E2EE Phase siap. |
+| **Daoji Student** | Rp 19.000/bln | Sama dengan Plus, dengan verifikasi status mahasiswa (self-declaration honor system + verifikasi email `.ac.id` di Fase 1; bisa ditingkatkan ke third-party verification di kemudian hari). |
 | **Annual Plan** | Rp 249.000/thn (hemat ~29%) | Sama dengan Plus — mengunci pengguna dan meningkatkan LTV. |
 | **Micro-Transactions (Kosmetik)** | Rp 5.000–15.000/item | Skin spesies pohon (Sakura, Maple, Bonsai, dll) — murni kosmetik. Dark Mode tersedia gratis sebagai fitur aksesibilitas. |
 
@@ -80,7 +80,7 @@ Fase 1 hanya Bahasa Indonesia, tapi struktur i18n disiapkan sejak awal:
 
 | Aplikasi | Streak | Anti-Guilt | Jurnal | Habit | Life Audit | E2EE | Child Safety | Harga |
 |----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|-------|
-| **LifeTree** | ❌ | ✅ | ✅ | ✅ | ✅ | Future | ✅ (Fase 2) | Freemium Rp 29K |
+| **Daoji** | ❌ | ✅ | ✅ | ✅ | ✅ | Future | ✅ (Fase 2) | Freemium Rp 29K |
 | **Fabulous** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ~Rp 65K/bln |
 | **Habitica** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ~Rp 65K/bln |
 | **Streaks** | ✅✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | One-time Rp 65K |
@@ -101,6 +101,6 @@ Fase 1 hanya Bahasa Indonesia, tapi struktur i18n disiapkan sejak awal:
 6. *Compliance* anak Indonesia (PP TUNAS) sebagai fase masa depan.
 7. *Privacy roadmap* yang dimulai dari minimisasi data lokal, lalu naik ke E2EE setelah core retention terbukti.
 
-**Notion Life OS:** Kompetitor indirect — template gratis/berbayar untuk life management. LifeTree unggul di: guided experience, native mobile, automation built-in, dan privacy roadmap yang lebih ketat. Rekomendasi: fitur import dari Notion di Fase 1.5 untuk menurunkan switching cost.
+**Notion Life OS:** Kompetitor indirect — template gratis/berbayar untuk life management. Daoji unggul di: guided experience, native mobile, automation built-in, dan privacy roadmap yang lebih ketat. Rekomendasi: fitur import dari Notion di Fase 1.5 untuk menurunkan switching cost.
 
 **Gap Pasar Indonesia:** Tidak ada pemain lokal yang memadukan jurnal + habit tracker + life audit. Aplikasi kesehatan mental Indonesia (Riliv, Kalm) fokus pada terapi/konseling — bukan *self-orientation* harian.

@@ -7,17 +7,17 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:life_tree/src/app.dart';
+import 'package:daoji/src/app.dart';
 
 void main() {
   testWidgets('App smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(
       const ProviderScope(
-        child: LifeTreeApp(),
+        child: DaojiApp(),
       ),
     );
 
-    expect(find.byType(LifeTreeApp), findsOneWidget);
+    expect(find.byType(DaojiApp), findsOneWidget);
   });
 }

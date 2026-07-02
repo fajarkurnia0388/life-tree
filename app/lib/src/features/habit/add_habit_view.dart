@@ -167,7 +167,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             content: Text(
               'Total beban kapasitas harian Anda adalah $maxCapacity poin. '
               'Menambahkan/mengubah habit ini akan meningkatkan beban menjadi $nextLoad poin. '
-              '\n\nLifeTree menyarankan untuk menjaga beban di bawah batas agar tidak kelelahan. Tetap lanjutkan?',
+              '\n\nDaoji menyarankan untuk menjaga beban di bawah batas agar tidak kelelahan. Tetap lanjutkan?',
             ),
             actions: [
               TextButton(
@@ -301,7 +301,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
               const SizedBox(height: 8),
               Text(
-                'LifeTree membantu Anda membangun kebiasaan secara perlahan tanpa memicu rasa bersalah.',
+                'Daoji membantu Anda membangun kebiasaan secara perlahan tanpa memicu rasa bersalah.',
                 style: TextStyle(
                   fontSize: 13,
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),

@@ -391,14 +391,14 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
 
       final tempDir = await getTemporaryDirectory();
       final file = File(
-        '${tempDir.path}/lifetree_export_${DateTime.now().millisecondsSinceEpoch}.json',
+        '${tempDir.path}/daoji_export_${DateTime.now().millisecondsSinceEpoch}.json',
       );
       await file.writeAsString(jsonString);
 
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path, mimeType: 'application/json')],
-          subject: 'LifeTree Data Export',
+          subject: 'Daoji Data Export',
         ),
       );
     } catch (e) {

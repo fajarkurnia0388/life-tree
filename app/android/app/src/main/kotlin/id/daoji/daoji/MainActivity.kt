@@ -1,4 +1,4 @@
-package id.lifetree.life_tree
+package id.daoji.daoji
 
 import io.flutter.embedding.android.FlutterActivity
 

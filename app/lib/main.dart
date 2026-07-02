@@ -8,7 +8,7 @@ void main() {
   GoogleFonts.config.allowRuntimeFetching = false;
   runApp(
     const ProviderScope(
-      child: LifeTreeApp(),
+      child: DaojiApp(),
     ),
   );
 }

@@ -1,13 +1,13 @@
 # Evaluasi Dokumen `08_konsep_pohon_pertumbuhan.md`
 
 Tanggal evaluasi: 2026-06-30  
-Repo HEAD saat evaluasi: `7585f27` — `docs: add documentation for LifeTree growth concept and visual system`
+Repo HEAD saat evaluasi: `7585f27` — `docs: add documentation for Daoji growth concept and visual system`
 
 ## Ringkasan Eksekutif
 
-Dokumen `08_konsep_pohon_pertumbuhan.md` punya ide visual yang kuat: LifeTree tidak hanya menampilkan pohon statis, tetapi dapat berkembang menjadi **peta pertumbuhan interaktif** yang menghubungkan nilai inti, domain hidup, kebiasaan, dan keputusan.
+Dokumen `08_konsep_pohon_pertumbuhan.md` punya ide visual yang kuat: Daoji tidak hanya menampilkan pohon statis, tetapi dapat berkembang menjadi **peta pertumbuhan interaktif** yang menghubungkan nilai inti, domain hidup, kebiasaan, dan keputusan.
 
-Namun, dokumen saat ini masih lebih berupa **narasi konsep visual** daripada spesifikasi implementasi. Ada beberapa konflik dengan prinsip canonical LifeTree yang sudah ada, terutama:
+Namun, dokumen saat ini masih lebih berupa **narasi konsep visual** daripada spesifikasi implementasi. Ada beberapa konflik dengan prinsip canonical Daoji yang sudah ada, terutama:
 
 1. Potensi bertentangan dengan **Hard Rule Anti-Guilt** karena menyebut dahan defisit tampak `layu/kering`.
 2. Scope-nya melampaui MVP dan implementasi saat ini, tetapi belum diberi label fase/iterasi.
@@ -24,7 +24,7 @@ Rekomendasi utama: dokumen ini sebaiknya diposisikan sebagai **Iterasi 2 / Advan
 Repo berhasil diperbarui dari GitHub dengan commit terbaru:
 
 ```text
-7585f27 docs: add documentation for LifeTree growth concept and visual system
+7585f27 docs: add documentation for Daoji growth concept and visual system
 ```
 
 File baru yang relevan sudah ada:
@@ -54,11 +54,11 @@ Pembagian:
 - Dahan = Domain Kehidupan
 - Daun/Buah = Habits & Decisions
 
-cukup intuitif dan cocok dengan branding LifeTree.
+cukup intuitif dan cocok dengan branding Daoji.
 
 ### 2. Menyatukan habit tracker dan life compass
 
-Dokumen berhasil menghubungkan kebiasaan harian dengan identitas/nilai hidup, bukan sekadar checklist produktivitas. Ini sejalan dengan visi LifeTree sebagai **Personal OS untuk orientasi diri**.
+Dokumen berhasil menghubungkan kebiasaan harian dengan identitas/nilai hidup, bukan sekadar checklist produktivitas. Ini sejalan dengan visi Daoji sebagai **Personal OS untuk orientasi diri**.
 
 ### 3. Memperkenalkan feedback loop dua arah
 
@@ -239,7 +239,7 @@ Tabel interaktivitas menyebut:
 
 > saat di-hover
 
-Target utama LifeTree adalah mobile Flutter. Hover hanya relevan untuk web/desktop.
+Target utama Daoji adalah mobile Flutter. Hover hanya relevan untuk web/desktop.
 
 #### Rekomendasi
 
@@ -259,7 +259,7 @@ Contoh:
 
 ### 7. Istilah `Tech Tree / Skill Tree` perlu hati-hati
 
-`Tech Tree` dan `Skill Tree` memberi nuansa game/RPG. Ini menarik, tetapi LifeTree juga mengusung Calm Tech dan anti-toxic productivity.
+`Tech Tree` dan `Skill Tree` memberi nuansa game/RPG. Ini menarik, tetapi Daoji juga mengusung Calm Tech dan anti-toxic productivity.
 
 Risiko:
 
@@ -375,7 +375,7 @@ Values → Domains → Actions → Logs → Domain Signals → Values Reflection
 Agar dokumen menjadi siap-implementasi, susun ulang menjadi:
 
 ```markdown
-# 08 — Konsep Pohon Pertumbuhan LifeTree
+# 08 — Konsep Pohon Pertumbuhan Daoji
 
 > Status: Iterasi 2 / Advanced Visual System
 > Canonical constraints: Anti-Guilt, Offline-first, Mobile-first, Accessibility-first

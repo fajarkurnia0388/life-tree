@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:life_tree/src/features/dashboard/widgets/growth_map/growth_map_node.dart';
-import 'package:life_tree/src/features/dashboard/widgets/growth_map/growth_map_semantics.dart';
+import 'package:daoji/src/features/dashboard/widgets/growth_map/growth_map_node.dart';
+import 'package:daoji/src/features/dashboard/widgets/growth_map/growth_map_semantics.dart';
 
 void main() {
   group('GrowthMap Accessibility Semantics Tests', () {

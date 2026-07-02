@@ -1,24 +1,24 @@
-/// Custom exception types for LifeTree application.
+/// Custom exception types for Daoji application.
 ///
 /// These exceptions provide more semantic meaning than generic exceptions,
 /// making it easier to handle different error scenarios appropriately.
 library;
 
-/// Base class for all LifeTree application exceptions.
-abstract class LifeTreeException implements Exception {
+/// Base class for all Daoji application exceptions.
+abstract class DaojiException implements Exception {
   final String message;
   final dynamic originalError;
 
-  const LifeTreeException(this.message, [this.originalError]);
+  const DaojiException(this.message, [this.originalError]);
 
   @override
-  String toString() => 'LifeTreeException: $message';
+  String toString() => 'DaojiException: $message';
 }
 
 /// Thrown when a database operation fails.
 ///
 /// Examples: insert/update/delete failures, constraint violations, etc.
-class DatabaseException extends LifeTreeException {
+class DatabaseException extends DaojiException {
   const DatabaseException(super.message, [super.originalError]);
 
   @override
@@ -28,7 +28,7 @@ class DatabaseException extends LifeTreeException {
 /// Thrown when user input validation fails.
 ///
 /// Examples: empty required fields, invalid formats, out of range values.
-class ValidationException extends LifeTreeException {
+class ValidationException extends DaojiException {
   final String? fieldName;
 
   const ValidationException(
@@ -45,7 +45,7 @@ class ValidationException extends LifeTreeException {
 /// Thrown when a network operation fails (for future cloud sync).
 ///
 /// Currently unused in MVP, but prepared for future cloud sync features.
-class NetworkException extends LifeTreeException {
+class NetworkException extends DaojiException {
   const NetworkException(super.message, [super.originalError]);
 
   @override
@@ -55,7 +55,7 @@ class NetworkException extends LifeTreeException {
 /// Thrown when data parsing/serialization fails.
 ///
 /// Examples: JSON decode errors, invalid data format from database.
-class DataFormatException extends LifeTreeException {
+class DataFormatException extends DaojiException {
   const DataFormatException(super.message, [super.originalError]);
 
   @override

@@ -1,8 +1,8 @@
-# Whitepaper: Sistem Orientasi Diri "LifeTree" (Grow)
+# Whitepaper: Sistem Orientasi Diri "Daoji" (Grow)
 **Versi 14.0 (Master Product & System Spec) – Daily Orientation Loop, Privacy Roadmap, Arsitektur Sistem & Panduan UX**
 
 ## 1. Pendahuluan & Filosofi (Anti-Guilt)
-LifeTree adalah **Personal OS** untuk orientasi hidup. Dibangun di atas 3 pilar teori:
+Daoji adalah **Personal OS** untuk orientasi hidup. Dibangun di atas 3 pilar teori:
 
 | Pilar | Referensi | Implikasi Desain |
 |-------|-----------|-----------------|
@@ -10,7 +10,7 @@ LifeTree adalah **Personal OS** untuk orientasi hidup. Dibangun di atas 3 pilar 
 | **Canopy Load (Konstruk Produk)** | — | Kapasitas harian terbatas; sistem mencegah *overload*. Bukan backing ilmiah yang kuat — lihat §2.2 README untuk konteks ego depletion replication crisis. |
 | **Behavioral Design** | Fogg Behavior Model (B=MAP) | Intervensi presisi berdasarkan akar hambatan (Motivasi, Kemampuan, Pemicu). |
 
-**Filosofi inti:** Aplikasi produktivitas konvensional mengandalkan *loss aversion* via sistem *streak* — memicu rasa bersalah dan *burnout* saat pengguna melewatkan 1 hari. LifeTree menolak pendekatan ini dan membangun arsitektur **Anti-Guilt**: kegagalan dikonversi menjadi data refleksi, bukan hukuman.
+**Filosofi inti:** Aplikasi produktivitas konvensional mengandalkan *loss aversion* via sistem *streak* — memicu rasa bersalah dan *burnout* saat pengguna melewatkan 1 hari. Daoji menolak pendekatan ini dan membangun arsitektur **Anti-Guilt**: kegagalan dikonversi menjadi data refleksi, bukan hukuman.
 
 ### Referensi Akademis
 - Lally, P., van Jaarsveld, C. H. M., Potts, H. W. W., & Wardle, J. (2010). *How are habits formed: Modelling habit formation in the real world.* European Journal of Social Psychology, 40(6), 998–1009.
@@ -63,7 +63,7 @@ Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal Lite, Deep Reflection, T
 - **Adaptive Micro-Journaling:**
   - *Journal Lite (Default):* Hanya 1 ketuk emoji mood + 1 kata kunci.
   - *Deep Reflection:* 3 pertanyaan + *Gratitude prompt* (Hanya jika pengguna memilih). Dilengkapi dengan **Gratitude Suggestion Chips** untuk mempercepat pengisian dan memicu inspirasi rasa syukur harian secara instan.
-- **Thinking Canvas — Pilar Refleksi Berbasis Kertas:** mode paper-first untuk kondisi buntu, terlalu banyak opsi, ragu pada rencana, atau perlu mengubah ide menjadi aksi kecil. Pengguna dianjurkan corat-coret di buku/kertas asli; LifeTree menyimpan ringkasan digital berupa metode, temuan, asumsi, dan aksi kecil. Dilengkapi dengan **Panduan Interaktif (Onboarding Tour)** otomatis pada kunjungan pertama dan tombol Bantuan AppBar, di mana pengguna dapat memilih metode secara dinamis berdasarkan kondisi kognitif mereka saat ini (misalnya: Pikiran Penuh → Mind Dump).
+- **Thinking Canvas — Pilar Refleksi Berbasis Kertas:** mode paper-first untuk kondisi buntu, terlalu banyak opsi, ragu pada rencana, atau perlu mengubah ide menjadi aksi kecil. Pengguna dianjurkan corat-coret di buku/kertas asli; Daoji menyimpan ringkasan digital berupa metode, temuan, asumsi, dan aksi kecil. Dilengkapi dengan **Panduan Interaktif (Onboarding Tour)** otomatis pada kunjungan pertama dan tombol Bantuan AppBar, di mana pengguna dapat memilih metode secara dinamis berdasarkan kondisi kognitif mereka saat ini (misalnya: Pikiran Penuh → Mind Dump).
 - **Friction Journaling & Status Habit:**
   Habit memiliki 5 status: *Done, Missed, Skipped Intentionally, Paused*, dan implisit *Not_Scheduled* (hari di luar jadwal — tidak ada log dibuat).
   - *Daily:* 3x Missed dalam 7 hari
@@ -92,7 +92,7 @@ Lapis 0: 🌱 Akar (Refleksi & Diagnosis)   → Journal Lite, Deep Reflection, T
 
 - *Tagging Opsional:* Smart Suggestion saat men-tag habit ke domain.
 
-### Lapis 3: Buah & Kompas (Advanced — LifeTree Plus)
+### Lapis 3: Buah & Kompas (Advanced — Daoji Plus)
 - **Life Compass:** 3 Core Values opsional — didukung Self-Determination Theory (Deci & Ryan, 2000). Dilengkapi dengan **Preset Chips** nilai populer (Kesehatan, Kebebasan, Keluarga, dll.) untuk mempercepat penentuan arah hidup tanpa beban kognitif.
 - **Decision Journal:** Mencatat keputusan sulit + pengingat review kustom (7/30/90 hari). Dilengkapi dengan **Autofill Mock Templates** ("Beli Mobil vs Taksi" dan "Bootcamp vs Otodidak") untuk memvisualisasikan cara kerja dan mempercepat proses input keputusan strategis.
 
@@ -108,7 +108,7 @@ Aplikasi harus di-*coding* dengan tata bahasa empati.
 | *"Peringatan! Streak-mu terputus."* | *"Pohonmu sedang beristirahat. Tidak apa-apa."* |
 
 ## 5. Segmentasi Usia, Privasi Bertahap & Aksesibilitas
-- **Hukum Privasi (PP TUNAS & Permenkomdigi 9/2026):** Usia 13-17 (Teen Mode) mendapat privasi jurnal mutlak; Orang Tua di dasbor HANYA menerima tren agregat dan *Conversation Starters*. PP 17/2025 menetapkan 5 kelompok usia: 3–5, 6–9, 10–12, 13–15, 16–<18; Permenkomdigi 9/2026 mengatur tahapan implementasi dan klasifikasi risiko platform. LifeTree Fase 1 menggunakan <13/13–17; Fase 2 mengikuti granularitas ini.
+- **Hukum Privasi (PP TUNAS & Permenkomdigi 9/2026):** Usia 13-17 (Teen Mode) mendapat privasi jurnal mutlak; Orang Tua di dasbor HANYA menerima tren agregat dan *Conversation Starters*. PP 17/2025 menetapkan 5 kelompok usia: 3–5, 6–9, 10–12, 13–15, 16–<18; Permenkomdigi 9/2026 mengatur tahapan implementasi dan klasifikasi risiko platform. Daoji Fase 1 menggunakan <13/13–17; Fase 2 mengikuti granularitas ini.
 - **Usia < 13 Tahun:** Wajib *Offline-First* mutlak. **Biometrik tidak digunakan untuk akun anak** (*precautionary principle*).
 - **Age Graduation:** Tepat hari ulang tahun ke-18, revoke akses orang tua otomatis. Membutuhkan `date_of_birth`, bukan hanya `age_band`.
 - **MVP Core Privacy:** Data lokal di perangkat, tanpa akun, tanpa cloud sync, tanpa targeted ads. Ekspor JSON/CSV manual tetap tersedia.
@@ -118,7 +118,7 @@ Aplikasi harus di-*coding* dengan tata bahasa empati.
 - **Aksesibilitas (WCAG 2.1 AA):** Screen Reader, color+icon+label, touch target 48×48dp. Palet *Calm Tech* — warna yang diasosiasikan dengan ketenangan (hijau sage, biru redup, krem).
 
 ## 6. Keselamatan Pengguna (Passive Wellness & Emergency Resource Protocol)
-LifeTree BUKAN aplikasi medis (Tercantum jelas di T&C).
+Daoji BUKAN aplikasi medis (Tercantum jelas di T&C).
 - Tidak menggunakan AI/keyword untuk prediksi krisis mental (*False Negative/Positive* risk).
 - **Passive Safety:** Safety Card permanen. **Nomor primer di-hardcode** (119 PSC, 119 ext 8 SEJIWA).
 - **Anti-Banner-Blindness:** Visual berrotasi periodik.
@@ -145,7 +145,7 @@ String UI file terpisah, format locale-aware, Anti-Guit dilokalize oleh native s
 - Onboarding Life Audit (domain Tubuh, 1 pertanyaan), Dashboard 3 elemen (Pohon + Action + Journal), Journal Lite, Thinking Canvas Lite (paper-first prompt + ringkasan), Friction Intervention (dengan Recovery Mode duration selector + `mva_duration_min` one-time override), Safety Card (hardcoded), Canopy Load Basic, local-only storage tanpa akun/cloud sync, Export, Accessibility, Tier Gratis.
 
 ### Iterasi 1 (Bulan 3–4 setelah core stabil)
-- Radar Keseimbangan, Deep Reflection, **Thinking Canvas Full**, Anti-Banner-Blindness, Weekly Pulse + WHO-5, Out-of-App Wellness Check, Automaticity Decay, SQLCipher/local encrypted backup, LifeTree Plus & Student & Annual, Life Compass, Goal Hierarchy, Tree Vitality Blooming.
+- Radar Keseimbangan, Deep Reflection, **Thinking Canvas Full**, Anti-Banner-Blindness, Weekly Pulse + WHO-5, Out-of-App Wellness Check, Automaticity Decay, SQLCipher/local encrypted backup, Daoji Plus & Student & Annual, Life Compass, Goal Hierarchy, Tree Vitality Blooming.
 
 ### Iterasi 2 (Fase 1.5)
 - Domain Keuangan/Hubungan/Emosi/Karir/Rekreasi, Micro-transaksi kosmetik, Decision Journal.
@@ -160,7 +160,7 @@ Semua fitur untuk Anak/Remaja dan Dasbor Orang tua ditunda ke Fase 2.
 
 | Aplikasi | Streak | Anti-Guilt | Jurnal | Habit | Life Audit | E2EE | Child Safety | Harga |
 |----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|-------|
-| **LifeTree** | ❌ | ✅ | ✅ | ✅ | ✅ | Future | ✅ (Fase 2) | Freemium Rp 29K |
+| **Daoji** | ❌ | ✅ | ✅ | ✅ | ✅ | Future | ✅ (Fase 2) | Freemium Rp 29K |
 | **Fabulous** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ~Rp 65K/bln |
 | **Habitica** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ~Rp 65K/bln |
 | **Streaks** | ✅✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | One-time Rp 65K |
@@ -179,4 +179,4 @@ Semua fitur untuk Anak/Remaja dan Dasbor Orang tua ditunda ke Fase 2.
 6. *Compliance* anak Indonesia (PP TUNAS).
 6. *Privacy roadmap* dari minimisasi data lokal menuju zero-knowledge E2EE setelah core retention terbukti.
 
-**Notion Life OS:** Kompetitor indirect. Keunggulan LifeTree: guided (bukan setup manual), native mobile, automation built-in, dan privacy roadmap yang lebih ketat. Rekomendasi: fitur import dari Notion di Fase 1.5.
+**Notion Life OS:** Kompetitor indirect. Keunggulan Daoji: guided (bukan setup manual), native mobile, automation built-in, dan privacy roadmap yang lebih ketat. Rekomendasi: fitur import dari Notion di Fase 1.5.

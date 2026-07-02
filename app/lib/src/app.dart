@@ -4,8 +4,8 @@ import 'core/routing/router.dart';
 import 'core/theme/theme.dart';
 import 'features/onboarding/onboarding_view.dart';
 
-class LifeTreeApp extends ConsumerWidget {
-  const LifeTreeApp({super.key});
+class DaojiApp extends ConsumerWidget {
+  const DaojiApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,7 +17,7 @@ class LifeTreeApp extends ConsumerWidget {
       data: (completed) {
         final router = ref.watch(routerProvider);
         final appWidget = MaterialApp.router(
-          title: 'LifeTree',
+          title: 'Daoji',
           theme: CalmTheme.lightTheme,
           darkTheme: CalmTheme.darkTheme,
           themeMode: themeMode,

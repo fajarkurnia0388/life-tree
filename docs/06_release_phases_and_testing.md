@@ -1,6 +1,6 @@
-# Siklus Rilis & Fase Pengujian Aplikasi LifeTree
+# Siklus Rilis & Fase Pengujian Aplikasi Daoji
 
-Dokumen ini menjelaskan tahapan pengujian perangkat lunak (*Software Release Lifecycle*) yang umum digunakan dalam industri, serta menetapkan status fase pengujian saat ini untuk aplikasi **LifeTree**.
+Dokumen ini menjelaskan tahapan pengujian perangkat lunak (*Software Release Lifecycle*) yang umum digunakan dalam industri, serta menetapkan status fase pengujian saat ini untuk aplikasi **Daoji**.
 
 ---
 
@@ -12,10 +12,10 @@ Dalam siklus pengembangan aplikasi, terdapat 5 tahap rilis utama:
 * **Karakteristik:** Kode ditulis dan diuji langsung oleh developer per komponen. Banyak bagian logika masih berupa tiruan (*mock*) atau simulasi.
 * **Stabilitas:** Sangat tidak stabil, sering terjadi *crash*, data database sering berubah-ubah secara drastis (*schema breaking changes*).
 
-### 2. Alpha Testing (Internal) 👈 **[STATUS LIFETREE SAAT INI]**
+### 2. Alpha Testing (Internal) 👈 **[STATUS DAOJI SAAT INI]**
 * **Karakteristik:** Aplikasi sudah memiliki fungsionalitas dasar yang utuh. Pengujian dilakukan oleh tim internal (developer dan QA) di lingkungan yang terkontrol.
 * **Stabilitas:** Cukup stabil untuk dicoba internal, namun masih memiliki bug tersembunyi pada kasus-kasus batas (*edge cases*).
-* **Kondisi LifeTree saat ini:**
+* **Kondisi Daoji saat ini:**
   * Seluruh fitur utama (Akar, Batang, Cabang, dan Kompas) sudah diimplementasi secara lokal (SQLite via Drift).
   * Struktur kode telah dirapikan (*modularized*) dan lulus analisis linter 100%.
   * Memiliki cakupan pengujian otomatis sebanyak **34 pengujian (unit/widget test)** yang semuanya lolos (*passed*).
@@ -36,7 +36,7 @@ Dalam siklus pengembangan aplikasi, terdapat 5 tahap rilis utama:
 
 ## 2. Peta Jalan Menuju Rilis Berikutnya
 
-Untuk membawa **LifeTree** dari fase **Alpha** saat ini ke fase **Closed Beta**, langkah-langkah teknis berikut perlu diselesaikan:
+Untuk membawa **Daoji** dari fase **Alpha** saat ini ke fase **Closed Beta**, langkah-langkah teknis berikut perlu diselesaikan:
 
 1. **Penyelesaian Fitur Backlog:**
    * Implementasi algoritma penurunan otomatisasi (*Automaticity Decay*) berbasis sains perilaku (UCL Lally).

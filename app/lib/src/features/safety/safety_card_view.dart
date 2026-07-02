@@ -158,7 +158,7 @@ class SafetyCardView extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'LifeTree menyimpan semua data secara offline pada memori internal perangkat Anda — tidak ada yang diunggah ke internet atau dibagikan ke pihak ketiga. Enkripsi database (SQLCipher) direncanakan pada fase berikutnya.',
+                      'Daoji menyimpan semua data secara offline pada memori internal perangkat Anda — tidak ada yang diunggah ke internet atau dibagikan ke pihak ketiga. Enkripsi database (SQLCipher) direncanakan pada fase berikutnya.',
                       style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                       textAlign: TextAlign.center,
                     ),

@@ -1,4 +1,4 @@
-# Navigation Strategy — LifeTree
+# Navigation Strategy — Daoji
 
 **Status:** Decided (P2-02)
 **Last updated:** 28 Juni 2026

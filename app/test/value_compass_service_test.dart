@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/native.dart';
 import 'package:drift/drift.dart' as drift;
-import 'package:life_tree/src/core/providers/db_provider.dart';
-import 'package:life_tree/src/data/local_db/database.dart';
-import 'package:life_tree/src/features/value_compass/services/value_compass_service.dart';
+import 'package:daoji/src/core/providers/db_provider.dart';
+import 'package:daoji/src/data/local_db/database.dart';
+import 'package:daoji/src/features/value_compass/services/value_compass_service.dart';
 
 void main() {
   late AppDatabase db;

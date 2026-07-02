@@ -1,27 +1,27 @@
-# Research Paper & Compliance Guideline: LifeTree Personal OS
+# Research Paper & Compliance Guideline: Daoji Personal OS
 
 **Abstrak**
-Dokumen ini merupakan landasan empiris, psikologis, dan hukum dari pengembangan LifeTree. Berbeda dengan aplikasi produktivitas konvensional yang mengandalkan *loss aversion* (penghindaran kerugian) melalui sistem *streak*, LifeTree dirarsitekturi berbasis filosofi *Anti-Guilt* (Anti Rasa Bersalah). Makalah ini membedah integrasi *Habit Formation Theory*, *Canopy Load (Konstruk Produk)*, serta batas-batas hukum terkait privasi dan keselamatan pengguna di bawah payung yurisdiksi Indonesia (PP TUNAS + Permenkomdigi 9/2026) dan standar internasional (COPPA).
+Dokumen ini merupakan landasan empiris, psikologis, dan hukum dari pengembangan Daoji. Berbeda dengan aplikasi produktivitas konvensional yang mengandalkan *loss aversion* (penghindaran kerugian) melalui sistem *streak*, Daoji dirarsitekturi berbasis filosofi *Anti-Guilt* (Anti Rasa Bersalah). Makalah ini membedah integrasi *Habit Formation Theory*, *Canopy Load (Konstruk Produk)*, serta batas-batas hukum terkait privasi dan keselamatan pengguna di bawah payung yurisdiksi Indonesia (PP TUNAS + Permenkomdigi 9/2026) dan standar internasional (COPPA).
 
 ---
 
 ## Bagian 1: Landasan Ilmu Perilaku (Behavioral Science)
 
 ### 1.1 Dekonstruksi Mitos 21 Hari & Validasi 66 Hari
-Industri pengembangan diri sering berpatokan pada mitos bahwa kebiasaan terbentuk dalam 21 hari. LifeTree menolak kerangka ini dan menggunakan temuan **Lally et al. (2010)** dari University College London (UCL).
+Industri pengembangan diri sering berpatokan pada mitos bahwa kebiasaan terbentuk dalam 21 hari. Daoji menolak kerangka ini dan menggunakan temuan **Lally et al. (2010)** dari University College London (UCL).
 - **Temuan Kunci:** Waktu median menuju otomatisasi perilaku adalah 66 hari, dengan rentang variasi yang sangat ekstrem (18 hingga 254 hari).
-- **Landasan *Anti-Guilt*:** Studi yang sama membuktikan bahwa hilangnya kesempatan satu atau dua hari berturut-turut (*missed opportunity*) tidak merusak proses otomatisasi secara material. Oleh karena itu, arsitektur LifeTree mengizinkan *Recovery Mode* (Mode Istirahat) tanpa menghukum (*punish*) pengguna dengan me-reset visual pohon mereka.
+- **Landasan *Anti-Guilt*:** Studi yang sama membuktikan bahwa hilangnya kesempatan satu atau dua hari berturut-turut (*missed opportunity*) tidak merusak proses otomatisasi secara material. Oleh karena itu, arsitektur Daoji mengizinkan *Recovery Mode* (Mode Istirahat) tanpa menghukum (*punish*) pengguna dengan me-reset visual pohon mereka.
 - **Implikasi Teknis:** Ambang batas *Automaticity Decay* ditetapkan pada **60 hari kumulatif (recency-weighted)** — ini adalah **hipotesis produk** yang terinspirasi oleh literatur pembentukan kebiasaan (median 66 hari, dikurangi buffer 6 hari). Angka ini bukan klaim ilmiah baku, melainkan parameter produk yang akan divalidasi melalui pengujian iteratif dan A/B testing. Formula decay (`floor(cumulative_done / 20)`) adalah **model produk yang disederhanakan**, bukan representasi langsung dari penelitian Lally et al. — Lally hanya mengatakan median 66 hari dan rentang 18–254 hari, tanpa fungsi decay linear. Parameter akan dikalibrasi melalui A/B testing pada 500+ pengguna beta.
 
 ### 1.2 Canopy Load — Konstruk Produk (Bukan Klaim Ilmiah)
-LifeTree menggunakan konsep *Canopy Load* yang **konstruk produk** — bukan backing ilmiah yang kuat. Otak manusia (terutama *Working Memory*) memiliki kapasitas terbatas.
+Daoji menggunakan konsep *Canopy Load* yang **konstruk produk** — bukan backing ilmiah yang kuat. Otak manusia (terutama *Working Memory*) memiliki kapasitas terbatas.
 - **Rasionalisasi:** Kegagalan dalam mempertahankan kebiasaan seringkali bukan masalah motivasi, melainkan *overload* (kelebihan beban).
 - **Implementasi Produk:** Sistem mengkalibrasi beban kebiasaan melalui dua matriks: *Initiation Friction* (Kesulitan Memulai) dan *Energy Cost* (Biaya Tenaga). Beban ini otomatis turun seiring berjalannya waktu (*Automaticity Decay*) untuk membebaskan ruang memori kognitif. **Recency-weighted:** 90 hari terakhir bobot penuh, 91–180 hari bobot 0.5, >180 hari tidak dihitung — automaticity bukan "saldo permanen".
 
 ### 1.3 Model Intervensi Perilaku (Fogg Behavior Model)
-Berdasarkan rumusan B=MAP (*Behavior = Motivation + Ability + Prompt*) dari Dr. BJ Fogg, LifeTree tidak menangani kegagalan dengan "Peringatan Hukuman".
+Berdasarkan rumusan B=MAP (*Behavior = Motivation + Ability + Prompt*) dari Dr. BJ Fogg, Daoji tidak menangani kegagalan dengan "Peringatan Hukuman".
 
-| Hambatan | Diagnosis | Intervensi LifeTree |
+| Hambatan | Diagnosis | Intervensi Daoji |
 |----------|-----------|-------------------|
 | *Ability* bermasalah ("Kurang Waktu/Energi") | Daya tampung kognitif terlampaui | Turunkan durasi aksi → *Minimum Viable Action* (versi 2 menit) |
 | *Prompt* bermasalah ("Lupa") | Kebiasaan belum menempel pada rutinitas | Sarankan *Routine Stacking* (Habit Loop: Cue–Routine–Reward, Duhigg 2012; Implementation Intention: Gollwitzer 1999) |
@@ -34,14 +34,14 @@ Thinking Canvas diposisikan sebagai **mekanisme produk**, bukan klaim terapi ata
 
 Thinking Canvas juga mengikuti prinsip **paper-first, app-summary-second**. Pengguna dianjurkan melakukan eksplorasi awal di buku/kertas asli karena menulis membantu proses elaborasi: pengguna tidak sekadar menyalin, tetapi memilih, menyusun, menghubungkan, dan menguji ide. Dalam diskursus pendidikan Indonesia, Prof. Stella Christie sering dikutip menekankan bahwa menulis berkaitan erat dengan berpikir; dokumen ini memakai gagasan tersebut sebagai inspirasi produk, bukan sebagai klaim klinis atau kutipan primer tanpa timestamp.
 
-Riset tentang pencatatan dan handwriting juga mendukung arah desain ini dengan nuansa: mencatat dengan kata-kata sendiri dapat mendorong pemrosesan konseptual yang lebih dalam, dan beberapa studi EEG menunjukkan handwriting dapat melibatkan konektivitas otak yang lebih luas dibanding typing. Namun LifeTree **tidak** mengklaim bahwa menulis tangan selalu lebih baik daripada mengetik. Prinsip produknya: gunakan kertas untuk eksplorasi awal yang bebas; gunakan aplikasi untuk memilih metode, menyimpan ringkasan, dan menentukan aksi kecil.
+Riset tentang pencatatan dan handwriting juga mendukung arah desain ini dengan nuansa: mencatat dengan kata-kata sendiri dapat mendorong pemrosesan konseptual yang lebih dalam, dan beberapa studi EEG menunjukkan handwriting dapat melibatkan konektivitas otak yang lebih luas dibanding typing. Namun Daoji **tidak** mengklaim bahwa menulis tangan selalu lebih baik daripada mengetik. Prinsip produknya: gunakan kertas untuk eksplorasi awal yang bebas; gunakan aplikasi untuk memilih metode, menyimpan ringkasan, dan menentukan aksi kecil.
 
 Prinsip desain:
 - **Paper-first:** sesi utama dianjurkan di buku/kertas asli, bukan layar.
 - **Low pressure:** pengguna tidak diminta membuat rencana sempurna.
 - **Small next action:** setiap sesi berakhir dengan satu aksi kecil atau asumsi yang perlu diuji.
 - **Anti-Guilt:** ide yang tidak valid diperlakukan sebagai data, bukan kegagalan.
-- **App-summary-second:** LifeTree menyimpan ringkasan, bukan menggantikan proses berpikir di kertas.
+- **App-summary-second:** Daoji menyimpan ringkasan, bukan menggantikan proses berpikir di kertas.
 
 ### 1.5 Referensi Akademis
 - Lally, P., van Jaarsveld, C. H. M., Potts, H. W. W., & Wardle, J. (2010). *How are habits formed: Modelling habit formation in the real world.* European Journal of Social Psychology, 40(6), 998–1009.
@@ -59,17 +59,17 @@ Prinsip desain:
 ## Bagian 2: Kepatuhan Hukum & Etika Digital (Compliance)
 
 ### 2.1 Perlindungan Data Pribadi (UU PDP & PP 17/2025 - PP TUNAS + Permenkomdigi 9/2026)
-Menurut UU PDP, data kesehatan, data anak, dan data keuangan pribadi termasuk Data Pribadi yang bersifat spesifik. Dalam konteks LifeTree, jurnal emosi, skor mood, sinyal krisis, dan data finansial pengguna diperlakukan dengan standar proteksi setara data sensitif karena dapat memuat atau menghasilkan inferensi terkait kesehatan mental/kehidupan pribadi. Seluruh bagian compliance membutuhkan formal legal counsel review sebelum launch.
+Menurut UU PDP, data kesehatan, data anak, dan data keuangan pribadi termasuk Data Pribadi yang bersifat spesifik. Dalam konteks Daoji, jurnal emosi, skor mood, sinyal krisis, dan data finansial pengguna diperlakukan dengan standar proteksi setara data sensitif karena dapat memuat atau menghasilkan inferensi terkait kesehatan mental/kehidupan pribadi. Seluruh bagian compliance membutuhkan formal legal counsel review sebelum launch.
 
 #### Hak Atas Privasi Anak (Usia 13-17)
-Sesuai **PP No. 17 Tahun 2025** tentang Penyelenggaraan Sistem Elektronik dalam Pelindungan Anak (ditetapkan 28 Maret 2025; implementasi bertahap mulai 28 Maret 2026 melalui Permenkomdigi 9/2026) dan **Permenkomdigi No. 9 Tahun 2026** sebagai aturan pelaksanaannya, remaja adalah anak di bawah 18 tahun. PP ini mengacu pada praktik *Age-Appropriate Design Code*. PP 17/2025 menetapkan kelompok usia anak 3–5, 6–9, 10–12, 13–15, dan 16–<18 tahun. Permenkomdigi 9/2026 menjadi aturan pelaksana yang mengatur tahapan implementasi, termasuk pembatasan/penonaktifan akun anak di bawah 16 tahun pada platform digital berisiko tinggi. LifeTree saat ini menggunakan pembagian sederhana (< 13, 13–17) untuk Fase 1; jika masuk Fase 2, compliance rule akan mengikuti granularitas ini.
+Sesuai **PP No. 17 Tahun 2025** tentang Penyelenggaraan Sistem Elektronik dalam Pelindungan Anak (ditetapkan 28 Maret 2025; implementasi bertahap mulai 28 Maret 2026 melalui Permenkomdigi 9/2026) dan **Permenkomdigi No. 9 Tahun 2026** sebagai aturan pelaksanaannya, remaja adalah anak di bawah 18 tahun. PP ini mengacu pada praktik *Age-Appropriate Design Code*. PP 17/2025 menetapkan kelompok usia anak 3–5, 6–9, 10–12, 13–15, dan 16–<18 tahun. Permenkomdigi 9/2026 menjadi aturan pelaksana yang mengatur tahapan implementasi, termasuk pembatasan/penonaktifan akun anak di bawah 16 tahun pada platform digital berisiko tinggi. Daoji saat ini menggunakan pembagian sederhana (< 13, 13–17) untuk Fase 1; jika masuk Fase 2, compliance rule akan mengikuti granularitas ini.
 
 *Parental Dashboard* **hanya** menampilkan tren agregat dan *Conversation Starters*, dan secara sistem **membatasi orang tua untuk membaca teks asli isi jurnal anak**.
 
 #### Usia < 13 Tahun (COPPA & PP TUNAS)
 Anak usia 3-12 tahun diwajibkan menggunakan mode *Offline-First* mutlak tanpa sinkronisasi *cloud*.
 
-**Kebijakan Biometrik:** LifeTree secara kebijakan internal memilih **tidak menggunakan autentikasi biometrik (FaceID)** untuk akun anak sebagai tindakan perlindungan berlebih (*precautionary principle*). COPPA memperlakukan biometrik sebagai *personal information* yang menuntut consent/protection/retention controls — bukan larangan absolut.
+**Kebijakan Biometrik:** Daoji secara kebijakan internal memilih **tidak menggunakan autentikasi biometrik (FaceID)** untuk akun anak sebagai tindakan perlindungan berlebih (*precautionary principle*). COPPA memperlakukan biometrik sebagai *personal information* yang menuntut consent/protection/retention controls — bukan larangan absolut.
 
 **Catatan:** App-level biometric lock untuk pengguna dewasa (saat kembali dari background > 5 menit) berbeda dari larangan biometrik untuk akun anak — ini adalah keamanan akses, bukan autentikasi akun anak.
 
@@ -77,11 +77,11 @@ Anak usia 3-12 tahun diwajibkan menggunakan mode *Offline-First* mutlak tanpa si
 Tepat pada hari ulang tahun ke-18, sistem mencabut (*revoke*) akses orang tua dari akun secara otomatis. Membutuhkan `date_of_birth` atau `verified_age_token` (bukan hanya `age_band`). Diimplementasikan di Fase 2.
 
 ### 2.2 Passive Wellness & Emergency Resource Protocol
-LifeTree BUKAN *Medical Device* atau layanan terapi.
+Daoji BUKAN *Medical Device* atau layanan terapi.
 
 **Multi-Layer Medical Disclaimer:**
-1. **Onboarding** (wajib scroll + checkbox): *"LifeTree adalah alat refleksi diri, BUKAN pengganti konseling profesional. Jika Anda mengalami krisis, hubungi 119."*
-2. **Wellness Prompt pertama** (sebelum muncul): *"Beberapa catatan mood-mu terlihat berat belakangan ini. LifeTree tidak dapat mendiagnosis kondisi kesehatan mental."*
+1. **Onboarding** (wajib scroll + checkbox): *"Daoji adalah alat refleksi diri, BUKAN pengganti konseling profesional. Jika Anda mengalami krisis, hubungi 119."*
+2. **Wellness Prompt pertama** (sebelum muncul): *"Beberapa catatan mood-mu terlihat berat belakangan ini. Daoji tidak dapat mendiagnosis kondisi kesehatan mental."*
 3. **Safety Card** (selalu terlihat): *"Darurat? Hubungi profesional."*
 
 `wellness_disclaimer_acknowledged` di UserProfile mencatat pemahaman pengguna. Dicatat di ConsentLog `consent_type = 'Wellness_Disclaimer'`.
@@ -102,4 +102,4 @@ LifeTree BUKAN *Medical Device* atau layanan terapi.
 ---
 
 ## Kesimpulan Akademis
-LifeTree menjembatani kesejajaran antara aplikasi produktivitas yang menghukum, dengan aplikasi kesehatan mental yang terlalu klinis. Dengan berlandaskan sains perilaku dan kepatuhan hukum yang ketat (terutama pelindungan anak), LifeTree berdiri sebagai paradigma baru dalam *Ethical Technology Design* (Desain Teknologi Beretika).
+Daoji menjembatani kesejajaran antara aplikasi produktivitas yang menghukum, dengan aplikasi kesehatan mental yang terlalu klinis. Dengan berlandaskan sains perilaku dan kepatuhan hukum yang ketat (terutama pelindungan anak), Daoji berdiri sebagai paradigma baru dalam *Ethical Technology Design* (Desain Teknologi Beretika).

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:drift/native.dart';
-import 'package:life_tree/src/data/local_db/database.dart';
+import 'package:daoji/src/data/local_db/database.dart';
 
 // Pure logic function extracted from journal_lite_view.dart for testability.
 // Returns true if user has had moodScore <= 2 for 3 strict consecutive calendar days.

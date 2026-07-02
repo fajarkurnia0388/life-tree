@@ -349,7 +349,7 @@ class AppDatabase extends _$AppDatabase {
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationSupportDirectory();
-    final file = File(p.join(dbFolder.path, 'lifetree.db'));
+    final file = File(p.join(dbFolder.path, 'daoji.db'));
     if (!await file.parent.exists()) {
       await file.parent.create(recursive: true);
     }

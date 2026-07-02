@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:life_tree/src/core/domain/app_constants.dart';
-import 'package:life_tree/src/core/domain/tree_skin_config.dart';
+import 'package:daoji/src/core/domain/app_constants.dart';
+import 'package:daoji/src/core/domain/tree_skin_config.dart';
 
 void main() {
   group('TreeSkinConfig', () {

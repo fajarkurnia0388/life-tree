@@ -1,6 +1,6 @@
-# LifeTree Application
+# Daoji Application
 
-LifeTree is a dynamic habit tracker built with Flutter, focusing on life balance and mental health, visually represented by a customizable growth tree.
+Daoji is a dynamic habit tracker built with Flutter, focusing on life balance and mental health, visually represented by a customizable growth tree.
 
 ## Fitur Utama
 - **Radar Chart Keseimbangan Hidup:** Visualisasi skor domain kehidupan (Tubuh, Pikiran, Sosial, Karier, dll.).

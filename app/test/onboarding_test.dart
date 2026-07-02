@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/native.dart';
-import 'package:life_tree/src/core/providers/db_provider.dart';
-import 'package:life_tree/src/data/local_db/database.dart';
-import 'package:life_tree/src/features/onboarding/onboarding_view.dart';
+import 'package:daoji/src/core/providers/db_provider.dart';
+import 'package:daoji/src/data/local_db/database.dart';
+import 'package:daoji/src/features/onboarding/onboarding_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -35,7 +35,7 @@ void main() {
     );
 
     // Initial page - Welcome page
-    expect(find.text('Selamat Datang di LifeTree'), findsOneWidget);
+    expect(find.text('Selamat Datang di Daoji'), findsOneWidget);
     await tester.tap(find.text('Lanjut'));
     await tester.pumpAndSettle();
 
@@ -52,7 +52,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Disclaimer step
-    expect(find.text('LifeTree BUKAN aplikasi medis.'), findsOneWidget);
+    expect(find.text('Daoji BUKAN aplikasi medis.'), findsOneWidget);
 
     // Try starting without completing check
     expect(find.text('Mulai'), findsOneWidget);

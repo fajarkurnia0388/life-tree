@@ -41,7 +41,7 @@ class DisclaimerStep extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'LifeTree BUKAN aplikasi medis.',
+                    'Daoji BUKAN aplikasi medis.',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.primary,
@@ -63,10 +63,10 @@ class DisclaimerStep extends StatelessWidget {
 
           _buildDisclaimerSection(
             theme,
-            title: 'Apa itu LifeTree?',
+            title: 'Apa itu Daoji?',
             icon: Icons.spa_outlined,
             body:
-                'LifeTree adalah jurnal orientasi diri dan pendamping kebiasaan '
+                'Daoji adalah jurnal orientasi diri dan pendamping kebiasaan '
                 '(habit tracker) pribadi. Tujuannya membantumu berorientasi diri '
                 'secara damai tanpa rasa bersalah — bukan untuk mendiagnosis '
                 'atau merawat kondisi apa pun.',
@@ -76,7 +76,7 @@ class DisclaimerStep extends StatelessWidget {
             title: 'Batasan Penting',
             icon: Icons.info_outline,
             body:
-                'LifeTree BUKAN aplikasi medis atau alat diagnosis psikologis klinis. '
+                'Daoji BUKAN aplikasi medis atau alat diagnosis psikologis klinis. '
                 'Kami tidak memberikan saran medis, diagnosis, maupun perawatan '
                 'kesehatan mental secara profesional.\n\n'
                 'Jika kamu mengalami kondisi krisis emosional atau membutuhkan '
@@ -158,7 +158,7 @@ class DisclaimerStep extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Sebelum lanjut, LifeTree adalah aplikasi...?',
+            'Sebelum lanjut, Daoji adalah aplikasi...?',
             style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
@@ -220,7 +220,7 @@ class DisclaimerStep extends StatelessWidget {
           if (comprehensionCorrect == false) ...[
             const SizedBox(height: 8),
             Text(
-              'Coba lagi ya — LifeTree hadir sebagai pendamping, bukan layanan medis.',
+              'Coba lagi ya — Daoji hadir sebagai pendamping, bukan layanan medis.',
               style: theme.textTheme.bodySmall?.copyWith(color: Colors.redAccent),
             ),
           ],
