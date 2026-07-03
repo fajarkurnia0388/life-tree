@@ -96,49 +96,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     });
   }
 
-  Widget _buildRadarChartCard(DashboardData data) {
-    Map<String, double> scores = Map.from(DomainDefaults.scores);
-    if (data.profile.latestDomainScores != null) {
-      try {
-        final Map<String, dynamic> parsed = jsonDecode(
-          data.profile.latestDomainScores!,
-        );
-        parsed.forEach((key, value) {
-          final numVal = value as num;
-          if (scores.containsKey(key)) {
-            scores[key] = numVal.toDouble();
-          }
-        });
-      } catch (e, stackTrace) {
-        ErrorHandlerService().logError(
-          e,
-          stackTrace,
-          context: 'DashboardView._buildRadarChartCard',
-        );
-      }
-    }
-
-    return DomainScoresCard(
-      data: data,
-      selectedDomain: _selectedDomainFilter,
-      onDomainSelected: (domain) {
-        final currentScore = scores[domain] ?? 5.0;
-        DomainInsightDialog.show(
-          context,
-          domain: domain,
-          score: currentScore,
-          onFocusApplied: () {
-            setState(() {
-              _selectedDomainFilter = (_selectedDomainFilter == domain)
-                  ? 'Semua'
-                  : domain;
-            });
-          },
-        );
-      },
-    );
-  }
-
   Widget _buildNoActionsCard(ThemeData theme) {
     return Card(
       child: Padding(
@@ -342,10 +299,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     },
                     balanceIndex: balanceIndex,
                   ),
-                  const SizedBox(height: 16),
-
-                  // Radar Chart Keseimbangan
-                  _buildRadarChartCard(data),
                   const SizedBox(height: 16),
 
                   // 3. Action of the Day / Celebration State

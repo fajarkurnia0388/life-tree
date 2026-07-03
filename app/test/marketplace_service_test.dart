@@ -4,6 +4,7 @@ import 'package:drift/native.dart';
 import 'package:daoji/src/core/providers/db_provider.dart';
 import 'package:daoji/src/data/local_db/database.dart';
 import 'package:daoji/src/features/marketplace/marketplace_service.dart';
+import 'package:daoji/src/features/marketplace/models/marketplace_template_model.dart';
 
 void main() {
   late AppDatabase db;
@@ -13,9 +14,7 @@ void main() {
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     container = ProviderContainer(
-      overrides: [
-        dbProvider.overrideWithValue(db),
-      ],
+      overrides: [dbProvider.overrideWithValue(db)],
     );
     service = container.read(marketplaceServiceProvider);
   });
@@ -28,9 +27,12 @@ void main() {
   group('LocalMarketplaceService Tests', () {
     test('Seeding otomatis saat database kosong', () async {
       final templates = await service.fetchTemplates();
-      expect(templates.length, 10);
-      
-      final first = templates.firstWhere((t) => t.templateId == 'temp-1');
+      expect(templates.length, 7); // 4 habits + 3 core values
+
+      final habitTemplates = templates.where((t) => t.isHabit).toList();
+      expect(habitTemplates.length, 4);
+
+      final first = templates.firstWhere((t) => t.templateId == 'habit-temp-1');
       expect(first.title, 'Minum Segelas Air Hangat');
       expect(first.domainTag, 'Tubuh');
       expect(first.creatorPenName, 'dr. Budi');
@@ -39,17 +41,31 @@ void main() {
     test('Filter berdasarkan domain', () async {
       final bodyTemplates = await service.fetchTemplates(domain: 'Tubuh');
       expect(bodyTemplates.every((t) => t.domainTag == 'Tubuh'), isTrue);
-      expect(bodyTemplates.length, 4); // temp-1, temp-2, temp-3, temp-4
+      expect(bodyTemplates.length, 3); // habit-temp-1, habit-temp-2, value-temp-1 (Kesehatan)
+    });
+
+    test('Filter berdasarkan template type', () async {
+      final habitTemplates = await service.fetchTemplates(
+        templateType: 'habit',
+      );
+      expect(habitTemplates.every((t) => t.isHabit), isTrue);
+      expect(habitTemplates.length, 4);
+
+      final coreValueTemplates = await service.fetchTemplates(
+        templateType: 'core_value',
+      );
+      expect(coreValueTemplates.every((t) => t.isCoreValue), isTrue);
+      expect(coreValueTemplates.length, 3);
     });
 
     test('Pencarian berdasarkan query', () async {
       final results = await service.fetchTemplates(query: 'hangat');
       expect(results.length, 1);
-      expect(results.first.templateId, 'temp-1');
+      expect(results.first.templateId, 'habit-temp-1');
     });
 
-    test('Upload template baru', () async {
-      await service.uploadTemplate(
+    test('Upload habit template baru', () async {
+      await service.uploadHabitTemplate(
         title: 'Kebiasaan Baru Saya',
         description: 'Deskripsi kebiasaan baru',
         domainTag: 'Karir',
@@ -60,35 +76,79 @@ void main() {
         creatorPenName: 'Penulis Tes',
       );
 
-      final templates = await service.fetchTemplates(domain: 'Karir');
-      final myTemplate = templates.firstWhere((t) => t.title == 'Kebiasaan Baru Saya');
+      final templates = await service.fetchTemplates(
+        templateType: 'habit',
+        domain: 'Karir',
+      );
+      final myTemplate = templates.firstWhere(
+        (t) => t.title == 'Kebiasaan Baru Saya',
+      );
       expect(myTemplate.creatorPenName, 'Penulis Tes');
       expect(myTemplate.description, 'Deskripsi kebiasaan baru');
-      expect(myTemplate.mvaDuration, 10);
+      expect(myTemplate.habitMetadata?.mvaDuration, 10);
+      expect(myTemplate.habitMetadata?.friction, 2);
+      expect(myTemplate.habitMetadata?.energy, 2);
+      expect(myTemplate.habitMetadata?.impact, 4);
+    });
+
+    test('Upload core value template baru', () async {
+      await service.uploadCoreValueTemplate(
+        title: 'Integritas',
+        description: 'Konsisten antara kata dan perbuatan',
+        emoji: '🛡️',
+        whyItMatters: 'Integritas membangun kepercayaan jangka panjang',
+        relatedDomains: ['Karir', 'Hubungan'],
+        reflectionPrompt: 'Kapan terakhir saya menepati janji meski sulit?',
+        creatorPenName: 'Penulis Tes',
+      );
+
+      final templates = await service.fetchTemplates(
+        templateType: 'core_value',
+      );
+      final myTemplate = templates.firstWhere((t) => t.title == 'Integritas');
+      expect(myTemplate.creatorPenName, 'Penulis Tes');
+      expect(myTemplate.description, 'Konsisten antara kata dan perbuatan');
+      expect(myTemplate.coreValueMetadata?.emoji, '🛡️');
+      expect(
+        myTemplate.coreValueMetadata?.whyItMatters,
+        'Integritas membangun kepercayaan jangka panjang',
+      );
+      expect(myTemplate.coreValueMetadata?.relatedDomains, [
+        'Karir',
+        'Hubungan',
+      ]);
     });
 
     test('Rating template', () async {
-      // temp-1 averageRating awal: 48 / 10 = 4.8
-      final initial = (await service.fetchTemplates()).firstWhere((t) => t.templateId == 'temp-1');
+      // habit-temp-1 averageRating awal: 48 / 10 = 4.8
+      final initial = (await service.fetchTemplates()).firstWhere(
+        (t) => t.templateId == 'habit-temp-1',
+      );
       expect(initial.ratingsSum, 48);
       expect(initial.ratingsCount, 10);
 
       // Rate dengan 5 bintang
-      await service.rateTemplate('temp-1', 5);
+      await service.rateTemplate('habit-temp-1', 5);
 
-      final updated = (await service.fetchTemplates()).firstWhere((t) => t.templateId == 'temp-1');
+      final updated = (await service.fetchTemplates()).firstWhere(
+        (t) => t.templateId == 'habit-temp-1',
+      );
       expect(updated.ratingsSum, 53);
       expect(updated.ratingsCount, 11);
       expect(updated.averageRating, 53 / 11);
     });
 
     test('Increment download count', () async {
-      final initial = (await service.fetchTemplates()).firstWhere((t) => t.templateId == 'temp-2');
+      final initial = (await service.fetchTemplates()).firstWhere(
+        (t) => t.templateId == 'habit-temp-2',
+      );
       expect(initial.downloadsCount, 189);
 
-      await service.incrementDownloads('temp-2');
+      await service.incrementDownloads('habit-temp-2');
 
-      final updated = (await service.fetchTemplates()).firstWhere((t) => t.templateId == 'temp-2');
+      final updated = (await service.fetchTemplates()).firstWhere(
+        (t) => t.templateId == 'habit-temp-2',
+      );
       expect(updated.downloadsCount, 190);
     });
   });

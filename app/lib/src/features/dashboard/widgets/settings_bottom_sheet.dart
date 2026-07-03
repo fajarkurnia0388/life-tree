@@ -35,6 +35,20 @@ class SettingsBottomSheet extends ConsumerWidget {
     ref.invalidate(dashboardDataProvider);
   }
 
+  Future<void> _toggleDeveloperMode(WidgetRef ref, bool enabled) async {
+    final db = ref.read(dbProvider);
+    final profile = await (db.select(
+      db.userProfiles,
+    )..limit(1)).getSingleOrNull();
+    if (profile == null) return;
+
+    await (db.update(db.userProfiles)
+          ..where((tbl) => tbl.userId.equals(profile.userId)))
+        .write(UserProfilesCompanion(isDeveloperMode: drift.Value(enabled)));
+
+    ref.invalidate(dashboardDataProvider);
+  }
+
   Future<void> _exportDataAsJson(BuildContext context, WidgetRef ref) async {
     final db = ref.read(dbProvider);
     final profile = await (db.select(
@@ -238,6 +252,7 @@ class SettingsBottomSheet extends ConsumerWidget {
             builder: (context, snapshot) {
               final profile = snapshot.data;
               final themeEnabled = profile?.cultivationThemeEnabled ?? true;
+              final devMode = profile?.isDeveloperMode ?? false;
 
               return Column(
                 children: [
@@ -303,6 +318,25 @@ class SettingsBottomSheet extends ConsumerWidget {
                       ),
                     ),
                   ],
+                  const SizedBox(height: 16),
+                  const Divider(),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    leading: Icon(
+                      devMode
+                          ? Icons.developer_mode_rounded
+                          : Icons.developer_mode_outlined,
+                      color: Colors.blueGrey,
+                    ),
+                    title: const Text('Mode Developer'),
+                    subtitle: const Text(
+                      'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
+                    ),
+                    trailing: Switch(
+                      value: devMode,
+                      onChanged: (value) => _toggleDeveloperMode(ref, value),
+                    ),
+                  ),
                 ],
               );
             },

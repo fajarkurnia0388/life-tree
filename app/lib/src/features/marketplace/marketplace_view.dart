@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -12,6 +14,7 @@ import '../../core/widgets/empty_state_widget.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'marketplace_service.dart';
+import 'models/marketplace_template_model.dart';
 import 'widgets/share_template_bottom_sheet.dart';
 import 'widgets/marketplace_template_card.dart';
 
@@ -24,10 +27,16 @@ class MarketplaceView extends ConsumerStatefulWidget {
 
 class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
   final _searchController = TextEditingController();
+  String _selectedTemplateType = 'habit';
   String _selectedDomain = 'Semua';
   String _sortBy = 'Terpopuler';
-  late Future<List<PublicTemplate>> _templatesFuture;
+  late Future<List<MarketplaceTemplateModel>> _templatesFuture;
 
+  final List<String> _templateTypes = ['habit', 'core_value'];
+  final Map<String, String> _templateTypeLabels = {
+    'habit': '🎯 Kebiasaan',
+    'core_value': '💎 Nilai Inti',
+  };
   final List<String> _domains = [
     'Semua',
     'Tubuh',
@@ -49,6 +58,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
     final service = ref.read(marketplaceServiceProvider);
     setState(() {
       _templatesFuture = service.fetchTemplates(
+        templateType: _selectedTemplateType,
         domain: _selectedDomain,
         query: _searchController.text,
         sortBy: _sortBy,
@@ -56,9 +66,19 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
     });
   }
 
-  Future<void> _downloadTemplate(PublicTemplate t) async {
+  Future<void> _downloadTemplate(MarketplaceTemplateModel t) async {
+    if (t.isHabit) {
+      await _downloadHabitTemplate(t);
+    } else if (t.isCoreValue) {
+      await _downloadCoreValueTemplate(t);
+    }
+  }
+
+  Future<void> _downloadHabitTemplate(MarketplaceTemplateModel t) async {
     final db = ref.read(dbProvider);
     final service = ref.read(marketplaceServiceProvider);
+    final meta = t.habitMetadata;
+    if (meta == null) return;
 
     try {
       final profiles = await db.select(db.userProfiles).get();
@@ -96,11 +116,11 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
         title: t.title,
         status: const drift.Value(HabitStatus.active),
         frequency: const drift.Value('Daily'),
-        initiationFriction: drift.Value(t.friction),
-        originalFriction: drift.Value(t.friction),
-        energyCost: drift.Value(t.energy),
-        impactScore: drift.Value(t.impact),
-        mvaDurationMin: drift.Value(t.mvaDuration),
+        initiationFriction: drift.Value(meta.friction),
+        originalFriction: drift.Value(meta.friction),
+        energyCost: drift.Value(meta.energy),
+        impactScore: drift.Value(meta.impact),
+        mvaDurationMin: drift.Value(meta.mvaDuration),
         createdAt: now,
       );
 
@@ -135,7 +155,87 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
     }
   }
 
-  Future<void> _rateTemplate(PublicTemplate t) async {
+  Future<void> _downloadCoreValueTemplate(MarketplaceTemplateModel t) async {
+    final db = ref.read(dbProvider);
+    final service = ref.read(marketplaceServiceProvider);
+
+    try {
+      final profiles = await db.select(db.userProfiles).get();
+      if (profiles.isEmpty) throw Exception('Profil tidak ditemukan');
+      final profile = profiles.first;
+
+      // Parse existing core values
+      List<String> currentValues = [];
+      if (profile.coreValues != null && profile.coreValues!.isNotEmpty) {
+        try {
+          currentValues = List<String>.from(
+            const JsonDecoder().convert(profile.coreValues!),
+          );
+        } catch (_) {}
+      }
+
+      if (currentValues.contains(t.title)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('"${t.title}" sudah ada di nilai inti Anda!'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+
+      if (currentValues.length >= 3) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Nilai inti maksimal 3. Hapus salah satu terlebih dahulu.',
+              ),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+
+      currentValues.add(t.title);
+      await (db.update(
+        db.userProfiles,
+      )..where((tbl) => tbl.userId.equals(profile.userId))).write(
+        UserProfilesCompanion(
+          coreValues: drift.Value(const JsonEncoder().convert(currentValues)),
+        ),
+      );
+
+      await service.incrementDownloads(t.templateId);
+      ref.invalidate(dashboardDataProvider);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Nilai "${t.title}" berhasil ditambahkan ke Life Compass!',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _refreshTemplates();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal mengunduh: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _rateTemplate(MarketplaceTemplateModel t) async {
     final service = ref.read(marketplaceServiceProvider);
     int selectedStars = 5;
 
@@ -237,11 +337,11 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Marketplace Kebiasaan'),
+        title: const Text('Marketplace'),
         actions: [
           IconButton(
             icon: const Icon(Icons.share_rounded),
-            tooltip: 'Bagikan Kebiasaan Saya',
+            tooltip: 'Bagikan Template Saya',
             onPressed: _showShareDialog,
           ),
         ],
@@ -249,13 +349,42 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Template Type Selector
+          SizedBox(
+            height: 56,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              itemCount: _templateTypes.length,
+              itemBuilder: (context, index) {
+                final type = _templateTypes[index];
+                final label = _templateTypeLabels[type]!;
+                final isSelected = _selectedTemplateType == type;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: ChoiceChip(
+                    label: Text(label),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() {
+                          _selectedTemplateType = type;
+                        });
+                        _refreshTemplates();
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 labelText: 'Cari Template',
-                hintText: 'Cari template kebiasaan...',
+                hintText: 'Cari template...',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.clear),
@@ -345,7 +474,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
           ),
 
           Expanded(
-            child: FutureBuilder<List<PublicTemplate>>(
+            child: FutureBuilder<List<MarketplaceTemplateModel>>(
               future: _templatesFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

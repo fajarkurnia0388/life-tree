@@ -9,14 +9,14 @@
 
 ## 0. Ringkasan Status
 
-| Fase   | Nama                                   |         Status | Catatan                                                                  |
-| ------ | -------------------------------------- | -------------: | ------------------------------------------------------------------------ |
-| Fase 0 | Foundation — Layer Interpretasi        |     ✅ Selesai | Core layer, provider, strings, widget foundation, dan test sudah dibuat. |
-| Fase 1 | Narasi & Bahasa — 3-Level Language     |     ✅ Selesai | Language resolver aktif; plain/hybrid/full copy terhubung ke UI utama.   |
-| Fase 2 | Visual & UI — Kosmetik Cultivation     |     ✅ Selesai | Badge, progress, panel status, visual states, palace aura, skins.        |
+| Fase    | Nama                                   |         Status | Catatan                                                                          |
+| ------- | -------------------------------------- | -------------: | -------------------------------------------------------------------------------- |
+| Fase 0  | Foundation — Layer Interpretasi        |     ✅ Selesai | Core layer, provider, strings, widget foundation, dan test sudah dibuat.         |
+| Fase 1  | Narasi & Bahasa — 3-Level Language     |     ✅ Selesai | Language resolver aktif; plain/hybrid/full copy terhubung ke UI utama.           |
+| Fase 2  | Visual & UI — Kosmetik Cultivation     |     ✅ Selesai | Badge, progress, panel status, visual states, palace aura, skins.                |
 | UX Pref | Onboarding & Settings Theme Choice     |     ✅ Selesai | User bisa memilih bahasa sederhana atau tema kultivasi saat onboarding/settings. |
-| Fase 3 | Depth — Achievement, Path, Heart Demon | ⬜ Belum mulai | Logic mendalam dan anti-guilt detection.                                 |
-| Fase 4 | Ekspansi — Advanced Cultivation        | ⬜ Belum mulai | Journal mode, resonance, guide, social non-kompetitif.                   |
+| Fase 3  | Depth — Achievement, Path, Heart Demon | ⬜ Belum mulai | Logic mendalam dan anti-guilt detection.                                         |
+| Fase 4  | Ekspansi — Advanced Cultivation        | ⬜ Belum mulai | Journal mode, resonance, guide, social non-kompetitif.                           |
 
 ---
 
@@ -77,9 +77,9 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 | 1.7  | Integrasi Friction Intervention → Bottleneck/Heart Demon copy                   | ✅ Selesai | `friction_intervention_sheet.dart`                                                         | File ini                                | Friction flow test             |
 | 1.8  | Integrasi Journal + Thinking Canvas language                                    | ✅ Selesai | `journal_lite_view.dart`, `journal_dashboard_tab.dart`, `thinking_canvas_lite_view.dart`   | File ini                                | Journal tests                  |
 | 1.9  | Integrasi Reflection/Profile: Dao Heart, Meridian Check, Forked Path            | ✅ Selesai | `reflection_dashboard_tab.dart`, `profile_dashboard_tab.dart`, `life_compass_section.dart` | File ini                                | Profile/reflection tests       |
-| 1.10 | Pastikan Safety Card tetap plain/dual-label                                     | ⬜ Todo | `safety_card_view.dart`                                                                    | File ini                                | Safety test                    |
-| 1.11 | Test 3 language level consistency                                               | ⬜ Todo | `app/test/cultivation_strings_test.dart`                                                   | File ini                                | New test                       |
-| 1.12 | Update status docs Fase 1                                                       | ⬜ Todo | Docs                                                                                       | File ini, `05_implementation_status.md` | Doc review                     |
+| 1.10 | Pastikan Safety Card tetap plain/dual-label                                     |    ⬜ Todo | `safety_card_view.dart`                                                                    | File ini                                | Safety test                    |
+| 1.11 | Test 3 language level consistency                                               |    ⬜ Todo | `app/test/cultivation_strings_test.dart`                                                   | File ini                                | New test                       |
+| 1.12 | Update status docs Fase 1                                                       |    ⬜ Todo | Docs                                                                                       | File ini, `05_implementation_status.md` | Doc review                     |
 
 ### 3.2 Kriteria Selesai Fase 1
 
@@ -98,8 +98,8 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 
 ### 4.1 Task Breakdown
 
-| ID   | Task                                                             |  Status | File Target                                           | Dokumen yang Diupdate                                             | Test/Validasi              |
-| ---- | ---------------------------------------------------------------- | ------: | ----------------------------------------------------- | ----------------------------------------------------------------- | -------------------------- |
+| ID   | Task                                                             |     Status | File Target                                           | Dokumen yang Diupdate                                             | Test/Validasi              |
+| ---- | ---------------------------------------------------------------- | ---------: | ----------------------------------------------------- | ----------------------------------------------------------------- | -------------------------- |
 | 2.1  | Pasang `CultivationBadge` di Dashboard                           | ✅ Selesai | `dashboard_view.dart`                                 | File ini                                                          | Widget test                |
 | 2.2  | Pasang `CultivationProgressBar` tanpa rank agresif               | ✅ Selesai | `dashboard_view.dart` atau `tree_display_widget.dart` | File ini                                                          | Widget test                |
 | 2.3  | Pasang `CultivationStatusPanel` sebagai panel ringkasan opsional | ✅ Selesai | `dashboard_view.dart` / settings/dev area             | File ini                                                          | UI smoke test              |
@@ -259,6 +259,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
    - `compass_comparison_dialog.dart` → Comparison logic
 
 **Prioritas Integrasi:**
+
 - **High:** Dashboard tree title, Action of Day, Habit list header, Recovery mode labels
 - **Medium:** Domain labels di radar/growth map, Journal titles, Reflection tab
 - **Low:** Internal comments, dev strings, template descriptions
@@ -266,6 +267,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 ### 2026-07-02 — Task 1.2 Language Picker selesai
 
 **Implementasi:**
+
 - Menambahkan dropdown picker di `settings_bottom_sheet.dart`
 - Mengintegrasikan dengan `cultivationLanguageLevelProvider`
 - 3 opsi: Plain (Sehari-hari), Hybrid (Paduan Tenang - default), Full (Nuansa Kultivasi)
@@ -273,14 +275,16 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65 tests passed
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/settings_bottom_sheet.dart`
 
 ### 2026-07-02 — Task 1.3 Dashboard Copy Integration selesai
 
 **Implementasi:**
+
 - Mengintegrasikan CultivationStrings ke widget dashboard utama
 - `season_badge_widget.dart`: Season labels (Recovery/Dormant/Growth) kini menggunakan `CultivationStrings.seasonRecovery/Dormant/Growth()` dan `recoveryModeDescription()`
-- `tree_display_widget.dart`: 
+- `tree_display_widget.dart`:
   - Convert `TreeVitalityCard` dari StatefulWidget → ConsumerStatefulWidget
   - Dashboard title menggunakan `CultivationStrings.dashboardTitle()`
   - Journey label menggunakan `CultivationStrings.realmDisplay()` dengan realm dinamis dari `cultivationProvider`
@@ -289,12 +293,14 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/season_badge_widget.dart`
 - `app/lib/src/features/dashboard/widgets/tree_display_widget.dart`
 
 ### 2026-07-02 — Task 1.4 Action of the Day Copy Integration selesai
 
 **Implementasi:**
+
 - Convert `ActionOfTheDayCard` dari StatelessWidget → ConsumerWidget
 - Menambahkan watch ke `cultivationLanguageLevelProvider`
 - Header "ACTION OF THE DAY" diganti menjadi `CultivationStrings.actionOfTheDayTitle()`
@@ -303,13 +309,15 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/action_of_the_day_card.dart`
 
 ### 2026-07-02 — Task 1.5 Habit List Language Integration selesai
 
 **Implementasi:**
+
 - `habit_list_section.dart`: Mengganti "Jadwal Kebiasaan Hari Ini" dengan `CultivationStrings.habitListTitle()`
-- `add_habit_view.dart`: 
+- `add_habit_view.dart`:
   - AppBar title kini dinamis menggunakan `CultivationStrings.addHabit()` dan `habitLabel()`
   - Heading menggunakan cultivation strings
   - Dialog hapus menggunakan `habitLabel()` untuk terminology yang konsisten
@@ -318,12 +326,14 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/habit_list_section.dart`
 - `app/lib/src/features/habit/add_habit_view.dart`
 
 ### 2026-07-02 — Task 1.6 Growth Map Labels + Semantics selesai
 
 **Implementasi:**
+
 - `growth_map_semantics.dart`: `buildLabel()` kini menerima `CultivationLanguageLevel`
 - Semantics root/branch/leaf/flower/fruit menggunakan `CultivationStrings.growthMapRoot/Branch/Leaf/Flower/Fruit()`
 - `growth_map_widget.dart`: watch `cultivationLanguageLevelProvider` dan meneruskan level ke semantics builder
@@ -332,6 +342,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/growth_map/growth_map_widget.dart`
 - `app/lib/src/features/dashboard/widgets/growth_map/growth_map_semantics.dart`
 - `app/test/growth_map_accessibility_test.dart`
@@ -339,6 +350,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 ### 2026-07-02 — Task 1.7 Friction Intervention Language selesai
 
 **Implementasi:**
+
 - `friction_intervention_sheet.dart`: watch `cultivationLanguageLevelProvider`
 - Title "Ada apa hari ini?" → `CultivationStrings.frictionInterventionTitle()` (Hambatan apa? / Bottleneck apa? / Heart Demon macam apa?)
 - Option "Kurang Waktu" → `CultivationStrings.frictionOptionTime()` (Kurang Waktu / Qi belum terkumpul / Qi-mu bocor)
@@ -347,12 +359,14 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/sheets/friction_intervention_sheet.dart`
 
 ### 2026-07-02 — Task 1.8 Journal + Thinking Canvas Language selesai
 
 **Implementasi:**
-- `journal_lite_view.dart`: 
+
+- `journal_lite_view.dart`:
   - Added cultivation imports
   - Watch `cultivationLanguageLevelProvider`
   - AppBar title "Jurnal Lite" → `CultivationStrings.journalLite()` (Cepat / Journal Ringan / Meditasi Cepat)
@@ -369,12 +383,14 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 **Catatan:** Beberapa istilah pohon (akar, cabang, buah) masih muncul di Thinking Canvas methods (Mind Map, Lotus Blossom, 5 Whys) karena mereka adalah nama metode berpikir standar, bukan bagian dari UI cultivation system.
 
 **File yang diubah:**
+
 - `app/lib/src/features/journal/journal_lite_view.dart`
 - `app/lib/src/features/journal/journal_dashboard_tab.dart`
 
 ### 2026-07-02 — Task 1.9 Reflection/Profile Language Integration selesai
 
 **Implementasi:**
+
 - `reflection_dashboard_tab.dart`:
   - Converted `StatelessWidget` → `ConsumerWidget`
   - Added cultivation imports and watch `cultivationLanguageLevelProvider`
@@ -392,6 +408,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/reflection/reflection_dashboard_tab.dart`
 - `app/lib/src/features/profile/profile_dashboard_tab.dart`
 - `app/lib/src/features/profile/widgets/life_compass_section.dart`
@@ -401,6 +418,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 ### 2026-07-02 — Task 2.1 CultivationBadge di Dashboard selesai
 
 **Implementasi:**
+
 - `dashboard_view.dart`:
   - Added import for `cultivation_badge.dart`
   - Placed `CultivationBadge` widget in AppBar actions (top right corner)
@@ -411,11 +429,13 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/dashboard_view.dart`
 
 ### 2026-07-02 — Task 2.2 CultivationProgressBar tanpa rank agresif selesai
 
 **Implementasi:**
+
 - `dashboard_view.dart`:
   - Added `CultivationProgressBar` below season status and above Tree Vitality card
   - Progress is now visible in the primary dashboard flow without adding competitive/ranking UI
@@ -430,12 +450,14 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/dashboard_view.dart`
 - `app/lib/src/features/cultivation/widgets/cultivation_progress_bar.dart`
 
 ### 2026-07-02 — Task 2.3 CultivationStatusPanel opsional selesai
 
 **Implementasi:**
+
 - `dashboard_view.dart`:
   - Added `CultivationStatusPanel` import
   - Added `_showCultivationDetails` state flag
@@ -445,11 +467,13 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/dashboard_view.dart`
 
 ### 2026-07-02 — Task 2.4 State-based visual modifiers untuk Dao Tree selesai
 
 **Implementasi:**
+
 - `growth_map_painter.dart`:
   - Added `_SeasonModifier` class with alpha, saturation, and glow multipliers
   - Implemented `_applySeasonMod()` method to apply HSV saturation and alpha adjustments
@@ -464,11 +488,13 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/growth_map/growth_map_painter.dart`
 
 ### 2026-07-02 — Task 2.5 Growth state normal/kanopi penuh selesai
 
 **Implementasi:**
+
 - `tree_display_widget.dart`:
   - Added full-canopy visual state when `balanceIndex >= 0.8` and not in recovery
   - Added animated glow around the tree scene for healthy/full-canopy state
@@ -480,11 +506,13 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/tree_display_widget.dart`
 
 ### 2026-07-02 — Task 2.6 Recovery state: snow/soft visual, no death language selesai
 
 **Implementasi:**
+
 - `tree_display_widget.dart`:
   - Added soft blue gradient veil overlay during recovery mode
   - Gradient uses CalmTheme.secondaryBlue with gentle alpha transitions
@@ -494,11 +522,13 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/tree_display_widget.dart`
 
 ### 2026-07-02 — Task 2.7 Dormant state: redup/tenang, bukan mati selesai
 
 **Implementasi:**
+
 - `tree_display_widget.dart`:
   - Added `isDormant` flag to detect dormant season state
   - Added dim radial gradient overlay for dormant state (darker than recovery, softer than harsh)
@@ -508,11 +538,13 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/tree_display_widget.dart`
 
 ### 2026-07-02 — Task 2.8 Tribulation state: aura biru/getaran halus selesai
 
 **Implementasi:**
+
 - `tree_display_widget.dart`:
   - Added `cultivationSeason` optional parameter to TreeDisplayWidget to support cultivation-specific seasons (tribulation, quietIntegration)
   - Added `isTribulation` flag using `CultivationSeason.tribulation`
@@ -523,11 +555,13 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/tree_display_widget.dart`
 
 ### 2026-07-02 — Task 2.9 Quiet Integration state: night/stars visual selesai
 
 **Implementasi:**
+
 - `tree_display_widget.dart`:
   - Added `isQuietIntegration` flag using `CultivationSeason.quietIntegration`
   - Created `QuietIntegrationOverlay`: stable night-sky visual with soft gradient and static stars
@@ -538,11 +572,13 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/tree_display_widget.dart`
 
 ### 2026-07-02 — Task 2.10 Palace aura di Growth Map selesai
 
 **Implementasi:**
+
 - `growth_map_painter.dart`:
   - Added `_drawPalaceAura` helper for each domain branch/palace node
   - Aura radius scales with branch score (14–30 px)
@@ -554,11 +590,13 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/features/dashboard/widgets/growth_map/growth_map_painter.dart`
 
 ### 2026-07-02 — Task 2.11 Tambah skin cultivation: Bamboo Immortal selesai
 
 **Implementasi:**
+
 - `app_constants.dart`: Added `TreeSkin.bambooImmortal = 'Bamboo_Immortal'` constant
 - `tree_skin_config.dart`: Added `TreeSkin.bambooImmortal` to `supportedSkins` set
 - `skin_shop_bottom_sheet.dart`: Added Bamboo Immortal to shop list with cultivation-themed description
@@ -570,6 +608,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/core/domain/app_constants.dart`
 - `app/lib/src/core/domain/tree_skin_config.dart`
 - `app/lib/src/features/dashboard/widgets/skin_shop_bottom_sheet.dart`
@@ -577,6 +616,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 ### 2026-07-02 — Task 2.12 Tambah skin cultivation: Peach Blossom selesai
 
 **Implementasi:**
+
 - `app_constants.dart`: Added `TreeSkin.peachBlossom = 'Peach_Blossom'` constant
 - `tree_skin_config.dart`: Added `TreeSkin.peachBlossom` to `supportedSkins` set
 - `skin_shop_bottom_sheet.dart`: Added Peach Blossom Paradise to shop list with cultivation-themed description
@@ -588,6 +628,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/core/domain/app_constants.dart`
 - `app/lib/src/core/domain/tree_skin_config.dart`
 - `app/lib/src/features/dashboard/widgets/skin_shop_bottom_sheet.dart`
@@ -595,6 +636,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 ### 2026-07-02 — Task 2.13 Tambah skin cultivation: Ancient Pine selesai
 
 **Implementasi:**
+
 - `app_constants.dart`: Added `TreeSkin.ancientPine = 'Ancient_Pine'` constant
 - `tree_skin_config.dart`: Added `TreeSkin.ancientPine` to `supportedSkins` set
 - `skin_shop_bottom_sheet.dart`: Added Ancient Pine to shop list with cultivation-themed description
@@ -606,6 +648,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - Validasi: `flutter test` → 65/65 tests passed, no compilation errors
 
 **File yang diubah:**
+
 - `app/lib/src/core/domain/app_constants.dart`
 - `app/lib/src/core/domain/tree_skin_config.dart`
 - `app/lib/src/features/dashboard/widgets/skin_shop_bottom_sheet.dart`
@@ -613,10 +656,11 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 ### 2026-07-02 — Task 2.14 Pastikan visual tidak bergantung warna saja selesai
 
 **Audit Accessibility:**
+
 - Reviewed all cultivation visual components for color-independence
 - **Palace aura** (Task 2.10): ✅ Uses radius scaling (14–30px), stroke width variation (1.4–2.2), and ring patterns (outer ring ≥6 score, inner ring ≥8 score) — not color-only
 - **Season visual modifiers**: ✅ Use alpha, saturation, and glow multipliers; overlays include gradients, animations, and patterns — not color-only
-- **Tree state overlays**: 
+- **Tree state overlays**:
   - Recovery: ✅ Snow animation + soft blue gradient
   - Dormant: ✅ Dim radial gradient (black low-alpha)
   - Tribulation: ✅ Pulsing blue aura (animation cue)
@@ -626,12 +670,14 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - All key visual states use multiple cues: size, stroke, pattern, animation, position, and semantic labels
 
 **Validasi:**
+
 - Accessibility test suite: 3/3 passed
 - Visual implementations confirmed to use non-color cues
 
 ### 2026-07-02 — Task 2.15 Update status docs Fase 2 selesai
 
 **Documentation Update:**
+
 - Updated `05_implementation_status.md`:
   - Changed Cultivation Visual UI status: 🔶 BERJALAN → ✅ SELESAI
   - Changed readiness: 🟡 Implemented → 🟢 Production-Ready
@@ -647,6 +693,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
   - ✅ All tests passing: 65/65
 
 **File yang diubah:**
+
 - `docs/CULTIVATION_IMPLEMENTATION_PLAN.md`
 - `docs/05_implementation_status.md`
 
@@ -657,6 +704,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 **Tanggal Selesai:** 2026-07-02
 
 **Kriteria Selesai (Terpenuhi Semua):**
+
 - ✅ 5 cultivation states memiliki representasi visual non-punitive dan supportive
 - ✅ Badge, progress bar, dan status panel terintegrasi ke Dashboard
 - ✅ Visual cultivation menggunakan multi-cue (tidak bergantung warna saja)
@@ -676,6 +724,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 **Latar Belakang:** Tidak semua user familiar dengan istilah cerita immortal/cultivation seperti Qi, Realm, Dao, atau Seclusion. Karena itu tema kultivasi kini bisa dipilih secara eksplisit dan tidak dipaksakan.
 
 **Implementasi:**
+
 - ✅ Tambah field persistensi `cultivationThemeEnabled` di `UserProfiles` dengan migration schema v9.
 - ✅ Tambah step onboarding “Pilih gaya bahasa aplikasi” sebelum age/audit/disclaimer.
 - ✅ Onboarding menyimpan pilihan bahasa sederhana vs tema kultivasi.
@@ -686,6 +735,7 @@ Setiap task implementasi wajib mengikuti aturan berikut:
 - ✅ Validasi: `flutter test` → 65/65 passed.
 
 **File utama:**
+
 - `app/lib/src/data/local_db/database.dart`
 - `app/lib/src/data/local_db/database.g.dart`
 - `app/lib/src/features/onboarding/onboarding_view.dart`

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/button_theme.dart';
-import '../marketplace_service.dart';
+import '../models/marketplace_template_model.dart';
 
 class MarketplaceTemplateCard extends StatelessWidget {
-  final PublicTemplate template;
+  final MarketplaceTemplateModel template;
   final VoidCallback onRate;
   final VoidCallback onDownload;
 
@@ -39,7 +39,8 @@ class MarketplaceTemplateCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    template.domainTag,
+                    template.domainTag ??
+                        (template.isHabit ? 'Kebiasaan' : 'Nilai Inti'),
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -76,11 +77,24 @@ class MarketplaceTemplateCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            Text(
-              template.title,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                if (template.isCoreValue && template.coreValueMetadata != null)
+                  Text(
+                    template.coreValueMetadata!.emoji,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                if (template.isCoreValue && template.coreValueMetadata != null)
+                  const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    template.title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 4),
             Text(
@@ -99,65 +113,8 @@ class MarketplaceTemplateCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.timer_outlined,
-                      size: 14,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'MVA: ${template.mvaDuration}m',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.6,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Icon(
-                      Icons.fitness_center_rounded,
-                      size: 14,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Beban: ${template.friction + template.energy} Poin',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.6,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.download_rounded,
-                      size: 14,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${template.downloadsCount}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.6,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            if (template.isHabit) _buildHabitMetadata(theme),
+            if (template.isCoreValue) _buildCoreValueMetadata(theme),
             const Divider(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -188,6 +145,186 @@ class MarketplaceTemplateCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildHabitMetadata(ThemeData theme) {
+    final meta = template.habitMetadata;
+    if (meta == null) return const SizedBox();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.timer_outlined,
+              size: 14,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              'MVA: ${meta.mvaDuration}m',
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Icon(
+              Icons.fitness_center_rounded,
+              size: 14,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              'Beban: ${meta.friction + meta.energy} Poin',
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Icon(
+              Icons.download_rounded,
+              size: 14,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '${template.downloadsCount}',
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCoreValueMetadata(ThemeData theme) {
+    final meta = template.coreValueMetadata;
+    if (meta == null) return const SizedBox();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (meta.whyItMatters.isNotEmpty) ...[
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.teal.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.teal.withValues(alpha: 0.3)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline,
+                      size: 14,
+                      color: Colors.teal.shade700,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Mengapa Penting',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.teal.shade700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  meta.whyItMatters,
+                  style: const TextStyle(fontSize: 12, height: 1.4),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (meta.reflectionPrompt.isNotEmpty) ...[
+          Row(
+            children: [
+              Icon(
+                Icons.question_answer_outlined,
+                size: 14,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  meta.reflectionPrompt,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontStyle: FontStyle.italic,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (meta.relatedDomains.isNotEmpty)
+              Wrap(
+                spacing: 4,
+                children: meta.relatedDomains.take(2).map((domain) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest
+                          .withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      domain,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.7,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            Row(
+              children: [
+                Icon(
+                  Icons.download_rounded,
+                  size: 14,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${template.downloadsCount}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

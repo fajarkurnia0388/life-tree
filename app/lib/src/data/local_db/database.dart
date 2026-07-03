@@ -241,13 +241,12 @@ class DecisionEntries extends Table {
 @DataClassName('MarketplaceTemplate')
 class MarketplaceTemplates extends Table {
   TextColumn get templateId => text()();
+  TextColumn get templateType => text()(); // 'habit' or 'core_value'
   TextColumn get title => text()();
   TextColumn get description => text()();
-  TextColumn get domainTag => text()();
-  IntColumn get friction => integer()();
-  IntColumn get energy => integer()();
-  IntColumn get impact => integer()();
-  IntColumn get mvaDuration => integer()();
+  TextColumn get domainTag => text().nullable()();
+  TextColumn get metadata =>
+      text().nullable()(); // JSON: habit-specific or value-specific data
   TextColumn get creatorPenName => text()();
   IntColumn get ratingsSum => integer()();
   IntColumn get ratingsCount => integer()();
@@ -266,6 +265,8 @@ class ValueDilemmaResponses extends Table {
   TextColumn get chosenValueTag => text().nullable()();
   TextColumn get chosenOptionLabel => text().nullable()();
   TextColumn get openTextResponse => text().nullable()();
+  TextColumn get responseReason =>
+      text().nullable()(); // Optional reason for choosing A/B/Both
   DateTimeColumn get answeredAt => dateTime()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -307,7 +308,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -409,6 +410,33 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 9) {
         await m.addColumn(userProfiles, userProfiles.cultivationThemeEnabled);
+      }
+      if (from < 10) {
+        await m.addColumn(
+          valueDilemmaResponses,
+          valueDilemmaResponses.responseReason,
+        );
+      }
+      if (from < 11) {
+        // Migrate existing habit templates to new schema
+        await customStatement(
+          'ALTER TABLE marketplace_templates ADD COLUMN template_type TEXT NOT NULL DEFAULT "habit"',
+        );
+        await customStatement(
+          'ALTER TABLE marketplace_templates ADD COLUMN metadata TEXT',
+        );
+        // Move habit-specific data to metadata JSON
+        await customStatement('''
+          UPDATE marketplace_templates
+          SET metadata = json_object(
+            'friction', friction,
+            'energy', energy,
+            'impact', impact,
+            'mvaDuration', mva_duration
+          )
+          WHERE template_type = 'habit'
+          ''');
+        // Keep old columns for backward compatibility but mark as deprecated
       }
     },
   );

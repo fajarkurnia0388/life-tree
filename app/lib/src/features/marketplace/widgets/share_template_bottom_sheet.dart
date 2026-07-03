@@ -70,7 +70,7 @@ class _ShareTemplateBottomSheetState
     final service = ref.read(marketplaceServiceProvider);
 
     try {
-      await service.uploadTemplate(
+      await service.uploadHabitTemplate(
         title: _selectedHabit!.title,
         description: _descController.text.trim(),
         domainTag: _selectedHabit!.domainTag ?? 'Tubuh',

@@ -6,7 +6,7 @@ class ValueDilemmaCard extends StatelessWidget {
   final ValueDilemma dilemma;
   final int index;
   final int total;
-  final Function(String option, String valueTag) onSelected;
+  final Function(String option, String valueTag, String? reason) onSelected;
 
   const ValueDilemmaCard({
     super.key,
@@ -15,6 +15,31 @@ class ValueDilemmaCard extends StatelessWidget {
     required this.total,
     required this.onSelected,
   });
+
+  Future<void> _handleSelection(
+    BuildContext context,
+    String option,
+    String valueTag,
+  ) async {
+    HapticFeedback.selectionClick();
+
+    // Ask if user wants to add optional reason
+    final reason = await showDialog<String>(
+      context: context,
+      builder: (context) => _ReasonDialog(
+        selectedOption: option,
+        optionLabel: option == 'A'
+            ? dilemma.optionALabel
+            : option == 'B'
+            ? dilemma.optionBLabel
+            : 'Keduanya Penting',
+      ),
+    );
+
+    if (context.mounted) {
+      onSelected(option, valueTag, reason);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,10 +100,8 @@ class ValueDilemmaCard extends StatelessWidget {
             const Spacer(),
             // Option A Button
             ElevatedButton(
-              onPressed: () {
-                HapticFeedback.selectionClick();
-                onSelected('A', dilemma.optionAValueTag);
-              },
+              onPressed: () =>
+                  _handleSelection(context, 'A', dilemma.optionAValueTag),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.surfaceContainerHighest
                     .withValues(alpha: isDark ? 0.3 : 0.6),
@@ -109,10 +132,8 @@ class ValueDilemmaCard extends StatelessWidget {
             const SizedBox(height: 12),
             // Option B Button
             ElevatedButton(
-              onPressed: () {
-                HapticFeedback.selectionClick();
-                onSelected('B', dilemma.optionBValueTag);
-              },
+              onPressed: () =>
+                  _handleSelection(context, 'B', dilemma.optionBValueTag),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.surfaceContainerHighest
                     .withValues(alpha: isDark ? 0.3 : 0.6),
@@ -141,9 +162,107 @@ class ValueDilemmaCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
+            // "Both Important" Button
+            OutlinedButton(
+              onPressed: () => _handleSelection(context, 'Both', ''),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.teal,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 18,
+                  horizontal: 16,
+                ),
+                side: BorderSide(color: Colors.teal.withValues(alpha: 0.5)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: const Text(
+                '⚖️ Keduanya Penting / Tergantung Konteks',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 12),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ReasonDialog extends StatefulWidget {
+  final String selectedOption;
+  final String optionLabel;
+
+  const _ReasonDialog({
+    required this.selectedOption,
+    required this.optionLabel,
+  });
+
+  @override
+  State<_ReasonDialog> createState() => _ReasonDialogState();
+}
+
+class _ReasonDialogState extends State<_ReasonDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: const Text('Alasan Pilihan (Opsional)'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Anda memilih: "${widget.optionLabel}"',
+            style: TextStyle(
+              fontSize: 12,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Ingin menambahkan alasan mengapa Anda memilih ini? (Opsional)',
+            style: TextStyle(fontSize: 13),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _controller,
+            maxLines: 3,
+            maxLength: 200,
+            decoration: InputDecoration(
+              hintText: 'Misal: Karena saat ini saya fokus pada...',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              counterText: '',
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, null),
+          child: const Text('Lewati'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final text = _controller.text.trim();
+            Navigator.pop(context, text.isEmpty ? null : text);
+          },
+          child: const Text('Lanjut'),
+        ),
+      ],
     );
   }
 }

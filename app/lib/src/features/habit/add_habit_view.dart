@@ -453,7 +453,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        '🚀 $t.friction   ⚡ $t.energy',
+                                        '� ${t.friction}   ⚡ ${t.energy}',
                                         style: const TextStyle(
                                           fontSize: 9,
                                           fontWeight: FontWeight.bold,

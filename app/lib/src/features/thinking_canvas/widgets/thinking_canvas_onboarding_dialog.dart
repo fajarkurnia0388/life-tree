@@ -13,10 +13,12 @@ class ThinkingCanvasOnboardingDialog extends StatefulWidget {
   });
 
   @override
-  State<ThinkingCanvasOnboardingDialog> createState() => _ThinkingCanvasOnboardingDialogState();
+  State<ThinkingCanvasOnboardingDialog> createState() =>
+      _ThinkingCanvasOnboardingDialogState();
 }
 
-class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardingDialog> {
+class _ThinkingCanvasOnboardingDialogState
+    extends State<ThinkingCanvasOnboardingDialog> {
   final PageController _controller = PageController();
   int _currentPage = 0;
   String _tempSelectedMethod = 'MindDump';
@@ -31,19 +33,23 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
   final List<Map<String, String>> _steps = [
     {
       'title': '1. Ambil Kertas Fisik 📝',
-      'desc': 'Prinsip Daoji adalah Paper-First. Jauhkan layar Anda sejenak. Ambillah buku catatan, pulpen, atau kertas coretan kosong.',
+      'desc':
+          'Prinsip Daoji adalah Paper-First. Jauhkan layar Anda sejenak. Ambillah buku catatan, pulpen, atau kertas coretan kosong.',
     },
     {
       'title': '2. Pilih Metode Berpikir 🧠',
-      'desc': 'Kami mendukung 21 metode kognitif premium dengan panduan coretan kertas dan editor interaktif (seperti Mind Map, Slot Machine, Teratai Radial, dll) untuk memicu ide terbaik Anda.',
+      'desc':
+          'Kami mendukung 21 metode kognitif premium dengan panduan coretan kertas dan editor interaktif (seperti Mind Map, Slot Machine, Teratai Radial, dll) untuk memicu ide terbaik Anda.',
     },
     {
       'title': '3. Corat-Coret Tanpa Gangguan ✍️',
-      'desc': 'Ikuti rekomendasi format coretan kertas fisik di dalam aplikasi untuk melatih fokus kognitif, membebaskan imajinasi, dan mengurangi screen fatigue.',
+      'desc':
+          'Ikuti rekomendasi format coretan kertas fisik di dalam aplikasi untuk melatih fokus kognitif, membebaskan imajinasi, dan mengurangi screen fatigue.',
     },
     {
-      'title': '4. Ringkas & Lakukan Digitalisasi 🌳',
-      'desc': 'Gunakan modul editor interaktif khusus bertema kami untuk mengabadikan intisari coretan Anda, mengacak kombinasi slot parameter, memetakan SWOT, atau memilih persona kognitif.',
+      'title': '4. Ringkas & Lakukan Digitalisasi 💾',
+      'desc':
+          'Gunakan modul editor interaktif khusus bertema kami untuk mengabadikan intisari coretan Anda, mengacak kombinasi slot parameter, memetakan SWOT, atau memilih persona kognitif.',
     },
   ];
 
@@ -64,19 +70,27 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
         },
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(double.infinity, 44),
-          backgroundColor: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.1) : Colors.transparent,
+          backgroundColor: isSelected
+              ? theme.colorScheme.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
           side: BorderSide(
-            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.12),
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurface.withValues(alpha: 0.12),
             width: isSelected ? 2 : 1,
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
         child: Align(
           alignment: Alignment.centerLeft,
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurface,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               fontSize: 12,
             ),
@@ -132,12 +146,18 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                         Text(
                           step['desc']!,
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.bodyMedium?.copyWith(height: 1.4, fontSize: 11),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            height: 1.4,
+                            fontSize: 11,
+                          ),
                         ),
                         const SizedBox(height: 10),
                         const Text(
                           'Apa yang Anda rasakan saat ini?',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         Expanded(
@@ -149,7 +169,11 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                                 const Text(
                                   'DIVERGEN (MEMBANGUN IDE)',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.blue),
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue,
+                                  ),
                                 ),
                                 const SizedBox(height: 4),
                                 _buildInteractiveStateButton(
@@ -163,17 +187,20 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '⏱️ Tulis Cepat Tanpa Jeda (Freewriting)',
+                                  label:
+                                      '⏱️ Tulis Cepat Tanpa Jeda (Freewriting)',
                                   methodKey: 'Freewriting',
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '🎰 Kombinasi Unik Acak (Morphological)',
+                                  label:
+                                      '🎰 Kombinasi Unik Acak (Morphological)',
                                   methodKey: 'MorphologicalAnalysis',
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '🌸 Mekarkan Cabang Ide (Lotus Blossom)',
+                                  label:
+                                      '🌸 Mekarkan Cabang Ide (Lotus Blossom)',
                                   methodKey: 'LotusBlossom',
                                   theme: theme,
                                 ),
@@ -198,12 +225,14 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '🎭 Pakai Kacamata Karakter (Role Storming)',
+                                  label:
+                                      '🎭 Pakai Kacamata Karakter (Role Storming)',
                                   methodKey: 'RoleStorming',
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '⭐️ Butuh Pertanyaan Kunci (Starburst)',
+                                  label:
+                                      '⭐️ Butuh Pertanyaan Kunci (Starburst)',
                                   methodKey: 'Starbursting',
                                   theme: theme,
                                 ),
@@ -211,7 +240,11 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                                 const Text(
                                   'KONVERGEN (MENGEVALUASI IDE)',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.green),
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
                                 ),
                                 const SizedBox(height: 4),
                                 _buildInteractiveStateButton(
@@ -220,17 +253,20 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '💡 Banyak Ide Bingung Pilih (Scoring)',
+                                  label:
+                                      '💡 Banyak Ide Bingung Pilih (Scoring)',
                                   methodKey: 'Scoring',
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '🔍 Ingin Uji Asumsi Nyata (Validation)',
+                                  label:
+                                      '🔍 Ingin Uji Asumsi Nyata (Validation)',
                                   methodKey: 'Validation',
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '🧗 Buntu Cari Akar Solusi (Reverse BS)',
+                                  label:
+                                      '🧗 Buntu Cari Akar Solusi (Reverse BS)',
                                   methodKey: 'ReverseBrainstorming',
                                   theme: theme,
                                 ),
@@ -240,7 +276,8 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '🛠️ Bongkar Asumsi Dasar (First Principles)',
+                                  label:
+                                      '🛠️ Bongkar Asumsi Dasar (First Principles)',
                                   methodKey: 'FirstPrinciples',
                                   theme: theme,
                                 ),
@@ -253,11 +290,16 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                                 const Text(
                                   'SESI LENGKAP & EVALUASI',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.purple),
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.purple,
+                                  ),
                                 ),
                                 const SizedBox(height: 4),
                                 _buildInteractiveStateButton(
-                                  label: '🎩 Analisis 6 Topi Kognitif (Six Hats)',
+                                  label:
+                                      '🎩 Analisis 6 Topi Kognitif (Six Hats)',
                                   methodKey: 'SixThinkingHats',
                                   theme: theme,
                                 ),
@@ -267,12 +309,14 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '💎 Alur Desain Terpadu (Double Diamond)',
+                                  label:
+                                      '💎 Alur Desain Terpadu (Double Diamond)',
                                   methodKey: 'DoubleDiamond',
                                   theme: theme,
                                 ),
                                 _buildInteractiveStateButton(
-                                  label: '🏷️ Kelompokkan Ide Sejenis (Affinity)',
+                                  label:
+                                      '🏷️ Kelompokkan Ide Sejenis (Affinity)',
                                   methodKey: 'AffinityMapping',
                                   theme: theme,
                                 ),
@@ -284,7 +328,9 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                         Text(
                           step['desc']!,
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            height: 1.5,
+                          ),
                         ),
                       ],
                     ],
@@ -364,10 +410,12 @@ class _ThinkingCanvasOnboardingDialogState extends State<ThinkingCanvasOnboardin
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: theme.colorScheme.onPrimary,
                   ),
-                  child: Text(_currentPage == _steps.length - 1 ? 'Mengerti' : 'Lanjut'),
+                  child: Text(
+                    _currentPage == _steps.length - 1 ? 'Mengerti' : 'Lanjut',
+                  ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

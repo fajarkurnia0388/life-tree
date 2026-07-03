@@ -74,6 +74,7 @@ class _ValueMirrorSessionViewState
     ValueDilemma dilemma,
     String option,
     String valueTag,
+    String? reason,
     int totalCards,
   ) async {
     if (_isSaving) return;
@@ -86,12 +87,22 @@ class _ValueMirrorSessionViewState
       final userId = profiles.first.userId;
 
       final service = ref.read(valueCompassServiceProvider);
-      await service.recordBinaryResponse(
-        userId: userId,
-        dilemmaKey: dilemma.key,
-        chosenOptionLabel: option,
-        chosenValueTag: valueTag,
-      );
+      if (option == 'Both') {
+        await service.recordNeutralResponse(
+          userId: userId,
+          dilemmaKey: dilemma.key,
+          neutralLabel: 'Both',
+          reason: reason,
+        );
+      } else {
+        await service.recordBinaryResponse(
+          userId: userId,
+          dilemmaKey: dilemma.key,
+          chosenOptionLabel: option,
+          chosenValueTag: valueTag,
+          reason: reason,
+        );
+      }
 
       // Invalidate providers to refresh dashboard/profile
       ref.invalidate(revealedValuesProvider);
@@ -335,12 +346,14 @@ class _ValueMirrorSessionViewState
                         dilemma: cardData,
                         index: index,
                         total: cards.length,
-                        onSelected: (option, valueTag) => _handleBinaryAnswer(
-                          cardData,
-                          option,
-                          valueTag,
-                          cards.length,
-                        ),
+                        onSelected: (option, valueTag, reason) =>
+                            _handleBinaryAnswer(
+                              cardData,
+                              option,
+                              valueTag,
+                              reason,
+                              cards.length,
+                            ),
                       ),
                     );
                   } else if (cardData is OpenValueQuestion) {
