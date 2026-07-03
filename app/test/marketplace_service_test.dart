@@ -41,7 +41,10 @@ void main() {
     test('Filter berdasarkan domain', () async {
       final bodyTemplates = await service.fetchTemplates(domain: 'Tubuh');
       expect(bodyTemplates.every((t) => t.domainTag == 'Tubuh'), isTrue);
-      expect(bodyTemplates.length, 3); // habit-temp-1, habit-temp-2, value-temp-1 (Kesehatan)
+      expect(
+        bodyTemplates.length,
+        3,
+      ); // habit-temp-1, habit-temp-2, value-temp-1 (Kesehatan)
     });
 
     test('Filter berdasarkan template type', () async {

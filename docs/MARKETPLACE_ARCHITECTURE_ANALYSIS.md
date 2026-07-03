@@ -1,4 +1,5 @@
 # Marketplace Architecture Analysis
+
 **Date:** 2026-07-03  
 **Purpose:** Understand current marketplace implementation for refactoring into a generic system
 
@@ -7,6 +8,7 @@
 ## 1. Current Marketplace Structure
 
 ### 1.1 Database Schema
+
 **Location:** [app/lib/src/data/local_db/database.dart](app/lib/src/data/local_db/database.dart#L241-L260)
 
 ```dart
@@ -32,6 +34,7 @@ class MarketplaceTemplates extends Table {
 ```
 
 **Key Observations:**
+
 - ✅ Generic fields: `templateId`, `title`, `description`, `domainTag`, `creatorPenName`, `ratingsSum`, `ratingsCount`, `downloadsCount`, `createdAt`
 - ❌ Habit-specific fields: `friction`, `energy`, `impact`, `mvaDuration`
 - **Refactoring Need:** Extract habit-specific fields into a flexible JSON metadata column
@@ -41,6 +44,7 @@ class MarketplaceTemplates extends Table {
 ## 2. Service Layer Architecture
 
 ### 2.1 PublicTemplate Model
+
 **Location:** [app/lib/src/features/marketplace/marketplace_service.dart](app/lib/src/features/marketplace/marketplace_service.dart#L1-L70)
 
 ```dart
@@ -64,20 +68,22 @@ class PublicTemplate {
 ```
 
 **Refactoring Strategy:**
+
 - Create generic `PublicTemplate<T>` with type parameter for metadata
 - Or use `Map<String, dynamic> metadata` field
 
 ### 2.2 MarketplaceService Interface
+
 **Location:** [app/lib/src/features/marketplace/marketplace_service.dart](app/lib/src/features/marketplace/marketplace_service.dart#L71-L87)
 
 ```dart
 abstract class MarketplaceService {
   Future<List<PublicTemplate>> fetchTemplates({
-    String? domain, 
-    String? query, 
+    String? domain,
+    String? query,
     String? sortBy
   });
-  
+
   Future<void> uploadTemplate({
     required String title,
     required String description,
@@ -88,21 +94,24 @@ abstract class MarketplaceService {
     required int mvaDuration,  // Habit-specific
     required String creatorPenName,
   });
-  
+
   Future<void> rateTemplate(String templateId, int rating);
   Future<void> incrementDownloads(String templateId);
 }
 ```
 
 **Analysis:**
+
 - ✅ `fetchTemplates`, `rateTemplate`, `incrementDownloads` are generic
 - ❌ `uploadTemplate` is tightly coupled to habit fields
 - **Refactoring Need:** Add `templateType` parameter and generic metadata
 
 ### 2.3 LocalMarketplaceService Implementation
+
 **Location:** [app/lib/src/features/marketplace/marketplace_service.dart](app/lib/src/features/marketplace/marketplace_service.dart#L89-L350)
 
 **Key Methods:**
+
 1. **`_seedIfEmpty()`** - Seeds 10 habit templates on first run
 2. **`fetchTemplates()`** - Filters by domain, search query, and sorts
 3. **`uploadTemplate()`** - Inserts new template to database
@@ -110,6 +119,7 @@ abstract class MarketplaceService {
 5. **`incrementDownloads()`** - Increments download counter
 
 **Seeded Template Domains:**
+
 - Tubuh (Body): 4 templates
 - Emosi (Emotion): 2 templates
 - Keuangan (Finance): 1 template
@@ -118,6 +128,7 @@ abstract class MarketplaceService {
 - Rekreasi (Recreation): 1 template
 
 **Provider:**
+
 ```dart
 final marketplaceServiceProvider = Provider<MarketplaceService>((ref) {
   final db = ref.watch(dbProvider);
@@ -130,9 +141,11 @@ final marketplaceServiceProvider = Provider<MarketplaceService>((ref) {
 ## 3. UI Layer
 
 ### 3.1 MarketplaceView Widget
+
 **Location:** [app/lib/src/features/marketplace/marketplace_view.dart](app/lib/src/features/marketplace/marketplace_view.dart)
 
 **Structure:**
+
 ```
 MarketplaceView (ConsumerStatefulWidget)
 ├── AppBar
@@ -150,18 +163,21 @@ MarketplaceView (ConsumerStatefulWidget)
 ```
 
 **State Management:**
+
 - `_searchController` - Search input
 - `_selectedDomain` - Currently selected domain filter
 - `_sortBy` - Current sort mode
 - `_templatesFuture` - Async template data
 
 **Key Methods:**
+
 1. **`_refreshTemplates()`** - Fetches templates with current filters
 2. **`_downloadTemplate()`** - Converts template to Habit and inserts to DB
 3. **`_rateTemplate()`** - Shows rating dialog and submits rating
 4. **`_showShareDialog()`** - Opens share bottom sheet
 
 **Download Logic (Habit-Specific):**
+
 ```dart
 // Creates a new Habit from PublicTemplate
 final newHabit = HabitsCompanion.insert(
@@ -181,9 +197,11 @@ final newHabit = HabitsCompanion.insert(
 ```
 
 ### 3.2 MarketplaceTemplateCard Widget
+
 **Location:** [app/lib/src/features/marketplace/widgets/marketplace_template_card.dart](app/lib/src/features/marketplace/widgets/marketplace_template_card.dart)
 
 **Visual Structure:**
+
 ```
 Card
 ├── Domain Tag Badge (e.g., "Tubuh")
@@ -202,14 +220,17 @@ Card
 ```
 
 **Props:**
+
 - `template: PublicTemplate` - Template data
 - `onRate: VoidCallback` - Rating action
 - `onDownload: VoidCallback` - Download action
 
 ### 3.3 ShareTemplateBottomSheet Widget
+
 **Location:** [app/lib/src/features/marketplace/widgets/share_template_bottom_sheet.dart](app/lib/src/features/marketplace/widgets/share_template_bottom_sheet.dart)
 
 **Structure:**
+
 ```
 BottomSheet
 ├── Header: "Bagikan Kebiasaan Saya 👥"
@@ -222,6 +243,7 @@ BottomSheet
 ```
 
 **Logic:**
+
 1. Loads user's active habits from database
 2. User selects a habit to share
 3. User provides description/tips
@@ -233,6 +255,7 @@ BottomSheet
 ## 4. Navigation & Routing
 
 ### 4.1 Route Registration
+
 **Location:** [app/lib/src/core/routing/router.dart](app/lib/src/core/routing/router.dart#L78-L82)
 
 ```dart
@@ -246,11 +269,13 @@ GoRoute(
 
 **1. Bottom Navigation Bar**  
 **Location:** [app/lib/src/features/navigation/main_navigation_shell.dart](app/lib/src/features/navigation/main_navigation_shell.dart#L25-L70)
+
 - Tab 4: "Marketplace" with storefront icon
 - Displays MarketplaceView in IndexedStack
 
 **2. Add Habit View AppBar**  
 **Location:** [app/lib/src/features/habit/add_habit_view.dart](app/lib/src/features/habit/add_habit_view.dart#L295-L301)
+
 ```dart
 IconButton(
   icon: const Icon(Icons.storefront_outlined),
@@ -261,10 +286,12 @@ IconButton(
 
 **3. Reflection Dashboard**  
 **Location:** Referenced in grep search (reflection_dashboard_tab.dart)
+
 - "Habit Marketplace 🛒" tile
 
 **4. Thinking Canvas Workspaces**  
 **Location:** Referenced in grep search (brainstorm_workspaces.dart, morphological_workspace.dart)
+
 - Brainstorm: `_openMarketplace()` method
 - Morphological: `_showTemplateMarketplace()` method
 
@@ -275,6 +302,7 @@ IconButton(
 ### 5.1 Database Schema Changes
 
 **Proposed New Schema:**
+
 ```dart
 @DataClassName('MarketplaceTemplate')
 class MarketplaceTemplates extends Table {
@@ -289,16 +317,17 @@ class MarketplaceTemplates extends Table {
   IntColumn get ratingsCount => integer()();
   IntColumn get downloadsCount => integer()();
   DateTimeColumn get createdAt => dateTime()();
-  
+
   // Type-specific metadata (NEW)
   TextColumn get metadata => text().map(const JsonConverter())();
-  
+
   @override
   Set<Column> get primaryKey => {templateId};
 }
 ```
 
 **Metadata Examples:**
+
 ```dart
 // For habit templates
 {
@@ -320,6 +349,7 @@ class MarketplaceTemplates extends Table {
 ### 5.2 Service Layer Changes
 
 **Generic PublicTemplate:**
+
 ```dart
 class PublicTemplate<T> {
   final String templateId;
@@ -354,15 +384,16 @@ class CoreValueMetadata {
 ```
 
 **Updated Service Interface:**
+
 ```dart
 abstract class MarketplaceService {
   Future<List<PublicTemplate>> fetchTemplates({
     String? templateType,      // NEW: filter by type
-    String? domain, 
-    String? query, 
+    String? domain,
+    String? query,
     String? sortBy
   });
-  
+
   Future<void> uploadTemplate({
     required String templateType,           // NEW
     required String title,
@@ -371,7 +402,7 @@ abstract class MarketplaceService {
     required String creatorPenName,
     required Map<String, dynamic> metadata, // NEW: flexible metadata
   });
-  
+
   Future<void> rateTemplate(String templateId, int rating);
   Future<void> incrementDownloads(String templateId);
 }
@@ -380,10 +411,11 @@ abstract class MarketplaceService {
 ### 5.3 UI Layer Changes
 
 **Generic MarketplaceView:**
+
 ```dart
 class MarketplaceView extends ConsumerStatefulWidget {
   final String templateType;  // NEW: 'habit' | 'core_value'
-  
+
   const MarketplaceView({
     super.key,
     required this.templateType,
@@ -392,12 +424,13 @@ class MarketplaceView extends ConsumerStatefulWidget {
 ```
 
 **Abstract Template Card:**
+
 ```dart
 abstract class BaseTemplateCard extends StatelessWidget {
   final PublicTemplate template;
   final VoidCallback onRate;
   final VoidCallback onDownload;
-  
+
   @protected
   Widget buildMetadata(BuildContext context);  // Override for each type
 }
@@ -432,6 +465,7 @@ class CoreValueTemplateCard extends BaseTemplateCard {
 ### 5.4 Navigation Changes
 
 **Type-specific routes:**
+
 ```dart
 GoRoute(
   path: '/marketplace/habits',
@@ -448,12 +482,13 @@ GoRoute(
 ## 6. Migration Strategy
 
 ### Phase 1: Database Migration
+
 1. Add `templateType` column (default: 'habit')
 2. Add `metadata` JSON column
 3. Migrate existing rows:
    ```sql
-   UPDATE marketplace_templates 
-   SET 
+   UPDATE marketplace_templates
+   SET
      templateType = 'habit',
      metadata = json_object(
        'friction', friction,
@@ -465,6 +500,7 @@ GoRoute(
 4. Mark old columns as deprecated (don't drop yet for rollback safety)
 
 ### Phase 2: Service Layer Refactoring
+
 1. Create generic `PublicTemplate` with metadata field
 2. Create `HabitMetadata` and `CoreValueMetadata` classes
 3. Update `MarketplaceService` interface
@@ -472,6 +508,7 @@ GoRoute(
 5. Add metadata serialization/deserialization logic
 
 ### Phase 3: UI Refactoring
+
 1. Create `BaseTemplateCard` abstract class
 2. Refactor `MarketplaceTemplateCard` → `HabitTemplateCard`
 3. Create `CoreValueTemplateCard`
@@ -479,12 +516,14 @@ GoRoute(
 5. Create type-specific card factory
 
 ### Phase 4: Integration
+
 1. Add core value seeding logic
 2. Create `ShareCoreValueBottomSheet`
 3. Update navigation routes
 4. Add core value download logic to `MarketplaceView`
 
 ### Phase 5: Cleanup
+
 1. Drop deprecated columns from schema
 2. Remove old code
 3. Update tests
@@ -496,6 +535,7 @@ GoRoute(
 Based on the existing habit marketplace, core value templates should include:
 
 ### 7.1 Generic Fields (Same as Habits)
+
 - Template ID
 - Title (e.g., "Kebebasan Berekspresi")
 - Description (e.g., "Nilai yang menekankan pentingnya otonomi dalam mengekspresikan diri...")
@@ -506,6 +546,7 @@ Based on the existing habit marketplace, core value templates should include:
 - Created At
 
 ### 7.2 Core Value Specific Metadata
+
 ```dart
 class CoreValueMetadata {
   final String category;              // 'intrinsic', 'extrinsic', 'transcendence'
@@ -519,6 +560,7 @@ class CoreValueMetadata {
 ```
 
 ### 7.3 Example Core Value Template
+
 ```json
 {
   "templateId": "cv-001",
@@ -554,26 +596,29 @@ class CoreValueMetadata {
 
 ## 8. Key Files Summary
 
-| File | Purpose | Refactoring Priority |
-|------|---------|---------------------|
-| `database.dart` | Schema definition | 🔴 HIGH - Foundation |
-| `marketplace_service.dart` | Business logic | 🔴 HIGH - Core abstraction |
-| `marketplace_view.dart` | Main UI | 🟡 MEDIUM - Depends on service |
-| `marketplace_template_card.dart` | Template display | 🟡 MEDIUM - Make generic |
-| `share_template_bottom_sheet.dart` | Upload UI | 🟢 LOW - Create separate for core values |
-| `router.dart` | Navigation | 🟢 LOW - Add new routes |
-| `main_navigation_shell.dart` | Bottom nav | 🟢 LOW - Keep as-is initially |
+| File                               | Purpose           | Refactoring Priority                     |
+| ---------------------------------- | ----------------- | ---------------------------------------- |
+| `database.dart`                    | Schema definition | 🔴 HIGH - Foundation                     |
+| `marketplace_service.dart`         | Business logic    | 🔴 HIGH - Core abstraction               |
+| `marketplace_view.dart`            | Main UI           | 🟡 MEDIUM - Depends on service           |
+| `marketplace_template_card.dart`   | Template display  | 🟡 MEDIUM - Make generic                 |
+| `share_template_bottom_sheet.dart` | Upload UI         | 🟢 LOW - Create separate for core values |
+| `router.dart`                      | Navigation        | 🟢 LOW - Add new routes                  |
+| `main_navigation_shell.dart`       | Bottom nav        | 🟢 LOW - Keep as-is initially            |
 
 ---
 
 ## 9. Testing Considerations
 
 ### 9.1 Existing Test
+
 **Location:** `app/test/marketplace_service_test.dart`
+
 - Verify this test exists and covers current behavior
 - Will need updates for generic implementation
 
 ### 9.2 New Tests Needed
+
 1. **Generic template CRUD**
    - Upload habit template
    - Upload core value template
