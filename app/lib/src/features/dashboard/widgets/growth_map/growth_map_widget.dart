@@ -490,7 +490,11 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                   Positioned.fill(
                     child: Container(
                       color: Colors.transparent,
-                      child: Center(child: LoadingStateWidget(message: 'Memperbarui status kebiasaan...')),
+                      child: Center(
+                        child: LoadingStateWidget(
+                          message: 'Memperbarui status kebiasaan...',
+                        ),
+                      ),
                     ),
                   ),
               ],

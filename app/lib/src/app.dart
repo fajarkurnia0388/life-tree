@@ -30,7 +30,11 @@ class DaojiApp extends ConsumerWidget {
       },
       loading: () => const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Scaffold(body: Center(child: LoadingStateWidget(message: 'Menyiapkan aplikasi...'))),
+        home: Scaffold(
+          body: Center(
+            child: LoadingStateWidget(message: 'Menyiapkan aplikasi...'),
+          ),
+        ),
       ),
       error: (err, stack) => MaterialApp(
         debugShowCheckedModeBanner: false,

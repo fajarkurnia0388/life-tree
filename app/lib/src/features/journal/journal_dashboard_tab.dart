@@ -385,7 +385,9 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
               },
               loading: () => SizedBox(
                 height: 80,
-                child: Center(child: LoadingStateWidget(message: 'Memuat keputusan...')),
+                child: Center(
+                  child: LoadingStateWidget(message: 'Memuat keputusan...'),
+                ),
               ),
               error: (_, _) => const SizedBox(),
             ),
@@ -519,7 +521,8 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                   },
                 );
               },
-              loading: () => LoadingStateWidget(message: 'Memuat riwayat mood...'),
+              loading: () =>
+                  LoadingStateWidget(message: 'Memuat riwayat mood...'),
               error: (err, _) => Text('Gagal memuat riwayat: $err'),
             ),
           ],

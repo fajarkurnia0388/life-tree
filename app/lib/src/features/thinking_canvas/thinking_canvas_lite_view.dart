@@ -1149,7 +1149,7 @@ class _ThinkingCanvasLiteViewState
                               },
                             ),
                           ),
-                            if (_scoringItems.length > 1)
+                          if (_scoringItems.length > 1)
                             IconButton(
                               icon: const Icon(
                                 Icons.delete_outline_rounded,

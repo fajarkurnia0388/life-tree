@@ -100,7 +100,8 @@ class CultivationStatusPanel extends ConsumerWidget {
           ),
         );
       },
-      loading: () => LoadingStateWidget(message: 'Memuat status cultivation...'),
+      loading: () =>
+          LoadingStateWidget(message: 'Memuat status cultivation...'),
       error: (_, __) => const SizedBox.shrink(),
     );
   }
