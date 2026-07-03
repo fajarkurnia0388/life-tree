@@ -345,7 +345,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                           Icons.account_tree_rounded,
                           color: Colors.blueAccent,
                         ),
-                        tooltip: 'Tambah Cabang (+)',
+                        tooltip: 'Tambah Cabang',
                         onPressed: () => _addChildNode(selectedNode.id),
                       ),
                       const SizedBox(width: 8),

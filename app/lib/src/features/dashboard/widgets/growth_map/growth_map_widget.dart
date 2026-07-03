@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/domain/app_constants.dart';
 import '../../../../core/widgets/error_state_widget.dart';
+import '../../../../core/widgets/loading_state_widget.dart';
 import '../../../cultivation/cultivation_provider.dart';
 import '../../../cultivation/cultivation_strings.dart';
 import '../../dashboard_provider.dart';
@@ -82,7 +83,7 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
     final growthMapAsync = ref.watch(growthMapProvider);
 
     return growthMapAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => LoadingStateWidget(message: 'Memuat peta pertumbuhan...'),
       error: (err, stack) => ErrorStateWidget(
         message: 'Gagal memuat peta pertumbuhan',
         error: err.toString(),
@@ -489,7 +490,7 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                   Positioned.fill(
                     child: Container(
                       color: Colors.transparent,
-                      child: const Center(child: CircularProgressIndicator()),
+                      child: Center(child: LoadingStateWidget(message: 'Memperbarui status kebiasaan...')),
                     ),
                   ),
               ],

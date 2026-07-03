@@ -36,10 +36,7 @@ class ActivityHeatmapWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: _buildHeatmapGrid(theme, isDark),
-            ),
+            _buildHeatmapGrid(theme, isDark),
           ],
         ),
       ),
@@ -54,66 +51,79 @@ class ActivityHeatmapWidget extends StatelessWidget {
       weeks.add(weekDates);
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Month labels
-        _buildMonthLabels(weeks, theme),
-        const SizedBox(height: 4),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Day labels (Mon, Wed, Fri)
-            _buildDayLabels(theme),
-            const SizedBox(width: 8),
-            // Heatmap grid
-            Row(
-              children: weeks.map((week) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 3),
-                  child: Column(
-                    children: week.map((date) {
-                      return _buildDayCell(date, theme, isDark);
-                    }).toList(),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Month labels
+          _buildMonthLabels(weeks, theme),
+          const SizedBox(height: 4),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDayLabels(theme),
+              const SizedBox(width: 8),
+              SizedBox(
+                height: 105,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: weeks.map((week) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 3),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: week.map((date) {
+                          return _buildDayCell(date, theme, isDark);
+                        }).toList(),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildMonthLabels(List<List<DateTime>> weeks, ThemeData theme) {
     final labels = <Widget>[];
-    String? lastMonth;
+    String? currentMonth;
+    int segmentStart = 0;
 
-    for (int i = 0; i < weeks.length; i++) {
-      final firstDateOfWeek = weeks[i].first;
-      final monthName = DateFormat('MMM').format(firstDateOfWeek);
+    for (int i = 0; i <= weeks.length; i++) {
+      final monthLabel = i < weeks.length
+          ? weeks[i].first.month.toString()
+          : null;
 
-      if (monthName != lastMonth && i % 4 == 0) {
-        labels.add(
-          SizedBox(
-            width: (12 * 4) + (3 * 3).toDouble(), // 4 weeks worth of cells
-            child: Text(
-              monthName,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+      if (i == weeks.length || monthLabel != currentMonth) {
+        if (currentMonth != null) {
+          final weekCount = i - segmentStart;
+          final labelWidth = (12 * weekCount) + (3 * (weekCount - 1));
+          labels.add(
+            SizedBox(
+              width: labelWidth.toDouble(),
+              child: Text(
+                currentMonth!,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
               ),
             ),
-          ),
-        );
-        lastMonth = monthName;
-      } else {
-        labels.add(const SizedBox(width: 15));
+          );
+        }
+        if (i < weeks.length) {
+          currentMonth = monthLabel;
+          segmentStart = i;
+        }
       }
     }
 
     return Row(
       children: [
-        const SizedBox(width: 30), // Offset for day labels
+        const SizedBox(width: 38), // Offset for day labels + gap
         ...labels,
       ],
     );
@@ -121,28 +131,29 @@ class ActivityHeatmapWidget extends StatelessWidget {
 
   Widget _buildDayLabels(ThemeData theme) {
     final days = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-    // Only show Mon, Wed, Fri for compactness
-    final displayDays = [0, 2, 4].map((i) => days[i]).toList();
+    const rowHeight = 15.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(7, (index) {
-        if (index == 0 || index == 2 || index == 4) {
-          return SizedBox(
-            height: 12,
+        return SizedBox(
+          height: rowHeight,
+          child: Align(
+            alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 3),
+              padding: const EdgeInsets.only(left: 2),
               child: Text(
-                displayDays[index ~/ 2],
+                days[index],
+                textAlign: TextAlign.left,
                 style: theme.textTheme.labelSmall?.copyWith(
-                  fontSize: 9,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  fontSize: 10,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  height: 1.0,
                 ),
               ),
             ),
-          );
-        }
-        return const SizedBox(height: 15);
+          ),
+        );
       }),
     );
   }

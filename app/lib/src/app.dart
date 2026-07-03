@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/routing/router.dart';
 import 'core/theme/theme.dart';
 import 'features/onboarding/onboarding_view.dart';
+import 'core/widgets/loading_state_widget.dart';
 
 class DaojiApp extends ConsumerWidget {
   const DaojiApp({super.key});
@@ -29,7 +30,7 @@ class DaojiApp extends ConsumerWidget {
       },
       loading: () => const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+        home: Scaffold(body: Center(child: LoadingStateWidget(message: 'Menyiapkan aplikasi...'))),
       ),
       error: (err, stack) => MaterialApp(
         debugShowCheckedModeBanner: false,

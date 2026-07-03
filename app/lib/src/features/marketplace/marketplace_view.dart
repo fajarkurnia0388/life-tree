@@ -270,6 +270,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                           color: Colors.amber,
                           size: 36,
                         ),
+                        tooltip: 'Pilih $starIndex bintang',
                         onPressed: () {
                           setDialogState(() {
                             selectedStars = starIndex;
@@ -388,6 +389,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.clear),
+                  tooltip: 'Bersihkan pencarian',
                   onPressed: () {
                     _searchController.clear();
                     _refreshTemplates();

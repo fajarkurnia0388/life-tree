@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../cultivation_constants.dart';
 import '../cultivation_strings.dart';
 import '../cultivation_provider.dart';
+import '../../../core/widgets/loading_state_widget.dart';
 
 /// Comprehensive status panel showing all 4 cultivation sumbu.
 ///
@@ -99,7 +100,7 @@ class CultivationStatusPanel extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => LoadingStateWidget(message: 'Memuat status cultivation...'),
       error: (_, __) => const SizedBox.shrink(),
     );
   }

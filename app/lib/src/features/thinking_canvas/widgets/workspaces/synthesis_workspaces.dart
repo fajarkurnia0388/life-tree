@@ -76,6 +76,7 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
                 'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
+              tooltip: 'Tambah item',
               onPressed: _addNote,
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -267,6 +268,7 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
             hintText: 'Ketik gagasan/ide Anda lalu tekan Enter...',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
+              tooltip: 'Tambah gagasan',
               onPressed: _addItem,
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

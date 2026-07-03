@@ -265,6 +265,7 @@ class _ThinkingCanvasLiteViewState
                     color: theme.colorScheme.primary,
                     size: 28,
                   ),
+                  tooltip: _canvasTimerActive ? 'Jeda timer' : 'Mulai timer',
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(
                     minWidth: 44,
@@ -283,6 +284,7 @@ class _ThinkingCanvasLiteViewState
                   const SizedBox(width: 8),
                   IconButton(
                     icon: const Icon(Icons.replay_rounded, size: 20),
+                    tooltip: 'Setel ulang timer',
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(
                       minWidth: 44,
@@ -1147,13 +1149,14 @@ class _ThinkingCanvasLiteViewState
                               },
                             ),
                           ),
-                          if (_scoringItems.length > 1)
+                            if (_scoringItems.length > 1)
                             IconButton(
                               icon: const Icon(
                                 Icons.delete_outline_rounded,
                                 color: Colors.redAccent,
                                 size: 20,
                               ),
+                              tooltip: 'Hapus opsi',
                               onPressed: () => _removeScoringRow(index),
                             ),
                         ],

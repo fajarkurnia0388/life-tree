@@ -226,6 +226,7 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
                   IconButton(
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.close),
+                    tooltip: 'Tutup',
                   ),
                 ],
               ),
@@ -376,6 +377,7 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
                           Icons.delete_outline,
                           color: Colors.red,
                         ),
+                        tooltip: 'Hapus asumsi',
                       ),
                     ],
                   ),

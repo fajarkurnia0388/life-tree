@@ -118,7 +118,8 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
         score: score,
         statusLabel: statusLabel,
         color: domainColors[domain] ?? Colors.green,
-        semanticLabel: '', // Set in widget
+        semanticLabel:
+            '$domain — Skor: ${score.toStringAsFixed(1)}, Status: $statusLabel',
       ),
     );
   }
@@ -142,7 +143,8 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
         initial: initial,
         originalHabit: hl.habit,
         originalLog: hl.log,
-        semanticLabel: '',
+        semanticLabel:
+            'Kebiasaan: ${hl.habit.title}, Status: ${isDone ? 'Selesai' : 'Belum selesai'}',
       ),
     );
   }
@@ -168,7 +170,7 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
         label: d.title,
         domainTag: 'Emosi', // Map to default domain for visual layout
         originalDecision: d,
-        semanticLabel: '',
+        semanticLabel: 'Keputusan: ${d.title}',
       );
     }).toList();
   } catch (e, stackTrace) {
@@ -181,7 +183,7 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
     root: RootNode(
       id: 'root',
       label: 'Akar Diri',
-      semanticLabel: '',
+      semanticLabel: 'Akar Diri — Nilai Inti: ${coreValues.join(', ')}',
       coreValues: coreValues,
     ),
     branches: branchNodes,

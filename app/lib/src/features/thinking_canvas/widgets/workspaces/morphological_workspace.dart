@@ -380,6 +380,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.close_rounded),
+                    tooltip: 'Tutup',
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -552,6 +553,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline_rounded),
+                  tooltip: 'Tambah dimensi',
                   onPressed: _addDimension,
                 ),
               ],

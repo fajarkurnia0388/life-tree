@@ -66,6 +66,7 @@ class _RapidBrainstormWorkspaceState extends State<RapidBrainstormWorkspace> {
             hintText: 'Ketik ide baru di sini lalu tekan Enter 🚀...',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
+              tooltip: 'Tambah ide',
               onPressed: _submitIdea,
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -267,6 +268,7 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
             hintText: 'Ketik pertanyaan kritis Anda lalu tekan Enter...',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
+              tooltip: 'Tambah pertanyaan',
               onPressed: _submitQuestion,
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -783,6 +785,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
+                        tooltip: 'Tutup',
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],

@@ -124,6 +124,7 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
                       IconButton(
                         onPressed: () => Navigator.pop(context),
                         icon: const Icon(Icons.close),
+                        tooltip: 'Tutup',
                       ),
                     ],
                   ),

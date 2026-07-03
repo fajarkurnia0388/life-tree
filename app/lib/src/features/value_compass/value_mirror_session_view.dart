@@ -257,6 +257,7 @@ class _ValueMirrorSessionViewState
           button: true,
           child: IconButton(
             icon: const Icon(Icons.close_rounded),
+            tooltip: 'Tutup sesi',
             onPressed: () {
               showDialog(
                 context: context,

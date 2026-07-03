@@ -331,6 +331,7 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
               ),
               IconButton(
                 icon: const Icon(Icons.close_rounded),
+                tooltip: 'Tutup',
                 onPressed: () => Navigator.pop(context),
               ),
             ],

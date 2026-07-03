@@ -8,6 +8,7 @@ import '../../data/local_db/database.dart';
 import '../cultivation/cultivation_provider.dart';
 import '../cultivation/cultivation_strings.dart';
 import '../dashboard/dashboard_provider.dart';
+import '../../core/widgets/loading_state_widget.dart';
 
 final _moodHistoryProvider = StreamProvider<List<JournalEntry>>((ref) {
   final db = ref.watch(dbProvider);
@@ -382,9 +383,9 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                   ),
                 );
               },
-              loading: () => const SizedBox(
+              loading: () => SizedBox(
                 height: 80,
-                child: Center(child: CircularProgressIndicator()),
+                child: Center(child: LoadingStateWidget(message: 'Memuat keputusan...')),
               ),
               error: (_, _) => const SizedBox(),
             ),
@@ -518,7 +519,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => LoadingStateWidget(message: 'Memuat riwayat mood...'),
               error: (err, _) => Text('Gagal memuat riwayat: $err'),
             ),
           ],

@@ -42,25 +42,21 @@ class ActivityHeatmapService {
   }
 
   /// Helper untuk generate list of dates untuk 52 weeks (364 days)
-  /// Dimulai dari hari yang sama minggu lalu, aligned ke hari Senin
+  /// Dimulai dari hari Senin dan berakhir pada hari Minggu di minggu berjalan.
   List<DateTime> generateLast52Weeks() {
-    final today = DateTime.now();
-    final todayWeekday = today.weekday; // 1 = Monday, 7 = Sunday
+    final now = DateTime.now();
+    final currentWeekday = now.weekday; // 1 = Monday, 7 = Sunday
 
-    // Find the most recent Sunday (end of week)
-    final mostRecentSunday = today.subtract(Duration(days: todayWeekday % 7));
+    // Find the most recent Sunday (end of current week)
+    final endDate = now.subtract(Duration(days: currentWeekday % 7));
 
-    // Go back 52 weeks (364 days) from that Sunday
-    final startDate = mostRecentSunday.subtract(const Duration(days: 364));
+    // 52 columns × 7 rows => 364 days total
+    final startDate = endDate.subtract(const Duration(days: 363));
 
-    // Generate all dates from startDate to mostRecentSunday
-    final List<DateTime> dates = [];
-    for (int i = 0; i <= 364; i++) {
-      final date = startDate.add(Duration(days: i));
-      dates.add(DateTime(date.year, date.month, date.day));
-    }
-
-    return dates;
+    return List.generate(364, (index) {
+      final date = startDate.add(Duration(days: index));
+      return DateTime(date.year, date.month, date.day);
+    });
   }
 
   /// Helper untuk convert activity count ke level (0-4)
