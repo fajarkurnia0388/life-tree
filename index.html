@@ -2,64 +2,174 @@
 <html lang="id">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Daoji - Cultivate Your Inner World</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="dark" />
+    <title>
+      Daoji — Personal OS Kultivasi Batin | Offline-First Spiritual Growth
+    </title>
     <meta
       name="description"
-      content="Daoji adalah Personal OS offline-first bertema kultivasi batin: anti-guilt, reflektif, dan dirancang untuk membantu pengguna menata tubuh, perhatian, nilai, dan jalan hidupnya."
+      content="Daoji adalah Personal OS offline-first bertema kultivasi batin: anti-guilt, reflektif, dan dirancang untuk menata tubuh, perhatian, qi, nilai, dan arah hidup tanpa tekanan produktivitas."
     />
-    <meta name="theme-color" content="#070b0a" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <meta
+      name="keywords"
+      content="daoji, kultivasi batin, personal os, offline-first, anti-guilt, dantian, xianxia"
+    />
+    <meta name="theme-color" content="#050807" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Daoji" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Daoji — Personal OS Kultivasi Batin" />
+    <meta property="og:url" content="https://daoji.app" />
+    <meta property="og:site_name" content="Daoji" />
+    <meta
+      property="og:description"
+      content="Personal OS offline-first bertema kultivasi batin: anti-guilt, reflektif, dan menenangkan. Tidak menuntut streak sempurna, hanya ritme hidup yang sejati."
+    />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="id_ID" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Daoji — Personal OS Kultivasi Batin" />
+    <meta name="twitter:site" content="@daojiapp" />
+    <meta
+      name="twitter:description"
+      content="Personal OS offline-first bertema kultivasi batin: anti-guilt, reflektif, dan menenangkan."
+    />
+    <meta name="twitter:image" content="/og-image.png" />
+
+    <link rel="canonical" href="https://daoji.app" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Inter:wght@400;500;600;700;800&amp;family=Ma+Shan+Zheng&amp;family=Noto+Serif+SC:wght@400;500;700&amp;display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;700;900&display=swap"
       rel="stylesheet"
     />
+
     <style>
+      @property --angle {
+        syntax: "<angle>";
+        inherits: false;
+        initial-value: 180deg;
+      }
+
       :root {
-        --bg: #070b0a;
-        --ink: #0a1110;
-        --ink-2: #0e1715;
-        --ink-3: #121f1d;
-        --cream: #f1f5ee;
-        --muted: #a7b5ad;
-        --faint: #6d7d75;
-        --line: rgba(255, 255, 255, 0.1);
-        --line-strong: rgba(216, 181, 108, 0.32);
+        color-scheme: dark;
+        scrollbar-gutter: stable;
+
+        --bg: #050807;
+        --obsidian: #080d0c;
+        --obsidian-light: #0d1614;
+
+        --cream: #f2f6f0;
+        --muted: #a8b8b0;
+        --faint: #7b8d84;
+
+        --line: rgba(255, 255, 255, 0.08);
+        --line-soft: rgba(255, 255, 255, 0.05);
+        --line-gold: rgba(216, 181, 108, 0.35);
+        --line-jade: rgba(111, 174, 144, 0.35);
+
         --jade: #6fae90;
         --jade-soft: #b8ddc6;
-        --jade-glow: #a5e6b4;
+        --jade-glow: #88e2b0;
+        --jade-deep: #1e3a30;
+
         --gold: #d8b56c;
         --gold-soft: #f4e4bb;
+        --gold-glow: #ffd984;
+
+        --cinnabar: #d1565e;
+        --cinnabar-glow: #ff737d;
+
         --mist: #7ba4c0;
-        --cinnabar: #cd7f86;
-        --violet: #b99ade;
+        --spirit-blue: #a3d9ff;
+        --spirit-purple: #c3a1ff;
+
         --font-sans:
           "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
           sans-serif;
-        --font-serif: "Cormorant Garamond", Georgia, serif;
+        --font-serif: "Cormorant Garamond", "Noto Serif SC", Georgia, serif;
         --font-seal: "Ma Shan Zheng", "Noto Serif SC", serif;
       }
 
-      * {
+      *,
+      *::before,
+      *::after {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
       html {
         scroll-behavior: smooth;
+        scroll-padding-top: 96px;
         background: var(--bg);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
       body {
+        position: relative;
         min-height: 100vh;
-        margin: 0;
+        min-height: 100dvh;
         overflow-x: hidden;
         background: var(--bg);
         color: var(--cream);
         font-family: var(--font-sans);
-        line-height: 1.6;
+        line-height: 1.65;
         text-rendering: optimizeLegibility;
+        isolation: isolate;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -12;
+        pointer-events: none;
+        background:
+          radial-gradient(
+            ellipse at 18% 0%,
+            rgba(111, 174, 144, 0.14),
+            transparent 38%
+          ),
+          radial-gradient(
+            ellipse at 82% 14%,
+            rgba(216, 181, 108, 0.09),
+            transparent 34%
+          );
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -11;
+        pointer-events: none;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.028),
+          transparent 20%,
+          transparent 80%,
+          rgba(255, 255, 255, 0.018)
+        );
+        mix-blend-mode: screen;
+        opacity: 0.24;
       }
 
       body.menu-open {
@@ -73,49 +183,114 @@
 
       button {
         font: inherit;
+        border: 0;
+        background: none;
+        color: inherit;
+        cursor: pointer;
       }
 
-      img,
-      svg {
+      svg,
+      canvas {
         display: block;
+      }
+
+      .wrap {
+        width: min(1200px, calc(100% - 40px));
+        margin-inline: auto;
+      }
+
+      ::selection {
+        background: rgba(216, 181, 108, 0.34);
+        color: var(--cream);
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: linear-gradient(180deg, var(--jade), var(--gold));
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, var(--jade-glow), var(--gold-glow));
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        clip-path: inset(50%);
       }
 
       .skip-link {
         position: fixed;
+        top: -80px;
         left: 16px;
-        top: 16px;
-        z-index: 100;
-        transform: translateY(-160%);
+        z-index: 10000;
         border-radius: 999px;
         background: var(--gold-soft);
         color: var(--bg);
         font-weight: 800;
         padding: 10px 16px;
-        transition: transform 0.2s ease;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+        transition: top 0.2s ease;
       }
 
-      .skip-link:focus {
-        transform: translateY(0);
+      .skip-link:focus-visible {
+        top: 16px;
       }
 
-      .wrap {
-        width: min(1180px, calc(100% - 40px));
-        margin-inline: auto;
-      }
-
-      .seal-font {
-        font-family: var(--font-seal);
-      }
-
-      .serif {
-        font-family: var(--font-serif);
-      }
-
-      .focus-ring:focus-visible,
       a:focus-visible,
       button:focus-visible {
         outline: 2px solid var(--gold-soft);
         outline-offset: 4px;
+        border-radius: 4px;
+      }
+
+      /* Background */
+
+      .noise-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        pointer-events: none;
+        opacity: 0.03;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 128px;
+      }
+
+      .cursor-aura {
+        position: fixed;
+        width: 520px;
+        height: 520px;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: -1;
+        background: radial-gradient(
+          circle,
+          rgba(111, 174, 144, 0.09) 0%,
+          rgba(216, 181, 108, 0.045) 42%,
+          transparent 70%
+        );
+        transform: translate(-50%, -50%);
+        will-change: left, top;
+      }
+
+      #qiCanvas {
+        position: fixed;
+        inset: 0;
+        z-index: -8;
+        pointer-events: none;
+        opacity: 0.82;
       }
 
       .atmosphere {
@@ -126,65 +301,149 @@
         pointer-events: none;
         background:
           radial-gradient(
-            circle at 15% 5%,
-            rgba(111, 174, 144, 0.18),
-            transparent 32%
+            ellipse 80% 50% at 15% -5%,
+            rgba(111, 174, 144, 0.22),
+            transparent 60%
           ),
           radial-gradient(
-            circle at 85% 10%,
-            rgba(123, 164, 192, 0.15),
-            transparent 28%
+            ellipse 60% 45% at 85% 10%,
+            rgba(123, 164, 192, 0.18),
+            transparent 60%
           ),
           radial-gradient(
-            circle at 50% 115%,
-            rgba(216, 181, 108, 0.14),
-            transparent 38%
+            ellipse 70% 50% at 50% 115%,
+            rgba(216, 181, 108, 0.16),
+            transparent 70%
           ),
-          linear-gradient(180deg, #070b0a 0%, #0b1211 52%, #070b0a 100%);
+          linear-gradient(180deg, #050807 0%, #081210 50%, #050807 100%);
       }
 
       .atmosphere::before {
         content: "";
         position: absolute;
         inset: 0;
-        opacity: 0.16;
+        opacity: 0.08;
         background-image:
-          linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-        background-size: 42px 42px;
-        mask-image: radial-gradient(circle at 50% 35%, black, transparent 72%);
-        animation: drift-grid 42s linear infinite;
+          linear-gradient(rgba(216, 181, 108, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(216, 181, 108, 0.1) 1px, transparent 1px);
+        background-size: 64px 64px;
+        mask-image: radial-gradient(
+          ellipse 80% 70% at 50% 30%,
+          black,
+          transparent
+        );
+        animation: drift-grid 90s linear infinite;
       }
 
-      .moon {
+      .moon-glow {
         position: absolute;
-        right: -120px;
-        top: -120px;
-        width: 420px;
-        height: 420px;
-        border-radius: 999px;
+        right: -150px;
+        top: -150px;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
         background: radial-gradient(
           circle,
           rgba(244, 228, 187, 0.12),
-          transparent 64%
+          rgba(111, 174, 144, 0.05) 50%,
+          transparent 70%
         );
-        filter: blur(34px);
+        filter: blur(45px);
       }
 
-      .mountain-layer {
+      .mountain-svg {
         position: absolute;
         inset-inline: 0;
         bottom: 0;
         width: 100%;
-        opacity: 0.6;
+        opacity: 0.55;
       }
 
-      .mote {
-        position: absolute;
-        bottom: -12px;
-        border-radius: 999px;
-        animation: rise-mote var(--dur, 18s) linear var(--delay, 0s) infinite;
+      /* Shared */
+
+      .cinnabar-seal {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1.5px solid var(--cinnabar);
+        border-radius: 7px;
+        background: rgba(209, 86, 94, 0.12);
+        color: #ffb3b8;
+        font-family: var(--font-seal);
+        font-size: 0.95rem;
+        letter-spacing: 0.1em;
+        line-height: 1;
+        padding: 5px 10px;
+        box-shadow:
+          0 0 12px rgba(209, 86, 94, 0.25),
+          inset 0 0 8px rgba(209, 86, 94, 0.15);
+        text-shadow: 0 0 6px rgba(255, 115, 125, 0.45);
       }
+
+      .talisman-box {
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 28px;
+        background: linear-gradient(
+          160deg,
+          rgba(20, 32, 28, 0.5),
+          rgba(8, 13, 12, 0.82)
+        );
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.04),
+          0 24px 60px rgba(0, 0, 0, 0.24);
+      }
+
+      .t-corner {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        pointer-events: none;
+        border-color: var(--gold);
+        opacity: 0.58;
+        transition: all 0.3s ease;
+      }
+
+      .talisman-box:hover .t-corner {
+        opacity: 1;
+        filter: drop-shadow(0 0 6px var(--gold-glow));
+      }
+
+      .t-tl {
+        top: 12px;
+        left: 12px;
+        border-top: 1.5px solid;
+        border-left: 1.5px solid;
+        border-top-left-radius: 6px;
+      }
+
+      .t-tr {
+        top: 12px;
+        right: 12px;
+        border-top: 1.5px solid;
+        border-right: 1.5px solid;
+        border-top-right-radius: 6px;
+      }
+
+      .t-bl {
+        bottom: 12px;
+        left: 12px;
+        border-bottom: 1.5px solid;
+        border-left: 1.5px solid;
+        border-bottom-left-radius: 6px;
+      }
+
+      .t-br {
+        right: 12px;
+        bottom: 12px;
+        border-right: 1.5px solid;
+        border-bottom: 1.5px solid;
+        border-bottom-right-radius: 6px;
+      }
+
+      /* Navigation */
 
       .topbar {
         position: fixed;
@@ -193,21 +452,20 @@
         z-index: 50;
         border-bottom: 1px solid transparent;
         transition:
-          background 0.28s ease,
-          border-color 0.28s ease,
-          backdrop-filter 0.28s ease;
+          background 0.35s ease,
+          border-color 0.35s ease;
       }
 
       .topbar.scrolled,
       .topbar.menu-active {
-        border-bottom-color: rgba(255, 255, 255, 0.08);
-        background: rgba(7, 11, 10, 0.82);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
+        border-bottom-color: rgba(216, 181, 108, 0.15);
+        background: rgba(5, 8, 7, 0.86);
+        backdrop-filter: blur(24px) saturate(1.35);
+        -webkit-backdrop-filter: blur(24px) saturate(1.35);
       }
 
       .nav-inner {
-        min-height: 76px;
+        min-height: 80px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -217,64 +475,89 @@
       .brand {
         display: inline-flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
+        min-width: 0;
       }
 
       .brand-mark {
         position: relative;
-        width: 44px;
-        height: 44px;
+        width: 48px;
+        height: 48px;
+        flex: 0 0 auto;
         display: grid;
         place-items: center;
-        border: 1px solid var(--line-strong);
-        border-radius: 16px;
-        background:
-          radial-gradient(
-            circle at 32% 24%,
-            rgba(244, 228, 187, 0.34),
-            transparent 32%
-          ),
-          linear-gradient(
-            135deg,
-            rgba(111, 174, 144, 0.2),
-            rgba(216, 181, 108, 0.14)
-          );
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
         overflow: hidden;
+        border: 1px solid var(--line-gold);
+        border-radius: 14px;
+        background: linear-gradient(
+          135deg,
+          rgba(111, 174, 144, 0.2),
+          rgba(216, 181, 108, 0.15)
+        );
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.1),
+          0 0 25px rgba(111, 174, 144, 0.15);
+      }
+
+      .brand-mark::before {
+        content: "";
+        position: absolute;
+        inset: -50%;
+        background: conic-gradient(
+          from 0deg,
+          transparent,
+          rgba(244, 228, 187, 0.2),
+          transparent,
+          rgba(111, 174, 144, 0.2),
+          transparent
+        );
+        animation: spin-slow 10s linear infinite;
       }
 
       .brand-mark::after {
         content: "";
         position: absolute;
-        inset: 8px;
-        border: 1px solid rgba(244, 228, 187, 0.18);
-        border-radius: 11px;
+        inset: 6px;
+        border: 1px solid rgba(244, 228, 187, 0.2);
+        border-radius: 9px;
+        background: var(--bg);
       }
 
       .brand-mark span {
         position: relative;
         z-index: 1;
         font-family: var(--font-seal);
-        font-size: 1.35rem;
+        font-size: 1.5rem;
         color: var(--gold-soft);
-        transition: transform 0.45s ease;
+        text-shadow: 0 0 10px rgba(244, 228, 187, 0.5);
+        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
       .brand:hover .brand-mark span {
-        transform: rotate(18deg) scale(1.04);
+        transform: rotate(360deg) scale(1.1);
       }
 
       .brand-name {
         display: block;
+        color: var(--cream);
+        font-size: 1.1rem;
         font-weight: 800;
         letter-spacing: -0.02em;
       }
 
+      .brand-pill {
+        margin-left: 5px;
+        color: var(--jade-glow);
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
       .brand-sub {
         display: block;
-        color: var(--faint);
+        color: var(--gold-soft);
         font-size: 0.72rem;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.08em;
+        opacity: 0.82;
       }
 
       .nav-links {
@@ -284,59 +567,61 @@
       }
 
       .nav-links a {
+        position: relative;
         border-radius: 999px;
         color: var(--muted);
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         font-weight: 650;
-        padding: 9px 13px;
+        padding: 9px 16px;
         transition:
-          color 0.2s ease,
-          background 0.2s ease;
+          background 0.25s ease,
+          color 0.25s ease,
+          transform 0.25s ease;
       }
 
-      .nav-links a:hover {
+      .nav-links a:hover,
+      .nav-links a.active {
         background: rgba(255, 255, 255, 0.06);
         color: var(--cream);
       }
 
-      .nav-cta,
-      .btn-primary,
-      .btn-secondary {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
+      .nav-links a.active::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 4px;
+        width: 5px;
+        height: 5px;
         border-radius: 999px;
-        font-weight: 800;
-        transition:
-          transform 0.22s ease,
-          background 0.22s ease,
-          border-color 0.22s ease,
-          color 0.22s ease;
+        background: var(--gold-glow);
+        transform: translateX(-50%);
+        box-shadow: 0 0 10px var(--gold-glow);
       }
 
       .nav-cta {
-        margin-left: 10px;
-        padding: 10px 17px;
-        background: var(--cream);
-        color: var(--bg) !important;
+        margin-left: 14px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--jade-soft), var(--gold));
+        color: #050807 !important;
+        font-size: 0.88rem;
+        font-weight: 800;
+        padding: 10px 20px;
+        box-shadow: 0 0 25px rgba(111, 174, 144, 0.25);
       }
 
-      .nav-cta:hover,
-      .btn-primary:hover,
-      .btn-secondary:hover {
+      .nav-cta:hover {
         transform: translateY(-2px);
+        box-shadow: 0 8px 35px rgba(216, 181, 108, 0.4);
       }
 
       .menu-toggle {
         display: none;
         width: 44px;
         height: 44px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 999px;
         background: rgba(255, 255, 255, 0.04);
         color: var(--cream);
-        cursor: pointer;
       }
 
       .menu-toggle span {
@@ -363,15 +648,82 @@
         transform: translateY(-6px) rotate(-45deg);
       }
 
+      /* Buttons */
+
+      .btn-primary,
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        font-weight: 800;
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease,
+          background 0.25s ease,
+          border-color 0.25s ease;
+      }
+
+      .btn-primary {
+        border: 1px solid rgba(244, 228, 187, 0.5);
+        background: linear-gradient(135deg, var(--jade-soft), var(--gold));
+        color: #050807;
+        padding: 16px 30px;
+        box-shadow:
+          0 20px 60px -15px rgba(216, 181, 108, 0.7),
+          0 0 25px rgba(111, 174, 144, 0.2);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow:
+          0 25px 75px -15px rgba(216, 181, 108, 0.95),
+          0 0 45px rgba(111, 174, 144, 0.35);
+      }
+
+      .btn-secondary {
+        border: 1px solid rgba(216, 181, 108, 0.25);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--gold-soft);
+        padding: 16px 30px;
+        backdrop-filter: blur(8px);
+      }
+
+      .btn-secondary:hover {
+        border-color: rgba(216, 181, 108, 0.5);
+        background: rgba(216, 181, 108, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 0 25px rgba(216, 181, 108, 0.2);
+      }
+
+      /* Hero */
+
       .hero {
         position: relative;
         min-height: 100vh;
-        min-height: 100svh;
+        min-height: 100dvh;
         display: grid;
         align-items: center;
         overflow: hidden;
         isolation: isolate;
-        padding: 116px 0 86px;
+        padding: 130px 0 100px;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.025),
+          transparent 24%,
+          transparent 76%,
+          rgba(255, 255, 255, 0.015)
+        );
       }
 
       .hero::after {
@@ -382,17 +734,57 @@
         background:
           linear-gradient(
             90deg,
-            rgba(7, 11, 10, 0.95) 0%,
-            rgba(7, 11, 10, 0.78) 38%,
-            rgba(7, 11, 10, 0.25) 68%,
-            rgba(7, 11, 10, 0.86) 100%
+            rgba(5, 8, 7, 0.97) 0%,
+            rgba(5, 8, 7, 0.82) 35%,
+            rgba(5, 8, 7, 0.2) 65%,
+            rgba(5, 8, 7, 0.88) 100%
           ),
           linear-gradient(
             0deg,
-            rgba(7, 11, 10, 0.78),
-            transparent 35%,
-            rgba(7, 11, 10, 0.35)
+            rgba(5, 8, 7, 0.95) 0%,
+            transparent 30%,
+            rgba(5, 8, 7, 0.4) 100%
           );
+      }
+
+      .hero-couplet {
+        position: absolute;
+        top: 50%;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        pointer-events: none;
+        opacity: 0.65;
+        transform: translateY(-50%);
+      }
+
+      .couplet-left {
+        left: 24px;
+      }
+
+      .couplet-right {
+        right: 24px;
+      }
+
+      .couplet-char {
+        color: var(--gold-soft);
+        font-family: var(--font-seal);
+        font-size: 1.4rem;
+        line-height: 1;
+        text-shadow: 0 0 12px rgba(216, 181, 108, 0.4);
+      }
+
+      .couplet-line {
+        width: 1px;
+        height: 40px;
+        background: linear-gradient(
+          180deg,
+          transparent,
+          var(--gold-soft),
+          transparent
+        );
       }
 
       .hero-visual {
@@ -404,94 +796,31 @@
 
       .hero-orbit {
         position: absolute;
-        right: max(-160px, -7vw);
+        right: max(-180px, -8vw);
         top: 50%;
-        width: min(72vw, 920px);
+        width: min(80vw, 1020px);
         aspect-ratio: 1;
-        transform: translateY(-50%);
         opacity: 0.92;
+        transform: translateY(-50%);
       }
 
-      .hero-orbit .ring {
+      .bagua-ring {
         position: absolute;
-        border-radius: 999px;
-        border: 1px solid rgba(184, 221, 198, 0.18);
-        box-shadow: inset 0 0 70px rgba(111, 174, 144, 0.04);
-      }
-
-      .hero-orbit .ring:nth-child(1) {
-        inset: 0;
-        border-style: dashed;
-        animation: spin-slow 76s linear infinite;
-      }
-
-      .hero-orbit .ring:nth-child(2) {
-        inset: 11%;
-        border-color: rgba(216, 181, 108, 0.16);
-        animation: spin-reverse 92s linear infinite;
-      }
-
-      .hero-orbit .ring:nth-child(3) {
-        inset: 23%;
-        border-style: dashed;
-        animation: spin-slow 64s linear infinite;
-      }
-
-      .hero-orbit .ring:nth-child(4) {
-        inset: 36%;
-        border-color: rgba(123, 164, 192, 0.16);
-      }
-
-      .hero-core {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 25%;
-        aspect-ratio: 1;
+        inset: 5%;
         display: grid;
         place-items: center;
-        transform: translate(-50%, -50%);
-        border-radius: 999px;
-        background: radial-gradient(
-          circle at 38% 32%,
-          #f4e4bb 0%,
-          #b8ddc6 34%,
-          #6fae90 66%,
-          #263d35 100%
-        );
-        box-shadow:
-          0 0 70px rgba(111, 174, 144, 0.44),
-          inset 0 0 42px rgba(255, 255, 255, 0.24);
-        animation: core-breathe 8s ease-in-out infinite;
+        border: 1px dashed rgba(216, 181, 108, 0.25);
+        border-radius: 50%;
+        animation: spin-slow 120s linear infinite;
       }
 
-      .hero-core span {
-        color: rgba(7, 11, 10, 0.72);
-        font-family: var(--font-seal);
-        font-size: clamp(2.4rem, 6vw, 5rem);
-      }
-
-      .hero-node {
+      .trigram {
         position: absolute;
-        width: clamp(40px, 5.2vw, 72px);
-        aspect-ratio: 1;
-        display: grid;
-        place-items: center;
-        transform: translate(-50%, -50%);
-        border: 1px solid rgba(255, 255, 255, 0.24);
-        border-radius: 999px;
-        background:
-          radial-gradient(
-            circle at 35% 30%,
-            rgba(255, 255, 255, 0.52),
-            transparent 24%
-          ),
-          rgba(184, 221, 198, 0.22);
-        color: var(--cream);
-        font-family: var(--font-seal);
-        font-size: clamp(1rem, 2vw, 1.7rem);
-        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
-        animation: float-y 7s ease-in-out infinite;
+        color: var(--gold-soft);
+        font-family: var(--font-serif);
+        font-size: 1.5rem;
+        opacity: 0.62;
+        text-shadow: 0 0 10px var(--gold-glow);
       }
 
       .hero-line-svg {
@@ -499,245 +828,496 @@
         inset: 0;
         width: 100%;
         height: 100%;
-        opacity: 0.36;
+        opacity: 0.35;
+      }
+
+      .hero-orbit .ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 1px solid rgba(184, 221, 198, 0.18);
+      }
+
+      .hero-orbit .r1 {
+        inset: 0;
+        border-style: dashed;
+        border-color: rgba(184, 221, 198, 0.15);
+        animation: spin-slow 90s linear infinite;
+      }
+
+      .hero-orbit .r2 {
+        inset: 15%;
+        border-color: rgba(216, 181, 108, 0.15);
+        animation: spin-reverse 110s linear infinite;
+        box-shadow: inset 0 0 120px rgba(216, 181, 108, 0.04);
+      }
+
+      .hero-orbit .r3 {
+        inset: 28%;
+        border-style: dashed;
+        border-color: rgba(123, 164, 192, 0.15);
+        animation: spin-slow 75s linear infinite;
+      }
+
+      .hero-orbit .r4 {
+        inset: 41%;
+        border-color: rgba(244, 228, 187, 0.12);
+        animation: spin-reverse 55s linear infinite;
+      }
+
+      .hero-core {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 22%;
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 38% 30%,
+          #f4e4bb 0%,
+          #88e2b0 30%,
+          #6fae90 60%,
+          #1a332a 100%
+        );
+        box-shadow:
+          0 0 90px rgba(111, 174, 144, 0.6),
+          0 0 180px rgba(216, 181, 108, 0.25),
+          inset 0 0 50px rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        animation: core-breathe 8s ease-in-out infinite;
+      }
+
+      .hero-core::before {
+        content: "";
+        position: absolute;
+        inset: -20px;
+        border: 1px solid rgba(165, 230, 180, 0.25);
+        border-radius: 50%;
+        animation: halo-pulse 4s ease-in-out infinite;
+      }
+
+      .hero-core span {
+        color: rgba(5, 8, 7, 0.8);
+        font-family: var(--font-seal);
+        font-size: clamp(2.4rem, 5.8vw, 4.8rem);
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+      }
+
+      .hero-node {
+        position: absolute;
+        width: clamp(44px, 5.8vw, 76px);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(216, 181, 108, 0.35);
+        border-radius: 50%;
+        background:
+          radial-gradient(
+            circle at 35% 28%,
+            rgba(255, 255, 255, 0.6),
+            transparent 40%
+          ),
+          rgba(184, 221, 198, 0.2);
+        color: var(--cream);
+        font-family: var(--font-seal);
+        font-size: clamp(1rem, 2vw, 1.7rem);
+        backdrop-filter: blur(6px);
+        transform: translate(-50%, -50%);
+        box-shadow:
+          0 15px 45px rgba(0, 0, 0, 0.35),
+          0 0 25px rgba(111, 174, 144, 0.2);
+        animation: float-y 7s ease-in-out infinite;
       }
 
       .hero-rune {
         position: absolute;
-        left: 6vw;
-        bottom: 7vh;
-        color: rgba(255, 255, 255, 0.035);
+        left: 4vw;
+        bottom: 5vh;
+        color: rgba(255, 255, 255, 0.022);
         font-family: var(--font-seal);
-        font-size: clamp(8rem, 18vw, 19rem);
+        font-size: clamp(12rem, 25vw, 26rem);
         line-height: 1;
+        user-select: none;
+        pointer-events: none;
       }
 
       .hero-copy {
-        max-width: 700px;
+        position: relative;
+        z-index: 2;
+        max-width: 740px;
+      }
+
+      .hero-copy::before {
+        content: "";
+        display: block;
+        width: 72px;
+        height: 1px;
+        margin-bottom: 18px;
+        background: linear-gradient(90deg, var(--gold-soft), transparent);
       }
 
       .hero-kicker {
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 18px;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 22px;
         color: var(--gold-soft);
-        font-size: 0.82rem;
+        font-size: 0.78rem;
         font-weight: 800;
-        letter-spacing: 0.18em;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
       }
 
       .hero-kicker::before {
         content: "";
-        width: 42px;
+        width: 40px;
         height: 1px;
-        background: var(--gold-soft);
-        opacity: 0.6;
+        background: linear-gradient(90deg, var(--gold-soft), transparent);
       }
 
       .hero h1 {
-        margin: 0;
         font-family: var(--font-serif);
-        font-size: clamp(5rem, 16vw, 13rem);
+        font-size: clamp(5.2rem, 16vw, 13.5rem);
         font-weight: 500;
-        letter-spacing: -0.08em;
-        line-height: 0.76;
-        text-shadow: 0 0 40px rgba(165, 230, 180, 0.18);
+        line-height: 0.8;
+        letter-spacing: -0.07em;
+        background: linear-gradient(
+          180deg,
+          #ffffff 0%,
+          #dcf0e4 60%,
+          #9bc7af 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        filter: drop-shadow(0 0 50px rgba(165, 230, 180, 0.2));
       }
 
       .hero-title-sub {
         display: block;
-        margin-top: 24px;
-        max-width: 760px;
+        max-width: 780px;
+        margin-top: 18px;
+        font-family: var(--font-serif);
+        font-size: clamp(2.1rem, 6vw, 5rem);
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: -0.03em;
         background: linear-gradient(
-          100deg,
-          var(--jade-soft),
-          var(--gold-soft) 48%,
-          var(--jade-soft)
+          105deg,
+          var(--jade-soft) 15%,
+          var(--gold-soft) 45%,
+          var(--spirit-blue) 70%,
+          var(--jade-soft) 90%
         );
-        background-size: 200% auto;
+        background-size: 300% auto;
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
-        font-family: var(--font-serif);
-        font-size: clamp(2.1rem, 6vw, 5.1rem);
-        font-weight: 500;
-        letter-spacing: -0.045em;
-        line-height: 0.98;
-        animation: shimmer 9s linear infinite;
+        animation: shimmer 10s linear infinite;
       }
 
       .hero-desc {
         max-width: 650px;
-        margin: 26px 0 0;
+        margin-top: 28px;
         color: var(--muted);
-        font-size: clamp(1.02rem, 1.7vw, 1.2rem);
+        font-size: clamp(1.02rem, 1.6vw, 1.18rem);
       }
 
       .hero-desc strong {
-        color: var(--cream);
-        font-weight: 750;
+        color: var(--gold-soft);
+        font-weight: 700;
       }
 
       .hero-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 14px;
-        margin-top: 34px;
+        gap: 16px;
+        margin-top: 40px;
       }
 
-      .btn-primary {
-        border: 1px solid rgba(244, 228, 187, 0.48);
-        background: linear-gradient(135deg, var(--jade-soft), var(--gold));
-        box-shadow: 0 24px 70px -28px rgba(216, 181, 108, 0.88);
-        color: #07100e;
-        padding: 14px 22px;
+      .hero-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 45px;
+        margin-top: 50px;
+        padding-top: 35px;
+        border-top: 1px solid var(--line);
       }
 
-      .btn-secondary {
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--cream);
-        padding: 14px 22px;
+      .stat-item {
+        display: flex;
+        flex-direction: column;
       }
 
-      .btn-secondary:hover {
-        border-color: rgba(244, 228, 187, 0.32);
-        background: rgba(255, 255, 255, 0.08);
+      .stat-val {
+        color: var(--gold-soft);
+        font-family: var(--font-serif);
+        font-size: 2.35rem;
+        font-weight: 600;
+        line-height: 1;
+        text-shadow: 0 0 15px rgba(216, 181, 108, 0.4);
       }
+
+      .stat-label {
+        margin-top: 6px;
+        color: var(--faint);
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      /* Marquee */
+
+      .marquee-band {
+        position: relative;
+        overflow: hidden;
+        border-top: 1px solid var(--line-gold);
+        border-bottom: 1px solid var(--line-gold);
+        background: linear-gradient(
+          90deg,
+          rgba(8, 13, 12, 0.9),
+          rgba(216, 181, 108, 0.05),
+          rgba(8, 13, 12, 0.9)
+        );
+        padding: 18px 0;
+      }
+
+      .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee 45s linear infinite;
+      }
+
+      .marquee-track:hover {
+        animation-play-state: paused;
+      }
+
+      .marquee-item {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        padding: 0 28px;
+        color: var(--gold-soft);
+        font-family: var(--font-serif);
+        font-size: 0.92rem;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+      }
+
+      .marquee-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: radial-gradient(circle, var(--gold-glow), var(--cinnabar));
+        box-shadow: 0 0 10px var(--cinnabar-glow);
+      }
+
+      /* Sections */
 
       .section {
         position: relative;
-        padding: clamp(72px, 10vw, 128px) 0;
+        padding: clamp(90px, 12vw, 150px) 0;
       }
 
       .section + .section {
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        border-top: 1px solid var(--line-soft);
       }
 
       .section-head {
-        max-width: 780px;
-        margin-bottom: 44px;
+        max-width: 820px;
+        margin-bottom: 56px;
       }
 
       .section-label {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         color: var(--gold-soft);
-        font-size: 0.78rem;
-        font-weight: 850;
-        letter-spacing: 0.18em;
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
       }
 
       .section-label::before {
         content: attr(data-seal);
+        color: var(--jade-glow);
         font-family: var(--font-seal);
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         font-weight: 400;
         letter-spacing: 0;
       }
 
       .section h2 {
-        margin: 14px 0 0;
+        margin-top: 16px;
         font-family: var(--font-serif);
-        font-size: clamp(2.45rem, 5vw, 4.7rem);
+        font-size: clamp(2.8rem, 5.8vw, 5.2rem);
         font-weight: 500;
-        letter-spacing: -0.045em;
-        line-height: 0.98;
+        line-height: 0.95;
+        letter-spacing: -0.04em;
       }
 
       .section-head p {
         max-width: 720px;
-        margin: 18px 0 0;
+        margin-top: 22px;
         color: var(--muted);
-        font-size: 1.05rem;
+        font-size: 1.08rem;
       }
 
-      .principle-list,
-      .system-list,
-      .flow-list,
-      .docs-list {
-        border-top: 1px solid var(--line);
-      }
-
-      .principle-row,
-      .system-row,
-      .flow-row,
-      .docs-row {
-        display: grid;
-        grid-template-columns: minmax(140px, 0.32fr) minmax(0, 1fr);
-        gap: clamp(20px, 4vw, 70px);
-        padding: 28px 0;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .row-mark {
-        display: flex;
-        align-items: flex-start;
-        gap: 14px;
-        color: var(--gold-soft);
-        font-weight: 800;
-      }
-
-      .row-mark .hanzi {
-        width: 48px;
-        color: rgba(244, 228, 187, 0.9);
-        font-family: var(--font-seal);
-        font-size: 2rem;
-        line-height: 1;
-      }
-
-      .row-mark small {
+      .section-head::after {
+        content: "";
         display: block;
-        margin-top: 4px;
-        color: var(--faint);
-        font-size: 0.72rem;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
+        width: 92px;
+        height: 1px;
+        margin-top: 20px;
+        background: linear-gradient(90deg, var(--gold-soft), transparent);
       }
 
-      .row-copy h3 {
-        margin: 0;
+      /* Principles */
+
+      .principle-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+
+      .principle-card {
+        position: relative;
+        overflow: hidden;
+        padding: 40px 32px;
+        transition:
+          transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          border-color 0.4s ease,
+          box-shadow 0.4s ease;
+      }
+
+      .principle-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at var(--gx, 50%) var(--gy, 50%),
+          rgba(111, 174, 144, 0.12),
+          transparent 55%
+        );
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .principle-card:hover::before {
+        opacity: 1;
+      }
+
+      .principle-card:hover {
+        border-color: var(--line-gold);
+        transform: translateY(-8px);
+        box-shadow:
+          0 30px 90px -25px rgba(0, 0, 0, 0.7),
+          0 0 45px rgba(216, 181, 108, 0.1);
+      }
+
+      .principle-card .bg-hanzi {
+        position: absolute;
+        right: -10px;
+        top: -15px;
+        color: rgba(255, 255, 255, 0.025);
+        font-family: var(--font-seal);
+        font-size: 9rem;
+        line-height: 1;
+        pointer-events: none;
+        transition:
+          transform 0.5s ease,
+          color 0.5s ease;
+      }
+
+      .principle-card:hover .bg-hanzi {
+        color: rgba(216, 181, 108, 0.05);
+        transform: scale(1.08) rotate(-5deg);
+      }
+
+      .card-top {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 24px;
+      }
+
+      .card-tag {
+        color: var(--gold-soft);
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+      }
+
+      .principle-card h3 {
+        position: relative;
+        margin-bottom: 14px;
         color: var(--cream);
-        font-size: clamp(1.25rem, 2vw, 1.65rem);
-        letter-spacing: -0.02em;
+        font-family: var(--font-serif);
+        font-size: 1.45rem;
+        letter-spacing: -0.01em;
       }
 
-      .row-copy p {
-        max-width: 760px;
-        margin: 10px 0 0;
+      .principle-card p {
+        position: relative;
         color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.72;
       }
 
-      .prototype-shell {
+      /* Prototype */
+
+      .proto-shell {
         position: relative;
         display: grid;
-        grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.7fr);
-        gap: 22px;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 28px;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 34px;
-        background:
-          linear-gradient(
-            160deg,
-            rgba(255, 255, 255, 0.065),
-            rgba(255, 255, 255, 0.025)
-          ),
-          rgba(10, 17, 16, 0.72);
-        box-shadow: 0 42px 110px -54px rgba(0, 0, 0, 0.9);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-        padding: clamp(16px, 3vw, 26px);
+        border: 1px solid var(--line-gold);
+        border-radius: 36px;
+        background: linear-gradient(
+          160deg,
+          rgba(20, 32, 28, 0.65),
+          rgba(8, 13, 12, 0.9)
+        );
+        backdrop-filter: blur(24px);
+        box-shadow:
+          0 50px 130px -40px rgba(0, 0, 0, 0.9),
+          0 0 50px rgba(111, 174, 144, 0.08);
+        padding: clamp(20px, 3.5vw, 32px);
       }
 
-      .prototype-shell::before {
+      .proto-shell::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 36px;
+        padding: 1.5px;
+        background: conic-gradient(
+          from var(--angle),
+          rgba(111, 174, 144, 0.3),
+          rgba(216, 181, 108, 0.42),
+          rgba(209, 86, 94, 0.2),
+          rgba(111, 174, 144, 0.3)
+        );
+        mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+        -webkit-mask-composite: xor;
+        pointer-events: none;
+        animation: spin-angle 18s linear infinite;
+      }
+
+      .proto-shell::after {
         content: "";
         position: absolute;
         inset: 12px;
-        border: 1px solid rgba(216, 181, 108, 0.18);
+        border: 1px solid rgba(216, 181, 108, 0.15);
         border-radius: 26px;
         pointer-events: none;
       }
@@ -751,34 +1331,49 @@
         border-radius: 26px;
         background:
           radial-gradient(
-            circle at 50% 48%,
-            rgba(111, 174, 144, 0.18),
-            transparent 58%
+            circle at 50% 50%,
+            rgba(111, 174, 144, 0.2),
+            transparent 60%
           ),
-          linear-gradient(
-            180deg,
-            rgba(0, 0, 0, 0.16),
-            rgba(255, 255, 255, 0.025)
-          );
+          linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(13, 22, 20, 0.4));
         transition: background 0.5s ease;
       }
 
-      .stage::after {
+      .stage::before {
         content: "";
         position: absolute;
         inset: 0;
-        opacity: 0.18;
-        background-image:
-          linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-        background-size: 36px 36px;
-        mask-image: radial-gradient(circle, black 18%, transparent 78%);
+        opacity: 0.15;
+        background-image: radial-gradient(
+          circle at center,
+          rgba(216, 181, 108, 0.3) 1px,
+          transparent 1px
+        );
+        background-size: 32px 32px;
+      }
+
+      .proto-bagua {
+        position: absolute;
+        inset: 8%;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: spin-slow 150s linear infinite;
+      }
+
+      .proto-trigram {
+        position: absolute;
+        color: var(--gold-soft);
+        font-family: var(--font-serif);
+        font-size: 1.2rem;
+        opacity: 0.45;
       }
 
       .mandala {
         position: relative;
         z-index: 1;
-        width: min(86vw, 520px);
+        width: min(88vw, 520px);
         max-width: 100%;
         aspect-ratio: 1;
       }
@@ -792,24 +1387,25 @@
 
       .orbit-ring {
         position: absolute;
-        border: 1px solid rgba(165, 230, 180, 0.3);
-        border-radius: 999px;
-        transition: border-color 0.45s ease;
+        border: 1px solid rgba(165, 230, 180, 0.25);
+        border-radius: 50%;
+        transition: border-color 0.5s ease;
       }
 
       .orbit-ring.outer {
         inset: 0;
         border-style: dashed;
-        animation: spin-slow 52s linear infinite;
+        animation: spin-slow 60s linear infinite;
       }
 
       .orbit-ring.middle {
-        inset: 14%;
-        animation: spin-reverse 66s linear infinite;
+        inset: 15%;
+        border-color: rgba(216, 181, 108, 0.25);
+        animation: spin-reverse 75s linear infinite;
       }
 
       .orbit-ring.inner {
-        inset: 31%;
+        inset: 32%;
         border-style: dashed;
       }
 
@@ -817,58 +1413,69 @@
         position: absolute;
         left: 50%;
         top: 50%;
-        width: 108px;
+        width: 114px;
         aspect-ratio: 1;
         display: grid;
         place-items: center;
-        transform: translate(-50%, -50%);
-        border: 0;
-        border-radius: 999px;
+        border-radius: 50%;
         background: radial-gradient(
-          circle at 38% 32%,
+          circle at 38% 30%,
           #f4e4bb 0%,
-          #b8ddc6 34%,
-          #6fae90 66%,
-          #263d35 100%
+          #88e2b0 32%,
+          #6fae90 64%,
+          #1e3a30 100%
         );
-        color: rgba(7, 11, 10, 0.78);
+        color: rgba(5, 8, 7, 0.85);
         font-family: var(--font-seal);
-        font-size: 2.1rem;
+        font-size: 2.4rem;
+        transform: translate(-50%, -50%);
         box-shadow:
-          0 0 32px rgba(111, 174, 144, 0.42),
-          inset 0 0 36px rgba(255, 255, 255, 0.26);
+          0 0 50px rgba(111, 174, 144, 0.55),
+          0 0 120px rgba(111, 174, 144, 0.2),
+          inset 0 0 35px rgba(255, 255, 255, 0.35);
         animation: core-breathe 7s ease-in-out infinite;
         transition:
-          background 0.45s ease,
-          box-shadow 0.45s ease;
+          background 0.5s ease,
+          box-shadow 0.5s ease;
+      }
+
+      .core::before {
+        content: "";
+        position: absolute;
+        inset: -16px;
+        border: 1px solid rgba(216, 181, 108, 0.3);
+        border-radius: 50%;
+        animation: halo-pulse 4s ease-in-out infinite;
       }
 
       .palace-node {
         position: absolute;
-        width: 64px;
+        width: 66px;
         aspect-ratio: 1;
         display: grid;
         place-items: center;
-        transform: translate(-50%, -50%);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        background: rgba(13, 22, 20, 0.72);
         color: var(--cream);
-        cursor: pointer;
+        backdrop-filter: blur(8px);
+        transform: translate(-50%, -50%);
         transition:
-          transform 0.2s ease,
-          border-color 0.2s ease,
-          background 0.2s ease,
-          box-shadow 0.2s ease;
+          transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+          border-color 0.3s ease,
+          background 0.3s ease,
+          box-shadow 0.3s ease;
         animation: float-y 6.5s ease-in-out infinite;
       }
 
       .palace-node:hover,
       .palace-node.active {
-        transform: translate(-50%, -50%) scale(1.08);
-        border-color: rgba(244, 228, 187, 0.48);
-        background: rgba(255, 255, 255, 0.1);
-        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.32);
+        border-color: var(--gold-glow);
+        background: rgba(216, 181, 108, 0.2);
+        transform: translate(-50%, -50%) scale(1.16);
+        box-shadow:
+          0 16px 45px rgba(0, 0, 0, 0.4),
+          0 0 30px rgba(216, 181, 108, 0.35);
       }
 
       .node-glyph {
@@ -876,8 +1483,8 @@
         aspect-ratio: 1;
         display: grid;
         place-items: center;
-        border-radius: 999px;
-        color: #07100e;
+        border-radius: 50%;
+        color: #050807;
         font-family: var(--font-seal);
         font-size: 1.35rem;
         font-weight: 700;
@@ -886,17 +1493,21 @@
       .node-label {
         position: absolute;
         left: 50%;
-        top: calc(100% + 8px);
+        top: calc(100% + 10px);
         min-width: max-content;
-        transform: translateX(-50%);
-        color: var(--muted);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(5, 8, 7, 0.88);
+        color: var(--gold-soft);
         font-size: 0.66rem;
         font-weight: 800;
-        letter-spacing: 0.13em;
+        letter-spacing: 0.16em;
         opacity: 0;
+        padding: 2px 8px;
         pointer-events: none;
         text-transform: uppercase;
-        transition: opacity 0.2s ease;
+        transform: translateX(-50%);
+        transition: opacity 0.25s ease;
       }
 
       .palace-node:hover .node-label,
@@ -918,7 +1529,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        padding: 4px 4px 0;
+        padding: 4px 6px 0;
       }
 
       .window-dots {
@@ -929,28 +1540,38 @@
       .window-dots span {
         width: 10px;
         height: 10px;
-        border-radius: 999px;
+        border-radius: 50%;
       }
 
       .status-text {
-        color: var(--jade-soft);
-        font-size: 0.82rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--gold-soft);
+        font-size: 0.85rem;
         font-weight: 800;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.08em;
       }
 
-      .control-block,
+      .ctrl-block,
       .insight-block,
       .practice-block {
-        border: 1px solid rgba(255, 255, 255, 0.09);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 24px;
-        background: rgba(255, 255, 255, 0.04);
-        padding: 18px;
+        background: rgba(13, 22, 20, 0.5);
+        padding: 20px;
+        transition: border-color 0.3s ease;
+      }
+
+      .ctrl-block:hover,
+      .insight-block:hover,
+      .practice-block:hover {
+        border-color: rgba(216, 181, 108, 0.3);
       }
 
       .control-row {
         display: grid;
-        grid-template-columns: 76px 1fr;
+        grid-template-columns: 92px 1fr;
         gap: 12px;
         align-items: start;
       }
@@ -960,10 +1581,10 @@
       }
 
       .control-label {
-        color: var(--faint);
+        color: var(--gold-soft);
         font-size: 0.68rem;
-        font-weight: 850;
-        letter-spacing: 0.16em;
+        font-weight: 800;
+        letter-spacing: 0.18em;
         padding-top: 8px;
         text-transform: uppercase;
       }
@@ -977,34 +1598,43 @@
       .toggle-btn {
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.03);
         color: var(--muted);
-        cursor: pointer;
         font-size: 0.82rem;
-        font-weight: 800;
-        padding: 8px 12px;
+        font-weight: 700;
+        padding: 8px 14px;
         transition:
-          background 0.2s ease,
-          border-color 0.2s ease,
-          color 0.2s ease,
-          box-shadow 0.2s ease;
+          color 0.25s ease,
+          background 0.25s ease,
+          border-color 0.25s ease,
+          box-shadow 0.25s ease;
       }
 
-      .toggle-btn[aria-pressed="true"] {
-        border-color: rgba(216, 181, 108, 0.46);
-        background: linear-gradient(
-          135deg,
-          rgba(111, 174, 144, 0.24),
-          rgba(216, 181, 108, 0.17)
-        );
-        box-shadow: 0 0 20px rgba(111, 174, 144, 0.16);
+      .toggle-btn:hover {
+        border-color: rgba(216, 181, 108, 0.3);
+        background: rgba(255, 255, 255, 0.06);
         color: var(--cream);
       }
 
-      .badges {
+      .toggle-btn[aria-pressed="true"] {
+        border-color: var(--gold);
+        background: linear-gradient(
+          135deg,
+          rgba(111, 174, 144, 0.25),
+          rgba(216, 181, 108, 0.2)
+        );
+        color: var(--gold-soft);
+        box-shadow: 0 0 20px rgba(216, 181, 108, 0.2);
+      }
+
+      .badges,
+      .tag-list {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
+      }
+
+      .badges {
         margin-bottom: 16px;
       }
 
@@ -1012,66 +1642,84 @@
       .tag {
         display: inline-flex;
         align-items: center;
-        border: 1px solid rgba(255, 255, 255, 0.09);
+        gap: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.045);
+        background: rgba(255, 255, 255, 0.04);
         color: var(--muted);
-        font-size: 0.77rem;
-        font-weight: 750;
-        padding: 7px 10px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        padding: 6px 12px;
       }
 
       .badge.state {
-        color: var(--jade-soft);
+        color: var(--jade-glow);
+        border-color: rgba(111, 174, 144, 0.3);
       }
 
       .badge.realm {
-        color: var(--gold-soft);
+        color: var(--gold-glow);
+        border-color: rgba(216, 181, 108, 0.3);
       }
 
       .insight-block h3,
       .practice-block h3 {
-        margin: 0;
-        font-size: 1.05rem;
-        letter-spacing: -0.01em;
+        color: var(--cream);
+        font-family: var(--font-serif);
+        font-size: 1.16rem;
       }
 
       .insight-block p,
       .practice-block p {
-        margin: 8px 0 0;
+        margin-top: 8px;
         color: var(--muted);
         font-size: 0.94rem;
+        line-height: 1.62;
       }
 
       .qi-meter {
         display: grid;
         grid-template-columns: auto 1fr auto;
-        gap: 12px;
         align-items: center;
-        margin-top: 16px;
+        gap: 14px;
+        margin-top: 18px;
       }
 
       .qi-track {
-        height: 9px;
+        height: 12px;
         overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(0, 0, 0, 0.5);
+        padding: 2px;
       }
 
       .qi-fill {
+        position: relative;
         width: 0%;
         height: 100%;
+        overflow: hidden;
         border-radius: inherit;
         transition:
-          width 0.55s ease,
-          background 0.55s ease,
-          box-shadow 0.55s ease;
+          width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+          background 0.7s ease,
+          box-shadow 0.7s ease;
+      }
+
+      .qi-fill::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.45),
+          transparent
+        );
+        animation: shimmer 2s infinite;
       }
 
       .tag-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
         margin-top: 14px;
       }
 
@@ -1084,23 +1732,34 @@
       }
 
       .complete-btn {
-        border: 1px solid rgba(244, 228, 187, 0.32);
+        border: 1px solid rgba(216, 181, 108, 0.4);
         border-radius: 999px;
-        background: rgba(244, 228, 187, 0.08);
+        background: linear-gradient(
+          135deg,
+          rgba(216, 181, 108, 0.15),
+          rgba(111, 174, 144, 0.1)
+        );
         color: var(--gold-soft);
-        cursor: pointer;
-        font-size: 0.84rem;
-        font-weight: 850;
-        padding: 10px 14px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        padding: 10px 18px;
+        box-shadow: 0 0 15px rgba(216, 181, 108, 0.1);
         transition:
-          transform 0.2s ease,
-          background 0.2s ease,
-          color 0.2s ease;
+          transform 0.25s ease,
+          background 0.25s ease,
+          box-shadow 0.25s ease,
+          color 0.25s ease;
       }
 
       .complete-btn:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(216, 181, 108, 0.3),
+          rgba(111, 174, 144, 0.2)
+        );
+        color: #fff;
         transform: translateY(-2px);
-        background: rgba(244, 228, 187, 0.14);
+        box-shadow: 0 8px 25px rgba(216, 181, 108, 0.3);
       }
 
       .complete-note {
@@ -1108,11 +1767,21 @@
         font-size: 0.78rem;
       }
 
-      .system-grid {
+      /* Lists */
+
+      .system-grid,
+      .docs-layout {
         display: grid;
-        grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
-        gap: clamp(28px, 6vw, 90px);
+        gap: clamp(32px, 7vw, 100px);
         align-items: start;
+      }
+
+      .system-grid {
+        grid-template-columns: minmax(260px, 0.4fr) minmax(0, 1fr);
+      }
+
+      .docs-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 0.55fr);
       }
 
       .system-aside {
@@ -1121,69 +1790,187 @@
       }
 
       .system-aside p {
-        margin: 14px 0 0;
+        margin-top: 16px;
         color: var(--muted);
       }
 
       .seal-big {
-        color: rgba(244, 228, 187, 0.12);
+        margin-top: 24px;
+        color: rgba(216, 181, 108, 0.08);
         font-family: var(--font-seal);
-        font-size: clamp(9rem, 18vw, 17rem);
-        line-height: 0.78;
+        font-size: clamp(9rem, 18vw, 16rem);
+        line-height: 0.8;
+      }
+
+      .system-list,
+      .flow-list,
+      .docs-list {
+        border-top: 1px solid var(--line-gold);
+      }
+
+      .system-row,
+      .docs-row {
+        display: grid;
+        grid-template-columns: minmax(130px, 0.3fr) minmax(0, 1fr);
+        gap: clamp(20px, 4vw, 60px);
+        padding: 30px 0;
+        border-bottom: 1px solid var(--line);
+        transition:
+          padding-left 0.3s ease,
+          background 0.3s ease;
       }
 
       .flow-row {
-        grid-template-columns: 110px minmax(0, 1fr);
+        display: grid;
+        grid-template-columns: 100px minmax(0, 1fr);
+        gap: 24px;
+        padding: 32px 0;
+        border-bottom: 1px solid var(--line);
+        transition:
+          padding-left 0.3s ease,
+          background 0.3s ease;
+      }
+
+      .system-row:hover,
+      .docs-row:hover {
+        background: rgba(216, 181, 108, 0.03);
+        padding-left: 16px;
+      }
+
+      .flow-row:hover {
+        background: rgba(111, 174, 144, 0.03);
+        padding-left: 16px;
+      }
+
+      .row-mark {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        color: var(--gold-soft);
+        font-weight: 800;
+      }
+
+      .row-mark .hanzi {
+        width: 52px;
+        color: rgba(244, 228, 187, 0.9);
+        font-family: var(--font-seal);
+        font-size: 2.35rem;
+        line-height: 1;
+        text-shadow: 0 0 15px rgba(216, 181, 108, 0.3);
+        transition:
+          transform 0.3s ease,
+          color 0.3s ease;
+      }
+
+      .system-row:hover .hanzi,
+      .docs-row:hover .hanzi {
+        color: var(--gold-glow);
+        transform: scale(1.12) rotate(4deg);
+      }
+
+      .row-mark small {
+        display: block;
+        margin-top: 4px;
+        color: var(--faint);
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .row-copy h3 {
+        color: var(--cream);
+        font-family: var(--font-serif);
+        font-size: clamp(1.25rem, 2vw, 1.6rem);
+        letter-spacing: -0.01em;
+      }
+
+      .row-copy p {
+        max-width: 720px;
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.72;
       }
 
       .step-num {
         color: var(--gold-soft);
         font-family: var(--font-serif);
-        font-size: 2.3rem;
+        font-size: 2.8rem;
+        font-weight: 600;
         line-height: 1;
+        text-shadow: 0 0 15px rgba(216, 181, 108, 0.3);
+        transition:
+          transform 0.3s ease,
+          color 0.3s ease;
       }
 
-      .docs-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.58fr);
-        gap: clamp(28px, 5vw, 70px);
+      .flow-row:hover .step-num {
+        color: var(--jade-glow);
+        transform: scale(1.1);
       }
 
       .doc-map {
+        position: relative;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 28px;
-        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid var(--line-gold);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+
+      .doc-map::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at 20% 80%,
+          rgba(216, 181, 108, 0.08),
+          transparent 60%
+        );
       }
 
       .doc-map pre {
-        margin: 0;
+        position: relative;
         overflow-x: auto;
-        color: #c7d5ce;
+        margin: 0;
+        color: #c0d4c8;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", monospace;
         font-size: 0.9rem;
-        line-height: 1.75;
-        padding: 24px;
+        line-height: 2;
+        padding: 32px;
       }
+
+      .doc-map code .folder {
+        color: var(--gold-glow);
+        font-weight: 800;
+      }
+
+      .doc-map code .file {
+        color: var(--jade-soft);
+      }
+
+      /* CTA & Footer */
 
       .cta-section {
         overflow: hidden;
+        border-top: 1px solid var(--line-gold);
+        border-bottom: 1px solid var(--line-gold);
         background:
           radial-gradient(
-            circle at 25% 30%,
-            rgba(111, 174, 144, 0.2),
-            transparent 32%
+            ellipse 70% 60% at 25% 35%,
+            rgba(111, 174, 144, 0.22),
+            transparent
           ),
           radial-gradient(
-            circle at 75% 70%,
-            rgba(216, 181, 108, 0.14),
-            transparent 34%
+            ellipse 60% 50% at 75% 65%,
+            rgba(216, 181, 108, 0.18),
+            transparent
           ),
-          rgba(10, 17, 16, 0.56);
+          rgba(8, 13, 12, 0.72);
       }
 
       .cta-inner {
         position: relative;
-        min-height: 440px;
+        min-height: 520px;
         display: grid;
         place-items: center;
         text-align: center;
@@ -1194,64 +1981,81 @@
         position: absolute;
         left: 50%;
         top: 50%;
-        transform: translate(-50%, -50%);
-        color: rgba(255, 255, 255, 0.035);
+        color: rgba(216, 181, 108, 0.035);
         font-family: var(--font-seal);
-        font-size: clamp(12rem, 28vw, 26rem);
+        font-size: clamp(16rem, 35vw, 32rem);
         line-height: 1;
+        transform: translate(-50%, -50%);
       }
 
       .cta-copy {
         position: relative;
-        max-width: 760px;
+        z-index: 2;
+        max-width: 800px;
       }
 
       .cta-copy h2 {
-        margin: 0;
+        margin-top: 20px;
         font-family: var(--font-serif);
-        font-size: clamp(2.5rem, 6vw, 5rem);
+        font-size: clamp(3rem, 6.8vw, 5.8rem);
         font-weight: 500;
+        line-height: 0.92;
         letter-spacing: -0.05em;
-        line-height: 0.96;
+        background: linear-gradient(180deg, #fff, var(--gold-soft));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
       }
 
       .cta-copy p {
-        margin: 18px auto 0;
         max-width: 620px;
+        margin: 24px auto 0;
         color: var(--muted);
+        font-size: 1.1rem;
       }
 
       .footer {
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 40px 0;
+        background: #040605;
+        padding: 50px 0;
       }
 
       .footer-inner {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 22px;
+        gap: 24px;
         flex-wrap: wrap;
       }
 
       .footer p {
-        margin: 0;
         color: var(--faint);
-        font-size: 0.84rem;
+        font-size: 0.85rem;
       }
+
+      /* Reveal */
 
       .reveal {
         opacity: 0;
-        transform: translateY(24px);
+        transform: translateY(30px);
         transition:
-          opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-          transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+          opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .reveal.is-visible {
         opacity: 1;
         transform: translateY(0);
       }
+
+      .reveal-delay-1 {
+        transition-delay: 0.12s;
+      }
+
+      .reveal-delay-2 {
+        transition-delay: 0.24s;
+      }
+
+      /* Keyframes */
 
       @keyframes spin-slow {
         to {
@@ -1265,16 +2069,36 @@
         }
       }
 
+      @keyframes spin-angle {
+        to {
+          --angle: 540deg;
+        }
+      }
+
       @keyframes core-breathe {
         0%,
         100% {
           transform: translate(-50%, -50%) scale(1);
-          opacity: 0.92;
+          opacity: 0.9;
         }
 
         50% {
           transform: translate(-50%, -50%) scale(1.08);
           opacity: 1;
+          filter: brightness(1.1);
+        }
+      }
+
+      @keyframes halo-pulse {
+        0%,
+        100% {
+          opacity: 0.35;
+          transform: scale(1);
+        }
+
+        50% {
+          opacity: 0.85;
+          transform: scale(1.08);
         }
       }
 
@@ -1285,7 +2109,7 @@
         }
 
         50% {
-          translate: 0 -10px;
+          translate: 0 -12px;
         }
       }
 
@@ -1295,62 +2119,54 @@
         }
 
         to {
-          background-position: 84px 84px;
-        }
-      }
-
-      @keyframes rise-mote {
-        0% {
-          opacity: 0;
-          transform: translate3d(0, 0, 0) scale(0.5);
-        }
-
-        12% {
-          opacity: 0.75;
-        }
-
-        88% {
-          opacity: 0.45;
-        }
-
-        100% {
-          opacity: 0;
-          transform: translate3d(var(--mx, 24px), -320px, 0) scale(1.15);
+          background-position: 128px 128px;
         }
       }
 
       @keyframes shimmer {
         from {
-          background-position: -200% 0;
+          background-position: -300% 0;
         }
 
         to {
-          background-position: 200% 0;
+          background-position: 300% 0;
         }
       }
+
+      @keyframes marquee {
+        from {
+          transform: translateX(0);
+        }
+
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* Responsive */
 
       @media (max-width: 1060px) {
         .hero::after {
           background:
-            linear-gradient(
-              180deg,
-              rgba(7, 11, 10, 0.78),
-              rgba(7, 11, 10, 0.92)
-            ),
-            linear-gradient(0deg, rgba(7, 11, 10, 0.84), transparent 42%);
+            linear-gradient(180deg, rgba(5, 8, 7, 0.85), rgba(5, 8, 7, 0.95)),
+            linear-gradient(0deg, rgba(5, 8, 7, 0.9), transparent 40%);
         }
 
         .hero-orbit {
           right: 50%;
           top: 42%;
-          width: min(112vw, 760px);
+          width: min(120vw, 820px);
+          opacity: 0.35;
           transform: translate(50%, -50%);
-          opacity: 0.46;
         }
 
-        .prototype-shell,
+        .proto-shell,
         .system-grid,
         .docs-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .principle-grid {
           grid-template-columns: 1fr;
         }
 
@@ -1361,31 +2177,44 @@
         .system-aside {
           position: static;
         }
+
+        .hero-stats {
+          gap: 30px;
+        }
+
+        .hero-couplet {
+          display: none;
+        }
       }
 
       @media (max-width: 820px) {
         .wrap {
-          width: min(100% - 28px, 1180px);
+          width: min(100% - 24px, 1200px);
+        }
+
+        .brand-sub {
+          font-size: 0.68rem;
         }
 
         .nav-links {
           position: fixed;
-          left: 14px;
-          right: 14px;
+          left: 12px;
+          right: 12px;
           top: 88px;
           display: grid;
           gap: 6px;
-          padding: 14px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid var(--line-gold);
           border-radius: 24px;
-          background: rgba(7, 11, 10, 0.94);
-          box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+          background: rgba(5, 8, 7, 0.97);
+          box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+          backdrop-filter: blur(24px);
+          padding: 16px;
           opacity: 0;
           pointer-events: none;
-          transform: translateY(-10px);
+          transform: translateY(-12px);
           transition:
-            opacity 0.2s ease,
-            transform 0.2s ease;
+            opacity 0.25s ease,
+            transform 0.25s ease;
         }
 
         .nav-links.open {
@@ -1395,14 +2224,21 @@
         }
 
         .nav-links a {
-          border-radius: 16px;
-          padding: 12px 14px;
+          border-radius: 14px;
+          padding: 13px 18px;
+        }
+
+        .nav-links a.active::after {
+          left: auto;
+          right: 14px;
+          bottom: 50%;
+          transform: translateY(50%);
         }
 
         .nav-cta {
           justify-content: center;
           margin-left: 0;
-          margin-top: 6px;
+          margin-top: 8px;
         }
 
         .menu-toggle {
@@ -1410,27 +2246,22 @@
         }
 
         .hero {
-          padding-top: 112px;
-        }
-
-        .hero-kicker {
-          font-size: 0.72rem;
-          letter-spacing: 0.14em;
+          padding-top: 115px;
         }
 
         .hero-actions,
         .complete-row {
-          align-items: stretch;
           flex-direction: column;
+          align-items: stretch;
         }
 
         .btn-primary,
         .btn-secondary,
         .complete-btn {
           width: 100%;
+          text-align: center;
         }
 
-        .principle-row,
         .system-row,
         .flow-row,
         .docs-row {
@@ -1447,60 +2278,79 @@
         }
 
         .stage {
-          min-height: 430px;
+          min-height: 420px;
           border-radius: 20px;
         }
 
         .mandala {
-          width: min(92vw, 380px);
+          width: min(94vw, 380px);
         }
 
         .palace-node {
-          width: 54px;
+          width: 52px;
         }
 
         .node-glyph {
           width: 42px;
+          font-size: 1.15rem;
         }
 
         .core {
-          width: 86px;
+          width: 88px;
+          font-size: 1.9rem;
+        }
+
+        .cursor-aura {
+          display: none;
         }
       }
 
       @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
         *,
         *::before,
         *::after {
           animation-duration: 0.001ms !important;
           animation-iteration-count: 1 !important;
-          scroll-behavior: auto !important;
           transition-duration: 0.001ms !important;
+        }
+
+        #qiCanvas,
+        .cursor-aura {
+          display: none !important;
         }
       }
     </style>
   </head>
+
   <body>
-    <a class="skip-link" href="#main">Lewati ke konten</a>
+    <a href="#main" class="skip-link">Lewati ke konten utama</a>
+
+    <div class="noise-overlay" aria-hidden="true"></div>
+    <div class="cursor-aura" id="cursorAura" aria-hidden="true"></div>
+    <canvas id="qiCanvas" aria-hidden="true"></canvas>
+
     <div class="atmosphere" aria-hidden="true">
-      <div class="moon"></div>
+      <div class="moon-glow"></div>
       <svg
-        class="mountain-layer"
+        class="mountain-svg"
         viewBox="0 0 1440 320"
         preserveAspectRatio="none"
         aria-hidden="true"
       >
         <path
-          d="M0 226L126 209C252 192 504 158 727 176C950 194 1144 260 1288 280L1440 300V320H0Z"
-          fill="#0c1413"
-        ></path>
+          d="M0 230L140 210C280 190 520 150 740 175C960 200 1160 265 1300 285L1440 305V320H0Z"
+          fill="#08100e"
+        />
         <path
-          d="M0 276L170 242C340 208 614 196 870 226C1126 256 1284 290 1440 304V320H0Z"
-          fill="#08100f"
+          d="M0 280L180 245C360 210 620 195 880 225C1140 255 1300 290 1440 308V320H0Z"
+          fill="#050908"
           opacity="0.92"
-        ></path>
+        />
       </svg>
-      <div id="motesContainer"></div>
     </div>
 
     <nav class="topbar" id="navbar" aria-label="Navigasi utama">
@@ -1508,8 +2358,10 @@
         <a class="brand" href="#top" aria-label="Daoji home">
           <span class="brand-mark" aria-hidden="true"><span>道</span></span>
           <span>
-            <span class="brand-name">Daoji</span>
-            <span class="brand-sub">道己 / cultivate the self</span>
+            <span class="brand-name"
+              >Daoji <span class="brand-pill">修心 OS</span></span
+            >
+            <span class="brand-sub">道己 · Cultivate Your Inner World</span>
           </span>
         </a>
 
@@ -1521,49 +2373,119 @@
           aria-controls="navLinks"
           aria-expanded="false"
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span>
         </button>
 
         <div class="nav-links" id="navLinks">
-          <a href="#philosophy">Philosophy</a>
-          <a href="#prototype">Prototype</a>
-          <a href="#system">System</a>
-          <a href="#flow">Flow</a>
-          <a href="#docs">Docs</a>
-          <a class="nav-cta" href="#prototype">Open prototype</a>
+          <a data-nav href="#philosophy">Philosophy</a>
+          <a data-nav href="#prototype">Dantian Core</a>
+          <a data-nav href="#system">Six Palaces</a>
+          <a data-nav href="#flow">Daily Cycle</a>
+          <a data-nav href="#docs">Scriptures</a>
+          <a class="nav-cta" href="#prototype">Buka Alkimia</a>
         </div>
       </div>
     </nav>
 
     <header class="hero" id="top">
+      <div class="hero-couplet couplet-left" aria-hidden="true">
+        <div class="couplet-line"></div>
+        <span class="couplet-char">修</span>
+        <span class="couplet-char">心</span>
+        <span class="couplet-char">炼</span>
+        <span class="couplet-char">己</span>
+        <div class="couplet-line"></div>
+      </div>
+
+      <div class="hero-couplet couplet-right" aria-hidden="true">
+        <div class="couplet-line"></div>
+        <span class="couplet-char">顺</span>
+        <span class="couplet-char">应</span>
+        <span class="couplet-char">自</span>
+        <span class="couplet-char">然</span>
+        <div class="couplet-line"></div>
+      </div>
+
       <div class="hero-visual" aria-hidden="true">
         <div class="hero-orbit">
+          <div class="bagua-ring">
+            <span
+              class="trigram"
+              style="top: 2%; left: 50%; transform: translate(-50%, 0)"
+              >☰ 乾</span
+            >
+            <span
+              class="trigram"
+              style="top: 15%; right: 15%; transform: rotate(45deg)"
+              >☱ 兑</span
+            >
+            <span
+              class="trigram"
+              style="top: 50%; right: 2%; transform: translate(0, -50%)"
+              >☲ 离</span
+            >
+            <span
+              class="trigram"
+              style="bottom: 15%; right: 15%; transform: rotate(135deg)"
+              >☳ 震</span
+            >
+            <span
+              class="trigram"
+              style="bottom: 2%; left: 50%; transform: translate(-50%, 0)"
+              >☴ 巽</span
+            >
+            <span
+              class="trigram"
+              style="bottom: 15%; left: 15%; transform: rotate(225deg)"
+              >☵ 坎</span
+            >
+            <span
+              class="trigram"
+              style="top: 50%; left: 2%; transform: translate(0, -50%)"
+              >☶ 艮</span
+            >
+            <span
+              class="trigram"
+              style="top: 15%; left: 15%; transform: rotate(315deg)"
+              >☷ 坤</span
+            >
+          </div>
+
           <svg
             class="hero-line-svg"
             viewBox="0 0 1000 1000"
-            preserveAspectRatio="none"
+            preserveAspectRatio="xMidYMid meet"
           >
+            <defs>
+              <radialGradient id="lineGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(216,181,108,0.6)" />
+                <stop offset="100%" stop-color="rgba(111,174,144,0.05)" />
+              </radialGradient>
+            </defs>
             <g
               fill="none"
-              stroke="rgba(184, 221, 198, 0.4)"
+              stroke="url(#lineGrad)"
               stroke-width="1.2"
-              stroke-dasharray="8 14"
+              stroke-dasharray="6 12"
             >
-              <path d="M500 500L500 95"></path>
-              <path d="M500 500L851 298"></path>
-              <path d="M500 500L851 702"></path>
-              <path d="M500 500L500 905"></path>
-              <path d="M500 500L149 702"></path>
-              <path d="M500 500L149 298"></path>
-              <path d="M500 95L851 298L851 702L500 905L149 702L149 298Z"></path>
+              <path d="M500 500L500 95" />
+              <path d="M500 500L851 298" />
+              <path d="M500 500L851 702" />
+              <path d="M500 500L500 905" />
+              <path d="M500 500L149 702" />
+              <path d="M500 500L149 298" />
+              <polygon
+                points="500,95 851,298 851,702 500,905 149,702 149,298"
+                stroke-dasharray="8 16"
+              />
             </g>
           </svg>
-          <span class="ring"></span>
-          <span class="ring"></span>
-          <span class="ring"></span>
-          <span class="ring"></span>
+
+          <span class="ring r1"></span>
+          <span class="ring r2"></span>
+          <span class="ring r3"></span>
+          <span class="ring r4"></span>
+
           <span
             class="hero-node"
             style="left: 50%; top: 6%; animation-delay: 0s"
@@ -1571,27 +2493,27 @@
           >
           <span
             class="hero-node"
-            style="left: 85%; top: 30%; animation-delay: 0.7s"
+            style="left: 85%; top: 30%; animation-delay: 0.8s"
             >资</span
           >
           <span
             class="hero-node"
-            style="left: 85%; top: 70%; animation-delay: 1.4s"
+            style="left: 85%; top: 70%; animation-delay: 1.6s"
             >缘</span
           >
           <span
             class="hero-node"
-            style="left: 50%; top: 94%; animation-delay: 2.1s"
+            style="left: 50%; top: 94%; animation-delay: 2.4s"
             >心</span
           >
           <span
             class="hero-node"
-            style="left: 15%; top: 70%; animation-delay: 2.8s"
+            style="left: 15%; top: 70%; animation-delay: 3.2s"
             >艺</span
           >
           <span
             class="hero-node"
-            style="left: 15%; top: 30%; animation-delay: 3.5s"
+            style="left: 15%; top: 30%; animation-delay: 4s"
             >乐</span
           >
           <span class="hero-core"><span>丹</span></span>
@@ -1601,24 +2523,95 @@
 
       <div class="wrap">
         <div class="hero-copy reveal">
-          <p class="hero-kicker">Personal OS offline-first / anti-guilt</p>
+          <div class="hero-kicker">
+            <span class="cinnabar-seal">朱砂 · 无咎</span>
+            <span>Personal OS Offline-First</span>
+          </div>
+
           <h1>Daoji</h1>
-          <span class="hero-title-sub">Cultivate your inner world.</span>
+          <span class="hero-title-sub">Cultivate Your Inner World.</span>
+
           <p class="hero-desc">
-            Daoji adalah evolusi baru dari LifeTree: ruang reflektif untuk
-            menata tubuh, perhatian, kebiasaan, nilai, dan arah hidup dengan
-            bahasa kultivasi batin. <strong>Tanpa streak punishment.</strong>
-            Tanpa rasa malu. Selalu ada jalan untuk kembali.
+            Evolusi baru Personal OS dalam bahasa
+            <strong>Xianxia &amp; Kultivasi Batin</strong>. Menata enam istana
+            kehidupan tanpa rasa malu, tanpa hukuman streak yang merusak
+            pikiran.
+            <strong>Selalu ada jalan untuk kembali ke siklus qi.</strong>
           </p>
-          <div class="hero-actions" aria-label="Aksi utama">
-            <a class="btn-primary" href="#prototype">Lihat prototype</a>
-            <a class="btn-secondary" href="#philosophy">Baca prinsip</a>
+
+          <div class="hero-actions">
+            <a class="btn-primary" href="#prototype">Buka Dantian Core</a>
+            <a class="btn-secondary" href="#philosophy">Baca Filosofi Dao</a>
+          </div>
+
+          <div class="hero-stats reveal reveal-delay-2">
+            <div class="stat-item">
+              <div class="stat-val">六宫</div>
+              <div class="stat-label">Six Palaces</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-val">零罚</div>
+              <div class="stat-label">0 Guilt Streaks</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-val" style="font-family: var(--font-seal)">
+                道
+              </div>
+              <div class="stat-label">Infinite Return</div>
+            </div>
           </div>
         </div>
       </div>
     </header>
 
-    <main id="main">
+    <div class="marquee-band" aria-hidden="true">
+      <div class="marquee-track">
+        <span class="marquee-item"
+          ><span>无咎 · ANTI-GUILT</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>修心 · REFLECTIVE</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>六宫 · SIX PALACES</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>丹田 · DANTIAN CORE</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>顺应自然 · CALM TECH</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>炼己 · CULTIVATION</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>道法自然 · THE PATH</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>无咎 · ANTI-GUILT</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>修心 · REFLECTIVE</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>六宫 · SIX PALACES</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>丹田 · DANTIAN CORE</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>顺应自然 · CALM TECH</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>炼己 · CULTIVATION</span><span class="marquee-dot"></span
+        ></span>
+        <span class="marquee-item"
+          ><span>道法自然 · THE PATH</span><span class="marquee-dot"></span
+        ></span>
+      </div>
+    </div>
+
+    <main id="main" tabindex="-1">
       <section
         class="section"
         id="philosophy"
@@ -1626,63 +2619,91 @@
       >
         <div class="wrap">
           <div class="section-head reveal">
-            <span class="section-label" data-seal="心">Philosophy</span>
+            <span class="section-label" data-seal="心">Filosofi Alkimia</span>
             <h2 id="philosophy-title">
               Bukan mengejar streak. Menyuling hidup menjadi jalan.
             </h2>
             <p>
-              Tiga prinsip ini menjaga Daoji tetap cultivation, tetapi tidak
-              berubah menjadi aplikasi produktivitas yang menghukum pengguna
-              saat ritme hidupnya retak.
+              Tiga prinsip ini menjaga Daoji tetap kontemplatif layaknya
+              kultivasi batin, tanpa berubah menjadi alat produktivitas yang
+              menghukum pengguna saat ritmenya retak.
             </p>
           </div>
 
-          <div class="principle-list">
-            <article class="principle-row reveal">
-              <div class="row-mark">
-                <span class="hanzi">无咎</span>
-                <span>Anti-guilt<small>No shame loop</small></span>
+          <div class="principle-grid">
+            <article class="principle-card talisman-box reveal">
+              <span class="t-corner t-tl"></span
+              ><span class="t-corner t-tr"></span>
+              <span class="t-corner t-bl"></span
+              ><span class="t-corner t-br"></span>
+              <span class="bg-hanzi">无咎</span>
+              <div class="card-top">
+                <span class="cinnabar-seal">无咎</span>
+                <span class="card-tag">NO SHAME LOOP</span>
               </div>
-              <div class="row-copy">
-                <h3>Tersandung bukan kegagalan.</h3>
-                <p>
-                  Daoji tidak merayakan hukuman streak. Saat kebiasaan berhenti,
-                  sistem membuka inquiry yang lembut: apa yang menghalangi, apa
-                  yang perlu dikurangi, dan langkah kecil apa yang aman untuk
-                  dimulai.
-                </p>
-              </div>
+              <h3>Tersandung bukan kegagalan.</h3>
+              <p>
+                Dalam kultivasi, hambatan adalah bagian dari proses. Saat
+                kebiasaan terputus, Daoji membuka inquiry lembut: apa yang
+                menguras energi, dan langkah kecil apa yang aman untuk memulai
+                kembali.
+              </p>
             </article>
 
-            <article class="principle-row reveal">
-              <div class="row-mark">
-                <span class="hanzi">静</span>
-                <span>Calm tech<small>Quiet by design</small></span>
+            <article class="principle-card talisman-box reveal reveal-delay-1">
+              <span class="t-corner t-tl"></span
+              ><span class="t-corner t-tr"></span>
+              <span class="t-corner t-bl"></span
+              ><span class="t-corner t-br"></span>
+              <span class="bg-hanzi">静</span>
+              <div class="card-top">
+                <span
+                  class="cinnabar-seal"
+                  style="
+                    border-color: var(--jade);
+                    color: var(--jade-glow);
+                    background: rgba(111, 174, 144, 0.12);
+                  "
+                  >静谧</span
+                >
+                <span class="card-tag" style="color: var(--jade-glow)"
+                  >CALM TECH</span
+                >
               </div>
-              <div class="row-copy">
-                <h3>Teknologi yang menenangkan.</h3>
-                <p>
-                  Offline-first, minim distraksi, dan tidak menekan pengguna
-                  dengan notifikasi cemas. Interface memberi rasa lapang supaya
-                  refleksi terasa seperti ruang, bukan dashboard kompetisi.
-                </p>
-              </div>
+              <h3>Teknologi yang menenangkan batin.</h3>
+              <p>
+                Offline-first, minim distraksi, tanpa notifikasi cemas atau
+                kompetisi sosial. Antarmuka dirancang seperti Jade Chamber:
+                lapang, lembut, dan aman untuk refleksi.
+              </p>
             </article>
 
-            <article class="principle-row reveal">
-              <div class="row-mark">
-                <span class="hanzi">道</span>
-                <span>Purpose<small>Meaning before metrics</small></span>
+            <article class="principle-card talisman-box reveal reveal-delay-2">
+              <span class="t-corner t-tl"></span
+              ><span class="t-corner t-tr"></span>
+              <span class="t-corner t-bl"></span
+              ><span class="t-corner t-br"></span>
+              <span class="bg-hanzi">道</span>
+              <div class="card-top">
+                <span
+                  class="cinnabar-seal"
+                  style="
+                    border-color: var(--gold);
+                    color: var(--gold-glow);
+                    background: rgba(216, 181, 108, 0.12);
+                  "
+                  >道心</span
+                >
+                <span class="card-tag" style="color: var(--gold-glow)"
+                  >PURPOSE FIRST</span
+                >
               </div>
-              <div class="row-copy">
-                <h3>Angka dibaca sebagai sinyal, bukan tujuan.</h3>
-                <p>
-                  Progress tetap ada, tetapi dipakai untuk membaca musim batin:
-                  growth, seclusion, tribulation, dan dormant. Fokusnya bukan
-                  menang setiap hari, melainkan kembali ke arah hidup yang
-                  bernilai.
-                </p>
-              </div>
+              <h3>Angka dibaca sebagai sinyal musim.</h3>
+              <p>
+                Progress dipakai untuk membaca musim batin: Growth, Seclusion,
+                Tribulation, dan Dormant. Fokusnya bukan menang setiap hari,
+                melainkan menjaga arah hidup yang bernilai.
+              </p>
             </article>
           </div>
         </div>
@@ -1691,23 +2712,43 @@
       <section class="section" id="prototype" aria-labelledby="prototype-title">
         <div class="wrap">
           <div class="section-head reveal">
-            <span class="section-label" data-seal="丹">Prototype</span>
+            <span class="section-label" data-seal="丹">Alkimia Diri</span>
             <h2 id="prototype-title">
-              Dantian core sebagai pusat navigasi hidup.
+              Dantian Core sebagai pusat navigasi hidup.
             </h2>
             <p>
-              Coba ubah bahasa, state, dan palace. Prototype kecil ini
-              memperlihatkan bagaimana Daoji menerjemahkan kondisi hidup menjadi
-              satu practice yang cukup untuk hari ini.
+              Ubah bahasa, state, dan istana kehidupan. Prototype ini
+              menerjemahkan kondisi hidup menjadi satu practice yang cukup untuk
+              hari ini.
             </p>
           </div>
 
-          <div
-            class="prototype-shell reveal"
-            aria-label="Prototype antarmuka alkimia batin"
-          >
+          <div class="proto-shell reveal">
             <div class="stage" id="mandalaStage">
-              <div class="mandala" id="mandala" aria-label="Six Palace Mandala">
+              <div class="proto-bagua" aria-hidden="true">
+                <span
+                  class="proto-trigram"
+                  style="top: 2%; left: 50%; transform: translate(-50%, 0)"
+                  >乾</span
+                >
+                <span
+                  class="proto-trigram"
+                  style="top: 50%; right: 2%; transform: translate(0, -50%)"
+                  >离</span
+                >
+                <span
+                  class="proto-trigram"
+                  style="bottom: 2%; left: 50%; transform: translate(-50%, 0)"
+                  >坤</span
+                >
+                <span
+                  class="proto-trigram"
+                  style="top: 50%; left: 2%; transform: translate(0, -50%)"
+                  >坎</span
+                >
+              </div>
+
+              <div class="mandala" id="mandala">
                 <svg
                   class="mandala-lines"
                   id="mandalaLines"
@@ -1717,31 +2758,53 @@
                 <span class="orbit-ring outer" id="ringOuter"></span>
                 <span class="orbit-ring middle" id="ringMiddle"></span>
                 <span class="orbit-ring inner" id="ringInner"></span>
+
                 <button
                   class="core"
                   id="dantianCore"
                   type="button"
-                  aria-label="Dantian core"
+                  aria-label="Dantian core, klik untuk mengganti state batin"
                 >
                   <span id="coreHanzi">生</span>
                 </button>
+
                 <div id="palaceNodesContainer"></div>
               </div>
             </div>
 
-            <aside class="lab-panel">
+            <aside class="lab-panel" aria-label="Inner Alchemy Console">
               <div class="panel-header">
                 <div class="window-dots" aria-hidden="true">
-                  <span style="background: var(--cinnabar)"></span>
-                  <span style="background: var(--gold)"></span>
-                  <span style="background: var(--jade)"></span>
+                  <span
+                    style="
+                      background: var(--cinnabar);
+                      box-shadow: 0 0 8px var(--cinnabar);
+                    "
+                  ></span>
+                  <span
+                    style="
+                      background: var(--gold);
+                      box-shadow: 0 0 8px var(--gold);
+                    "
+                  ></span>
+                  <span
+                    style="
+                      background: var(--jade);
+                      box-shadow: 0 0 8px var(--jade);
+                    "
+                  ></span>
                 </div>
                 <div class="status-text">
-                  <span class="seal-font">丹田</span> Inner Alchemy
+                  <span
+                    class="cinnabar-seal"
+                    style="padding: 2px 8px; font-size: 0.8rem"
+                    >丹田</span
+                  >
+                  Inner Alchemy Console
                 </div>
               </div>
 
-              <div class="control-block" aria-label="Kontrol prototype">
+              <div class="ctrl-block">
                 <div class="control-row">
                   <span class="control-label">Bahasa</span>
                   <div
@@ -1772,17 +2835,18 @@
                       data-mode="full"
                       aria-pressed="false"
                     >
-                      Full
+                      Full Cultivation
                     </button>
                   </div>
                 </div>
+
                 <div class="control-row">
-                  <span class="control-label">State</span>
+                  <span class="control-label">Musim</span>
                   <div
                     class="toggle-group"
                     id="stateToggles"
                     role="group"
-                    aria-label="Pilih state"
+                    aria-label="Pilih musim batin"
                   >
                     <button
                       class="toggle-btn"
@@ -1829,15 +2893,32 @@
                 </div>
                 <h3 id="palaceTitle">Body Palace</h3>
                 <p id="palaceBody">
-                  Tubuh adalah gerbang awal kultivasi. Saat lelah, sistem lain
-                  ikut kehilangan pijakan.
+                  Tubuh adalah wadah primordial kultivasi. Saat wadah kelelahan,
+                  sistem meridian lain kehilangan pijakan energi.
                 </p>
-                <div class="qi-meter" aria-label="Qi capacity">
-                  <span class="seal-font" aria-hidden="true">气</span>
+
+                <div class="qi-meter" aria-label="Qi meter">
+                  <span
+                    style="
+                      font-family: var(--font-seal);
+                      color: var(--gold-soft);
+                      font-size: 1.3rem;
+                    "
+                    aria-hidden="true"
+                    >气</span
+                  >
                   <div class="qi-track">
                     <div class="qi-fill" id="qiBarFill"></div>
                   </div>
-                  <span id="qiBarText">70%</span>
+                  <span
+                    id="qiBarText"
+                    style="
+                      font-size: 0.85rem;
+                      font-weight: 800;
+                      color: var(--gold-soft);
+                    "
+                    >70%</span
+                  >
                 </div>
               </div>
 
@@ -1847,23 +2928,27 @@
                   Body Palace sedang butuh Qi. Mulai dari practice 12 menit:
                   jalan kaki dan napas tenang.
                 </p>
+
                 <div class="tag-list" id="actionTags">
                   <span class="tag">Body Palace</span>
                   <span class="tag">Qi Capacity 7/10</span>
                   <span class="tag">Gentle, enough</span>
                 </div>
+
                 <div class="complete-row">
                   <button
                     class="complete-btn"
                     id="completePractice"
                     type="button"
                   >
-                    Tandai practice cukup
+                    Tandai Practice Cukup
                   </button>
                   <span class="complete-note" id="completeNote"
-                    >Status tersimpan lokal di browser.</span
+                    >Status tersimpan lokal.</span
                   >
                 </div>
+
+                <p class="sr-only" id="prototypeStatus" aria-live="polite"></p>
               </div>
             </aside>
           </div>
@@ -1873,26 +2958,29 @@
       <section class="section" id="system" aria-labelledby="system-title">
         <div class="wrap system-grid">
           <div class="system-aside reveal">
-            <span class="section-label" data-seal="宫">System</span>
-            <h2 id="system-title">Enam palace, satu arah hidup.</h2>
+            <span class="section-label" data-seal="宫">Six Palaces</span>
+            <h2 id="system-title">
+              Enam istana kehidupan, satu jalan harmoni.
+            </h2>
             <p>
-              Daoji memecah hidup menjadi domain yang bisa dirawat tanpa membuat
-              pengguna merasa harus sempurna di semua area sekaligus.
+              Daoji memecah kehidupan menjadi enam domain energi yang saling
+              beresonansi. Pengguna dapat merawat area yang sedang redup tanpa
+              merasa harus sempurna di semua bidang sekaligus.
             </p>
-            <div class="seal-big" aria-hidden="true">六</div>
+            <div class="seal-big" aria-hidden="true">六宫</div>
           </div>
 
           <div class="system-list">
             <article class="system-row reveal">
               <div class="row-mark">
                 <span class="hanzi">身</span
-                ><span>Body<small>Energy</small></span>
+                ><span>Body<small>Vital Energy</small></span>
               </div>
               <div class="row-copy">
-                <h3>Tidur, gerak, napas, dan kapasitas fisik.</h3>
+                <h3>Tidur, gerak fisik, nutrisi, dan kapasitas stamina.</h3>
                 <p>
-                  Menjaga wadah agar sistem tidak meminta lebih dari energi yang
-                  tersedia.
+                  Menjaga wadah batin agar sistem tidak menuntut lebih dari
+                  energi vital yang tersedia.
                 </p>
               </div>
             </article>
@@ -1902,23 +2990,23 @@
                 ><span>Resource<small>Stability</small></span>
               </div>
               <div class="row-copy">
-                <h3>Uang, waktu, alat, dan batas operasional.</h3>
+                <h3>Keuangan, waktu, perangkat, dan batas operasional.</h3>
                 <p>
-                  Menata sumber daya supaya ambisi tidak melampaui fondasi
-                  nyata.
+                  Menata sumber daya nyata supaya ambisi tidak runtuh oleh
+                  kekacauan operasional sehari-hari.
                 </p>
               </div>
             </article>
             <article class="system-row reveal">
               <div class="row-mark">
                 <span class="hanzi">缘</span
-                ><span>Bond<small>Relations</small></span>
+                ><span>Bond<small>Resonance</small></span>
               </div>
               <div class="row-copy">
-                <h3>Relasi, keluarga, komunitas, dan dukungan.</h3>
+                <h3>Relasi, keluarga, komunitas, dan ikatan karmik.</h3>
                 <p>
-                  Membaca koneksi sebagai jaringan resonansi, bukan daftar
-                  kewajiban sosial.
+                  Membaca hubungan sebagai jaringan resonansi, bukan daftar
+                  kewajiban sosial yang melelahkan.
                 </p>
               </div>
             </article>
@@ -1928,36 +3016,36 @@
                 ><span>Heart<small>Attention</small></span>
               </div>
               <div class="row-copy">
-                <h3>Emosi, fokus, dan kejernihan batin.</h3>
+                <h3>Emosi, kejernihan fokus, dan ketenangan batin.</h3>
                 <p>
-                  Menjaga perhatian agar pengguna bisa melihat apa yang
-                  benar-benar sedang terjadi.
+                  Menyuling perhatian agar pengguna mampu menyadari emosi tanpa
+                  terseret arus mental.
                 </p>
               </div>
             </article>
             <article class="system-row reveal">
               <div class="row-mark">
                 <span class="hanzi">艺</span
-                ><span>Craft<small>Work</small></span>
+                ><span>Craft<small>Mastery</small></span>
               </div>
               <div class="row-copy">
-                <h3>Skill, karya, belajar, dan ritme produksi.</h3>
+                <h3>Keterampilan, karya, belajar, dan ritme penciptaan.</h3>
                 <p>
-                  Mendorong mastery yang stabil tanpa menjadikan produktivitas
-                  sebagai identitas.
+                  Mendorong mastery yang stabil tanpa mengubah produktivitas
+                  menjadi satu-satunya identitas diri.
                 </p>
               </div>
             </article>
             <article class="system-row reveal">
               <div class="row-mark">
                 <span class="hanzi">乐</span
-                ><span>Joy<small>Meaning</small></span>
+                ><span>Joy<small>Spirit</small></span>
               </div>
               <div class="row-copy">
-                <h3>Main, rasa syukur, rekreasi, dan rasa hidup.</h3>
+                <h3>Bermain, rasa syukur, keindahan, dan sukacita hidup.</h3>
                 <p>
-                  Mengingatkan bahwa cultivation juga membutuhkan sukacita,
-                  bukan hanya disiplin.
+                  Mengingatkan bahwa kultivasi sejati membutuhkan sukacita,
+                  bukan hanya disiplin yang kaku.
                 </p>
               </div>
             </article>
@@ -1968,54 +3056,54 @@
       <section class="section" id="flow" aria-labelledby="flow-title">
         <div class="wrap">
           <div class="section-head reveal">
-            <span class="section-label" data-seal="行">Daily flow</span>
+            <span class="section-label" data-seal="行">Daily Cycle</span>
             <h2 id="flow-title">
               Siklus harian yang lembut, bukan treadmill produktivitas.
             </h2>
             <p>
-              Alur harian dibuat singkat: baca kondisi, ambil satu practice,
-              catat aliran qi, lalu refleksi jika macet.
+              Alur kultivasi dibuat singkat, menenangkan, dan dapat diselesaikan
+              dalam beberapa menit per hari.
             </p>
           </div>
 
           <div class="flow-list">
             <article class="flow-row reveal">
-              <div class="step-num">01</div>
+              <div class="step-num">一</div>
               <div class="row-copy">
-                <h3>Baca kondisi batin.</h3>
+                <h3>Baca Kondisi Batin.</h3>
                 <p>
-                  Dashboard membuka hari dengan state, realm hint, dan six
-                  palace resonance.
+                  Dashboard membuka hari dengan membaca state, realm hint, dan
+                  resonansi antar Six Palaces.
                 </p>
               </div>
             </article>
             <article class="flow-row reveal">
-              <div class="step-num">02</div>
+              <div class="step-num">二</div>
               <div class="row-copy">
-                <h3>Ambil satu breakthrough.</h3>
+                <h3>Ambil Satu Breakthrough.</h3>
                 <p>
                   Action of the Day diframing sebagai practice paling relevan:
-                  kecil, nyata, dan cukup.
+                  kecil, terukur, dan cukup.
                 </p>
               </div>
             </article>
             <article class="flow-row reveal">
-              <div class="step-num">03</div>
+              <div class="step-num">三</div>
               <div class="row-copy">
-                <h3>Jika macet, jangan malu.</h3>
+                <h3>Inquiry Saat Macet.</h3>
                 <p>
-                  Friction menjadi Bottleneck Inquiry: kurang waktu, qi
-                  tercecer, fokus buyar, atau beban terlalu besar.
+                  Jika terjadi friction, sistem membuka Bottleneck Inquiry tanpa
+                  memunculkan rasa bersalah.
                 </p>
               </div>
             </article>
             <article class="flow-row reveal">
-              <div class="step-num">04</div>
+              <div class="step-num">四</div>
               <div class="row-copy">
-                <h3>Masuk ke refleksi.</h3>
+                <h3>Refleksi &amp; Penyulingan.</h3>
                 <p>
-                  Qi Log, Meridian Check, Dao Heart, dan Dao Heart Mirror
-                  menjaga arah pertumbuhan.
+                  Qi Log, Meridian Check, dan Dao Heart Mirror menjaga agar
+                  pertumbuhan terlihat sebagai pola jangka panjang.
                 </p>
               </div>
             </article>
@@ -2027,21 +3115,20 @@
         <div class="wrap docs-layout">
           <div>
             <div class="section-head reveal">
-              <span class="section-label" data-seal="卷">Docs</span>
+              <span class="section-label" data-seal="卷">Scriptures</span>
               <h2 id="docs-title">
                 Struktur dokumentasi yang siap dikembangkan.
               </h2>
               <p>
-                Link docs di navbar sekarang punya tujuan jelas. Bagian ini
-                merangkum modul yang bisa menjadi fondasi PRD, design system,
-                dan dokumentasi implementasi.
+                Dokumentasi Daoji dirancang seperti kitab teknis: jelas, rapi,
+                dan siap menjadi fondasi pengembangan produk offline-first.
               </p>
             </div>
 
             <div class="docs-list">
               <article class="docs-row reveal">
                 <div class="row-mark">
-                  <span class="hanzi">一</span
+                  <span class="hanzi">壹</span
                   ><span>Product<small>PRD</small></span>
                 </div>
                 <div class="row-copy">
@@ -2054,41 +3141,45 @@
               </article>
               <article class="docs-row reveal">
                 <div class="row-mark">
-                  <span class="hanzi">二</span
-                  ><span>Design<small>Visual language</small></span>
+                  <span class="hanzi">贰</span
+                  ><span>Design<small>Visual</small></span>
                 </div>
                 <div class="row-copy">
-                  <h3>Dantian, palace, talisman geometry, dan tone copy.</h3>
+                  <h3>Dantian, palaces, talisman geometry, dan tone copy.</h3>
                   <p>
-                    Menjaga agar tema cultivation terasa elegan, bukan game
-                    fantasi yang ramai.
+                    Menjaga agar tema kultivasi terasa elegan, filosofis, dan
+                    tidak menjadi game fantasi yang ramai.
                   </p>
                 </div>
               </article>
               <article class="docs-row reveal">
                 <div class="row-mark">
-                  <span class="hanzi">三</span
-                  ><span>Build<small>Offline-first</small></span>
+                  <span class="hanzi">叁</span
+                  ><span>Build<small>Offline</small></span>
                 </div>
                 <div class="row-copy">
                   <h3>Local data, sync boundaries, dan privacy model.</h3>
                   <p>
-                    Semua refleksi pribadi perlu diperlakukan sebagai data
-                    sensitif sejak desain awal.
+                    Semua refleksi pribadi diperlakukan sebagai data sensitif
+                    sejak desain awal.
                   </p>
                 </div>
               </article>
             </div>
           </div>
 
-          <div class="doc-map reveal" aria-label="Contoh struktur docs">
-            <pre><code>daoji-docs/
-  01-product-principles.md
-  02-six-palaces.md
-  03-state-machine.md
-  04-anti-guilt-copy.md
-  05-offline-first-data.md
-  06-interface-patterns.md</code></pre>
+          <div class="doc-map talisman-box reveal">
+            <span class="t-corner t-tl"></span
+            ><span class="t-corner t-tr"></span>
+            <span class="t-corner t-bl"></span
+            ><span class="t-corner t-br"></span>
+            <pre><code><span class="folder">daoji-scriptures/</span>
+  ├── <span class="file">01-dao-principles-and-antiguilt.md</span>
+  ├── <span class="file">02-six-palaces-meridian-map.md</span>
+  ├── <span class="file">03-alchemical-state-machine.md</span>
+  ├── <span class="file">04-xianxia-copywriting-tone.md</span>
+  ├── <span class="file">05-offline-first-storage-schema.md</span>
+  └── <span class="file">06-jade-chamber-ui-components.md</span></code></pre>
           </div>
         </div>
       </section>
@@ -2096,17 +3187,21 @@
       <section class="section cta-section" aria-labelledby="cta-title">
         <div class="wrap cta-inner">
           <div class="cta-copy reveal">
+            <span class="cinnabar-seal">顺应自然</span>
             <h2 id="cta-title">
               Kembali ke ritme, bukan merasa dihukum saat ritme itu retak.
             </h2>
             <p>
-              Daoji dirancang untuk menemani, bukan menuntut. Satu practice
-              kecil hari ini sudah cukup untuk membuka jalan.
+              Daoji dirancang untuk menemani, bukan menuntut. Satu latihan kecil
+              hari ini sudah cukup untuk membuka kembali aliran energi dalam
+              hidupmu.
             </p>
-            <div class="hero-actions" style="justify-content: center">
-              <a class="btn-primary" href="#prototype"
-                >Mulai dari satu practice</a
-              >
+            <div
+              class="hero-actions"
+              style="justify-content: center; margin-top: 38px"
+            >
+              <a class="btn-primary" href="#prototype">Mulai Satu Practice</a>
+              <a class="btn-secondary" href="#top">Kembali ke Puncak</a>
             </div>
           </div>
         </div>
@@ -2118,518 +3213,863 @@
         <a class="brand" href="#top" aria-label="Kembali ke atas">
           <span class="brand-mark" aria-hidden="true"><span>道</span></span>
           <span>
-            <span class="brand-name">Daoji / LifeTree</span>
-            <span class="brand-sub">道己 / cultivate your inner world</span>
+            <span class="brand-name">Daoji</span>
+            <span class="brand-sub">道己 · Cultivate Your Inner World</span>
           </span>
         </a>
         <p>
-          (c) 2026 Daoji. Bukan mengejar streak - menyuling hidup menjadi jalan.
+          &copy; 2026 Daoji. Bukan mengejar streak — menyulin hidup menjadi
+          jalan.
         </p>
       </div>
     </footer>
 
     <script>
-      const motesContainer = document.getElementById("motesContainer");
-      for (let i = 0; i < 24; i += 1) {
-        const mote = document.createElement("span");
-        const size = 1 + (i % 4) * 0.75;
-        const left = (i * 47) % 100;
-        const dur = 15 + (i % 8) * 2.4;
-        const delay = (i % 10) * 1.2;
-        const mx = (i % 2 === 0 ? 1 : -1) * (12 + (i % 5) * 7);
-        mote.className = "mote";
-        mote.style.left = left + "%";
-        mote.style.width = size + "px";
-        mote.style.height = size + "px";
-        mote.style.background =
-          i % 3 === 0 ? "rgba(244,228,187,0.72)" : "rgba(165,230,180,0.62)";
-        mote.style.boxShadow =
-          i % 3 === 0
-            ? "0 0 8px rgba(216,181,108,0.62)"
-            : "0 0 8px rgba(111,174,144,0.62)";
-        mote.style.setProperty("--dur", dur + "s");
-        mote.style.setProperty("--delay", delay + "s");
-        mote.style.setProperty("--mx", mx + "px");
-        motesContainer.appendChild(mote);
-      }
+      (() => {
+        "use strict";
 
-      const navbar = document.getElementById("navbar");
-      const menuToggle = document.getElementById("menuToggle");
-      const navLinks = document.getElementById("navLinks");
+        const $ = (id) => document.getElementById(id);
+        const reduceMotionQuery = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        );
+        const finePointerQuery = window.matchMedia("(pointer: fine)");
+        let reduceMotion = reduceMotionQuery.matches;
 
-      function syncNavbar() {
-        navbar.classList.toggle("scrolled", window.scrollY > 20);
-      }
+        /* Canvas Qi Effects */
 
-      function closeMenu() {
-        document.body.classList.remove("menu-open");
-        navLinks.classList.remove("open");
-        navbar.classList.remove("menu-active");
-        menuToggle.setAttribute("aria-expanded", "false");
-        menuToggle.setAttribute("aria-label", "Buka menu");
-      }
+        const canvas = $("qiCanvas");
+        const ctx =
+          canvas && canvas.getContext ? canvas.getContext("2d") : null;
+        let cW = 0;
+        let cH = 0;
+        let particles = [];
+        let canvasRAF = 0;
+        let auraRAF = 0;
+        let mouseX = -1000;
+        let mouseY = -1000;
 
-      window.addEventListener("scroll", syncNavbar, { passive: true });
-      syncNavbar();
-
-      menuToggle.addEventListener("click", () => {
-        const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
-        if (isOpen) {
-          closeMenu();
-          return;
+        function resizeCanvas() {
+          if (!canvas || !ctx) return;
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          cW = window.innerWidth;
+          cH = window.innerHeight;
+          canvas.width = Math.floor(cW * dpr);
+          canvas.height = Math.floor(cH * dpr);
+          canvas.style.width = cW + "px";
+          canvas.style.height = cH + "px";
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          createParticles();
         }
-        document.body.classList.add("menu-open");
-        navLinks.classList.add("open");
-        navbar.classList.add("menu-active");
-        menuToggle.setAttribute("aria-expanded", "true");
-        menuToggle.setAttribute("aria-label", "Tutup menu");
-      });
 
-      navLinks.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", closeMenu);
-      });
+        class SpiritMote {
+          constructor() {
+            this.reset(true);
+          }
 
-      const revealObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("is-visible");
-              revealObserver.unobserve(entry.target);
+          reset(randomY = false) {
+            this.x = Math.random() * cW;
+            this.y = randomY ? Math.random() * cH : cH + Math.random() * 100;
+            this.size = 0.8 + Math.random() * 2.2;
+            this.speedY = -(0.2 + Math.random() * 0.5);
+            this.speedX = (Math.random() - 0.5) * 0.3;
+            this.opacity = 0;
+            this.maxOpacity = 0.22 + Math.random() * 0.55;
+            this.life = 520 + Math.random() * 700;
+            this.age = Math.random() * this.life;
+
+            const t = Math.random();
+            if (t < 0.4) {
+              this.r = 111;
+              this.g = 174;
+              this.b = 144;
+            } else if (t < 0.72) {
+              this.r = 216;
+              this.g = 181;
+              this.b = 108;
+            } else if (t < 0.92) {
+              this.r = 163;
+              this.g = 217;
+              this.b = 255;
+            } else {
+              this.r = 209;
+              this.g = 86;
+              this.b = 94;
             }
-          });
-        },
-        { threshold: 0.16 },
-      );
+          }
 
-      document
-        .querySelectorAll(".reveal")
-        .forEach((element) => revealObserver.observe(element));
+          update() {
+            this.age++;
+            this.x += this.speedX + Math.sin(this.age * 0.01) * 0.2;
+            this.y += this.speedY;
 
-      const copyData = {
-        plain: {
-          growth: {
-            state: "Mode Aktif",
-            realm: "Fondasi Diri",
-            title: "Prioritas Hari Ini",
-            body: "Area ini paling butuh perhatian. Ambil satu langkah kecil yang realistis dan cukup untuk hari ini.",
-            tags: ["Satu langkah", "Cukup", "Ritme aman"],
-            qi: 70,
-          },
-          recovery: {
-            state: "Mode Istirahat",
-            realm: "Pemulihan",
-            title: "Fokus Pemulihan",
-            body: "Hari ini tidak perlu dipaksa. Turunkan beban dan pilih aksi yang hanya menjaga ritme dasar.",
-            tags: ["Pemulihan", "Beban rendah", "Istirahat sah"],
-            qi: 32,
-          },
-          tribulation: {
-            state: "Mode Tantangan",
-            realm: "Transformasi",
-            title: "Arahkan Ulang",
-            body: "Ada hambatan yang terasa nyata. Fokus pada satu tindakan yang paling menenangkan sistemmu.",
-            tags: ["Hambatan aktif", "Tidak heroik", "Data dari gesekan"],
-            qi: 44,
-          },
-          dormant: {
-            state: "Mode Hening",
-            realm: "Pemurnian Ulang",
-            title: "Mulai Lagi",
-            body: "Jika ritme sempat redup, tidak apa-apa. Kembali lewat satu tindakan kecil yang aman dan sederhana.",
-            tags: ["Mulai lagi", "Tidak balik nol", "Aman"],
-            qi: 52,
-          },
-        },
-        hybrid: {
-          growth: {
-            state: "Growth Phase",
-            realm: "Foundation Establishment",
-            title: "Breakthrough Hari Ini",
-            body: "Palace ini sedang butuh Qi. Mulai dari practice 12 menit yang lembut, terukur, dan bisa selesai.",
-            tags: ["Qi Capacity 7/10", "Gentle enough", "One practice"],
-            qi: 70,
-          },
-          recovery: {
-            state: "Seclusion Aktif",
-            realm: "Quiet Integration",
-            title: "Seclusion Focus",
-            body: "Qi-mu perlu dipulihkan, bukan dipaksa. Pilih practice yang hanya menjaga fondasi hari ini.",
-            tags: [
-              "Seclusion Mode",
-              "Qi Capacity 3/10",
-              "Recovery is cultivation",
-            ],
-            qi: 32,
-          },
-          tribulation: {
-            state: "Tribulation",
-            realm: "Spirit Transformation",
-            title: "Bottleneck Hari Ini",
-            body: "Ada gesekan nyata. Cari satu tindakan yang meredakan tekanan, bukan yang paling megah.",
-            tags: ["Friction = data", "Qi Capacity 4/10", "Witness first"],
-            qi: 44,
-          },
-          dormant: {
-            state: "Dormant Phase",
-            realm: "Qi Gathering",
-            title: "Kembali ke Jalur",
-            body: "Sistemmu sedang redup, bukan rusak. Kembali lewat satu practice yang mudah dan tidak menuntut pembuktian.",
-            tags: ["Quiet restart", "Qi Capacity 5/10", "The path remains"],
-            qi: 52,
-          },
-        },
-        full: {
-          growth: {
-            state: "Cultivation Progress",
-            realm: "Foundation Establishment",
-            title: "One Practice",
-            body: "Meridian palace ini sedang redup. Jalankan satu teknik sederhana untuk menghimpun Qi.",
-            tags: ["Qi Reservoir 7/10", "Steady", "No drama"],
-            qi: 70,
-          },
-          recovery: {
-            state: "Closed-Door Seclusion",
-            realm: "Quiet Integration",
-            title: "Nourish the Foundation",
-            body: "Bukan saatnya menembus batas. Hari ini adalah waktu menjaga bejana dan menenangkan Shen.",
-            tags: [
-              "Seclusion Chamber",
-              "Qi Reservoir 3/10",
-              "Retreat without shame",
-            ],
-            qi: 32,
-          },
-          tribulation: {
-            state: "Heavenly Tribulation",
-            realm: "Spirit Transformation",
-            title: "Heart Demon Inquiry",
-            body: "Gesekan hari ini bisa menjadi guru. Jangan kejar kemenangan besar; cukup cegah penyimpangan.",
-            tags: ["Tribulation", "Qi Reservoir 4/10", "Do not punish"],
-            qi: 44,
-          },
-          dormant: {
-            state: "Winter Hibernation",
-            realm: "Qi Gathering",
-            title: "Reopen the Path",
-            body: "Bahkan dunia batin perlu musim hening. Kembali bukan dari malu, tetapi dari satu langkah yang menghidupkan akar.",
-            tags: ["Dormant Root", "Qi Reservoir 5/10", "Path remains"],
-            qi: 52,
-          },
-        },
-      };
+            if (mouseX > -500) {
+              const dx = this.x - mouseX;
+              const dy = this.y - mouseY;
+              const dist = Math.hypot(dx, dy);
+              if (dist > 0 && dist < 150) {
+                const force = (150 - dist) / 150;
+                this.x += (dx / dist) * force * 1.5;
+                this.y += (dy / dist) * force * 1.5;
+              }
+            }
 
-      const visualsData = {
-        growth: {
-          core: "radial-gradient(circle at 38% 32%, #f4e4bb 0%, #b8ddc6 34%, #6fae90 66%, #263d35 100%)",
-          ring: "rgba(165,230,180,0.32)",
-          glow: "rgba(111,174,144,0.46)",
-          accent: "#a5e6b4",
-          hanzi: "生",
-        },
-        recovery: {
-          core: "radial-gradient(circle at 38% 32%, #e3f2f8 0%, #badbea 32%, #7ba4c0 68%, #304d5f 100%)",
-          ring: "rgba(123,164,192,0.34)",
-          glow: "rgba(123,164,192,0.42)",
-          accent: "#9cc6e0",
-          hanzi: "静",
-        },
-        tribulation: {
-          core: "radial-gradient(circle at 38% 32%, #f6e6cf 0%, #d9c1a0 22%, #cd7f86 58%, #563138 100%)",
-          ring: "rgba(205,127,134,0.36)",
-          glow: "rgba(205,127,134,0.44)",
-          accent: "#e29aa1",
-          hanzi: "劫",
-        },
-        dormant: {
-          core: "radial-gradient(circle at 38% 32%, #d5dedb 0%, #9ca9a5 32%, #66736f 68%, #323c39 100%)",
-          ring: "rgba(206,215,213,0.24)",
-          glow: "rgba(206,215,213,0.27)",
-          accent: "#c3cecb",
-          hanzi: "眠",
-        },
-      };
+            const progress = this.age / this.life;
+            if (progress < 0.15) {
+              this.opacity = (progress / 0.15) * this.maxOpacity;
+            } else if (progress > 0.75) {
+              this.opacity = ((1 - progress) / 0.25) * this.maxOpacity;
+            } else {
+              this.opacity = this.maxOpacity;
+            }
 
-      const palaces = [
-        {
-          id: "body",
-          hanzi: "身",
-          name: "Body Palace",
-          color: "#9bd6a0",
-          angle: -90,
-          insight:
-            "Tubuh adalah gerbang awal kultivasi. Saat lelah, sistem lain ikut kehilangan pijakan.",
-          practice:
-            "Jalan kaki 12 menit, lalu tiga napas panjang sebelum kembali bekerja.",
-        },
-        {
-          id: "resource",
-          hanzi: "资",
-          name: "Resource Palace",
-          color: "#f0d58c",
-          angle: -30,
-          insight:
-            "Sumber daya memberi batas nyata. Kejernihan sering muncul setelah beban operasional ditata.",
-          practice:
-            "Pilih satu pengeluaran, jadwal, atau alat yang perlu dirapikan hari ini.",
-        },
-        {
-          id: "bond",
-          hanzi: "缘",
-          name: "Bond Palace",
-          color: "#eca7b4",
-          angle: 30,
-          insight:
-            "Relasi adalah medan resonansi. Tidak semua koneksi perlu intens, tetapi beberapa perlu dirawat.",
-          practice:
-            "Kirim satu pesan jujur dan singkat kepada orang yang perlu kamu hubungi.",
-        },
-        {
-          id: "heart",
-          hanzi: "心",
-          name: "Heart Palace",
-          color: "#94bbe0",
-          angle: 90,
-          insight:
-            "Perhatian yang buyar sering meminta ruang, bukan tekanan. Lihat dulu sebelum memperbaiki.",
-          practice:
-            "Tulis tiga kalimat: apa yang terasa berat, apa yang nyata, dan apa yang bisa dilepas.",
-        },
-        {
-          id: "craft",
-          hanzi: "艺",
-          name: "Craft Palace",
-          color: "#caa6ec",
-          angle: 150,
-          insight:
-            "Karya tumbuh dari ritme yang bisa diulang. Mastery tidak perlu dramatis untuk tetap bergerak.",
-          practice:
-            "Kerjakan satu blok 25 menit untuk skill atau karya yang paling penting.",
-        },
-        {
-          id: "joy",
-          hanzi: "乐",
-          name: "Joy Palace",
-          color: "#f3c68a",
-          angle: 210,
-          insight:
-            "Sukacita menjaga akar tetap hidup. Kultivasi yang kehilangan rasa akan cepat mengering.",
-          practice:
-            "Ambil 15 menit untuk sesuatu yang memberi rasa hidup tanpa harus produktif.",
-        },
-      ];
+            if (
+              this.age >= this.life ||
+              this.y < -24 ||
+              this.x < -24 ||
+              this.x > cW + 24
+            ) {
+              this.reset();
+            }
+          }
 
-      const mandalaLines = document.getElementById("mandalaLines");
-      const palaceNodesContainer = document.getElementById(
-        "palaceNodesContainer",
-      );
-      const stateBadge = document.getElementById("stateBadge");
-      const realmBadge = document.getElementById("realmBadge");
-      const palaceTitle = document.getElementById("palaceTitle");
-      const palaceBody = document.getElementById("palaceBody");
-      const actionTitle = document.getElementById("actionTitle");
-      const actionBody = document.getElementById("actionBody");
-      const actionTags = document.getElementById("actionTags");
-      const coreHanzi = document.getElementById("coreHanzi");
-      const dantianCore = document.getElementById("dantianCore");
-      const mandalaStage = document.getElementById("mandalaStage");
-      const qiBarFill = document.getElementById("qiBarFill");
-      const qiBarText = document.getElementById("qiBarText");
-      const completePractice = document.getElementById("completePractice");
-      const completeNote = document.getElementById("completeNote");
-      const rings = ["ringOuter", "ringMiddle", "ringInner"].map((id) =>
-        document.getElementById(id),
-      );
-      const storageKey = "daoji-prototype-state";
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${this.r},${this.g},${this.b},${this.opacity})`;
+            ctx.fill();
 
-      let currentMode = "hybrid";
-      let currentState = "growth";
-      let currentPalace = "body";
-      let completedCount = 0;
-
-      try {
-        const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
-        currentMode = copyData[saved.mode] ? saved.mode : currentMode;
-        currentState = visualsData[saved.state] ? saved.state : currentState;
-        currentPalace = palaces.some((palace) => palace.id === saved.palace)
-          ? saved.palace
-          : currentPalace;
-        completedCount =
-          Number.isFinite(saved.completedCount) && saved.completedCount > 0
-            ? saved.completedCount
-            : 0;
-      } catch (error) {
-        completedCount = 0;
-      }
-
-      function savePrototypeState() {
-        try {
-          localStorage.setItem(
-            storageKey,
-            JSON.stringify({
-              mode: currentMode,
-              state: currentState,
-              palace: currentPalace,
-              completedCount,
-            }),
-          );
-        } catch (error) {
-          completeNote.textContent = "Browser membatasi penyimpanan lokal.";
+            if (this.size > 1.5) {
+              ctx.beginPath();
+              ctx.arc(this.x, this.y, this.size * 3.5, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(${this.r},${this.g},${this.b},${this.opacity * 0.18})`;
+              ctx.fill();
+            }
+          }
         }
-      }
 
-      function createSvgElement(name) {
-        return document.createElementNS("http://www.w3.org/2000/svg", name);
-      }
+        function createParticles() {
+          if (!ctx || reduceMotion) return;
+          const count = Math.min(72, Math.max(28, Math.floor(cW / 18)));
+          particles = Array.from({ length: count }, () => new SpiritMote());
+        }
 
-      function initMandala() {
-        const radius = 195;
-        const center = 260;
-        const points = [];
+        function animateCanvas() {
+          if (reduceMotion || document.hidden || !ctx) {
+            canvasRAF = 0;
+            return;
+          }
 
-        palaces.forEach((palace, index) => {
-          const rad = (palace.angle * Math.PI) / 180;
-          const x = center + radius * Math.cos(rad);
-          const y = center + radius * Math.sin(rad);
-          points.push(`${x},${y}`);
+          ctx.clearRect(0, 0, cW, cH);
 
-          const line = createSvgElement("line");
-          line.setAttribute("x1", center);
-          line.setAttribute("y1", center);
-          line.setAttribute("x2", x);
-          line.setAttribute("y2", y);
-          line.setAttribute("stroke-width", "1");
-          line.setAttribute("stroke-dasharray", "4 8");
-          line.classList.add("mandala-line");
-          mandalaLines.appendChild(line);
+          for (let i = 0; i < particles.length; i++) {
+            const a = particles[i];
+            a.update();
+            a.draw();
 
-          const node = document.createElement("button");
-          node.type = "button";
-          node.className = "palace-node";
-          node.dataset.palace = palace.id;
-          node.style.left = `${(x / 520) * 100}%`;
-          node.style.top = `${(y / 520) * 100}%`;
-          node.style.animationDelay = `${index * 0.45}s`;
-          node.setAttribute("aria-label", `Pilih ${palace.name}`);
-          node.innerHTML = `
-            <span class="node-glyph" style="background: radial-gradient(circle at 38% 32%, rgba(255,255,255,0.68), ${palace.color} 62%, ${palace.color}bb)">${palace.hanzi}</span>
-            <span class="node-label">${palace.name}</span>
-          `;
-          node.addEventListener("click", () => {
-            currentPalace = palace.id;
-            updateInterface();
-          });
-          palaceNodesContainer.appendChild(node);
-        });
+            for (let j = i + 1; j < particles.length; j++) {
+              const b = particles[j];
+              const dx = a.x - b.x;
+              const dy = a.y - b.y;
+              const dist = Math.hypot(dx, dy);
 
-        const polygon = createSvgElement("polygon");
-        polygon.setAttribute("points", points.join(" "));
-        polygon.setAttribute("fill", "none");
-        polygon.setAttribute("stroke-width", "1");
-        polygon.setAttribute("stroke-dasharray", "10 12");
-        polygon.id = "mandalaPolygon";
-        mandalaLines.appendChild(polygon);
-      }
+              if (dist < 105) {
+                const alpha =
+                  (1 - dist / 105) * Math.min(a.opacity, b.opacity) * 0.42;
+                ctx.beginPath();
+                ctx.moveTo(a.x, a.y);
+                ctx.lineTo(b.x, b.y);
+                ctx.strokeStyle = `rgba(216,181,108,${alpha})`;
+                ctx.lineWidth = 0.7;
+                ctx.stroke();
+              }
+            }
+          }
 
-      function setPressedButtons(groupSelector, key, value) {
-        document.querySelectorAll(groupSelector).forEach((button) => {
-          const isActive = button.dataset[key] === value;
-          button.setAttribute("aria-pressed", String(isActive));
-        });
-      }
+          canvasRAF = requestAnimationFrame(animateCanvas);
+        }
 
-      function updateInterface() {
-        const text = copyData[currentMode][currentState];
-        const visual = visualsData[currentState];
-        const palace =
-          palaces.find((item) => item.id === currentPalace) || palaces[0];
-        const qi = Math.max(
-          8,
-          Math.min(100, text.qi + (palaces.indexOf(palace) - 2) * 3),
+        function startCanvas() {
+          if (reduceMotion || document.hidden || !ctx || canvasRAF) return;
+          if (!particles.length) {
+            resizeCanvas();
+          }
+          canvasRAF = requestAnimationFrame(animateCanvas);
+        }
+
+        function stopCanvas() {
+          if (canvasRAF) cancelAnimationFrame(canvasRAF);
+          canvasRAF = 0;
+          if (ctx) ctx.clearRect(0, 0, cW, cH);
+        }
+
+        /* Cursor Aura */
+
+        const cursorAura = $("cursorAura");
+        let auraX = -1000;
+        let auraY = -1000;
+
+        function animateAura() {
+          if (
+            reduceMotion ||
+            document.hidden ||
+            !cursorAura ||
+            !finePointerQuery.matches
+          ) {
+            auraRAF = 0;
+            return;
+          }
+
+          auraX += (mouseX - auraX) * 0.08;
+          auraY += (mouseY - auraY) * 0.08;
+          cursorAura.style.left = auraX + "px";
+          cursorAura.style.top = auraY + "px";
+          auraRAF = requestAnimationFrame(animateAura);
+        }
+
+        function startAura() {
+          if (
+            reduceMotion ||
+            document.hidden ||
+            !cursorAura ||
+            !finePointerQuery.matches ||
+            auraRAF
+          ) {
+            return;
+          }
+          auraRAF = requestAnimationFrame(animateAura);
+        }
+
+        function stopAura() {
+          if (auraRAF) cancelAnimationFrame(auraRAF);
+          auraRAF = 0;
+        }
+
+        document.addEventListener(
+          "mousemove",
+          (event) => {
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+          },
+          { passive: true },
         );
 
-        stateBadge.textContent = text.state;
-        realmBadge.textContent = text.realm;
-        palaceTitle.textContent = palace.name;
-        palaceBody.textContent = palace.insight;
-        actionTitle.textContent = text.title;
-        actionBody.textContent = `${palace.name}: ${text.body} Practice: ${palace.practice}`;
-        actionTags.innerHTML = [palace.name, ...text.tags]
-          .map((tag) => `<span class="tag">${tag}</span>`)
-          .join("");
+        window.addEventListener("resize", resizeCanvas, { passive: true });
 
-        coreHanzi.textContent = visual.hanzi;
-        dantianCore.style.background = visual.core;
-        dantianCore.style.boxShadow = `0 0 34px ${visual.glow}, inset 0 0 36px rgba(255,255,255,0.24)`;
-        mandalaStage.style.background = `radial-gradient(circle at 50% 48%, ${visual.glow} 0%, transparent 60%), linear-gradient(180deg, rgba(0,0,0,0.16), rgba(255,255,255,0.025))`;
-        rings.forEach((ring) => {
-          ring.style.borderColor = visual.ring;
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            stopCanvas();
+            stopAura();
+          } else {
+            startCanvas();
+            startAura();
+          }
         });
-        document
-          .querySelectorAll(".mandala-line")
-          .forEach((line) => line.setAttribute("stroke", visual.ring));
-        document
-          .getElementById("mandalaPolygon")
-          .setAttribute("stroke", visual.ring);
-        qiBarFill.style.width = `${qi}%`;
-        qiBarFill.style.background = `linear-gradient(90deg, ${visual.accent}, ${visual.accent}80)`;
-        qiBarFill.style.boxShadow = `0 0 14px ${visual.glow}`;
-        qiBarText.textContent = `${qi}%`;
 
-        document.querySelectorAll(".palace-node").forEach((node) => {
-          node.classList.toggle(
-            "active",
-            node.dataset.palace === currentPalace,
-          );
-          node.setAttribute(
-            "aria-pressed",
-            String(node.dataset.palace === currentPalace),
-          );
-        });
-        setPressedButtons("#modeToggles .toggle-btn", "mode", currentMode);
-        setPressedButtons("#stateToggles .toggle-btn", "state", currentState);
-        completeNote.textContent =
-          completedCount > 0
-            ? `${completedCount} practice cukup tersimpan lokal.`
-            : "Status tersimpan lokal di browser.";
-        savePrototypeState();
-      }
+        if (reduceMotionQuery.addEventListener) {
+          reduceMotionQuery.addEventListener("change", (event) => {
+            reduceMotion = event.matches;
+            if (reduceMotion) {
+              stopCanvas();
+              stopAura();
+            } else {
+              resizeCanvas();
+              startCanvas();
+              startAura();
+            }
+          });
+        }
 
-      document
-        .querySelectorAll("#modeToggles .toggle-btn")
-        .forEach((button) => {
-          button.addEventListener("click", () => {
-            currentMode = button.dataset.mode;
-            updateInterface();
+        if (!reduceMotion) {
+          resizeCanvas();
+          startCanvas();
+          startAura();
+        }
+
+        /* Card hover glow */
+
+        document.querySelectorAll(".principle-card").forEach((card) => {
+          card.addEventListener("mousemove", (event) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty(
+              "--gx",
+              ((event.clientX - rect.left) / rect.width) * 100 + "%",
+            );
+            card.style.setProperty(
+              "--gy",
+              ((event.clientY - rect.top) / rect.height) * 100 + "%",
+            );
           });
         });
 
-      document
-        .querySelectorAll("#stateToggles .toggle-btn")
-        .forEach((button) => {
-          button.addEventListener("click", () => {
-            currentState = button.dataset.state;
-            updateInterface();
-          });
+        /* Navigation */
+
+        const navbar = $("navbar");
+        const menuToggle = $("menuToggle");
+        const navLinks = $("navLinks");
+
+        function syncNavbar() {
+          navbar.classList.toggle("scrolled", window.scrollY > 24);
+        }
+
+        function closeMenu() {
+          document.body.classList.remove("menu-open");
+          navbar.classList.remove("menu-active");
+          navLinks.classList.remove("open");
+          menuToggle.setAttribute("aria-expanded", "false");
+          menuToggle.setAttribute("aria-label", "Buka menu");
+        }
+
+        function openMenu() {
+          document.body.classList.add("menu-open");
+          navbar.classList.add("menu-active");
+          navLinks.classList.add("open");
+          menuToggle.setAttribute("aria-expanded", "true");
+          menuToggle.setAttribute("aria-label", "Tutup menu");
+        }
+
+        window.addEventListener("scroll", syncNavbar, { passive: true });
+        syncNavbar();
+
+        menuToggle.addEventListener("click", () => {
+          const open = menuToggle.getAttribute("aria-expanded") === "true";
+          open ? closeMenu() : openMenu();
         });
 
-      completePractice.addEventListener("click", () => {
-        completedCount += 1;
-        completePractice.textContent = "Practice hari ini cukup";
-        window.setTimeout(() => {
-          completePractice.textContent = "Tandai practice cukup";
-        }, 1600);
-        updateInterface();
-      });
+        navLinks.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", closeMenu);
+        });
 
-      dantianCore.addEventListener("click", () => {
-        const order = ["growth", "recovery", "tribulation", "dormant"];
-        const nextIndex = (order.indexOf(currentState) + 1) % order.length;
-        currentState = order[nextIndex];
-        updateInterface();
-      });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") closeMenu();
+        });
 
-      initMandala();
-      updateInterface();
+        window.addEventListener(
+          "resize",
+          () => {
+            if (window.innerWidth > 820) closeMenu();
+          },
+          { passive: true },
+        );
+
+        /* Scrollspy */
+
+        const navItems = [...document.querySelectorAll("[data-nav]")];
+        const sectionIds = navItems
+          .map((a) => a.getAttribute("href"))
+          .filter((href) => href && href.startsWith("#"))
+          .map((href) => href.slice(1));
+
+        const sectionEls = sectionIds.map((id) => $(id)).filter(Boolean);
+
+        if ("IntersectionObserver" in window) {
+          const spy = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                const id = entry.target.id;
+                navItems.forEach((a) => {
+                  a.classList.toggle(
+                    "active",
+                    a.getAttribute("href") === "#" + id,
+                  );
+                });
+              });
+            },
+            {
+              threshold: 0.18,
+              rootMargin: "-35% 0px -50% 0px",
+            },
+          );
+
+          sectionEls.forEach((section) => spy.observe(section));
+        }
+
+        /* Reveal */
+
+        if ("IntersectionObserver" in window) {
+          const revealObs = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("is-visible");
+                  revealObs.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+          );
+
+          document.querySelectorAll(".reveal").forEach((el) => {
+            revealObs.observe(el);
+          });
+        } else {
+          document.querySelectorAll(".reveal").forEach((el) => {
+            el.classList.add("is-visible");
+          });
+        }
+
+        /* Prototype data */
+
+        const copyData = {
+          plain: {
+            growth: {
+              state: "Mode Aktif",
+              realm: "Fondasi Diri",
+              title: "Prioritas Hari Ini",
+              body: "Area ini paling butuh perhatian. Ambil satu langkah kecil yang realistis dan cukup untuk hari ini.",
+              tags: ["Satu langkah", "Cukup", "Ritme aman"],
+              qi: 70,
+            },
+            recovery: {
+              state: "Mode Istirahat",
+              realm: "Pemulihan",
+              title: "Fokus Pemulihan",
+              body: "Hari ini tidak perlu dipaksa. Turunkan beban dan pilih aksi yang hanya menjaga ritme dasar.",
+              tags: ["Pemulihan", "Beban rendah", "Istirahat sah"],
+              qi: 32,
+            },
+            tribulation: {
+              state: "Mode Tantangan",
+              realm: "Transformasi",
+              title: "Arahkan Ulang",
+              body: "Ada hambatan yang terasa nyata. Fokus pada satu tindakan yang paling menenangkan sistemmu.",
+              tags: ["Hambatan aktif", "Tidak heroik", "Data dari gesekan"],
+              qi: 44,
+            },
+            dormant: {
+              state: "Mode Hening",
+              realm: "Pemurnian Ulang",
+              title: "Mulai Lagi",
+              body: "Jika ritme sempat redup, tidak apa-apa. Kembali lewat satu tindakan kecil yang aman.",
+              tags: ["Mulai lagi", "Tidak balik nol", "Aman"],
+              qi: 52,
+            },
+          },
+          hybrid: {
+            growth: {
+              state: "Growth Phase (生)",
+              realm: "Foundation Establishment",
+              title: "Breakthrough Hari Ini",
+              body: "Palace ini sedang butuh Qi. Mulai dari practice 12 menit yang lembut dan bisa selesai.",
+              tags: ["Qi Capacity 7/10", "Gentle enough", "One practice"],
+              qi: 70,
+            },
+            recovery: {
+              state: "Seclusion Mode (静)",
+              realm: "Quiet Integration",
+              title: "Seclusion Focus",
+              body: "Qi-mu perlu dipulihkan, bukan dipaksa. Pilih practice yang hanya menjaga fondasi hari ini.",
+              tags: [
+                "Seclusion Mode",
+                "Qi Capacity 3/10",
+                "Recovery is cultivation",
+              ],
+              qi: 32,
+            },
+            tribulation: {
+              state: "Tribulation (劫)",
+              realm: "Spirit Transformation",
+              title: "Bottleneck Inquiry",
+              body: "Ada gesekan nyata. Cari satu tindakan yang meredakan tekanan mental, bukan yang paling megah.",
+              tags: ["Friction = data", "Qi Capacity 4/10", "Witness first"],
+              qi: 44,
+            },
+            dormant: {
+              state: "Dormant Root (眠)",
+              realm: "Qi Gathering",
+              title: "Kembali ke Aliran",
+              body: "Sistemmu sedang redup, bukan rusak. Kembali lewat satu practice sederhana tanpa tuntutan pembuktian.",
+              tags: ["Quiet restart", "Qi Capacity 5/10", "The path remains"],
+              qi: 52,
+            },
+          },
+          full: {
+            growth: {
+              state: "炼气化神 · Cultivation Progress",
+              realm: "筑基期 · Foundation Establishment",
+              title: "Meridian Breakthrough",
+              body: "Meridian palace ini membutuhkan sirkulasi Qi. Jalankan satu teknik sederhana untuk menghimpun energi Dantian.",
+              tags: ["Qi Reservoir 7/10", "Steady circulation", "No drama"],
+              qi: 70,
+            },
+            recovery: {
+              state: "闭关静修 · Closed-Door Seclusion",
+              realm: "培元期 · Quiet Integration",
+              title: "Nourish the Primordial Root",
+              body: "Bukan saatnya menembus batas. Hari ini adalah waktu suci untuk menjaga bejana fisik dan menenangkan Shen.",
+              tags: [
+                "Seclusion Chamber",
+                "Qi Reservoir 3/10",
+                "Retreat without shame",
+              ],
+              qi: 32,
+            },
+            tribulation: {
+              state: "渡劫破除 · Heavenly Tribulation",
+              realm: "化神期 · Spirit Transformation",
+              title: "Heart Demon Inquiry",
+              body: "Gesekan hari ini adalah guru sejati. Jangan mengejar kemenangan besar; cukup amati dan cegah penyimpangan.",
+              tags: ["Tribulation", "Qi Reservoir 4/10", "Do not punish"],
+              qi: 44,
+            },
+            dormant: {
+              state: "蛰伏息定 · Winter Hibernation",
+              realm: "聚气期 · Qi Gathering",
+              title: "Reopen the Immortal Path",
+              body: "Bahkan dunia batin membutuhkan musim dingin. Kembali bukan dari rasa malu, melainkan dari satu tarikan napas.",
+              tags: ["Dormant Root", "Qi Reservoir 5/10", "Path remains"],
+              qi: 52,
+            },
+          },
+        };
+
+        const visualsData = {
+          growth: {
+            core: "radial-gradient(circle at 38% 30%, #f4e4bb 0%, #88e2b0 32%, #6fae90 64%, #1a332a 100%)",
+            ring: "rgba(111,174,144,0.4)",
+            glow: "rgba(111,174,144,0.55)",
+            glowSoft: "rgba(111,174,144,0.18)",
+            accent: "#88e2b0",
+            hanzi: "生",
+          },
+          recovery: {
+            core: "radial-gradient(circle at 38% 30%, #e3f2f8 0%, #a3d9ff 30%, #7ba4c0 66%, #1f3747 100%)",
+            ring: "rgba(163,217,255,0.4)",
+            glow: "rgba(163,217,255,0.45)",
+            glowSoft: "rgba(163,217,255,0.16)",
+            accent: "#a3d9ff",
+            hanzi: "静",
+          },
+          tribulation: {
+            core: "radial-gradient(circle at 38% 30%, #f6e6cf 0%, #ffd984 22%, #d1565e 56%, #4a1a20 100%)",
+            ring: "rgba(209,86,94,0.45)",
+            glow: "rgba(209,86,94,0.5)",
+            glowSoft: "rgba(209,86,94,0.18)",
+            accent: "#ff737d",
+            hanzi: "劫",
+          },
+          dormant: {
+            core: "radial-gradient(circle at 38% 30%, #d5dedb 0%, #a4b4ac 30%, #56685f 66%, #202a26 100%)",
+            ring: "rgba(164,180,172,0.25)",
+            glow: "rgba(164,180,172,0.3)",
+            glowSoft: "rgba(164,180,172,0.12)",
+            accent: "#a4b4ac",
+            hanzi: "眠",
+          },
+        };
+
+        const palaces = [
+          {
+            id: "body",
+            hanzi: "身",
+            name: "Body Palace",
+            color: "#88e2b0",
+            angle: -90,
+            insight:
+              "Tubuh adalah wadah primordial kultivasi. Saat wadah kelelahan, sistem meridian lain kehilangan pijakan energi.",
+            practice:
+              "Jalan kaki 12 menit di udara terbuka, lalu tiga tarikan napas Dantian yang dalam.",
+          },
+          {
+            id: "resource",
+            hanzi: "资",
+            name: "Resource Palace",
+            color: "#ffd984",
+            angle: -30,
+            insight:
+              "Sumber daya memberi batas nyata di dunia fisik. Kejernihan batin sering muncul setelah beban operasional dirapikan.",
+            practice:
+              "Pilih satu pengeluaran, jadwal, atau perangkat digital yang perlu dibersihkan hari ini.",
+          },
+          {
+            id: "bond",
+            hanzi: "缘",
+            name: "Bond Palace",
+            color: "#ffb3b8",
+            angle: 30,
+            insight:
+              "Relasi adalah medan resonansi karmik. Tidak semua ikatan perlu intens, namun ikatan sejati perlu dirawat dengan jujur.",
+            practice:
+              "Kirim satu pesan singkat dan tulus kepada orang yang memberi ketenangan dalam hidupmu.",
+          },
+          {
+            id: "heart",
+            hanzi: "心",
+            name: "Heart Palace",
+            color: "#a3d9ff",
+            angle: 90,
+            insight:
+              "Perhatian yang buyar meminta ruang jeda, bukan tekanan mental. Amati pusaran arus sebelum mencoba memperbaikinya.",
+            practice:
+              "Tulis tiga kalimat pendek: apa yang terasa berat, apa yang nyata, dan apa yang siap dilepaskan.",
+          },
+          {
+            id: "craft",
+            hanzi: "艺",
+            name: "Craft Palace",
+            color: "#c3a1ff",
+            angle: 150,
+            insight:
+              "Karya tumbuh dari ritme latihan yang konstan. Mastery tidak perlu dramatis untuk terus berkembang.",
+            practice:
+              "Dedikasikan 25 menit fokus penuh tanpa distraksi untuk karya atau keahlian utamamu.",
+          },
+          {
+            id: "joy",
+            hanzi: "乐",
+            name: "Joy Palace",
+            color: "#f4e4bb",
+            angle: 210,
+            insight:
+              "Sukacita menjaga akar spiritual tetap menyala. Kultivasi yang kehilangan keindahan dan rasa syukur akan cepat mengering.",
+            practice:
+              "Luangkan 15 menit untuk menikmati teh, musik, atau keindahan alam tanpa tuntutan produktivitas.",
+          },
+        ];
+
+        const mandalaLines = $("mandalaLines");
+        const palaceNodesContainer = $("palaceNodesContainer");
+        const rings = ["ringOuter", "ringMiddle", "ringInner"].map($);
+        const storageKey = "daoji-immortal-state";
+
+        let currentMode = "hybrid";
+        let currentState = "growth";
+        let currentPalace = "body";
+        let completedCount = 0;
+
+        try {
+          const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+          if (copyData[saved.mode]) currentMode = saved.mode;
+          if (visualsData[saved.state]) currentState = saved.state;
+          if (palaces.some((p) => p.id === saved.palace)) {
+            currentPalace = saved.palace;
+          }
+          if (Number.isFinite(saved.cc) && saved.cc > 0) {
+            completedCount = saved.cc;
+          }
+        } catch (_) {}
+
+        function save() {
+          try {
+            localStorage.setItem(
+              storageKey,
+              JSON.stringify({
+                mode: currentMode,
+                state: currentState,
+                palace: currentPalace,
+                cc: completedCount,
+              }),
+            );
+          } catch (_) {}
+        }
+
+        function svgEl(name) {
+          return document.createElementNS("http://www.w3.org/2000/svg", name);
+        }
+
+        function addTag(text) {
+          const tag = document.createElement("span");
+          tag.className = "tag";
+          tag.textContent = text;
+          $("actionTags").appendChild(tag);
+        }
+
+        function initMandala() {
+          const R = 195;
+          const C = 260;
+          const points = [];
+
+          mandalaLines.textContent = "";
+          palaceNodesContainer.textContent = "";
+
+          palaces.forEach((palace, index) => {
+            const rad = (palace.angle * Math.PI) / 180;
+            const x = C + R * Math.cos(rad);
+            const y = C + R * Math.sin(rad);
+            points.push(`${x},${y}`);
+
+            const line = svgEl("line");
+            line.setAttribute("x1", C);
+            line.setAttribute("y1", C);
+            line.setAttribute("x2", x);
+            line.setAttribute("y2", y);
+            line.setAttribute("stroke-width", "1.2");
+            line.setAttribute("stroke-dasharray", "4 8");
+            line.classList.add("ml");
+            mandalaLines.appendChild(line);
+
+            const node = document.createElement("button");
+            node.type = "button";
+            node.className = "palace-node";
+            node.dataset.palace = palace.id;
+            node.style.left = `${(x / 520) * 100}%`;
+            node.style.top = `${(y / 520) * 100}%`;
+            node.style.animationDelay = `${index * 0.45}s`;
+            node.setAttribute("aria-label", `Pilih ${palace.name}`);
+
+            const glyph = document.createElement("span");
+            glyph.className = "node-glyph";
+            glyph.textContent = palace.hanzi;
+            glyph.style.background = `radial-gradient(circle at 36% 30%, rgba(255,255,255,0.7), ${palace.color} 60%, ${palace.color}bb)`;
+
+            const label = document.createElement("span");
+            label.className = "node-label";
+            label.textContent = palace.name.replace(" Palace", "");
+
+            node.append(glyph, label);
+            node.addEventListener("click", () => {
+              currentPalace = palace.id;
+              updateUI();
+            });
+
+            palaceNodesContainer.appendChild(node);
+          });
+
+          const poly = svgEl("polygon");
+          poly.setAttribute("points", points.join(" "));
+          poly.setAttribute("fill", "none");
+          poly.setAttribute("stroke-width", "1.2");
+          poly.setAttribute("stroke-dasharray", "8 14");
+          poly.id = "mandPoly";
+          mandalaLines.appendChild(poly);
+        }
+
+        function updateUI() {
+          const text = copyData[currentMode][currentState];
+          const visual = visualsData[currentState];
+          const palace =
+            palaces.find((item) => item.id === currentPalace) || palaces[0];
+          const palaceIndex = palaces.indexOf(palace);
+          const qi = Math.max(
+            10,
+            Math.min(100, text.qi + (palaceIndex - 2) * 4),
+          );
+
+          $("stateBadge").textContent = text.state;
+          $("realmBadge").textContent = text.realm;
+          $("palaceTitle").textContent = `${palace.name} (${palace.hanzi})`;
+          $("palaceBody").textContent = palace.insight;
+          $("actionTitle").textContent = text.title;
+          $("actionBody").textContent =
+            `${palace.name}: ${text.body} Practice: ${palace.practice}`;
+
+          $("actionTags").textContent = "";
+          addTag(palace.name);
+          text.tags.forEach(addTag);
+
+          $("coreHanzi").textContent = visual.hanzi;
+
+          const core = $("dantianCore");
+          core.style.background = visual.core;
+          core.style.boxShadow = `0 0 50px ${visual.glow}, 0 0 130px ${visual.glowSoft}, inset 0 0 35px rgba(255,255,255,0.3)`;
+          core.setAttribute(
+            "aria-label",
+            `Dantian core. State saat ini ${text.state}. Klik untuk mengganti state batin.`,
+          );
+
+          $("mandalaStage").style.background =
+            `radial-gradient(circle at 50% 50%, ${visual.glow} 0%, transparent 60%), linear-gradient(180deg, rgba(0,0,0,0.3), rgba(13,22,20,0.4))`;
+
+          rings.forEach((ring) => {
+            ring.style.borderColor = visual.ring;
+          });
+
+          document.querySelectorAll(".ml").forEach((line) => {
+            line.setAttribute("stroke", visual.ring);
+          });
+
+          const mandPoly = $("mandPoly");
+          if (mandPoly) mandPoly.setAttribute("stroke", visual.ring);
+
+          const qiBar = $("qiBarFill");
+          qiBar.style.width = qi + "%";
+          qiBar.style.background = `linear-gradient(90deg, ${visual.accent}, ${visual.accent}90)`;
+          qiBar.style.boxShadow = `0 0 18px ${visual.glow}`;
+          $("qiBarText").textContent = qi + "%";
+
+          document.querySelectorAll(".palace-node").forEach((node) => {
+            const active = node.dataset.palace === currentPalace;
+            node.classList.toggle("active", active);
+            node.setAttribute("aria-pressed", String(active));
+          });
+
+          document
+            .querySelectorAll("#modeToggles .toggle-btn")
+            .forEach((button) => {
+              button.setAttribute(
+                "aria-pressed",
+                String(button.dataset.mode === currentMode),
+              );
+            });
+
+          document
+            .querySelectorAll("#stateToggles .toggle-btn")
+            .forEach((button) => {
+              button.setAttribute(
+                "aria-pressed",
+                String(button.dataset.state === currentState),
+              );
+            });
+
+          $("completeNote").textContent =
+            completedCount > 0
+              ? `${completedCount} practice tersimpan lokal.`
+              : "Status tersimpan lokal.";
+
+          $("prototypeStatus").textContent =
+            `${text.state}, ${palace.name}, qi ${qi} persen. ${text.title}.`;
+
+          save();
+        }
+
+        document
+          .querySelectorAll("#modeToggles .toggle-btn")
+          .forEach((button) => {
+            button.addEventListener("click", () => {
+              currentMode = button.dataset.mode;
+              updateUI();
+            });
+          });
+
+        document
+          .querySelectorAll("#stateToggles .toggle-btn")
+          .forEach((button) => {
+            button.addEventListener("click", () => {
+              currentState = button.dataset.state;
+              updateUI();
+            });
+          });
+
+        $("completePractice").addEventListener("click", () => {
+          completedCount++;
+          const button = $("completePractice");
+
+          button.textContent = "Practice Hari Ini Cukup";
+          button.style.background =
+            "linear-gradient(135deg, rgba(111,174,144,0.3), rgba(216,181,108,0.25))";
+          button.style.borderColor = "var(--gold-glow)";
+          button.style.color = "#fff";
+
+          setTimeout(() => {
+            button.textContent = "Tandai Practice Cukup";
+            button.style.background = "";
+            button.style.borderColor = "";
+            button.style.color = "";
+          }, 2200);
+
+          updateUI();
+        });
+
+        $("dantianCore").addEventListener("click", () => {
+          const order = ["growth", "recovery", "tribulation", "dormant"];
+          currentState =
+            order[(order.indexOf(currentState) + 1) % order.length];
+          updateUI();
+        });
+
+        initMandala();
+        updateUI();
+      })();
     </script>
   </body>
 </html>
