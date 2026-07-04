@@ -117,7 +117,9 @@ class SettingsBottomSheet extends ConsumerWidget {
     final confirm = await showAnimatedDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(DaojiText.resolve(DaojiTextKey.settingsReset, vocabularyLevel)),
+        title: Text(
+          DaojiText.resolve(DaojiTextKey.settingsReset, vocabularyLevel),
+        ),
         content: const Text(
           'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
         ),
@@ -196,13 +198,17 @@ class SettingsBottomSheet extends ConsumerWidget {
           const SizedBox(height: 20),
           ListTile(
             leading: const Icon(Icons.file_download_outlined),
-            title: Text(DaojiText.resolve(DaojiTextKey.settingsExport, vocabularyLevel)),
+            title: Text(
+              DaojiText.resolve(DaojiTextKey.settingsExport, vocabularyLevel),
+            ),
             subtitle: const Text('Simpan semua data ke file JSON'),
             onTap: () => _exportDataAsJson(context, ref),
           ),
           ListTile(
             leading: const Icon(Icons.refresh_rounded),
-            title: Text(DaojiText.resolve(DaojiTextKey.settingsReset, vocabularyLevel)),
+            title: Text(
+              DaojiText.resolve(DaojiTextKey.settingsReset, vocabularyLevel),
+            ),
             subtitle: const Text('Hapus semua data dan kembali ke awal'),
             onTap: () => _resetApplication(context, ref),
             tileColor: Colors.red.withValues(alpha: 0.1),
@@ -268,7 +274,12 @@ class SettingsBottomSheet extends ConsumerWidget {
                           : Icons.developer_mode_outlined,
                       color: Colors.blueGrey,
                     ),
-                    title: Text(DaojiText.resolve(DaojiTextKey.settingsDevMode, vocabularyLevel)),
+                    title: Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.settingsDevMode,
+                        vocabularyLevel,
+                      ),
+                    ),
                     subtitle: const Text(
                       'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
                     ),
