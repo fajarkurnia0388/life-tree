@@ -140,7 +140,9 @@ class GrowthMapPainter extends CustomPainter {
     // Radial aura around branch nodes based on palace score
     // Uses multiple visual cues for accessibility: size, opacity, ring pattern
     for (final branch in branchNodes) {
-      _drawPalaceAura(canvas, branch);
+      if (!branch.isLocked) {
+        _drawPalaceAura(canvas, branch);
+      }
     }
 
     // ─── Draw Branches (Root -> Domain) ───
@@ -162,10 +164,18 @@ class GrowthMapPainter extends CustomPainter {
       final ctrlY = (rootPos.dy + branchPos.dy) / 2;
 
       path.quadraticBezierTo(ctrlX, ctrlY, branchPos.dx, branchPos.dy);
-      canvas.drawPath(path, branchPaint);
+      final effectiveBranchPaint = branch.isLocked
+          ? (Paint()
+              ..color = Colors.grey.withValues(alpha: 0.22)
+              ..strokeWidth = 1.6
+              ..style = PaintingStyle.stroke
+              ..strokeCap = StrokeCap.round)
+          : branchPaint;
+      canvas.drawPath(path, effectiveBranchPaint);
 
-      // If the domain is healthy (score >= 8), draw an extra glowing aura path
-      if (branch.score >= 8.0) {
+      // If the stream is healthy (score >= 8), draw an extra glowing aura path.
+      // Locked streams stay visually quiet until unlocked/progressively active.
+      if (!branch.isLocked && branch.score >= 8.0) {
         final glowPaint = Paint()
           ..color = _applySeasonMod(
             branch.color.withValues(alpha: 0.35 * _seasonMod.glowMult),

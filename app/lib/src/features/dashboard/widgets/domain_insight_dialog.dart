@@ -5,12 +5,14 @@ import '../../../core/theme/theme.dart';
 class DomainInsightDialog extends StatefulWidget {
   final String domain;
   final double score;
+  final String? displayDomain;
   final VoidCallback? onFocusApplied;
 
   const DomainInsightDialog({
     super.key,
     required this.domain,
     required this.score,
+    this.displayDomain,
     this.onFocusApplied,
   });
 
@@ -18,6 +20,7 @@ class DomainInsightDialog extends StatefulWidget {
     BuildContext context, {
     required String domain,
     required double score,
+    String? displayDomain,
     VoidCallback? onFocusApplied,
   }) {
     showGeneralDialog(
@@ -32,6 +35,7 @@ class DomainInsightDialog extends StatefulWidget {
           child: DomainInsightDialog(
             domain: domain,
             score: score,
+            displayDomain: displayDomain,
             onFocusApplied: onFocusApplied,
           ),
         );
@@ -45,6 +49,7 @@ class DomainInsightDialog extends StatefulWidget {
 
 class _DomainInsightDialogState extends State<DomainInsightDialog>
     with TickerProviderStateMixin {
+  String get _displayDomain => widget.displayDomain ?? widget.domain;
   late AnimationController _pulseController;
   late AnimationController _fillController;
   late Animation<double> _scaleAnimation;
@@ -307,7 +312,7 @@ class _DomainInsightDialogState extends State<DomainInsightDialog>
         ),
         const SizedBox(height: 28),
         Text(
-          'Mengalirkan Energi ${widget.domain}...',
+          'Mengalirkan Energi $_displayDomain...',
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -369,7 +374,7 @@ class _DomainInsightDialogState extends State<DomainInsightDialog>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Domain ${widget.domain}',
+                        _displayDomain,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: domainColor,
@@ -557,7 +562,7 @@ class _DomainInsightDialogState extends State<DomainInsightDialog>
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text('Fokus Dasbor'),
+                      child: const Text('Fokus Dashboard'),
                     ),
                   ),
                 ],

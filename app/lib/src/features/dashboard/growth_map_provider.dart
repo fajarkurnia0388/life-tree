@@ -100,9 +100,25 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
     'Rekreasi': Colors.purple,
   };
 
-  // Convert to BranchNode
+  final activeDomains = <String>{'Tubuh'};
+  if (dashboardData.profile.isDeveloperMode) {
+    activeDomains.addAll(domains);
+  } else {
+    activeDomains.addAll(domainScores.keys.where(domains.contains));
+    for (final hwl in dashboardData.habitsToday) {
+      final domain = hwl.habit.domainTag;
+      if (domain != null && domains.contains(domain)) {
+        activeDomains.add(domain);
+      }
+    }
+  }
+
+  // Convert to BranchNode. Locked branches stay visible as progressive
+  // disclosure, but cannot be focused unless Developer Mode is active or the
+  // user has created/activated data in that stream.
   final List<BranchNode> branchNodes = [];
   for (final domain in domains) {
+    final isLocked = !activeDomains.contains(domain);
     final score = domainScores[domain] ?? 5.0; // default to 5.0 (neutral)
     final String statusLabel;
     if (score >= 8.0) {
@@ -113,16 +129,19 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
       statusLabel = 'Butuh perhatian';
     }
 
+    final displayDomain = DaojiText.domainLabel(domain, vocabularyLevel);
     branchNodes.add(
       BranchNode(
         id: domain,
         label: DaojiText.domainLabel(domain, vocabularyLevel, short: true),
         icon: _getDomainIcon(domain),
         score: score,
-        statusLabel: statusLabel,
+        statusLabel: isLocked ? 'Soon' : statusLabel,
         color: domainColors[domain] ?? Colors.green,
-        semanticLabel:
-            '${DaojiText.domainLabel(domain, vocabularyLevel)} — Skor: ${score.toStringAsFixed(1)}, Status: $statusLabel',
+        isLocked: isLocked,
+        semanticLabel: isLocked
+            ? '$displayDomain — segera dibuka bertahap. Tambahkan practice di stream ini atau aktifkan Developer Mode untuk testing.'
+            : '$displayDomain — Skor: ${score.toStringAsFixed(1)}, Status: $statusLabel',
       ),
     );
   }

@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 
 import '../../core/domain/app_constants.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
 import '../../core/theme/button_theme.dart';
@@ -275,6 +278,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
   }
 
   Widget _buildVitalityRadarCard(DashboardData data) {
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     Map<String, double> scores = Map.from(DomainDefaults.scores);
     if (data.profile.latestDomainScores != null) {
       try {
@@ -305,6 +309,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
           context,
           domain: domain,
           score: currentScore,
+          displayDomain: DaojiText.domainLabel(domain, vocabularyLevel),
           onFocusApplied: () {
             setState(() {
               _selectedDomainFilter = (_selectedDomainFilter == domain)
@@ -320,14 +325,15 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
   @override
   Widget build(BuildContext context) {
     final dataAsync = ref.watch(dashboardDataProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profil'),
+        title: Text(DaojiText.resolve(DaojiTextKey.navProfile, vocabularyLevel)),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            tooltip: 'Pengaturan',
+            tooltip: DaojiText.resolve(DaojiTextKey.settingsTitle, vocabularyLevel),
             onPressed: () {
               showModalBottomSheet(
                 context: context,

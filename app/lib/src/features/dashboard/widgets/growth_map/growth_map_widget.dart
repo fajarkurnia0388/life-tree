@@ -166,6 +166,22 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
     }
   }
 
+  void _showLockedStreamSnackBar(BuildContext context, BranchNode node) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          '${node.label} akan terbuka bertahap. Tambahkan practice di stream ini, atau aktifkan Developer Mode untuk testing bebas.',
+        ),
+        action: SnackBarAction(
+          label: 'Tambah Practice',
+          onPressed: () => context.push('/add-habit'),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -344,11 +360,11 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                         node.id == widget.selectedDomain;
                     final branchDiameter = isSelectedBranch ? 46.0 : 36.0;
                     final iconSize = isSelectedBranch ? 22.0 : 18.0;
-                    final isDeficit = node.score < 5.0;
-                    final glowColor = isDeficit
-                        ? Colors.amber[800]!
-                        : node.color;
-                    final isHealthy = node.score >= 8.0;
+                    final isDeficit = !node.isLocked && node.score < 5.0;
+                    final glowColor = node.isLocked
+                        ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
+                        : (isDeficit ? Colors.amber[800]! : node.color);
+                    final isHealthy = !node.isLocked && node.score >= 8.0;
 
                     return AnimatedPositioned(
                       key: ValueKey('branch-${node.id}'),
@@ -362,7 +378,9 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: widget.onDomainTap != null
+                            onTap: node.isLocked
+                                ? () => _showLockedStreamSnackBar(context, node)
+                                : widget.onDomainTap != null
                                 ? () => widget.onDomainTap!(node.id)
                                 : () {
                                     showDialog(
@@ -382,7 +400,9 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                                   height: branchDiameter,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: theme.colorScheme.surface,
+                                    color: node.isLocked
+                                        ? theme.colorScheme.surface.withValues(alpha: 0.62)
+                                        : theme.colorScheme.surface,
                                     border: Border.all(
                                       color: glowColor,
                                       width: isHealthy ? 2.5 : 1.5,
@@ -405,6 +425,27 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                                         size: iconSize,
                                         color: glowColor,
                                       ),
+                                      if (node.isLocked)
+                                        Positioned(
+                                          right: 0,
+                                          bottom: 0,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(2),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: theme.colorScheme.surface,
+                                              border: Border.all(
+                                                color: glowColor,
+                                                width: 0.8,
+                                              ),
+                                            ),
+                                            child: Icon(
+                                              Icons.lock_rounded,
+                                              size: 9,
+                                              color: glowColor,
+                                            ),
+                                          ),
+                                        ),
                                       if (isDeficit)
                                         Positioned(
                                           top: 0,

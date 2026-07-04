@@ -51,6 +51,7 @@ class BranchNode extends GrowthMapNode {
   final double score; // 1 to 10
   final String statusLabel; // Needs Attention, Neutral, Healthy
   final Color color;
+  final bool isLocked;
 
   const BranchNode({
     required super.id,
@@ -61,6 +62,7 @@ class BranchNode extends GrowthMapNode {
     required this.score,
     required this.statusLabel,
     required this.color,
+    this.isLocked = false,
   }) : super(type: NodeType.branch);
 
   @override
@@ -74,6 +76,7 @@ class BranchNode extends GrowthMapNode {
       score: score,
       statusLabel: statusLabel,
       color: color,
+      isLocked: isLocked,
     );
   }
 }
