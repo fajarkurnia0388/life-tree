@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/theme/form_theme.dart';
 import '../../core/theme/button_theme.dart';
@@ -412,10 +415,11 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(CultivationStrings.journalLite(languageLevel)),
+        title: Text(DaojiText.resolve(DaojiTextKey.journalQuickTitle, vocabularyLevel)),
       ),
       body: Form(
         key: _formKey,

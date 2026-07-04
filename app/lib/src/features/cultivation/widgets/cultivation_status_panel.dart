@@ -5,7 +5,7 @@ import '../cultivation_strings.dart';
 import '../cultivation_provider.dart';
 import '../../../core/widgets/loading_state_widget.dart';
 
-/// Comprehensive status panel showing all 4 cultivation sumbu.
+/// Comprehensive status panel showing the current cultivation interpretation.
 ///
 /// Phase 0: Basic informational display.
 /// Phase 2: Add visual enhancements (icons, colors, animations).
@@ -63,9 +63,9 @@ class CultivationStatusPanel extends ConsumerWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // Palaces
+                // Streams
                 Text(
-                  'Six Palace Resonance',
+                  CultivationStrings.radarChartTitle(languageLevel),
                   style: Theme.of(context).textTheme.labelLarge,
                 ),
                 const SizedBox(height: 8),
@@ -139,8 +139,6 @@ class CultivationStatusPanel extends ConsumerWidget {
     return Column(
       children: CultivationPalace.values.map((palace) {
         final score = cultivation.palaceScores[palace] ?? 5.0;
-        final palaceInfo = CultivationConstants.palaceInfo(palace);
-
         return Padding(
           padding: const EdgeInsets.only(bottom: 6),
           child: Row(

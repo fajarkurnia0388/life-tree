@@ -1,46 +1,46 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/i18n/daoji_vocabulary_level.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'cultivation_constants.dart';
 import 'cultivation_layer.dart';
 
-/// Provides the active 3-level language setting for cultivation terminology.
+/// Legacy 3-level language setting used by older widgets.
 ///
-/// Reads from user profile's cultivationThemeEnabled flag. When theme is
-/// disabled, forces Plain level. When enabled, allows user to cycle between
-/// Plain/Hybrid/Full via settings (defaults to Hybrid).
+/// New code should prefer DaojiVocabularyLevel from core/i18n. This provider is
+/// kept for compatibility while the UI migrates from CultivationStrings to the
+/// central DaojiText registry.
 final cultivationLanguageLevelProvider =
     StateNotifierProvider<
       CultivationLanguageLevelNotifier,
       CultivationLanguageLevel
     >((ref) {
-      final dashboardAsync = ref.watch(dashboardDataProvider);
-
-      // If user disabled cultivation theme entirely, force Plain
-      final themeEnabled =
-          dashboardAsync.whenOrNull(
-            data: (data) => data.profile.cultivationThemeEnabled,
-          ) ??
-          true;
-
-      return CultivationLanguageLevelNotifier(themeEnabled: themeEnabled);
+      final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
+      return CultivationLanguageLevelNotifier(
+        initialLevel: _legacyLevelFromVocabulary(vocabularyLevel),
+      );
     });
 
-/// Notifier for cultivation language level that respects the theme toggle.
+CultivationLanguageLevel _legacyLevelFromVocabulary(
+  DaojiVocabularyLevel vocabularyLevel,
+) {
+  return switch (vocabularyLevel) {
+    DaojiVocabularyLevel.practical => CultivationLanguageLevel.plain,
+    DaojiVocabularyLevel.gentleCultivation => CultivationLanguageLevel.plain,
+    DaojiVocabularyLevel.daoStream => CultivationLanguageLevel.hybrid,
+    DaojiVocabularyLevel.immortalCultivation => CultivationLanguageLevel.full,
+  };
+}
+
+/// Notifier for legacy cultivation language level.
 class CultivationLanguageLevelNotifier
     extends StateNotifier<CultivationLanguageLevel> {
-  final bool themeEnabled;
+  CultivationLanguageLevelNotifier({
+    CultivationLanguageLevel initialLevel = CultivationLanguageLevel.hybrid,
+  }) : super(initialLevel);
 
-  CultivationLanguageLevelNotifier({required this.themeEnabled})
-    : super(
-        themeEnabled
-            ? CultivationLanguageLevel.hybrid
-            : CultivationLanguageLevel.plain,
-      );
-
-  /// Cycle to next level (only if theme is enabled).
+  /// Cycle to next legacy level.
   void cycleLevel() {
-    if (!themeEnabled) return;
-
     state = switch (state) {
       CultivationLanguageLevel.plain => CultivationLanguageLevel.hybrid,
       CultivationLanguageLevel.hybrid => CultivationLanguageLevel.full,
@@ -48,9 +48,8 @@ class CultivationLanguageLevelNotifier
     };
   }
 
-  /// Set specific level (only if theme is enabled).
+  /// Set specific legacy level.
   void setLevel(CultivationLanguageLevel level) {
-    if (!themeEnabled) return;
     state = level;
   }
 }

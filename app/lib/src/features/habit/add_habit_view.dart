@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/theme/form_theme.dart';
 import '../../core/theme/button_theme.dart';
@@ -280,6 +283,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -368,7 +372,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                           return Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: ChoiceChip(
-                              label: Text(tag),
+                              label: Text(DaojiText.domainLabel(tag, vocabularyLevel, short: true)),
                               selected: isSelected,
                               onSelected: (selected) {
                                 if (selected) {
@@ -481,9 +485,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 const SizedBox(height: 16),
               ],
 
-              const Text(
-                'Kategori Kebiasaan',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                DaojiText.resolve(DaojiTextKey.habitCategory, vocabularyLevel),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
@@ -508,7 +512,16 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                         ]
                         .map(
                           (val) =>
-                              DropdownMenuItem(value: val, child: Text(val)),
+                              DropdownMenuItem(
+                                value: val,
+                                child: Text(
+                                  DaojiText.domainLabel(
+                                    val,
+                                    vocabularyLevel,
+                                    short: true,
+                                  ),
+                                ),
+                              ),
                         )
                         .toList(),
                 onChanged: (val) {
@@ -524,7 +537,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               TextFormField(
                 controller: _titleController,
                 decoration: AppFormTheme.inputDecoration(
-                  labelText: 'Nama Kebiasaan',
+                  labelText: DaojiText.resolve(DaojiTextKey.habitNameLabel, vocabularyLevel),
                   hintText: 'Misal: Jalan kaki pagi',
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -532,9 +545,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
               const SizedBox(height: 20),
 
-              const Text(
-                'Target / Goal yang Terkait (Opsional) 🎯',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                '${DaojiText.resolve(DaojiTextKey.habitGoalLabel, vocabularyLevel)} (Opsional) 🎯',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               TextFormField(
@@ -550,9 +563,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
               const SizedBox(height: 24),
 
-              const Text(
-                'Frekuensi Rutinitas',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                DaojiText.resolve(DaojiTextKey.habitFrequency, vocabularyLevel),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               SegmentedButton<String>(
@@ -609,7 +622,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ],
 
               _buildSliderSection(
-                title: '🚀 Seberapa susah memulai?',
+                title: '🚀 ${DaojiText.resolve(DaojiTextKey.habitFriction, vocabularyLevel)}',
                 helperText:
                     'Contoh: olahraga ke gym = susah (4-5), baca 1 halaman = mudah (1-2)',
                 value: _initiationFriction,
@@ -619,7 +632,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
 
               _buildSliderSection(
-                title: '⚡ Seberapa menguras energi?',
+                title: '⚡ ${DaojiText.resolve(DaojiTextKey.habitEnergy, vocabularyLevel)}',
                 helperText:
                     'Contoh: lari 30 menit = banyak energi (4-5), nulis jurnal = sedikit (1-2)',
                 value: _energyCost,
@@ -629,7 +642,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
 
               _buildSliderSection(
-                title: '🎯 Seberapa besar dampaknya?',
+                title: '🎯 ${DaojiText.resolve(DaojiTextKey.habitImpact, vocabularyLevel)}',
                 helperText:
                     'Contoh: olahraga rutin = dampak besar (5), minum vitamin = menengah (3)',
                 value: _impactScore,
@@ -639,7 +652,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
 
               _buildSliderSection(
-                title: '⏱️ Durasi minimum (menit)',
+                title: '⏱️ ${DaojiText.resolve(DaojiTextKey.habitMva, vocabularyLevel)} (menit)',
                 helperText:
                     'MVA: Minimum Viable Action — durasi terpendek agar tetap "valid dilakukan"',
                 value: _mvaDurationMin,
@@ -658,7 +671,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 style: AppButtonStyles.primary(context),
                 onPressed: _saveHabit,
                 child: Text(
-                  _isEditing ? 'Perbarui Kebiasaan' : 'Simpan Kebiasaan',
+                  _isEditing
+                      ? DaojiText.resolve(DaojiTextKey.habitEdit, vocabularyLevel)
+                      : DaojiText.resolve(DaojiTextKey.habitSave, vocabularyLevel),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

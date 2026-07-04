@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/app_constants.dart';
+import '../../../core/i18n/daoji_text_key.dart';
+import '../../../core/i18n/daoji_text_resolver.dart';
+import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/services/error_handler_service.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
-import '../../cultivation/cultivation_provider.dart';
-import '../../cultivation/cultivation_strings.dart';
 import '../dashboard_provider.dart';
 
 /// Card widget untuk Action of the Day
@@ -27,7 +28,7 @@ class ActionOfTheDayCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final domainColor = DomainColors.forDomain(habit.domainTag);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -65,8 +66,9 @@ class ActionOfTheDayCard extends ConsumerWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        CultivationStrings.actionOfTheDayTitle(
-                          languageLevel,
+                        DaojiText.resolve(
+                          DaojiTextKey.actionTitle,
+                          vocabularyLevel,
                         ).toUpperCase(),
                         style: const TextStyle(
                           fontSize: 11,
@@ -89,9 +91,9 @@ class ActionOfTheDayCard extends ConsumerWidget {
                       color: Colors.blueGrey,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
-                      '⏸ DIJEDA',
-                      style: TextStyle(
+                    child: Text(
+                      DaojiText.resolve(DaojiTextKey.actionPaused, vocabularyLevel),
+                      style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -101,7 +103,11 @@ class ActionOfTheDayCard extends ConsumerWidget {
                 ],
                 const Spacer(),
                 IconButton(
-                  onPressed: () => _showWhyDialog(context, domainColor),
+                  onPressed: () => _showWhyDialog(
+                    context,
+                    domainColor,
+                    vocabularyLevel,
+                  ),
                   icon: Icon(Icons.info_outline, color: domainColor),
                   iconSize: 20,
                   constraints: const BoxConstraints(
@@ -109,7 +115,7 @@ class ActionOfTheDayCard extends ConsumerWidget {
                     minHeight: 44,
                   ),
                   padding: EdgeInsets.zero,
-                  tooltip: 'Mengapa kebiasaan ini dipilih',
+                  tooltip: DaojiText.resolve(DaojiTextKey.actionWhyTooltip, vocabularyLevel),
                 ),
               ],
             ),
@@ -117,7 +123,7 @@ class ActionOfTheDayCard extends ConsumerWidget {
             Text(habit.title, style: theme.textTheme.headlineMedium),
             const SizedBox(height: 4),
             Text(
-              CultivationStrings.actionOfTheDaySubtitle(languageLevel),
+              DaojiText.resolve(DaojiTextKey.actionSubtitle, vocabularyLevel),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
               ),
@@ -127,7 +133,13 @@ class ActionOfTheDayCard extends ConsumerWidget {
               children: [
                 Chip(
                   avatar: Text(_getDomainEmoji(habit.domainTag ?? 'Tubuh')),
-                  label: Text(habit.domainTag ?? 'Tubuh'),
+                  label: Text(
+                    DaojiText.domainLabel(
+                      habit.domainTag,
+                      vocabularyLevel,
+                      short: true,
+                    ),
+                  ),
                   backgroundColor: Colors.transparent,
                   side: const BorderSide(color: Colors.grey, width: 0.5),
                 ),
@@ -155,7 +167,9 @@ class ActionOfTheDayCard extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('Tandai Selesai'),
+                    child: Text(
+                      DaojiText.resolve(DaojiTextKey.actionDone, vocabularyLevel),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -166,9 +180,12 @@ class ActionOfTheDayCard extends ConsumerWidget {
                       const BorderSide(color: Colors.redAccent, width: 1),
                     ),
                   ),
-                  child: const Text(
-                    'Tidak Sanggup',
-                    style: TextStyle(color: Colors.redAccent),
+                  child: Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.actionNotCapable,
+                      vocabularyLevel,
+                    ),
+                    style: const TextStyle(color: Colors.redAccent),
                   ),
                 ),
               ],
@@ -205,8 +222,13 @@ class ActionOfTheDayCard extends ConsumerWidget {
     return 5.0;
   }
 
-  void _showWhyDialog(BuildContext context, Color domainColor) {
+  void _showWhyDialog(
+    BuildContext context,
+    Color domainColor,
+    vocabularyLevel,
+  ) {
     final domain = habit.domainTag ?? 'Tubuh';
+    final domainLabel = DaojiText.domainLabel(domain, vocabularyLevel);
     final domainScore = _domainScoreFor(domain);
     final domainDeficit = 10.0 - domainScore;
     final load = habit.initiationFriction + habit.energyCost;
@@ -226,7 +248,11 @@ class ActionOfTheDayCard extends ConsumerWidget {
             children: [
               Icon(Icons.info_outline, color: domainColor),
               const SizedBox(width: 8),
-              const Expanded(child: Text('Kenapa ini dipilih?')),
+              Expanded(
+                child: Text(
+                  DaojiText.resolve(DaojiTextKey.actionWhyTitle, vocabularyLevel),
+                ),
+              ),
             ],
           ),
           content: Column(
@@ -234,7 +260,7 @@ class ActionOfTheDayCard extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Dipilih karena domain $domain sedang rendah '
+                'Dipilih karena $domainLabel sedang rendah '
                 '(skor $domainScoreText/10), dampak tinggi '
                 '(impact ${habit.impactScore}/5), dan beban ringan ($load poin).',
                 style: theme.textTheme.bodyMedium,
@@ -253,7 +279,9 @@ class ActionOfTheDayCard extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Mengerti'),
+              child: Text(
+                DaojiText.resolve(DaojiTextKey.actionUnderstand, vocabularyLevel),
+              ),
             ),
           ],
         );

@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/domain/priority_helper.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/services/error_handler_service.dart';
 import '../../core/widgets/error_state_widget.dart';
@@ -96,7 +99,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     });
   }
 
-  Widget _buildNoActionsCard(ThemeData theme) {
+  Widget _buildNoActionsCard(ThemeData theme, vocabularyLevel) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -105,13 +108,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             const Text('🍃', style: TextStyle(fontSize: 32)),
             const SizedBox(height: 12),
             Text(
-              'Tidak ada kebiasaan yang terjadwal untuk hari ini.',
+              DaojiText.resolve(DaojiTextKey.dashboardNoActionsTitle, vocabularyLevel),
               textAlign: TextAlign.center,
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(
-              'Gunakan waktu hari ini untuk beristirahat atau tambahkan kebiasaan baru.',
+              DaojiText.resolve(DaojiTextKey.dashboardNoActionsBody, vocabularyLevel),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
@@ -128,6 +131,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dataAsync = ref.watch(dashboardDataProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -266,8 +270,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       ),
                       label: Text(
                         _showCultivationDetails
-                            ? 'Sembunyikan status kultivasi'
-                            : 'Lihat status kultivasi',
+                            ? DaojiText.resolve(
+                                DaojiTextKey.dashboardHideCultivationStatus,
+                                vocabularyLevel,
+                              )
+                            : DaojiText.resolve(
+                                DaojiTextKey.dashboardShowCultivationStatus,
+                                vocabularyLevel,
+                              ),
                       ),
                     ),
                   ),
@@ -328,7 +338,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       },
                     ),
                   ] else
-                    _buildNoActionsCard(theme),
+                    _buildNoActionsCard(theme, vocabularyLevel),
                   const SizedBox(height: 24),
 
                   // 4. Other habits list
@@ -351,11 +361,19 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             ),
           );
         },
-        loading: () => const Center(
-          child: LoadingStateWidget(message: 'Memuat data dashboard...'),
+        loading: () => Center(
+          child: LoadingStateWidget(
+            message: DaojiText.resolve(
+              DaojiTextKey.dashboardLoading,
+              vocabularyLevel,
+            ),
+          ),
         ),
         error: (err, stack) => ErrorStateWidget(
-          message: 'Gagal memuat dashboard',
+          message: DaojiText.resolve(
+            DaojiTextKey.dashboardLoadError,
+            vocabularyLevel,
+          ),
           error: err.toString(),
           onRetry: () {
             ref.invalidate(dashboardDataProvider);
@@ -385,6 +403,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       ),
       builder: (context) {
         final theme = Theme.of(context);
+        final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -407,7 +426,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   ),
                 ),
                 Text(
-                  'Aksi Cepat ⚡',
+                  DaojiText.resolve(DaojiTextKey.dashboardQuickActionsTitle, vocabularyLevel),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -415,7 +434,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 ),
                 const SizedBox(height: 16),
                 Semantics(
-                  label: 'Tambah kebiasaan baru',
+                  label: DaojiText.resolve(DaojiTextKey.dashboardAddPracticeTitle, vocabularyLevel),
                   hint: 'Buka halaman untuk membuat kebiasaan baru',
                   button: true,
                   child: ListTile(
@@ -423,12 +442,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       backgroundColor: Color(0xFFE8F5E9),
                       child: Icon(Icons.add_rounded, color: Color(0xFF2E7D32)),
                     ),
-                    title: const Text(
-                      'Tambah Kebiasaan Baru',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    title: Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.dashboardAddPracticeTitle,
+                        vocabularyLevel,
+                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: const Text(
-                      'Buat kebiasaan baru di domain kehidupan Anda',
+                    subtitle: Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.dashboardAddPracticeSubtitle,
+                        vocabularyLevel,
+                      ),
                     ),
                     onTap: () {
                       Navigator.pop(context);
@@ -438,7 +463,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 ),
                 const Divider(),
                 Semantics(
-                  label: 'Tulis jurnal hari ini',
+                  label: DaojiText.resolve(DaojiTextKey.dashboardJournalTitle, vocabularyLevel),
                   hint:
                       'Buka halaman jurnal untuk mencatat mood dan refleksi harian',
                   button: true,
@@ -447,11 +472,19 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       backgroundColor: Color(0xFFE3F2FD),
                       child: Icon(Icons.book_rounded, color: Color(0xFF1E88E5)),
                     ),
-                    title: const Text(
-                      'Tulis Jurnal Hari Ini',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    title: Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.dashboardJournalTitle,
+                        vocabularyLevel,
+                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: const Text('Catat mood & jurnal harian Anda'),
+                    subtitle: Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.dashboardJournalSubtitle,
+                        vocabularyLevel,
+                      ),
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                       context.push('/journal');

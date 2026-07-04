@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/theme/theme.dart';
-import '../cultivation/cultivation_provider.dart';
-import '../cultivation/cultivation_strings.dart';
 
 class ReflectionDashboardTab extends ConsumerWidget {
   const ReflectionDashboardTab({super.key});
@@ -11,11 +12,11 @@ class ReflectionDashboardTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     final List<Map<String, dynamic>> reflectionFeatures = [
       {
-        'title': CultivationStrings.valueMirrorTitle(languageLevel),
+        'title': DaojiText.resolve(DaojiTextKey.reflectionValueMirror, vocabularyLevel),
         'desc':
             'Jawab dilema ringan untuk melihat nilai apa yang sebenarnya kamu pegang lewat pilihan kecilmu.',
         'route': '/value-mirror',
@@ -23,7 +24,7 @@ class ReflectionDashboardTab extends ConsumerWidget {
         'color': CalmTheme.secondaryBlue,
       },
       {
-        'title': CultivationStrings.weeklyPulseTitle(languageLevel),
+        'title': DaojiText.resolve(DaojiTextKey.reflectionWeeklyPulse, vocabularyLevel),
         'desc':
             'Evaluasi berkala 2 mingguan untuk meninjau kembali keseimbangan hidup Anda di seluruh domain.',
         'route': '/weekly-pulse',
@@ -31,7 +32,7 @@ class ReflectionDashboardTab extends ConsumerWidget {
         'color': CalmTheme.primarySage,
       },
       {
-        'title': 'Thinking Canvas 🧠',
+        'title': DaojiText.resolve(DaojiTextKey.reflectionThinkingCanvas, vocabularyLevel),
         'desc':
             'Alat bantu analisis visual terstruktur (seperti Metode Kertas Kosong) untuk mengurai kerumitan pikiran.',
         'route': '/thinking-canvas',
@@ -39,7 +40,7 @@ class ReflectionDashboardTab extends ConsumerWidget {
         'color': CalmTheme.secondaryBlue,
       },
       {
-        'title': 'Safety Card 🛡️',
+        'title': DaojiText.resolve(DaojiTextKey.reflectionSafetyCard, vocabularyLevel),
         'desc':
             'Panduan penanganan krisis keselamatan diri, kontak bantuan darurat, dan latihan rileksasi cemas.',
         'route': '/safety',
@@ -47,7 +48,7 @@ class ReflectionDashboardTab extends ConsumerWidget {
         'color': CalmTheme.alertMutedRed,
       },
       {
-        'title': 'Habit Marketplace 🛒',
+        'title': DaojiText.resolve(DaojiTextKey.reflectionMarketplace, vocabularyLevel),
         'desc':
             'Temukan dan unduh kumpulan template kebiasaan berfaedah yang dibagikan oleh komunitas.',
         'route': '/marketplace',
@@ -57,7 +58,9 @@ class ReflectionDashboardTab extends ConsumerWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Refleksi Diri 🧘')),
+      appBar: AppBar(
+        title: Text(DaojiText.resolve(DaojiTextKey.reflectionTitle, vocabularyLevel)),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -72,7 +75,7 @@ class ReflectionDashboardTab extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Luangkan waktu sejenak untuk meninjau pola pikiran, kebiasaan, dan kondisi mental Anda.',
+              DaojiText.resolve(DaojiTextKey.reflectionSubtitle, vocabularyLevel),
               style: TextStyle(
                 fontSize: 13,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),

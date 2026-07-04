@@ -79,16 +79,16 @@ class CultivationStrings {
   static String actionOfTheDayTitle(CultivationLanguageLevel level) {
     return switch (level) {
       CultivationLanguageLevel.plain => '📋 Prioritas Hari Ini',
-      CultivationLanguageLevel.hybrid => '⚔️ Breakthrough Hari Ini',
-      CultivationLanguageLevel.full => '🧘 One Practice',
+      CultivationLanguageLevel.hybrid => 'One Practice Today',
+      CultivationLanguageLevel.full => 'Daily Refinement',
     };
   }
 
   static String actionOfTheDaySubtitle(CultivationLanguageLevel level) {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Domain terlemah',
-      CultivationLanguageLevel.hybrid => 'Palace butuh Qi',
-      CultivationLanguageLevel.full => 'Meridian redup',
+      CultivationLanguageLevel.hybrid => 'Stream needs care',
+      CultivationLanguageLevel.full => 'Meridian needs Qi',
     };
   }
 
@@ -135,8 +135,8 @@ class CultivationStrings {
   static String frictionInterventionTitle(CultivationLanguageLevel level) {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Hambatan apa?',
-      CultivationLanguageLevel.hybrid => 'Bottleneck apa?',
-      CultivationLanguageLevel.full => 'Heart Demon macam apa?',
+      CultivationLanguageLevel.hybrid => 'Bottleneck Inquiry',
+      CultivationLanguageLevel.full => 'Heart Demon Inquiry',
     };
   }
 
@@ -144,7 +144,7 @@ class CultivationStrings {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Kurang Waktu',
       CultivationLanguageLevel.hybrid => 'Qi belum terkumpul',
-      CultivationLanguageLevel.full => 'Qi-mu bocor',
+      CultivationLanguageLevel.full => 'Time channel blocked',
     };
   }
 
@@ -152,7 +152,7 @@ class CultivationStrings {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Kelelahan',
       CultivationLanguageLevel.hybrid => 'Energi habis',
-      CultivationLanguageLevel.full => 'Shen-mu lelah',
+      CultivationLanguageLevel.full => 'Spirit depleted',
     };
   }
 
@@ -207,7 +207,7 @@ class CultivationStrings {
   static String growthMapRoot(CultivationLanguageLevel level) {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Akar Diri',
-      CultivationLanguageLevel.hybrid => 'Dao Heart',
+      CultivationLanguageLevel.hybrid => 'Dao Root',
       CultivationLanguageLevel.full => 'Dao Heart (道心)',
     };
   }
@@ -215,8 +215,8 @@ class CultivationStrings {
   static String growthMapBranch(CultivationLanguageLevel level) {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Domain',
-      CultivationLanguageLevel.hybrid => 'Palace',
-      CultivationLanguageLevel.full => 'Palace (殿)',
+      CultivationLanguageLevel.hybrid => 'Stream',
+      CultivationLanguageLevel.full => 'Meridian',
     };
   }
 
@@ -232,7 +232,7 @@ class CultivationStrings {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Stabil',
       CultivationLanguageLevel.hybrid => 'Pattern Mengakar',
-      CultivationLanguageLevel.full => 'Automaticity',
+      CultivationLanguageLevel.full => 'Rooted Technique',
     };
   }
 
@@ -251,7 +251,7 @@ class CultivationStrings {
   static String canopyLoadTitle(CultivationLanguageLevel level) {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Beban Harian',
-      CultivationLanguageLevel.hybrid => 'Daily Qi Capacity',
+      CultivationLanguageLevel.hybrid => 'Qi Capacity',
       CultivationLanguageLevel.full => 'Dantian Capacity',
     };
   }
@@ -260,7 +260,7 @@ class CultivationStrings {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Terlalu banyak target',
       CultivationLanguageLevel.hybrid => 'Qi overload',
-      CultivationLanguageLevel.full => 'Meridian tersumbat',
+      CultivationLanguageLevel.full => 'Qi Deviation Risk',
     };
   }
 
@@ -271,8 +271,8 @@ class CultivationStrings {
   static String weeklyPulseTitle(CultivationLanguageLevel level) {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Review Mingguan',
-      CultivationLanguageLevel.hybrid => 'Meridian Check',
-      CultivationLanguageLevel.full => 'Resonance Check',
+      CultivationLanguageLevel.hybrid => 'Dao Stream Check',
+      CultivationLanguageLevel.full => 'Meridian Resonance',
     };
   }
 
@@ -292,7 +292,7 @@ class CultivationStrings {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Cermin Nilai',
       CultivationLanguageLevel.hybrid => 'Dao Heart Mirror',
-      CultivationLanguageLevel.full => 'Heart Demon Mirror',
+      CultivationLanguageLevel.full => 'Heart Mirror',
     };
   }
 
@@ -314,7 +314,7 @@ class CultivationStrings {
 
   static String marketplaceTitle(CultivationLanguageLevel level) {
     return switch (level) {
-      CultivationLanguageLevel.plain => 'Template Komunitas',
+      CultivationLanguageLevel.plain => 'Template',
       CultivationLanguageLevel.hybrid => 'Sutra Pavilion',
       CultivationLanguageLevel.full => 'Heritage Archive',
     };
@@ -386,33 +386,33 @@ class CultivationStrings {
     return switch (palace) {
       CultivationPalace.body => switch (level) {
         CultivationLanguageLevel.plain => 'Tubuh',
-        CultivationLanguageLevel.hybrid => 'Body Palace',
-        CultivationLanguageLevel.full => 'Body Palace (体殿)',
+        CultivationLanguageLevel.hybrid => 'Vital Stream',
+        CultivationLanguageLevel.full => 'Vital Meridian',
       },
       CultivationPalace.resource => switch (level) {
-        CultivationLanguageLevel.plain => 'Keuangan',
-        CultivationLanguageLevel.hybrid => 'Resource Palace',
-        CultivationLanguageLevel.full => 'Resource Palace (财殿)',
+        CultivationLanguageLevel.plain => 'Sumber Daya',
+        CultivationLanguageLevel.hybrid => 'Reserve Stream',
+        CultivationLanguageLevel.full => 'Reserve Meridian',
       },
       CultivationPalace.bond => switch (level) {
-        CultivationLanguageLevel.plain => 'Hubungan',
-        CultivationLanguageLevel.hybrid => 'Bond Palace',
-        CultivationLanguageLevel.full => 'Bond Palace (缘殿)',
+        CultivationLanguageLevel.plain => 'Relasi',
+        CultivationLanguageLevel.hybrid => 'Karma Stream',
+        CultivationLanguageLevel.full => 'Karmic Meridian',
       },
       CultivationPalace.heartSea => switch (level) {
-        CultivationLanguageLevel.plain => 'Emosi',
-        CultivationLanguageLevel.hybrid => 'Heart Sea',
-        CultivationLanguageLevel.full => 'Heart Sea (心海)',
+        CultivationLanguageLevel.plain => 'Pikiran & Emosi',
+        CultivationLanguageLevel.hybrid => 'Mind Stream',
+        CultivationLanguageLevel.full => 'Mind Sea Meridian',
       },
       CultivationPalace.craft => switch (level) {
-        CultivationLanguageLevel.plain => 'Karir',
-        CultivationLanguageLevel.hybrid => 'Craft Palace',
-        CultivationLanguageLevel.full => 'Craft Palace (技殿)',
+        CultivationLanguageLevel.plain => 'Kerja & Skill',
+        CultivationLanguageLevel.hybrid => 'Mastery Stream',
+        CultivationLanguageLevel.full => 'Mastery Meridian',
       },
       CultivationPalace.joy => switch (level) {
-        CultivationLanguageLevel.plain => 'Rekreasi',
-        CultivationLanguageLevel.hybrid => 'Joy Garden',
-        CultivationLanguageLevel.full => 'Joy Garden (乐园)',
+        CultivationLanguageLevel.plain => 'Rehat & Makna',
+        CultivationLanguageLevel.hybrid => 'Spirit Stream',
+        CultivationLanguageLevel.full => 'Spirit Meridian',
       },
     };
   }
@@ -424,8 +424,8 @@ class CultivationStrings {
   static String radarChartTitle(CultivationLanguageLevel level) {
     return switch (level) {
       CultivationLanguageLevel.plain => 'Keseimbangan Hidup',
-      CultivationLanguageLevel.hybrid => 'Six Palace Resonance',
-      CultivationLanguageLevel.full => 'Palace Harmony Chart',
+      CultivationLanguageLevel.hybrid => 'Six Dao Streams',
+      CultivationLanguageLevel.full => 'Six Meridians',
     };
   }
 }

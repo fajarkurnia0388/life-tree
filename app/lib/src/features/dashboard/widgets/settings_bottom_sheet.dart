@@ -5,35 +5,20 @@ import 'package:path_provider/path_provider.dart';
 import 'package:drift/drift.dart' as drift;
 import 'dart:io';
 import 'dart:convert';
+import '../../../core/i18n/daoji_text_key.dart';
+import '../../../core/i18n/daoji_text_resolver.dart';
+import '../../../core/i18n/daoji_vocabulary_level.dart';
+import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../core/animations/dialog_animations.dart';
 import '../../../data/local_db/database.dart';
-import '../../cultivation/cultivation_constants.dart';
-import '../../cultivation/cultivation_provider.dart';
-import '../../cultivation/cultivation_strings.dart';
 import '../dashboard_provider.dart';
 
 /// Bottom Sheet untuk Settings (Export, Reset, Theme)
 class SettingsBottomSheet extends ConsumerWidget {
   const SettingsBottomSheet({super.key});
-
-  Future<void> _toggleCultivationTheme(WidgetRef ref, bool enabled) async {
-    final db = ref.read(dbProvider);
-    final profile = await (db.select(
-      db.userProfiles,
-    )..limit(1)).getSingleOrNull();
-    if (profile == null) return;
-
-    await (db.update(
-      db.userProfiles,
-    )..where((tbl) => tbl.userId.equals(profile.userId))).write(
-      UserProfilesCompanion(cultivationThemeEnabled: drift.Value(enabled)),
-    );
-
-    ref.invalidate(dashboardDataProvider);
-  }
 
   Future<void> _toggleDeveloperMode(WidgetRef ref, bool enabled) async {
     final db = ref.read(dbProvider);
@@ -126,12 +111,13 @@ class SettingsBottomSheet extends ConsumerWidget {
 
   Future<void> _resetApplication(BuildContext context, WidgetRef ref) async {
     final db = ref.read(dbProvider);
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
 
     // Confirm reset
     final confirm = await showAnimatedDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reset Aplikasi'),
+        title: Text(DaojiText.resolve(DaojiTextKey.settingsReset, vocabularyLevel)),
         content: const Text(
           'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
         ),
@@ -191,20 +177,10 @@ class SettingsBottomSheet extends ConsumerWidget {
     ref.invalidate(dashboardDataProvider);
   }
 
-  String _languageDescription(CultivationLanguageLevel level) {
-    return switch (level) {
-      CultivationLanguageLevel.plain => 'Istilah sehari-hari, paling jelas.',
-      CultivationLanguageLevel.hybrid =>
-        'Default: paduan Daoji dan bahasa praktis.',
-      CultivationLanguageLevel.full =>
-        'Nuansa kultivasi penuh untuk pengalaman imersif.',
-    };
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Container(
       padding: const EdgeInsets.all(20.0),
@@ -213,20 +189,20 @@ class SettingsBottomSheet extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Pengaturan',
+            DaojiText.resolve(DaojiTextKey.settingsTitle, vocabularyLevel),
             style: theme.textTheme.titleLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           ListTile(
             leading: const Icon(Icons.file_download_outlined),
-            title: const Text('Ekspor Data'),
+            title: Text(DaojiText.resolve(DaojiTextKey.settingsExport, vocabularyLevel)),
             subtitle: const Text('Simpan semua data ke file JSON'),
             onTap: () => _exportDataAsJson(context, ref),
           ),
           ListTile(
             leading: const Icon(Icons.refresh_rounded),
-            title: const Text('Reset Aplikasi'),
+            title: Text(DaojiText.resolve(DaojiTextKey.settingsReset, vocabularyLevel)),
             subtitle: const Text('Hapus semua data dan kembali ke awal'),
             onTap: () => _resetApplication(context, ref),
             tileColor: Colors.red.withValues(alpha: 0.1),
@@ -251,73 +227,37 @@ class SettingsBottomSheet extends ConsumerWidget {
                     .getSingleOrNull(),
             builder: (context, snapshot) {
               final profile = snapshot.data;
-              final themeEnabled = profile?.cultivationThemeEnabled ?? true;
               final devMode = profile?.isDeveloperMode ?? false;
 
               return Column(
                 children: [
                   ListTile(
                     leading: const Icon(Icons.auto_awesome_outlined),
-                    title: const Text('Tema Kultivasi'),
-                    subtitle: Text(
-                      themeEnabled
-                          ? 'Menggunakan istilah kultivasi seperti Qi, Realm, Dao'
-                          : 'Menggunakan bahasa sederhana dan praktis',
+                    title: Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.settingsVocabularyStyle,
+                        vocabularyLevel,
+                      ),
                     ),
-                    trailing: Switch(
-                      value: themeEnabled,
-                      onChanged: (value) => _toggleCultivationTheme(ref, value),
+                    subtitle: Text(vocabularyLevel.description),
+                    trailing: DropdownButton<DaojiVocabularyLevel>(
+                      value: vocabularyLevel,
+                      underline: const SizedBox.shrink(),
+                      items: DaojiVocabularyLevel.values.map((level) {
+                        return DropdownMenuItem(
+                          value: level,
+                          child: Text(level.displayName),
+                        );
+                      }).toList(),
+                      onChanged: (newLevel) {
+                        if (newLevel != null) {
+                          ref
+                              .read(daojiVocabularyControllerProvider)
+                              .setLevel(newLevel);
+                        }
+                      },
                     ),
                   ),
-                  if (themeEnabled) ...[
-                    const SizedBox(height: 8),
-                    ListTile(
-                      leading: const Icon(Icons.language_outlined),
-                      title: Text(
-                        CultivationStrings.settingsLanguageLevelTitle(
-                          languageLevel,
-                        ),
-                      ),
-                      subtitle: Text(_languageDescription(languageLevel)),
-                      trailing: DropdownButton<CultivationLanguageLevel>(
-                        value: languageLevel,
-                        underline: const SizedBox.shrink(),
-                        items: [
-                          DropdownMenuItem(
-                            value: CultivationLanguageLevel.plain,
-                            child: Text(
-                              CultivationStrings.languageLevelPlain(
-                                languageLevel,
-                              ),
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: CultivationLanguageLevel.hybrid,
-                            child: Text(
-                              CultivationStrings.languageLevelHybrid(
-                                languageLevel,
-                              ),
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: CultivationLanguageLevel.full,
-                            child: Text(
-                              CultivationStrings.languageLevelFull(
-                                languageLevel,
-                              ),
-                            ),
-                          ),
-                        ],
-                        onChanged: (newLevel) {
-                          if (newLevel != null) {
-                            ref
-                                .read(cultivationLanguageLevelProvider.notifier)
-                                .setLevel(newLevel);
-                          }
-                        },
-                      ),
-                    ),
-                  ],
                   const SizedBox(height: 16),
                   const Divider(),
                   const SizedBox(height: 16),
@@ -328,7 +268,7 @@ class SettingsBottomSheet extends ConsumerWidget {
                           : Icons.developer_mode_outlined,
                       color: Colors.blueGrey,
                     ),
-                    title: const Text('Mode Developer'),
+                    title: Text(DaojiText.resolve(DaojiTextKey.settingsDevMode, vocabularyLevel)),
                     subtitle: const Text(
                       'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
                     ),

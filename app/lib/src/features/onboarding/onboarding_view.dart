@@ -134,6 +134,9 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
       canopyLoadCapacity: const drift.Value(10),
       wellnessDisclaimerAcknowledged: const drift.Value(true),
       cultivationThemeEnabled: drift.Value(_cultivationThemeEnabled),
+      vocabularyLevel: drift.Value(
+        _cultivationThemeEnabled ? 'daoStream' : 'practical',
+      ),
       unlockedSkins: drift.Value(
         _devMode ? 'Default,Sakura,Maple,Bonsai' : 'Default',
       ),

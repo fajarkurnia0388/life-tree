@@ -1,12 +1,16 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../core/domain/app_constants.dart';
+import '../../../core/i18n/daoji_text_key.dart';
+import '../../../core/i18n/daoji_text_resolver.dart';
+import '../../../core/i18n/daoji_vocabulary_level.dart';
 
 class RadarChartWidget extends StatelessWidget {
   final Map<String, double> scores;
   final Set<String> activeDomains;
   final String? selectedDomain;
   final ValueChanged<String>? onDomainSelected;
+  final DaojiVocabularyLevel vocabularyLevel;
 
   const RadarChartWidget({
     super.key,
@@ -14,6 +18,7 @@ class RadarChartWidget extends StatelessWidget {
     required this.activeDomains,
     this.selectedDomain,
     this.onDomainSelected,
+    this.vocabularyLevel = DaojiVocabularyLevel.daoStream,
   });
 
   static const List<String> _domains = [
@@ -32,7 +37,12 @@ class RadarChartWidget extends StatelessWidget {
   /// Membangun label pembaca layar yang menyebutkan tiap domain dan skornya
   /// dalam urutan kanonik.
   String _buildSemanticsLabel() {
-    final parts = _domains.map((d) => '$d ${_scoreOf(d)} dari 10').join(', ');
+    final parts = _domains
+        .map(
+          (d) =>
+              '${DaojiText.domainLabel(d, vocabularyLevel)} ${_scoreOf(d)} dari 10',
+        )
+        .join(', ');
     return 'Radar keseimbangan: $parts.';
   }
 
@@ -91,7 +101,9 @@ class RadarChartWidget extends StatelessWidget {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Text(
-            isActive ? domain : '$domain\n(Soon)',
+            isActive
+                ? DaojiText.domainLabel(domain, vocabularyLevel, short: true)
+                : '${DaojiText.domainLabel(domain, vocabularyLevel, short: true)}\n(Soon)',
             textAlign: TextAlign.center,
             style: textStyle,
           ),
@@ -108,9 +120,9 @@ class RadarChartWidget extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
           ),
-          title: const Text('Interaksi domain'),
+          title: Text(DaojiText.resolve(DaojiTextKey.mapInfoTitle, vocabularyLevel)),
           content: const Text(
-            'Ketuk kartu nama domain untuk melihat kutipan, tips wawasan, atau menyaring dasbor.',
+            'Ketuk kartu nama untuk melihat kutipan, tips wawasan, atau menyaring dasbor.',
           ),
           actions: [
             TextButton(
@@ -137,7 +149,7 @@ class RadarChartWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Vitality Radar',
+                    DaojiText.resolve(DaojiTextKey.mapTitle, vocabularyLevel),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -149,7 +161,7 @@ class RadarChartWidget extends StatelessWidget {
                     minWidth: 24,
                     minHeight: 24,
                   ),
-                  tooltip: 'Tentang interaksi domain',
+                  tooltip: DaojiText.resolve(DaojiTextKey.mapInfoTitle, vocabularyLevel),
                   onPressed: () => _showHelpDialog(context, theme),
                   icon: Container(
                     width: 22,
@@ -265,8 +277,16 @@ class RadarChartWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Row(
             children: [
-              Expanded(child: Text('Domain', style: headerStyle)),
-              Text('Skor', style: headerStyle),
+              Expanded(
+                child: Text(
+                  DaojiText.resolve(DaojiTextKey.mapDomainLabel, vocabularyLevel),
+                  style: headerStyle,
+                ),
+              ),
+              Text(
+                DaojiText.resolve(DaojiTextKey.mapScoreLabel, vocabularyLevel),
+                style: headerStyle,
+              ),
             ],
           ),
         ),
@@ -280,7 +300,9 @@ class RadarChartWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    isActive ? domain : '$domain (Soon)',
+                    isActive
+                        ? DaojiText.domainLabel(domain, vocabularyLevel)
+                        : '${DaojiText.domainLabel(domain, vocabularyLevel)} (Soon)',
                     style: cellStyle.copyWith(
                       fontWeight: domain == selectedDomain
                           ? FontWeight.bold
@@ -298,7 +320,7 @@ class RadarChartWidget extends StatelessWidget {
           // Area ketuk >= 44px tinggi dengan label tombol untuk pembaca layar.
           return Semantics(
             button: true,
-            label: 'Fokus domain $domain',
+            label: 'Fokus ${DaojiText.domainLabel(domain, vocabularyLevel)}',
             child: InkWell(
               onTap: () => onDomainSelected!(domain),
               child: ConstrainedBox(

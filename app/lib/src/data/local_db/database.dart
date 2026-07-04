@@ -42,6 +42,8 @@ class UserProfiles extends Table {
   DateTimeColumn get revealedValueLastUpdatedAt => dateTime().nullable()();
   BoolColumn get cultivationThemeEnabled =>
       boolean().withDefault(const Constant(true))();
+  TextColumn get vocabularyLevel =>
+      text().withDefault(const Constant('daoStream'))();
 
   @override
   Set<Column> get primaryKey => {userId};
@@ -308,7 +310,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -437,6 +439,17 @@ class AppDatabase extends _$AppDatabase {
           WHERE template_type = 'habit'
           ''');
         // Keep old columns for backward compatibility but mark as deprecated
+      }
+      if (from < 12) {
+        await m.addColumn(userProfiles, userProfiles.vocabularyLevel);
+        await customStatement('''
+          UPDATE user_profiles
+          SET vocabulary_level = CASE
+            WHEN cultivation_theme_enabled = 0 THEN 'practical'
+            ELSE 'daoStream'
+          END
+          WHERE vocabulary_level IS NULL OR vocabulary_level = ''
+          ''');
       }
     },
   );

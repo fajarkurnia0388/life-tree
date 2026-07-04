@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/app_constants.dart';
+import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/services/error_handler_service.dart';
 import '../dashboard_provider.dart';
 import 'radar_chart_widget.dart';
 
 /// Card widget untuk menampilkan domain scores dan radar chart
-class DomainScoresCard extends StatelessWidget {
+class DomainScoresCard extends ConsumerWidget {
   const DomainScoresCard({
     super.key,
     required this.data,
@@ -19,7 +21,8 @@ class DomainScoresCard extends StatelessWidget {
   final Function(String)? onDomainSelected;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     Map<String, double> scores = {
       'Tubuh': 5.0,
       'Keuangan': 3.0,
@@ -111,6 +114,7 @@ class DomainScoresCard extends StatelessWidget {
       activeDomains: activeDomains,
       selectedDomain: selectedDomain,
       onDomainSelected: onDomainSelected,
+      vocabularyLevel: vocabularyLevel,
     );
   }
 }

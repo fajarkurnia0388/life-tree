@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 import '../../core/providers/db_provider.dart';
@@ -248,9 +251,10 @@ class _ValueMirrorSessionViewState
 
   @override
   Widget build(BuildContext context) {
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cermin Nilai 🪞'),
+        title: Text(DaojiText.resolve(DaojiTextKey.valueIntroTitle, vocabularyLevel)),
         leading: Semantics(
           label: 'Keluar dari sesi',
           hint: 'Menutup sesi refleksi Value Mirror',

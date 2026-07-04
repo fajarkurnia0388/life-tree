@@ -5,6 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../core/theme/app_spacing.dart';
@@ -336,9 +339,11 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
 
   @override
   Widget build(BuildContext context) {
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Marketplace'),
+        title: Text(DaojiText.resolve(DaojiTextKey.marketTitle, vocabularyLevel)),
         actions: [
           IconButton(
             icon: const Icon(Icons.share_rounded),

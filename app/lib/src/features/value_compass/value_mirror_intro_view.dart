@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/theme.dart';
 import '../../core/theme/button_theme.dart';
 
-class ValueMirrorIntroView extends StatelessWidget {
+class ValueMirrorIntroView extends ConsumerWidget {
   const ValueMirrorIntroView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cermin Nilai 🪞')),
+      appBar: AppBar(
+        title: Text(
+          DaojiText.resolve(DaojiTextKey.valueIntroTitle, vocabularyLevel),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
@@ -104,9 +113,15 @@ class ValueMirrorIntroView extends StatelessWidget {
                     ),
                   ),
                   onPressed: () => context.push('/value-mirror/session'),
-                  child: const Text(
-                    'Mulai Sesi',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  child: Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.valueStart,
+                      vocabularyLevel,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/domain/app_constants.dart';
+import '../../../core/i18n/daoji_text_key.dart';
+import '../../../core/i18n/daoji_text_resolver.dart';
+import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
-import '../../cultivation/cultivation_provider.dart';
-import '../../cultivation/cultivation_strings.dart';
 import '../../habit/services/habit_log_service.dart';
 
 /// Bottom sheet for friction intervention — shown when user taps "Tidak Sanggup".
@@ -64,7 +65,7 @@ class _FrictionInterventionSheetState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Container(
       decoration: BoxDecoration(
@@ -93,13 +94,13 @@ class _FrictionInterventionSheetState
           ),
           const SizedBox(height: 20),
           Text(
-            CultivationStrings.frictionInterventionTitle(languageLevel),
+            DaojiText.resolve(DaojiTextKey.frictionTitle, vocabularyLevel),
             style: theme.textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
-            'Jangan merasa bersalah. Menghadapi rintangan adalah bagian dari proses pembentukan kebiasaan.',
+            DaojiText.resolve(DaojiTextKey.frictionNoGuilt, vocabularyLevel),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
@@ -110,19 +111,19 @@ class _FrictionInterventionSheetState
           _buildReasonTile(
             value: FrictionReason.kurangWaktu,
             icon: Icons.timer_outlined,
-            title: CultivationStrings.frictionOptionTime(languageLevel),
+            title: DaojiText.resolve(DaojiTextKey.frictionTime, vocabularyLevel),
             desc: 'Saya hanya punya sedikit waktu hari ini.',
           ),
           _buildReasonTile(
             value: FrictionReason.kelelahan,
             icon: Icons.battery_alert_rounded,
-            title: CultivationStrings.frictionOptionEnergy(languageLevel),
+            title: DaojiText.resolve(DaojiTextKey.frictionEnergy, vocabularyLevel),
             desc: 'Energi saya benar-benar terkuras hari ini.',
           ),
           _buildReasonTile(
             value: FrictionReason.lupa,
             icon: Icons.notifications_off_outlined,
-            title: CultivationStrings.frictionOptionForgot(languageLevel),
+            title: DaojiText.resolve(DaojiTextKey.frictionForgot, vocabularyLevel),
             desc: 'Saya terlewat karena tidak ingat jadwalnya.',
           ),
           const SizedBox(height: 16),
@@ -158,7 +159,7 @@ class _FrictionInterventionSheetState
                 child: Column(
                   children: [
                     Text(
-                      '❄️ Masuk Mode Istirahat',
+                      '❄️ ${DaojiText.resolve(DaojiTextKey.frictionRecoveryTitle, vocabularyLevel)}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: CalmTheme.secondaryBlue,
@@ -180,7 +181,11 @@ class _FrictionInterventionSheetState
                           child: Semantics(
                             button: true,
                             selected: isSelected,
-                            label: 'Mode istirahat $days hari',
+                            label: DaojiText.resolve(
+                              DaojiTextKey.frictionRestDays,
+                              vocabularyLevel,
+                              params: {'days': days},
+                            ),
                             child: ConstrainedBox(
                               constraints: const BoxConstraints(minHeight: 44),
                               child: ChoiceChip(
@@ -242,7 +247,9 @@ class _FrictionInterventionSheetState
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text('Simpan & Refleksikan'),
+            child: Text(
+                DaojiText.resolve(DaojiTextKey.frictionSave, vocabularyLevel),
+              ),
           ),
         ],
       ),

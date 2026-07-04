@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../core/widgets/empty_state_widget.dart';
@@ -76,12 +79,13 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView>
 
   @override
   Widget build(BuildContext context) {
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final theme = Theme.of(context);
     final decisionsAsync = ref.watch(decisionListProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Decision Journal ⚖️'),
+        title: Text(DaojiText.resolve(DaojiTextKey.decisionTitle, vocabularyLevel)),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: theme.colorScheme.primary,

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
 import '../../core/theme/app_spacing.dart';
@@ -44,6 +47,8 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
   ];
 
   Future<void> _submitPulse() async {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+
     if (_answers.contains(null)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -192,7 +197,12 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Kembali ke Dashboard'),
+                  child: Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.weeklyBackDashboard,
+                      vocabularyLevel,
+                    ),
+                  ),
                 ),
               ],
             );
@@ -226,6 +236,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
 
   Widget _buildQuestionCard(BuildContext context, int qIndex) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -247,7 +258,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Jawablah sejujur mungkin berdasarkan apa yang Anda rasakan selama 2 minggu terakhir.',
+                      DaojiText.resolve(DaojiTextKey.weeklyIntro, vocabularyLevel),
                       style: TextStyle(
                         fontSize: 12,
                         color: theme.colorScheme.onSurface.withValues(
@@ -360,6 +371,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
 
   Widget _buildReflectionCard(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Card(
@@ -403,12 +415,17 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     const totalSteps = 6;
     final isLastStep = _currentStep == totalSteps - 1;
     final canGoNext = _currentStep < 5 ? _answers[_currentStep] != null : true;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Weekly Pulse Check')),
+      appBar: AppBar(
+        title: Text(
+          DaojiText.resolve(DaojiTextKey.weeklyTitle, vocabularyLevel),
+        ),
+      ),
       body: _isSaving
           ? const Center(
               child: Column(

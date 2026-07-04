@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../cultivation/cultivation_provider.dart';
@@ -146,6 +149,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final moodHistoryAsync = ref.watch(_moodHistoryProvider);
     final decisionSummaryAsync = ref.watch(_decisionSummaryProvider);
     final todayMoodAsync = ref.watch(_todayMoodProvider);
@@ -153,7 +157,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(CultivationStrings.journalTitle(languageLevel)),
+        title: Text(DaojiText.resolve(DaojiTextKey.journalTabTitle, vocabularyLevel)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),

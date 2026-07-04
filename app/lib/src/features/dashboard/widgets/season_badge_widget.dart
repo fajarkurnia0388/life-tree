@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/domain/app_constants.dart';
+import '../../../core/i18n/daoji_text_key.dart';
+import '../../../core/i18n/daoji_text_resolver.dart';
+import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
-import '../../cultivation/cultivation_provider.dart';
-import '../../cultivation/cultivation_strings.dart';
 import '../dashboard_provider.dart';
 
 /// Displays the current season badge (Growth / Recovery / Dormant).
@@ -35,7 +36,7 @@ class SeasonBadgeWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     Color badgeColor;
     String label;
@@ -46,24 +47,36 @@ class SeasonBadgeWidget extends ConsumerWidget {
       case Season.recovery:
         badgeColor = CalmTheme.secondaryBlue;
         final daysLeft = _recoveryDaysLeft;
-        final recoveryLabel = CultivationStrings.seasonRecovery(languageLevel);
+        final recoveryLabel = DaojiText.resolve(
+          DaojiTextKey.stateRecovery,
+          vocabularyLevel,
+        );
         label = daysLeft != null
             ? '$recoveryLabel ($daysLeft hari lagi)'
             : recoveryLabel;
         icon = Icons.ac_unit_rounded;
-        message = CultivationStrings.recoveryModeDescription(languageLevel);
+        message = DaojiText.resolve(
+          DaojiTextKey.stateRecoveryDescription,
+          vocabularyLevel,
+        );
         break;
       case Season.dormant:
         badgeColor = Colors.blueGrey;
-        label = CultivationStrings.seasonDormant(languageLevel);
+        label = DaojiText.resolve(DaojiTextKey.stateDormant, vocabularyLevel);
         icon = Icons.blur_on_rounded;
-        message = 'Lama tidak aktif. Waktunya mengevaluasi kebiasaan.';
+        message = DaojiText.resolve(
+          DaojiTextKey.stateDormantDescription,
+          vocabularyLevel,
+        );
         break;
       default:
         badgeColor = CalmTheme.primarySage;
-        label = CultivationStrings.seasonGrowth(languageLevel);
+        label = DaojiText.resolve(DaojiTextKey.stateGrowth, vocabularyLevel);
         icon = Icons.wb_sunny_outlined;
-        message = 'Keseimbangan energi hidup terjaga.';
+        message = DaojiText.resolve(
+          DaojiTextKey.stateGrowthDescription,
+          vocabularyLevel,
+        );
     }
 
     return Card(

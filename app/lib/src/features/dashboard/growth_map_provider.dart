@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/services/error_logger_provider.dart';
@@ -43,6 +45,7 @@ IconData _getDomainIcon(String domain) {
 
 final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
   final dashboardData = await ref.watch(dashboardDataProvider.future);
+  final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
   // 1. Parse Core Values (Declared)
   List<String> coreValues = [];
@@ -113,13 +116,13 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
     branchNodes.add(
       BranchNode(
         id: domain,
-        label: domain,
+        label: DaojiText.domainLabel(domain, vocabularyLevel, short: true),
         icon: _getDomainIcon(domain),
         score: score,
         statusLabel: statusLabel,
         color: domainColors[domain] ?? Colors.green,
         semanticLabel:
-            '$domain — Skor: ${score.toStringAsFixed(1)}, Status: $statusLabel',
+            '${DaojiText.domainLabel(domain, vocabularyLevel)} — Skor: ${score.toStringAsFixed(1)}, Status: $statusLabel',
       ),
     );
   }
