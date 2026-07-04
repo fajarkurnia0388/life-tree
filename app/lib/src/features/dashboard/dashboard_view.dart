@@ -24,7 +24,6 @@ import 'sheets/friction_intervention_sheet.dart';
 import 'widgets/tree_display_widget.dart';
 import '../cultivation/widgets/cultivation_badge.dart';
 import '../cultivation/widgets/cultivation_progress_bar.dart';
-import '../cultivation/widgets/cultivation_status_panel.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
@@ -35,7 +34,6 @@ class DashboardView extends ConsumerStatefulWidget {
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
   String _selectedDomainFilter = 'Semua';
-  bool _showCultivationDetails = false;
 
   String _monthName(int month) {
     const months = [
@@ -255,37 +253,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   // 2. Cultivation Progress
                   const CultivationProgressBar(),
                   const SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          _showCultivationDetails = !_showCultivationDetails;
-                        });
-                      },
-                      icon: Icon(
-                        _showCultivationDetails
-                            ? Icons.expand_less
-                            : Icons.expand_more,
-                      ),
-                      label: Text(
-                        _showCultivationDetails
-                            ? DaojiText.resolve(
-                                DaojiTextKey.dashboardHideCultivationStatus,
-                                vocabularyLevel,
-                              )
-                            : DaojiText.resolve(
-                                DaojiTextKey.dashboardShowCultivationStatus,
-                                vocabularyLevel,
-                              ),
-                      ),
-                    ),
-                  ),
-                  if (_showCultivationDetails) ...[
-                    const CultivationStatusPanel(),
-                    const SizedBox(height: 12),
-                  ] else
-                    const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
                   // 3. Tree Vitality
                   TreeVitalityCard(

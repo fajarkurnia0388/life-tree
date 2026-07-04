@@ -10,7 +10,12 @@ import '../../../core/widgets/loading_state_widget.dart';
 /// Phase 0: Basic informational display.
 /// Phase 2: Add visual enhancements (icons, colors, animations).
 class CultivationStatusPanel extends ConsumerWidget {
-  const CultivationStatusPanel({super.key});
+  final EdgeInsetsGeometry margin;
+
+  const CultivationStatusPanel({
+    super.key,
+    this.margin = const EdgeInsets.all(16),
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,7 +25,7 @@ class CultivationStatusPanel extends ConsumerWidget {
     return cultivationAsync.when(
       data: (cultivation) {
         return Card(
-          margin: const EdgeInsets.all(16),
+          margin: margin,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(

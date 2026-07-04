@@ -18,6 +18,7 @@ import '../../../core/theme/theme.dart';
 import '../../cultivation/cultivation_constants.dart';
 import '../../cultivation/cultivation_provider.dart';
 import '../../cultivation/cultivation_strings.dart';
+import '../../cultivation/widgets/cultivation_status_panel.dart';
 import 'growth_map/growth_map_widget.dart';
 
 /// Displays the conceptual tree view for the current growth state.
@@ -249,6 +250,7 @@ class TreeVitalityCard extends ConsumerStatefulWidget {
 class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
   final GlobalKey _repaintBoundaryKey = GlobalKey();
   bool _isCapturing = false;
+  bool _showCultivationDetails = false;
 
   Future<void> _captureAndShareTree() async {
     if (_isCapturing) return;
@@ -549,6 +551,24 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
                     ),
                   ),
                 ),
+                TextButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _showCultivationDetails = !_showCultivationDetails;
+                    });
+                  },
+                  icon: Icon(
+                    _showCultivationDetails
+                        ? Icons.expand_less_rounded
+                        : Icons.expand_more_rounded,
+                    size: 18,
+                  ),
+                  label: Text(_statusButtonLabel(vocabularyLevel)),
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(72, 40),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -715,6 +735,20 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
                 valueColor: AlwaysStoppedAnimation<Color>(progressColor),
               ),
             ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 240),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              child: _showCultivationDetails
+                  ? const Padding(
+                      key: ValueKey('dao-stream-status-panel'),
+                      padding: EdgeInsets.only(top: 16),
+                      child: CultivationStatusPanel(margin: EdgeInsets.zero),
+                    )
+                  : const SizedBox.shrink(
+                      key: ValueKey('dao-stream-status-hidden'),
+                    ),
+            ),
           ],
         ),
       ),
@@ -736,6 +770,23 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
       DaojiVocabularyLevel.gentleCultivation => 'Stream Balance',
       DaojiVocabularyLevel.daoStream => 'Stream Balance',
       DaojiVocabularyLevel.immortalCultivation => 'Meridian Resonance',
+    };
+  }
+
+  String _statusButtonLabel(DaojiVocabularyLevel level) {
+    if (_showCultivationDetails) {
+      return switch (level) {
+        DaojiVocabularyLevel.practical => 'Tutup',
+        DaojiVocabularyLevel.gentleCultivation => 'Tutup',
+        DaojiVocabularyLevel.daoStream => 'Tutup',
+        DaojiVocabularyLevel.immortalCultivation => 'Conceal',
+      };
+    }
+    return switch (level) {
+      DaojiVocabularyLevel.practical => 'Status',
+      DaojiVocabularyLevel.gentleCultivation => 'Status',
+      DaojiVocabularyLevel.daoStream => 'Status',
+      DaojiVocabularyLevel.immortalCultivation => 'Status',
     };
   }
 }
