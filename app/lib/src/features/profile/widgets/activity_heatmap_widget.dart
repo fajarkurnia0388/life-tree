@@ -106,7 +106,7 @@ class ActivityHeatmapWidget extends StatelessWidget {
             SizedBox(
               width: labelWidth.toDouble(),
               child: Text(
-                currentMonth!,
+                currentMonth,
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),

@@ -47,8 +47,6 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
   ];
 
   Future<void> _submitPulse() async {
-    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
-
     if (_answers.contains(null)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -154,6 +152,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
       ref.invalidate(dashboardDataProvider);
 
       if (mounted) {
+        final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
         // Show wellness review prompt if WHO-5 is low (< 50%)
         final isLowMood = percentage < 50;
         if (isLowMood) {
@@ -258,7 +257,10 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      DaojiText.resolve(DaojiTextKey.weeklyIntro, vocabularyLevel),
+                      DaojiText.resolve(
+                        DaojiTextKey.weeklyIntro,
+                        vocabularyLevel,
+                      ),
                       style: TextStyle(
                         fontSize: 12,
                         color: theme.colorScheme.onSurface.withValues(
@@ -371,7 +373,6 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
 
   Widget _buildReflectionCard(BuildContext context) {
     final theme = Theme.of(context);
-    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Card(

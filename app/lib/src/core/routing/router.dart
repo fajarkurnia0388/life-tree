@@ -14,15 +14,13 @@ import '../../features/value_compass/value_mirror_intro_view.dart';
 import '../../features/value_compass/value_mirror_session_view.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final refreshListenable = ValueNotifier<AsyncValue<bool>>(const AsyncLoading());
-  
-  ref.listen<AsyncValue<bool>>(
-    onboardingCompletedProvider,
-    (previous, next) {
-      refreshListenable.value = next;
-    },
-    fireImmediately: true,
+  final refreshListenable = ValueNotifier<AsyncValue<bool>>(
+    const AsyncLoading(),
   );
+
+  ref.listen<AsyncValue<bool>>(onboardingCompletedProvider, (previous, next) {
+    refreshListenable.value = next;
+  }, fireImmediately: true);
 
   return GoRouter(
     initialLocation: '/',
@@ -71,7 +69,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/add-habit',
         builder: (context, state) {
           final habitId = state.uri.queryParameters['habitId'];
-          return AddHabitView(habitId: habitId);
+          final domain = state.uri.queryParameters['domain'];
+          return AddHabitView(habitId: habitId, initialDomainTag: domain);
         },
       ),
       GoRoute(

@@ -8,7 +8,7 @@ class ActivityHeatmapService {
   ActivityHeatmapService(this._db);
 
   /// Mengambil jumlah habits yang selesai per tanggal untuk 365 hari terakhir
-  /// Returns Map<DateTime, int> dimana key adalah tanggal dan value adalah jumlah habits
+  /// Returns `Map<DateTime, int>` dimana key adalah tanggal dan value adalah jumlah habits
   Future<Map<DateTime, int>> getActivityForLast365Days(String userId) async {
     final now = DateTime.now();
     final startDate = now.subtract(const Duration(days: 365));

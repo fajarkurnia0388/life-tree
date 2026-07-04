@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../cultivation_constants.dart';
-import '../cultivation_strings.dart';
 import '../cultivation_provider.dart';
 
 /// Displays the user's current cultivation realm as a badge.
@@ -26,7 +25,9 @@ class CultivationBadge extends ConsumerWidget {
             color: Theme.of(context).colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -52,7 +53,7 @@ class CultivationBadge extends ConsumerWidget {
         );
       },
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
 

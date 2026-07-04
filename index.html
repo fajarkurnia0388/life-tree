@@ -2323,6 +2323,355 @@
           display: none !important;
         }
       }
+
+      /* Flutter app demo mock */
+      .app-demo-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr);
+        gap: 32px;
+        align-items: stretch;
+      }
+
+      .mock-phone {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--line-jade);
+        border-radius: 34px;
+        background:
+          radial-gradient(
+            circle at 52% 20%,
+            rgba(111, 174, 144, 0.2),
+            transparent 34%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(18, 35, 28, 0.94),
+            rgba(10, 20, 16, 0.98)
+          );
+        box-shadow:
+          0 28px 90px rgba(0, 0, 0, 0.35),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+        padding: 18px;
+        min-height: 690px;
+      }
+
+      .mock-phone::before {
+        content: "";
+        position: absolute;
+        inset: -30% -20% auto -20%;
+        height: 360px;
+        background: radial-gradient(
+          circle,
+          rgba(163, 217, 255, 0.16),
+          transparent 68%
+        );
+        pointer-events: none;
+      }
+
+      .mock-statusbar,
+      .mock-bottom-nav {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        padding: 2px 6px 14px;
+      }
+
+      .mock-bottom-nav {
+        justify-content: space-around;
+        padding: 14px 8px 2px;
+      }
+
+      .mock-nav-item {
+        display: grid;
+        place-items: center;
+        gap: 4px;
+        opacity: 0.58;
+      }
+
+      .mock-nav-item.active {
+        color: var(--jade-soft);
+        opacity: 1;
+      }
+
+      .mock-card {
+        position: relative;
+        border: 1px solid rgba(111, 174, 144, 0.28);
+        border-radius: 24px;
+        background: rgba(22, 42, 33, 0.74);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+        padding: 18px;
+        margin-bottom: 14px;
+      }
+
+      .mock-card.compact {
+        padding: 16px 18px;
+      }
+
+      .mock-phase {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .mock-phase-icon {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        color: var(--jade-soft);
+        border-radius: 999px;
+        background: rgba(111, 174, 144, 0.1);
+        border: 1px solid rgba(111, 174, 144, 0.28);
+      }
+
+      .mock-phase h3,
+      .mock-card h3 {
+        margin: 0;
+        font-size: 1.02rem;
+        line-height: 1.2;
+      }
+
+      .mock-phase p,
+      .mock-card p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 0.86rem;
+        line-height: 1.45;
+      }
+
+      .mock-realm-row,
+      .mock-title-row,
+      .mock-balance-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .mock-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid rgba(111, 174, 144, 0.35);
+        border-radius: 999px;
+        padding: 4px 10px;
+        color: var(--jade-soft);
+        background: rgba(111, 174, 144, 0.1);
+        font-size: 0.74rem;
+        font-weight: 900;
+      }
+
+      .mock-progress {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .mock-progress > span {
+        display: block;
+        height: 100%;
+        width: 50%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--jade), var(--jade-soft));
+      }
+
+      .mock-stream-map {
+        position: relative;
+        height: 260px;
+        margin: 4px 0 16px;
+      }
+
+      .mock-line {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 116px;
+        height: 4px;
+        transform-origin: left center;
+        border-radius: 999px;
+        background: linear-gradient(
+          90deg,
+          rgba(184, 221, 198, 0.85),
+          rgba(184, 221, 198, 0.08)
+        );
+        opacity: 0.66;
+      }
+
+      .mock-line.locked {
+        background: linear-gradient(
+          90deg,
+          rgba(170, 184, 176, 0.38),
+          rgba(170, 184, 176, 0.05)
+        );
+        opacity: 0.55;
+      }
+
+      .mock-node {
+        position: absolute;
+        width: 52px;
+        height: 52px;
+        margin: -26px 0 0 -26px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: #172b22;
+        border: 3px solid currentColor;
+        color: var(--jade);
+        box-shadow: 0 0 26px currentColor;
+      }
+
+      .mock-node.root {
+        width: 68px;
+        height: 68px;
+        margin: -34px 0 0 -34px;
+        color: var(--jade-soft);
+        border-width: 4px;
+        box-shadow: 0 0 46px rgba(184, 221, 198, 0.35);
+      }
+
+      .mock-node.locked {
+        color: rgba(177, 193, 183, 0.42);
+        box-shadow: none;
+      }
+
+      .mock-node.locked::after {
+        content: "🔒";
+        position: absolute;
+        right: -5px;
+        bottom: -5px;
+        display: grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: #13231c;
+        border: 1px solid rgba(177, 193, 183, 0.45);
+        font-size: 0.68rem;
+      }
+
+      .mock-node.vital {
+        color: #00a99d;
+      }
+      .mock-node.reserve {
+        color: #ff9800;
+      }
+      .mock-node.karma {
+        color: #2196f3;
+      }
+      .mock-node.mind {
+        color: #4a5cff;
+      }
+      .mock-node.mastery {
+        color: #b52ad6;
+      }
+      .mock-node.spirit {
+        color: #42c85a;
+      }
+
+      .mock-resonance-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .mock-resonance-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.86rem;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .mock-resonance-row strong {
+        color: var(--cream);
+      }
+
+      .mock-resonance-row.locked strong {
+        color: rgba(242, 246, 240, 0.56);
+      }
+
+      .mock-demo-note {
+        border: 1px dashed rgba(216, 181, 108, 0.34);
+        background: rgba(216, 181, 108, 0.08);
+        border-radius: 18px;
+        color: var(--gold-soft);
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+
+      .demo-copy-list {
+        display: grid;
+        gap: 14px;
+        margin-top: 22px;
+      }
+
+      .demo-copy-card {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 18px;
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .demo-copy-card strong {
+        display: block;
+        color: var(--cream);
+        margin-bottom: 4px;
+      }
+
+      .demo-copy-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .recommend-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .recommend-card {
+        border: 1px solid rgba(111, 174, 144, 0.22);
+        border-radius: 18px;
+        padding: 16px;
+        background: rgba(111, 174, 144, 0.055);
+      }
+
+      .recommend-card b {
+        display: block;
+        color: var(--jade-soft);
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+      }
+
+      .recommend-card span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.8rem;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 980px) {
+        .app-demo-grid,
+        .recommend-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .mock-phone {
+          min-height: auto;
+        }
+      }
     </style>
   </head>
 
@@ -2379,7 +2728,8 @@
         <div class="nav-links" id="navLinks">
           <a data-nav href="#philosophy">Philosophy</a>
           <a data-nav href="#prototype">Dantian Core</a>
-          <a data-nav href="#system">Six Palaces</a>
+          <a data-nav href="#app-demo">Flutter Demo</a>
+          <a data-nav href="#system">Six Dao Streams</a>
           <a data-nav href="#flow">Daily Cycle</a>
           <a data-nav href="#docs">Scriptures</a>
           <a class="nav-cta" href="#prototype">Buka Alkimia</a>
@@ -2541,13 +2891,13 @@
 
           <div class="hero-actions">
             <a class="btn-primary" href="#prototype">Buka Dantian Core</a>
-            <a class="btn-secondary" href="#philosophy">Baca Filosofi Dao</a>
+            <a class="btn-secondary" href="#app-demo">Lihat Demo Flutter</a>
           </div>
 
           <div class="hero-stats reveal reveal-delay-2">
             <div class="stat-item">
               <div class="stat-val">六宫</div>
-              <div class="stat-label">Six Palaces</div>
+              <div class="stat-label">Six Dao Streams</div>
             </div>
             <div class="stat-item">
               <div class="stat-val">零罚</div>
@@ -2891,7 +3241,7 @@
                     >Foundation Establishment</span
                   >
                 </div>
-                <h3 id="palaceTitle">Body Palace</h3>
+                <h3 id="palaceTitle">Vital Stream</h3>
                 <p id="palaceBody">
                   Tubuh adalah wadah primordial kultivasi. Saat wadah kelelahan,
                   sistem meridian lain kehilangan pijakan energi.
@@ -2925,12 +3275,12 @@
               <div class="practice-block" aria-live="polite">
                 <h3 id="actionTitle">Breakthrough Hari Ini</h3>
                 <p id="actionBody">
-                  Body Palace sedang butuh Qi. Mulai dari practice 12 menit:
+                  Vital Stream sedang butuh Qi. Mulai dari practice 12 menit:
                   jalan kaki dan napas tenang.
                 </p>
 
                 <div class="tag-list" id="actionTags">
-                  <span class="tag">Body Palace</span>
+                  <span class="tag">Vital Stream</span>
                   <span class="tag">Qi Capacity 7/10</span>
                   <span class="tag">Gentle, enough</span>
                 </div>
@@ -2955,15 +3305,283 @@
         </div>
       </section>
 
+      <section class="section" id="app-demo" aria-labelledby="app-demo-title">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="section-label" data-seal="机">Flutter App Demo</span>
+            <h2 id="app-demo-title">
+              Imitasi UI Flutter: Six Dao Streams dalam aplikasi nyata.
+            </h2>
+            <p>
+              Demo ini bukan screenshot live, tetapi representasi landing dari
+              perilaku app Flutter: stream terlihat semua, sebagian terkunci
+              sebagai progressive disclosure, dan Developer Mode membuka semua
+              stream untuk pengujian bebas.
+            </p>
+          </div>
+
+          <div class="app-demo-grid">
+            <div
+              class="mock-phone reveal"
+              aria-label="Imitasi dashboard aplikasi Flutter Daoji"
+            >
+              <div class="mock-statusbar">
+                <span>Daoji Preview</span>
+                <span>Flutter UI · local-first</span>
+              </div>
+
+              <div class="mock-card compact">
+                <div class="mock-phase">
+                  <div class="mock-phase-icon">☼</div>
+                  <div>
+                    <h3>Growth Phase</h3>
+                    <p>Dao Streams sedang bergerak.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mock-realm-row" style="margin: 18px 0 8px">
+                <strong>Body Tempering</strong>
+                <strong>0%</strong>
+              </div>
+              <div class="mock-progress" aria-hidden="true">
+                <span style="width: 0%"></span>
+              </div>
+
+              <div class="mock-card" style="margin-top: 22px">
+                <div class="mock-title-row">
+                  <h3>Six Dao Streams</h3>
+                  <span class="mock-chip">Status ▾</span>
+                </div>
+
+                <div class="mock-stream-map" aria-hidden="true">
+                  <span
+                    class="mock-line"
+                    style="left: 50%; top: 50%; transform: rotate(-90deg)"
+                  ></span>
+                  <span
+                    class="mock-line locked"
+                    style="left: 50%; top: 50%; transform: rotate(-30deg)"
+                  ></span>
+                  <span
+                    class="mock-line locked"
+                    style="left: 50%; top: 50%; transform: rotate(30deg)"
+                  ></span>
+                  <span
+                    class="mock-line locked"
+                    style="left: 50%; top: 50%; transform: rotate(90deg)"
+                  ></span>
+                  <span
+                    class="mock-line locked"
+                    style="left: 50%; top: 50%; transform: rotate(150deg)"
+                  ></span>
+                  <span
+                    class="mock-line locked"
+                    style="left: 50%; top: 50%; transform: rotate(210deg)"
+                  ></span>
+
+                  <span class="mock-node root" style="left: 50%; top: 50%"
+                    >♧</span
+                  >
+                  <span class="mock-node vital" style="left: 50%; top: 18%"
+                    >☯</span
+                  >
+                  <span
+                    class="mock-node reserve locked"
+                    style="left: 78%; top: 34%"
+                    >▣</span
+                  >
+                  <span
+                    class="mock-node karma locked"
+                    style="left: 78%; top: 66%"
+                    >●●</span
+                  >
+                  <span
+                    class="mock-node spirit locked"
+                    style="left: 50%; top: 82%"
+                    >♟</span
+                  >
+                  <span
+                    class="mock-node mastery locked"
+                    style="left: 22%; top: 66%"
+                    >★</span
+                  >
+                  <span
+                    class="mock-node mind locked"
+                    style="left: 22%; top: 34%"
+                    >▰</span
+                  >
+                </div>
+
+                <div class="mock-realm-row">
+                  <div>
+                    <p
+                      style="
+                        margin: 0;
+                        color: var(--muted);
+                        font-weight: 800;
+                        font-size: 0.78rem;
+                      "
+                    >
+                      Current Realm
+                    </p>
+                    <strong>Penempaan Raga — Hari 0</strong>
+                  </div>
+                  <span class="mock-chip">Growth Phase</span>
+                </div>
+                <div class="mock-balance-row" style="margin-top: 18px">
+                  <strong style="color: var(--muted); font-size: 0.82rem"
+                    >Stream Balance</strong
+                  >
+                  <strong style="color: var(--jade-soft); font-size: 0.82rem"
+                    >50%</strong
+                  >
+                </div>
+                <div class="mock-progress"><span></span></div>
+              </div>
+
+              <div class="mock-card compact">
+                <div class="mock-title-row">
+                  <h3>Stream Resonance</h3>
+                  <span class="mock-chip">Profile</span>
+                </div>
+                <div class="mock-resonance-list">
+                  <div class="mock-resonance-row">
+                    <strong>Vital Stream</strong><span>5/10</span>
+                  </div>
+                  <div class="mock-resonance-row locked">
+                    <strong>Reserve Stream — Soon</strong><span>locked</span>
+                  </div>
+                  <div class="mock-resonance-row locked">
+                    <strong>Karma Stream — Soon</strong><span>locked</span>
+                  </div>
+                  <div class="mock-resonance-row locked">
+                    <strong>Mind Stream — Soon</strong><span>locked</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mock-demo-note">
+                Locked stream tetap terlihat agar pengguna memahami peta
+                hidupnya, tetapi tidak dipaksa membuka semuanya. Developer Mode
+                membuka semua stream untuk testing.
+              </div>
+
+              <div class="mock-bottom-nav" aria-hidden="true">
+                <span class="mock-nav-item active"
+                  >☷<small>Dao Tree</small></span
+                >
+                <span class="mock-nav-item">✎<small>Qi Log</small></span>
+                <span class="mock-nav-item">◈<small>Refinement</small></span>
+                <span class="mock-nav-item">☰<small>Compass</small></span>
+              </div>
+            </div>
+
+            <div class="reveal">
+              <div
+                class="section-head"
+                style="text-align: left; margin-bottom: 0"
+              >
+                <span class="section-label" data-seal="验"
+                  >Interaction Rules</span
+                >
+                <h2>Aturan UI yang disinkronkan dengan Flutter.</h2>
+                <p>
+                  Landing ini menyimpan keputusan desain terbaru agar ekspektasi
+                  antara halaman publik dan aplikasi Flutter tidak berjarak.
+                </p>
+              </div>
+
+              <div class="demo-copy-list">
+                <div class="demo-copy-card">
+                  <strong>Dashboard = Six Dao Streams</strong>
+                  <p>
+                    Map utama harian. Stream yang belum aktif tampil
+                    locked/Soon, bukan hilang.
+                  </p>
+                </div>
+                <div class="demo-copy-card">
+                  <strong>Profile = Stream Resonance</strong>
+                  <p>
+                    Radar diagnostik. Soon tetap ada untuk progressive
+                    disclosure.
+                  </p>
+                </div>
+                <div class="demo-copy-card">
+                  <strong>Manual opening path</strong>
+                  <p>
+                    User dapat mulai membuka stream dengan menambahkan practice
+                    pada stream tersebut.
+                  </p>
+                </div>
+                <div class="demo-copy-card">
+                  <strong>Developer Mode</strong>
+                  <p>
+                    Semua stream terbuka untuk QA, testing copy, visual state,
+                    dan motion.
+                  </p>
+                </div>
+                <div class="demo-copy-card">
+                  <strong>Heart Demon &amp; Qi Deviation</strong>
+                  <p>
+                    Hanya untuk mode imersif dan guardrail; tidak dipakai pada
+                    Safety Card atau teks krisis.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="recommend-grid reveal"
+            aria-label="Saran next step yang disimpan dari diskusi"
+          >
+            <div class="recommend-card">
+              <b>1 · Manual Unlock Flow</b
+              ><span
+                >Locked stream → snackbar → Tambah Practice dengan stream yang
+                dipilih sudah terisi.</span
+              >
+            </div>
+            <div class="recommend-card">
+              <b>2 · Locked UI Polish</b
+              ><span
+                >Lock icon, Soon state, tooltip, snackbar, dan semantics dibuat
+                konsisten.</span
+              >
+            </div>
+            <div class="recommend-card">
+              <b>3 · Tests</b
+              ><span
+                >Normal user locked, Developer Mode unlocked, dan vocabulary
+                labels teruji.</span
+              >
+            </div>
+            <div class="recommend-card">
+              <b>4 · Landing Sync</b
+              ><span
+                >Landing terus mengikuti perilaku Flutter agar tidak
+                overpromise.</span
+              >
+            </div>
+            <div class="recommend-card">
+              <b>5 · Profile Polish</b
+              ><span
+                >Stream Resonance menjadi diagnostic view, bukan duplikasi
+                dashboard.</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="system" aria-labelledby="system-title">
         <div class="wrap system-grid">
           <div class="system-aside reveal">
-            <span class="section-label" data-seal="宫">Six Palaces</span>
-            <h2 id="system-title">
-              Enam istana kehidupan, satu jalan harmoni.
-            </h2>
+            <span class="section-label" data-seal="宫">Six Dao Streams</span>
+            <h2 id="system-title">Enam aliran Dao, satu jalan harmoni.</h2>
             <p>
-              Daoji memecah kehidupan menjadi enam domain energi yang saling
+              Daoji memecah kehidupan menjadi enam aliran hidup yang saling
               beresonansi. Pengguna dapat merawat area yang sedang redup tanpa
               merasa harus sempurna di semua bidang sekaligus.
             </p>
@@ -2974,7 +3592,7 @@
             <article class="system-row reveal">
               <div class="row-mark">
                 <span class="hanzi">身</span
-                ><span>Body<small>Vital Energy</small></span>
+                ><span>Vital<small>Vital Stream</small></span>
               </div>
               <div class="row-copy">
                 <h3>Tidur, gerak fisik, nutrisi, dan kapasitas stamina.</h3>
@@ -2987,7 +3605,7 @@
             <article class="system-row reveal">
               <div class="row-mark">
                 <span class="hanzi">资</span
-                ><span>Resource<small>Stability</small></span>
+                ><span>Reserve<small>Reserve Stream</small></span>
               </div>
               <div class="row-copy">
                 <h3>Keuangan, waktu, perangkat, dan batas operasional.</h3>
@@ -3000,7 +3618,7 @@
             <article class="system-row reveal">
               <div class="row-mark">
                 <span class="hanzi">缘</span
-                ><span>Bond<small>Resonance</small></span>
+                ><span>Karma<small>Karma Stream</small></span>
               </div>
               <div class="row-copy">
                 <h3>Relasi, keluarga, komunitas, dan ikatan karmik.</h3>
@@ -3013,7 +3631,7 @@
             <article class="system-row reveal">
               <div class="row-mark">
                 <span class="hanzi">心</span
-                ><span>Heart<small>Attention</small></span>
+                ><span>Mind<small>Mind Stream</small></span>
               </div>
               <div class="row-copy">
                 <h3>Emosi, kejernihan fokus, dan ketenangan batin.</h3>
@@ -3026,7 +3644,7 @@
             <article class="system-row reveal">
               <div class="row-mark">
                 <span class="hanzi">艺</span
-                ><span>Craft<small>Mastery</small></span>
+                ><span>Mastery<small>Mastery Stream</small></span>
               </div>
               <div class="row-copy">
                 <h3>Keterampilan, karya, belajar, dan ritme penciptaan.</h3>
@@ -3039,7 +3657,7 @@
             <article class="system-row reveal">
               <div class="row-mark">
                 <span class="hanzi">乐</span
-                ><span>Joy<small>Spirit</small></span>
+                ><span>Spirit<small>Spirit Stream</small></span>
               </div>
               <div class="row-copy">
                 <h3>Bermain, rasa syukur, keindahan, dan sukacita hidup.</h3>
@@ -3073,14 +3691,14 @@
                 <h3>Baca Kondisi Batin.</h3>
                 <p>
                   Dashboard membuka hari dengan membaca state, realm hint, dan
-                  resonansi antar Six Palaces.
+                  resonansi antar Dao Streams.
                 </p>
               </div>
             </article>
             <article class="flow-row reveal">
               <div class="step-num">二</div>
               <div class="row-copy">
-                <h3>Ambil Satu Breakthrough.</h3>
+                <h3>Ambil One Practice.</h3>
                 <p>
                   Action of the Day diframing sebagai practice paling relevan:
                   kecil, terukur, dan cukup.
@@ -3145,7 +3763,9 @@
                   ><span>Design<small>Visual</small></span>
                 </div>
                 <div class="row-copy">
-                  <h3>Dantian, palaces, talisman geometry, dan tone copy.</h3>
+                  <h3>
+                    Dantian, Dao Streams, talisman geometry, dan tone copy.
+                  </h3>
                   <p>
                     Menjaga agar tema kultivasi terasa elegan, filosofis, dan
                     tidak menjadi game fantasi yang ramai.
@@ -3175,7 +3795,7 @@
             ><span class="t-corner t-br"></span>
             <pre><code><span class="folder">daoji-scriptures/</span>
   ├── <span class="file">01-dao-principles-and-antiguilt.md</span>
-  ├── <span class="file">02-six-palaces-meridian-map.md</span>
+  ├── <span class="file">02-six-dao-streams-map.md</span>
   ├── <span class="file">03-alchemical-state-machine.md</span>
   ├── <span class="file">04-xianxia-copywriting-tone.md</span>
   ├── <span class="file">05-offline-first-storage-schema.md</span>
@@ -3218,7 +3838,7 @@
           </span>
         </a>
         <p>
-          &copy; 2026 Daoji. Bukan mengejar streak — menyulin hidup menjadi
+          &copy; 2026 Daoji. Bukan mengejar streak — menyuling hidup menjadi
           jalan.
         </p>
       </div>
@@ -3650,7 +4270,7 @@
               state: "Growth Phase (生)",
               realm: "Foundation Establishment",
               title: "Breakthrough Hari Ini",
-              body: "Palace ini sedang butuh Qi. Mulai dari practice 12 menit yang lembut dan bisa selesai.",
+              body: "Stream ini sedang butuh Qi. Mulai dari practice 12 menit yang lembut dan bisa selesai.",
               tags: ["Qi Capacity 7/10", "Gentle enough", "One practice"],
               qi: 70,
             },
@@ -3688,7 +4308,7 @@
               state: "炼气化神 · Cultivation Progress",
               realm: "筑基期 · Foundation Establishment",
               title: "Meridian Breakthrough",
-              body: "Meridian palace ini membutuhkan sirkulasi Qi. Jalankan satu teknik sederhana untuk menghimpun energi Dantian.",
+              body: "Meridian stream ini membutuhkan sirkulasi Qi. Jalankan satu teknik sederhana untuk menghimpun energi Dantian.",
               tags: ["Qi Reservoir 7/10", "Steady circulation", "No drama"],
               qi: 70,
             },
@@ -3762,7 +4382,7 @@
           {
             id: "body",
             hanzi: "身",
-            name: "Body Palace",
+            name: "Vital Stream",
             color: "#88e2b0",
             angle: -90,
             insight:
@@ -3773,7 +4393,7 @@
           {
             id: "resource",
             hanzi: "资",
-            name: "Resource Palace",
+            name: "Reserve Stream",
             color: "#ffd984",
             angle: -30,
             insight:
@@ -3784,7 +4404,7 @@
           {
             id: "bond",
             hanzi: "缘",
-            name: "Bond Palace",
+            name: "Karma Stream",
             color: "#ffb3b8",
             angle: 30,
             insight:
@@ -3795,7 +4415,7 @@
           {
             id: "heart",
             hanzi: "心",
-            name: "Heart Palace",
+            name: "Mind Stream",
             color: "#a3d9ff",
             angle: 90,
             insight:
@@ -3806,7 +4426,7 @@
           {
             id: "craft",
             hanzi: "艺",
-            name: "Craft Palace",
+            name: "Mastery Stream",
             color: "#c3a1ff",
             angle: 150,
             insight:
@@ -3817,7 +4437,7 @@
           {
             id: "joy",
             hanzi: "乐",
-            name: "Joy Palace",
+            name: "Spirit Stream",
             color: "#f4e4bb",
             angle: 210,
             insight:
@@ -3914,7 +4534,7 @@
 
             const label = document.createElement("span");
             label.className = "node-label";
-            label.textContent = palace.name.replace(" Palace", "");
+            label.textContent = palace.name.replace(" Stream", "");
 
             node.append(glyph, label);
             node.addEventListener("click", () => {
@@ -4069,6 +4689,41 @@
 
         initMandala();
         updateUI();
+      })();
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'a15d820bb9e9ea82',t:'MTc4MzE2MTU4Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
       })();
     </script>
   </body>

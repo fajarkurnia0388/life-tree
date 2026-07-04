@@ -4,7 +4,6 @@ import 'package:drift/native.dart';
 import 'package:daoji/src/core/providers/db_provider.dart';
 import 'package:daoji/src/data/local_db/database.dart';
 import 'package:daoji/src/features/marketplace/marketplace_service.dart';
-import 'package:daoji/src/features/marketplace/models/marketplace_template_model.dart';
 
 void main() {
   late AppDatabase db;

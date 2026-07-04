@@ -19,7 +19,9 @@ import 'widgets/habit_templates.dart';
 
 class AddHabitView extends ConsumerStatefulWidget {
   final String? habitId;
-  const AddHabitView({super.key, this.habitId});
+  final String? initialDomainTag;
+
+  const AddHabitView({super.key, this.habitId, this.initialDomainTag});
 
   @override
   ConsumerState<AddHabitView> createState() => _AddHabitViewState();
@@ -36,7 +38,16 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   int _mvaDurationMin = 2;
   bool _showTemplates = true;
   String _frequency = 'Daily';
-  String _domainTag = 'Tubuh';
+  late String _domainTag;
+
+  static const List<String> _domainTags = [
+    'Tubuh',
+    'Keuangan',
+    'Hubungan',
+    'Emosi',
+    'Karir',
+    'Rekreasi',
+  ];
 
   final List<int> _selectedDays = [1, 2, 3, 4, 5, 6, 7];
 
@@ -46,9 +57,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   @override
   void initState() {
     super.initState();
+    _domainTag = _normalizedInitialDomainTag(widget.initialDomainTag);
     if (widget.habitId != null) {
       _loadHabitForEdit();
     }
+  }
+
+  String _normalizedInitialDomainTag(String? domainTag) {
+    if (domainTag == null || domainTag.trim().isEmpty) return 'Tubuh';
+    return _domainTags.contains(domainTag) ? domainTag : 'Tubuh';
   }
 
   Future<void> _loadHabitForEdit() async {
@@ -359,31 +376,29 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children:
-                        [
-                          'Tubuh',
-                          'Keuangan',
-                          'Hubungan',
-                          'Emosi',
-                          'Karir',
-                          'Rekreasi',
-                        ].map((tag) {
-                          final isSelected = _domainTag == tag;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: ChoiceChip(
-                              label: Text(DaojiText.domainLabel(tag, vocabularyLevel, short: true)),
-                              selected: isSelected,
-                              onSelected: (selected) {
-                                if (selected) {
-                                  setState(() {
-                                    _domainTag = tag;
-                                  });
-                                }
-                              },
+                    children: _domainTags.map((tag) {
+                      final isSelected = _domainTag == tag;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: ChoiceChip(
+                          label: Text(
+                            DaojiText.domainLabel(
+                              tag,
+                              vocabularyLevel,
+                              short: true,
                             ),
-                          );
-                        }).toList(),
+                          ),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            if (selected) {
+                              setState(() {
+                                _domainTag = tag;
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -491,6 +506,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
+                key: ValueKey(_domainTag),
                 initialValue: _domainTag,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -501,29 +517,20 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                     vertical: 12,
                   ),
                 ),
-                items:
-                    [
-                          'Tubuh',
-                          'Keuangan',
-                          'Hubungan',
-                          'Emosi',
-                          'Karir',
-                          'Rekreasi',
-                        ]
-                        .map(
-                          (val) =>
-                              DropdownMenuItem(
-                                value: val,
-                                child: Text(
-                                  DaojiText.domainLabel(
-                                    val,
-                                    vocabularyLevel,
-                                    short: true,
-                                  ),
-                                ),
-                              ),
-                        )
-                        .toList(),
+                items: _domainTags
+                    .map(
+                      (val) => DropdownMenuItem(
+                        value: val,
+                        child: Text(
+                          DaojiText.domainLabel(
+                            val,
+                            vocabularyLevel,
+                            short: true,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
                 onChanged: (val) {
                   if (val != null) {
                     setState(() {
@@ -537,7 +544,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               TextFormField(
                 controller: _titleController,
                 decoration: AppFormTheme.inputDecoration(
-                  labelText: DaojiText.resolve(DaojiTextKey.habitNameLabel, vocabularyLevel),
+                  labelText: DaojiText.resolve(
+                    DaojiTextKey.habitNameLabel,
+                    vocabularyLevel,
+                  ),
                   hintText: 'Misal: Jalan kaki pagi',
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -622,7 +632,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ],
 
               _buildSliderSection(
-                title: '🚀 ${DaojiText.resolve(DaojiTextKey.habitFriction, vocabularyLevel)}',
+                title:
+                    '🚀 ${DaojiText.resolve(DaojiTextKey.habitFriction, vocabularyLevel)}',
                 helperText:
                     'Contoh: olahraga ke gym = susah (4-5), baca 1 halaman = mudah (1-2)',
                 value: _initiationFriction,
@@ -632,7 +643,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
 
               _buildSliderSection(
-                title: '⚡ ${DaojiText.resolve(DaojiTextKey.habitEnergy, vocabularyLevel)}',
+                title:
+                    '⚡ ${DaojiText.resolve(DaojiTextKey.habitEnergy, vocabularyLevel)}',
                 helperText:
                     'Contoh: lari 30 menit = banyak energi (4-5), nulis jurnal = sedikit (1-2)',
                 value: _energyCost,
@@ -642,7 +654,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
 
               _buildSliderSection(
-                title: '🎯 ${DaojiText.resolve(DaojiTextKey.habitImpact, vocabularyLevel)}',
+                title:
+                    '🎯 ${DaojiText.resolve(DaojiTextKey.habitImpact, vocabularyLevel)}',
                 helperText:
                     'Contoh: olahraga rutin = dampak besar (5), minum vitamin = menengah (3)',
                 value: _impactScore,
@@ -652,7 +665,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
 
               _buildSliderSection(
-                title: '⏱️ ${DaojiText.resolve(DaojiTextKey.habitMva, vocabularyLevel)} (menit)',
+                title:
+                    '⏱️ ${DaojiText.resolve(DaojiTextKey.habitMva, vocabularyLevel)} (menit)',
                 helperText:
                     'MVA: Minimum Viable Action — durasi terpendek agar tetap "valid dilakukan"',
                 value: _mvaDurationMin,
@@ -672,8 +686,14 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 onPressed: _saveHabit,
                 child: Text(
                   _isEditing
-                      ? DaojiText.resolve(DaojiTextKey.habitEdit, vocabularyLevel)
-                      : DaojiText.resolve(DaojiTextKey.habitSave, vocabularyLevel),
+                      ? DaojiText.resolve(
+                          DaojiTextKey.habitEdit,
+                          vocabularyLevel,
+                        )
+                      : DaojiText.resolve(
+                          DaojiTextKey.habitSave,
+                          vocabularyLevel,
+                        ),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

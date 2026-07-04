@@ -13,10 +13,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/local_db/database.dart';
 import 'dashboard_provider.dart';
-import 'widgets/domain_insight_dialog.dart';
 import 'widgets/action_of_the_day_card.dart';
 import 'widgets/celebration_card.dart';
-import 'widgets/domain_scores_card.dart';
 import 'widgets/habit_list_section.dart';
 import '../habit/services/habit_log_service.dart';
 import 'widgets/season_badge_widget.dart';
@@ -106,13 +104,19 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             const Text('🍃', style: TextStyle(fontSize: 32)),
             const SizedBox(height: 12),
             Text(
-              DaojiText.resolve(DaojiTextKey.dashboardNoActionsTitle, vocabularyLevel),
+              DaojiText.resolve(
+                DaojiTextKey.dashboardNoActionsTitle,
+                vocabularyLevel,
+              ),
               textAlign: TextAlign.center,
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(
-              DaojiText.resolve(DaojiTextKey.dashboardNoActionsBody, vocabularyLevel),
+              DaojiText.resolve(
+                DaojiTextKey.dashboardNoActionsBody,
+                vocabularyLevel,
+              ),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
@@ -394,7 +398,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   ),
                 ),
                 Text(
-                  DaojiText.resolve(DaojiTextKey.dashboardQuickActionsTitle, vocabularyLevel),
+                  DaojiText.resolve(
+                    DaojiTextKey.dashboardQuickActionsTitle,
+                    vocabularyLevel,
+                  ),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -402,7 +409,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 ),
                 const SizedBox(height: 16),
                 Semantics(
-                  label: DaojiText.resolve(DaojiTextKey.dashboardAddPracticeTitle, vocabularyLevel),
+                  label: DaojiText.resolve(
+                    DaojiTextKey.dashboardAddPracticeTitle,
+                    vocabularyLevel,
+                  ),
                   hint: 'Buka halaman untuk membuat kebiasaan baru',
                   button: true,
                   child: ListTile(
@@ -431,7 +441,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 ),
                 const Divider(),
                 Semantics(
-                  label: DaojiText.resolve(DaojiTextKey.dashboardJournalTitle, vocabularyLevel),
+                  label: DaojiText.resolve(
+                    DaojiTextKey.dashboardJournalTitle,
+                    vocabularyLevel,
+                  ),
                   hint:
                       'Buka halaman jurnal untuk mencatat mood dan refleksi harian',
                   button: true,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/domain/app_constants.dart';
 import '../../../../core/widgets/error_state_widget.dart';
 import '../../../../core/widgets/loading_state_widget.dart';
+import '../../../../core/theme/theme.dart';
 import '../../../cultivation/cultivation_provider.dart';
 import '../../../cultivation/cultivation_strings.dart';
 import '../../dashboard_provider.dart';
@@ -39,13 +40,11 @@ class _MorphingGrowthMapLines extends StatefulWidget {
   final List<GrowthMapNode> nodes;
   final String season;
 
-  const _MorphingGrowthMapLines({
-    required this.nodes,
-    required this.season,
-  });
+  const _MorphingGrowthMapLines({required this.nodes, required this.season});
 
   @override
-  State<_MorphingGrowthMapLines> createState() => _MorphingGrowthMapLinesState();
+  State<_MorphingGrowthMapLines> createState() =>
+      _MorphingGrowthMapLinesState();
 }
 
 class _MorphingGrowthMapLinesState extends State<_MorphingGrowthMapLines>
@@ -69,7 +68,8 @@ class _MorphingGrowthMapLinesState extends State<_MorphingGrowthMapLines>
   @override
   void didUpdateWidget(covariant _MorphingGrowthMapLines oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final changed = _signature(oldWidget.nodes, oldWidget.season) !=
+    final changed =
+        _signature(oldWidget.nodes, oldWidget.season) !=
         _signature(widget.nodes, widget.season);
     if (!changed) return;
 
@@ -93,9 +93,7 @@ class _MorphingGrowthMapLinesState extends State<_MorphingGrowthMapLines>
     List<GrowthMapNode> to,
     double rawT,
   ) {
-    final t = Curves.easeInOutCubic.transform(
-      rawT.clamp(0.0, 1.0).toDouble(),
-    );
+    final t = Curves.easeInOutCubic.transform(rawT.clamp(0.0, 1.0).toDouble());
     final fromById = <String, GrowthMapNode>{
       for (final node in from) '${node.type}:${node.id}': node,
     };
@@ -116,7 +114,11 @@ class _MorphingGrowthMapLinesState extends State<_MorphingGrowthMapLines>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        final nodes = _interpolatedNodes(_fromNodes, _toNodes, _controller.value);
+        final nodes = _interpolatedNodes(
+          _fromNodes,
+          _toNodes,
+          _controller.value,
+        );
         return CustomPaint(
           painter: GrowthMapPainter(nodes: nodes, season: widget.season),
         );
@@ -168,15 +170,78 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
 
   void _showLockedStreamSnackBar(BuildContext context, BranchNode node) {
     final messenger = ScaffoldMessenger.of(context);
+    final safeBottom = MediaQuery.paddingOf(context).bottom;
+    final domainParam = Uri.encodeComponent(node.id);
+
     messenger.hideCurrentSnackBar();
     messenger.showSnackBar(
       SnackBar(
-        content: Text(
-          '${node.label} akan terbuka bertahap. Tambahkan practice di stream ini, atau aktifkan Developer Mode untuk testing bebas.',
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: CalmTheme.daoSurface,
+        elevation: 0,
+        margin: EdgeInsets.fromLTRB(16, 0, 16, 92 + safeBottom),
+        padding: const EdgeInsets.fromLTRB(16, 14, 8, 14),
+        duration: const Duration(milliseconds: 4800),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+            color: CalmTheme.daoJade.withValues(alpha: 0.38),
+            width: 1,
+          ),
+        ),
+        showCloseIcon: true,
+        closeIconColor: CalmTheme.daoMuted,
+        content: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: CalmTheme.obsidian.withValues(alpha: 0.72),
+                border: Border.all(
+                  color: CalmTheme.daoGold.withValues(alpha: 0.45),
+                ),
+              ),
+              child: const Icon(
+                Icons.lock_rounded,
+                color: CalmTheme.daoGold,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${node.label} Stream belum aktif',
+                    style: const TextStyle(
+                      color: CalmTheme.daoCream,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Tambahkan practice untuk mulai membuka stream ini. Developer Mode membuka semua stream untuk testing.',
+                    style: TextStyle(
+                      color: CalmTheme.daoMuted,
+                      height: 1.35,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         action: SnackBarAction(
           label: 'Tambah Practice',
-          onPressed: () => context.push('/add-habit'),
+          textColor: CalmTheme.daoGold,
+          onPressed: () => context.push('/add-habit?domain=$domainParam'),
         ),
       ),
     );
@@ -401,7 +466,9 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: node.isLocked
-                                        ? theme.colorScheme.surface.withValues(alpha: 0.62)
+                                        ? theme.colorScheme.surface.withValues(
+                                            alpha: 0.62,
+                                          )
                                         : theme.colorScheme.surface,
                                     border: Border.all(
                                       color: glowColor,

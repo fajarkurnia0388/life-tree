@@ -3,6 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/db_provider.dart';
 
 class CalmTheme {
+  // Daoji Premium Palette (Aligned with landing page)
+  static const Color obsidian = Color(0xFF050807);
+  static const Color daoSurface = Color(0xFF13231C);
+  static const Color daoSurfaceElevated = Color(0xFF1A332A);
+  static const Color daoJade = Color(0xFF6FAE90);
+  static const Color daoJadeSoft = Color(0xFFB8DDC6);
+  static const Color daoGold = Color(0xFFD8B56C);
+  static const Color daoCream = Color(0xFFF2F6F0);
+  static const Color daoMuted = Color(0xFFA8B8B0);
+
   // Light Mode Palette (Aligned with Landing Page)
   static const Color primarySage = Color(0xFF7C9A72);
   static const Color primaryContainer = Color(0xFFA3BC99);
@@ -45,18 +55,39 @@ class CalmTheme {
       ),
       fontFamily: 'Inter',
       textTheme: const TextTheme(
-        headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: textDarkSage),
-        headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: textDarkSage),
-        titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: textDarkSage),
+        headlineLarge: TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: textDarkSage,
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          color: textDarkSage,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: textDarkSage,
+        ),
         bodyLarge: TextStyle(fontSize: 16, color: textDarkSage),
         bodyMedium: TextStyle(fontSize: 14, color: textDarkSage),
-        labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+        labelLarge: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        ),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: backgroundCream,
         elevation: 0,
         iconTheme: IconThemeData(color: textDarkSage),
-        titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textDarkSage, fontFamily: 'Inter'),
+        titleTextStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: textDarkSage,
+          fontFamily: 'Inter',
+        ),
       ),
       buttonTheme: const ButtonThemeData(
         minWidth: 88,
@@ -90,18 +121,39 @@ class CalmTheme {
       ),
       fontFamily: 'Inter',
       textTheme: const TextTheme(
-        headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: textLightSage),
-        headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: textLightSage),
-        titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: textLightSage),
+        headlineLarge: TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: textLightSage,
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          color: textLightSage,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: textLightSage,
+        ),
         bodyLarge: TextStyle(fontSize: 16, color: textLightSage),
         bodyMedium: TextStyle(fontSize: 14, color: textLightSage),
-        labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: backgroundDark),
+        labelLarge: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: backgroundDark,
+        ),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: backgroundDark,
         elevation: 0,
         iconTheme: IconThemeData(color: textLightSage),
-        titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textLightSage, fontFamily: 'Inter'),
+        titleTextStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: textLightSage,
+          fontFamily: 'Inter',
+        ),
       ),
       buttonTheme: const ButtonThemeData(
         minWidth: 88,
