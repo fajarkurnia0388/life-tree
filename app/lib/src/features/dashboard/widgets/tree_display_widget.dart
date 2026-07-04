@@ -49,6 +49,7 @@ class TreeDisplayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final isRecovery = season == Season.recovery;
     final isDormant = season == Season.dormant;
     final isTribulation = cultivationSeason == CultivationSeason.tribulation;
@@ -69,86 +70,83 @@ class TreeDisplayWidget extends StatelessWidget {
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.surface.withValues(alpha: 0.18),
+                  color: theme.colorScheme.surface.withValues(alpha: 0.18),
                 ),
               ),
             ),
 
             // ── Dynamic Domain Aura ──
-            if (activeDomainColor != null)
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: RadialGradient(
-                      center: const Alignment(0, 0.2),
-                      radius: 0.65,
-                      colors: [
-                        activeDomainColor!.withValues(alpha: 0.32),
-                        activeDomainColor!.withValues(alpha: 0.0),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-            // ── Peta Pertumbuhan Konseptual ──
-            // AnimatedSwitcher gives the focus/unfocus state a PPT-like
-            // transition instead of snapping instantly between layouts.
+            // Animated like a PowerPoint morph background wash when a stream is
+            // focused/unfocused.
             Positioned.fill(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 520),
-                reverseDuration: const Duration(milliseconds: 420),
-                switchInCurve: Curves.easeOutCubic,
-                switchOutCurve: Curves.easeInCubic,
-                transitionBuilder: (child, animation) {
-                  final curved = CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOutCubic,
-                    reverseCurve: Curves.easeInCubic,
-                  );
-                  return FadeTransition(
-                    opacity: curved,
-                    child: ScaleTransition(
-                      scale: Tween<double>(
-                        begin: 0.94,
-                        end: 1.0,
-                      ).animate(curved),
-                      child: child,
-                    ),
-                  );
-                },
-                child: GrowthMapWidget(
-                  key: ValueKey(selectedDomain ?? 'all-domains'),
-                  width: width,
-                  height: height,
-                  activeDomainColor: activeDomainColor,
-                  selectedDomain: selectedDomain,
-                  onDomainTap: onDomainNavigate,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 650),
+                curve: Curves.easeInOutCubic,
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: selectedDomain == null
+                        ? Alignment.center
+                        : const Alignment(0, 0.2),
+                    radius: selectedDomain == null ? 0.42 : 0.72,
+                    colors: [
+                      (activeDomainColor ?? theme.colorScheme.primary)
+                          .withValues(alpha: selectedDomain == null ? 0.00 : 0.32),
+                      (activeDomainColor ?? theme.colorScheme.primary)
+                          .withValues(alpha: 0.0),
+                    ],
+                  ),
                 ),
               ),
             ),
 
-            if (selectedDomain != null && onDomainReset != null)
-              Positioned(
-                top: 0,
-                left: 0,
-                child: Tooltip(
-                  message: 'Tampilkan semua domain',
-                  child: ClipOval(
-                    child: Material(
-                      color: Colors.black.withValues(alpha: 0.12),
-                      child: InkWell(
-                        onTap: onDomainReset,
-                        child: SizedBox(
-                          width: 32,
-                          height: 32,
-                          child: Center(
-                            child: Icon(
-                              Icons.arrow_back_rounded,
-                              size: 16,
-                              color: Colors.white.withValues(alpha: 0.85),
+            // ── Peta Pertumbuhan Konseptual ──
+            // Keep the same GrowthMapWidget instance across focus/unfocus.
+            // This lets AnimatedPositioned nodes morph between layouts instead
+            // of replacing the whole map, creating a PPT "Morph"-like motion.
+            Positioned.fill(
+              child: GrowthMapWidget(
+                width: width,
+                height: height,
+                activeDomainColor: activeDomainColor,
+                selectedDomain: selectedDomain,
+                onDomainTap: onDomainNavigate,
+              ),
+            ),
+
+            Positioned(
+              top: 0,
+              left: 0,
+              child: IgnorePointer(
+                ignoring: selectedDomain == null || onDomainReset == null,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 260),
+                  curve: Curves.easeOutCubic,
+                  opacity: selectedDomain != null && onDomainReset != null
+                      ? 1.0
+                      : 0.0,
+                  child: AnimatedScale(
+                    duration: const Duration(milliseconds: 320),
+                    curve: Curves.easeOutBack,
+                    scale: selectedDomain != null && onDomainReset != null
+                        ? 1.0
+                        : 0.72,
+                    child: Tooltip(
+                      message: 'Tampilkan semua domain',
+                      child: ClipOval(
+                        child: Material(
+                          color: Colors.black.withValues(alpha: 0.12),
+                          child: InkWell(
+                            onTap: onDomainReset,
+                            child: SizedBox(
+                              width: 32,
+                              height: 32,
+                              child: Center(
+                                child: Icon(
+                                  Icons.arrow_back_rounded,
+                                  size: 16,
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -157,6 +155,7 @@ class TreeDisplayWidget extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
 
             // ── Quiet Integration state: night sky with stars, stable soft glow ──
             if (isQuietIntegration)

@@ -35,6 +35,96 @@ class GrowthMapWidget extends ConsumerStatefulWidget {
   ConsumerState<GrowthMapWidget> createState() => _GrowthMapWidgetState();
 }
 
+class _MorphingGrowthMapLines extends StatefulWidget {
+  final List<GrowthMapNode> nodes;
+  final String season;
+
+  const _MorphingGrowthMapLines({
+    required this.nodes,
+    required this.season,
+  });
+
+  @override
+  State<_MorphingGrowthMapLines> createState() => _MorphingGrowthMapLinesState();
+}
+
+class _MorphingGrowthMapLinesState extends State<_MorphingGrowthMapLines>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late List<GrowthMapNode> _fromNodes;
+  late List<GrowthMapNode> _toNodes;
+
+  @override
+  void initState() {
+    super.initState();
+    _fromNodes = widget.nodes;
+    _toNodes = widget.nodes;
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 620),
+      value: 1.0,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _MorphingGrowthMapLines oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final changed = _signature(oldWidget.nodes, oldWidget.season) !=
+        _signature(widget.nodes, widget.season);
+    if (!changed) return;
+
+    _fromNodes = _interpolatedNodes(_fromNodes, _toNodes, _controller.value);
+    _toNodes = widget.nodes;
+    _controller.forward(from: 0.0);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  String _signature(List<GrowthMapNode> nodes, String season) {
+    return '$season|${nodes.map((node) => '${node.type}:${node.id}:${node.position.dx.toStringAsFixed(1)},${node.position.dy.toStringAsFixed(1)}').join(';')}';
+  }
+
+  List<GrowthMapNode> _interpolatedNodes(
+    List<GrowthMapNode> from,
+    List<GrowthMapNode> to,
+    double rawT,
+  ) {
+    final t = Curves.easeInOutCubic.transform(
+      rawT.clamp(0.0, 1.0).toDouble(),
+    );
+    final fromById = <String, GrowthMapNode>{
+      for (final node in from) '${node.type}:${node.id}': node,
+    };
+
+    // Draw only the target node set. This prevents old focused/off-screen
+    // connector snapshots from lingering as ghost lines after a morph.
+    return to.map((target) {
+      final previous = fromById['${target.type}:${target.id}'];
+      if (previous == null) return target;
+      return target.copyWith(
+        position: Offset.lerp(previous.position, target.position, t),
+      );
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final nodes = _interpolatedNodes(_fromNodes, _toNodes, _controller.value);
+        return CustomPaint(
+          painter: GrowthMapPainter(nodes: nodes, season: widget.season),
+        );
+      },
+    );
+  }
+}
+
 class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
   bool _isToggling = false;
 
@@ -139,10 +229,13 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
             return Stack(
               clipBehavior: Clip.none,
               children: [
-                // 1. Connection lines painted in background
+                // 1. Connection lines painted in background.
+                // Keep this as a single current-state painter (no cross-fading
+                // old line layers). Cross-fading line snapshots can leave
+                // off-screen ghost connectors during PPT-like morph transitions.
                 Positioned.fill(
-                  child: CustomPaint(
-                    painter: GrowthMapPainter(
+                  child: ClipRect(
+                    child: _MorphingGrowthMapLines(
                       nodes: positionedNodes,
                       season: viewModel.season,
                     ),
