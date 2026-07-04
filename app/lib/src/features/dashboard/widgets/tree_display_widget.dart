@@ -9,6 +9,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/domain/app_constants.dart';
+import '../../../core/i18n/daoji_text_key.dart';
+import '../../../core/i18n/daoji_text_resolver.dart';
+import '../../../core/i18n/daoji_vocabulary_level.dart';
+import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/services/error_handler_service.dart';
 import '../../../core/theme/theme.dart';
 import '../../cultivation/cultivation_constants.dart';
@@ -508,12 +512,13 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final languageLevel = ref.watch(cultivationLanguageLevelProvider);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final cultivation = ref.watch(cultivationProvider).valueOrNull;
     final currentRealm = CultivationConstants.realms.firstWhere(
       (realm) => realm.level == (cultivation?.realm ?? 1),
       orElse: () => CultivationConstants.realms.first,
     );
-    final label = CultivationStrings.dashboardTitle(languageLevel);
+    final label = DaojiText.resolve(DaojiTextKey.mapTitle, vocabularyLevel);
     final progress = widget.balanceIndex ?? 1.0;
     final isRecovery = widget.season == Season.recovery;
     final progressColor = isRecovery
@@ -524,6 +529,8 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
       currentRealm.indonesianName,
       widget.cumulativeDays,
     );
+    final progressLabel = _progressLabel(vocabularyLevel);
+    final progressPercent = '${(progress.clamp(0.0, 1.0) * 100).round()}%';
 
     return Card(
       child: Padding(
@@ -542,7 +549,6 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
                     ),
                   ),
                 ),
-                Icon(Icons.terrain, size: 24, color: progressColor),
               ],
             ),
             const SizedBox(height: 16),
@@ -626,7 +632,8 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
             ),
             const SizedBox(height: 20),
 
-            // Info Section
+            // Current realm + state. Avoid repeating the card title; the
+            // visual already communicates the Dao Stream map.
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -636,7 +643,7 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        label,
+                        _realmLabel(vocabularyLevel),
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
@@ -647,27 +654,15 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        label,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                        journeyLabel,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.78,
+                          ),
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            // Stats & Badge Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  journeyLabel,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 Row(
@@ -687,7 +682,30 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
             ),
             const SizedBox(height: 16),
 
-            // Progress bar
+            // Balance progress. This bar represents the current stream balance,
+            // not the realm/day progression, so it has an explicit label.
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  progressLabel,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.62),
+                  ),
+                ),
+                Text(
+                  progressPercent,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: progressColor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
@@ -701,6 +719,24 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
         ),
       ),
     );
+  }
+
+  String _realmLabel(DaojiVocabularyLevel level) {
+    return switch (level) {
+      DaojiVocabularyLevel.practical => 'Tahap Saat Ini',
+      DaojiVocabularyLevel.gentleCultivation => 'Current Realm',
+      DaojiVocabularyLevel.daoStream => 'Current Realm',
+      DaojiVocabularyLevel.immortalCultivation => 'Cultivation Realm',
+    };
+  }
+
+  String _progressLabel(DaojiVocabularyLevel level) {
+    return switch (level) {
+      DaojiVocabularyLevel.practical => 'Keseimbangan',
+      DaojiVocabularyLevel.gentleCultivation => 'Stream Balance',
+      DaojiVocabularyLevel.daoStream => 'Stream Balance',
+      DaojiVocabularyLevel.immortalCultivation => 'Meridian Resonance',
+    };
   }
 }
 
