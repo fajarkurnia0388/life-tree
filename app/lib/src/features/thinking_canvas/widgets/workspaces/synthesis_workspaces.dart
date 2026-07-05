@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/i18n/daoji_text_key.dart';
+import '../../../../core/i18n/daoji_text_resolver.dart';
+import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 
 // ==========================================
 // 1. MIND DUMP WORKSPACE (STICKY NOTES)
 // ==========================================
-class MindDumpWorkspace extends StatefulWidget {
+class MindDumpWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const MindDumpWorkspace({super.key, required this.onChanged});
 
   @override
-  State<MindDumpWorkspace> createState() => _MindDumpWorkspaceState();
+  ConsumerState<MindDumpWorkspace> createState() => _MindDumpWorkspaceState();
 }
 
-class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
+class _MindDumpWorkspaceState extends ConsumerState<MindDumpWorkspace> {
   final List<String> _notes = [];
   final TextEditingController _inputController = TextEditingController();
 
@@ -59,24 +63,33 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Kuras Pikiran (Mind Dump Sticky Notes)',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.mindDumpTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _inputController,
           decoration: InputDecoration(
-            labelText: 'Tambah Item',
-            hintText:
-                'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
+            labelText: DaojiText.resolve(
+              DaojiTextKey.mindDumpAddLabel,
+              vocabularyLevel,
+            ),
+            hintText: DaojiText.resolve(
+              DaojiTextKey.mindDumpHint,
+              vocabularyLevel,
+            ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
-              tooltip: 'Tambah item',
+              tooltip: DaojiText.resolve(
+                DaojiTextKey.mindDumpAddLabel,
+                vocabularyLevel,
+              ),
               onPressed: _addNote,
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -94,14 +107,17 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
               ),
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Icon(Icons.note_alt_outlined, size: 40, color: Colors.grey),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  'Belum ada catatan tempel. Ketik sesuatu di atas untuk meluapkan isi kepala Anda!',
+                  DaojiText.resolve(
+                    DaojiTextKey.mindDumpEmptyMessage,
+                    vocabularyLevel,
+                  ),
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                  style: const TextStyle(fontSize: 11, color: Colors.grey),
                 ),
               ],
             ),
@@ -182,16 +198,17 @@ class _MindDumpWorkspaceState extends State<MindDumpWorkspace> {
 // ==========================================
 // 2. AFFINITY MAPPING WORKSPACE
 // ==========================================
-class AffinityMappingWorkspace extends StatefulWidget {
+class AffinityMappingWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const AffinityMappingWorkspace({super.key, required this.onChanged});
 
   @override
-  State<AffinityMappingWorkspace> createState() =>
+  ConsumerState<AffinityMappingWorkspace> createState() =>
       _AffinityMappingWorkspaceState();
 }
 
-class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
+class _AffinityMappingWorkspaceState
+    extends ConsumerState<AffinityMappingWorkspace> {
   final List<Map<String, dynamic>> _items = [];
   final List<String> _groups = const [
     'Grup A (Hijau)',
@@ -252,23 +269,33 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Pengelompokan Affinity Mapping',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.affinityTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _inputController,
           decoration: InputDecoration(
-            labelText: 'Tambah Gagasan',
-            hintText: 'Ketik gagasan/ide Anda lalu tekan Enter...',
+            labelText: DaojiText.resolve(
+              DaojiTextKey.affinityAddLabel,
+              vocabularyLevel,
+            ),
+            hintText: DaojiText.resolve(
+              DaojiTextKey.affinityHint,
+              vocabularyLevel,
+            ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
-              tooltip: 'Tambah gagasan',
+              tooltip: DaojiText.resolve(
+                DaojiTextKey.affinityAddLabel,
+                vocabularyLevel,
+              ),
               onPressed: _addItem,
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -286,14 +313,17 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
               ),
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Icon(Icons.label_outline_rounded, size: 40, color: Colors.grey),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  'Belum ada ide. Tambahkan ide di atas lalu kelompokkan ke dalam grup!',
+                  DaojiText.resolve(
+                    DaojiTextKey.affinityEmptyMessage,
+                    vocabularyLevel,
+                  ),
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                  style: const TextStyle(fontSize: 11, color: Colors.grey),
                 ),
               ],
             ),
@@ -366,15 +396,15 @@ class _AffinityMappingWorkspaceState extends State<AffinityMappingWorkspace> {
 // ==========================================
 // 3. FIVE WHYS WORKSPACE (WHY CHAIN)
 // ==========================================
-class FiveWhysWorkspace extends StatefulWidget {
+class FiveWhysWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const FiveWhysWorkspace({super.key, required this.onChanged});
 
   @override
-  State<FiveWhysWorkspace> createState() => _FiveWhysWorkspaceState();
+  ConsumerState<FiveWhysWorkspace> createState() => _FiveWhysWorkspaceState();
 }
 
-class _FiveWhysWorkspaceState extends State<FiveWhysWorkspace> {
+class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
   final List<TextEditingController> _controllers = List.generate(
     5,
     (_) => TextEditingController(),
@@ -408,13 +438,14 @@ class _FiveWhysWorkspaceState extends State<FiveWhysWorkspace> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Rantai 5 Whys (Menelusuri Akar Masalah)',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.fiveWhysTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 12),
         ...List.generate(5, (index) {

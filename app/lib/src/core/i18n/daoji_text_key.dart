@@ -173,6 +173,17 @@ enum DaojiTextKey {
   morphologicalOptionsPlusLabel,
   morphologicalDimensionCount,
   morphologicalCancel,
+  // Synthesis / Mind-synthesis workspaces
+  mindDumpTitle,
+  mindDumpAddLabel,
+  mindDumpHint,
+  mindDumpEmptyMessage,
+  affinityTitle,
+  affinityAddLabel,
+  affinityHint,
+  affinityEmptyMessage,
+  fiveWhysTitle,
+  fiveWhysPrompt,
   profileDomainReauditTitle,
   profileDomainReauditAction,
 
