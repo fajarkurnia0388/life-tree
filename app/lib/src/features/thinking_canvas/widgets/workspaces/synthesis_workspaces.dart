@@ -493,9 +493,18 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
                   style: const TextStyle(fontSize: 12),
                   decoration: InputDecoration(
                     labelText: index == 0
-                        ? 'Mengapa masalah ini terjadi?'
-                        : 'Mengapa hal itu bisa terjadi?',
-                    hintText: 'Tuliskan analisis sebab Anda...',
+                        ? DaojiText.resolve(
+                            DaojiTextKey.fiveWhysFirstLabel,
+                            vocabularyLevel,
+                          )
+                        : DaojiText.resolve(
+                            DaojiTextKey.fiveWhysOtherLabel,
+                            vocabularyLevel,
+                          ),
+                    hintText: DaojiText.resolve(
+                      DaojiTextKey.fiveWhysHint,
+                      vocabularyLevel,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -507,7 +516,10 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (val) {
                     if (val == null || val.trim().isEmpty) {
-                      return 'Harap isi analisis sebab';
+                      return DaojiText.resolve(
+                        DaojiTextKey.fiveWhysValidatorMessage,
+                        vocabularyLevel,
+                      );
                     }
                     return null;
                   },
@@ -524,24 +536,25 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
 // ==========================================
 // 4. FIRST PRINCIPLES WORKSPACE (LADDER)
 // ==========================================
-class FirstPrinciplesWorkspace extends StatefulWidget {
+class FirstPrinciplesWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const FirstPrinciplesWorkspace({super.key, required this.onChanged});
 
   @override
-  State<FirstPrinciplesWorkspace> createState() =>
+  ConsumerState<FirstPrinciplesWorkspace> createState() =>
       _FirstPrinciplesWorkspaceState();
 }
 
-class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
+class _FirstPrinciplesWorkspaceState
+    extends ConsumerState<FirstPrinciplesWorkspace> {
   final List<TextEditingController> _controllers = List.generate(
     3,
     (_) => TextEditingController(),
   );
-  final List<String> _steps = const [
-    'Asumsi Lama (Bagaimana orang biasa melakukannya)',
-    'Fakta Dasar (Kebenaran fisik/logika murni)',
-    'Konstruksi Baru (Solusi orisinil yang dirancang dari nol)',
+  final List<DaojiTextKey> _steps = const [
+    DaojiTextKey.firstPrinciplesStepOldAssumption,
+    DaojiTextKey.firstPrinciplesStepFact,
+    DaojiTextKey.firstPrinciplesStepConstruction,
   ];
 
   @override
@@ -572,13 +585,14 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Tangga Dekonstruksi First Principles',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.firstPrinciplesTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 12),
         ...List.generate(3, (index) {
@@ -602,7 +616,7 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  _steps[index],
+                  DaojiText.resolve(_steps[index], vocabularyLevel),
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
@@ -616,12 +630,24 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
                   controller: _controllers[index],
                   maxLines: 2,
                   style: const TextStyle(fontSize: 12),
-                  decoration: const InputDecoration(
-                    hintText: 'Tuliskan poin hasil pemikiran Anda...',
+                  decoration: InputDecoration(
+                    hintText: DaojiText.resolve(
+                      DaojiTextKey.firstPrinciplesHint,
+                      vocabularyLevel,
+                    ),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                   ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (val) {
+                    if (val == null || val.trim().isEmpty) {
+                      return DaojiText.resolve(
+                        DaojiTextKey.firstPrinciplesValidatorMessage,
+                        vocabularyLevel,
+                      );
+                    }
+                    return null;
+                  },
                 ),
               ],
             ),
@@ -635,46 +661,57 @@ class _FirstPrinciplesWorkspaceState extends State<FirstPrinciplesWorkspace> {
 // ==========================================
 // 5. DOUBLE DIAMOND WORKSPACE
 // ==========================================
-class DoubleDiamondWorkspace extends StatefulWidget {
+
+class _DoubleDiamondPhaseDefinition {
+  final DaojiTextKey title;
+  final DaojiTextKey label;
+  final DaojiTextKey hint;
+
+  const _DoubleDiamondPhaseDefinition({
+    required this.title,
+    required this.label,
+    required this.hint,
+  });
+}
+
+class DoubleDiamondWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const DoubleDiamondWorkspace({super.key, required this.onChanged});
 
   @override
-  State<DoubleDiamondWorkspace> createState() => _DoubleDiamondWorkspaceState();
+  ConsumerState<DoubleDiamondWorkspace> createState() =>
+      _DoubleDiamondWorkspaceState();
 }
 
-class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
+class _DoubleDiamondWorkspaceState
+    extends ConsumerState<DoubleDiamondWorkspace> {
   int _activeTab = 0;
   final List<TextEditingController> _controllers = List.generate(
     4,
     (_) => TextEditingController(),
   );
 
-  final List<Map<String, String>> _phases = const [
-    {
-      'title': '1. DISCOVER 🔍',
-      'label': 'Divergen: Cari Wawasan',
-      'hint':
-          'Tulis wawasan, riset lapangan, atau tren perilaku pengguna yang Anda temukan.',
-    },
-    {
-      'title': '2. DEFINE 🎯',
-      'label': 'Konvergen: Fokus Masalah',
-      'hint':
-          'Rumuskan satu pernyataan masalah utama yang krusial untuk segera diselesaikan.',
-    },
-    {
-      'title': '3. DEVELOP 💡',
-      'label': 'Divergen: Eksplorasi Ide',
-      'hint':
-          'Brainstorming berbagai alternatif solusi liar untuk memecahkan masalah utama.',
-    },
-    {
-      'title': '4. DELIVER 🚀',
-      'label': 'Konvergen: Eksekusi Solusi',
-      'hint':
-          'Pilih satu solusi terbaik, buat prototipe kecil, dan rencanakan cara mengujinya.',
-    },
+  final List<_DoubleDiamondPhaseDefinition> _phases = const [
+    _DoubleDiamondPhaseDefinition(
+      title: DaojiTextKey.doubleDiamondPhaseDiscoverTitle,
+      label: DaojiTextKey.doubleDiamondPhaseDiscoverLabel,
+      hint: DaojiTextKey.doubleDiamondPhaseDiscoverHint,
+    ),
+    _DoubleDiamondPhaseDefinition(
+      title: DaojiTextKey.doubleDiamondPhaseDefineTitle,
+      label: DaojiTextKey.doubleDiamondPhaseDefineLabel,
+      hint: DaojiTextKey.doubleDiamondPhaseDefineHint,
+    ),
+    _DoubleDiamondPhaseDefinition(
+      title: DaojiTextKey.doubleDiamondPhaseDevelopTitle,
+      label: DaojiTextKey.doubleDiamondPhaseDevelopLabel,
+      hint: DaojiTextKey.doubleDiamondPhaseDevelopHint,
+    ),
+    _DoubleDiamondPhaseDefinition(
+      title: DaojiTextKey.doubleDiamondPhaseDeliverTitle,
+      label: DaojiTextKey.doubleDiamondPhaseDeliverLabel,
+      hint: DaojiTextKey.doubleDiamondPhaseDeliverHint,
+    ),
   ];
 
   @override
@@ -706,14 +743,15 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final phase = _phases[_activeTab];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Jalur Pipa Double Diamond',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.doubleDiamondTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 10),
         Row(
@@ -737,7 +775,10 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
                     ),
                   ),
                   child: Text(
-                    _phases[index]['title']!.split(' ')[1],
+                    DaojiText.resolve(
+                      phase.title,
+                      vocabularyLevel,
+                    ).split(' ')[1],
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 9,
@@ -766,7 +807,7 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${phase['title']} — ${phase['label']}:',
+                '${DaojiText.resolve(phase.title, vocabularyLevel)} — ${DaojiText.resolve(phase.label, vocabularyLevel)}:',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -775,7 +816,7 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
               ),
               const SizedBox(height: 4),
               Text(
-                phase['hint']!,
+                DaojiText.resolve(phase.hint, vocabularyLevel),
                 style: const TextStyle(
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
@@ -790,14 +831,25 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
           maxLines: 4,
           style: const TextStyle(fontSize: 12),
           decoration: InputDecoration(
-            labelText:
-                'Catatan untuk Fase ${_phases[_activeTab]['title']!.split(' ')[1]}',
+            labelText: DaojiText.resolve(
+              DaojiTextKey.doubleDiamondNoteLabel,
+              vocabularyLevel,
+              params: {
+                'phase': DaojiText.resolve(
+                  phase.title,
+                  vocabularyLevel,
+                ).split(' ')[1],
+              },
+            ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (val) {
             if (val == null || val.trim().isEmpty) {
-              return 'Harap isi catatan untuk fase ini';
+              return DaojiText.resolve(
+                DaojiTextKey.doubleDiamondValidatorMessage,
+                vocabularyLevel,
+              );
             }
             return null;
           },
@@ -810,15 +862,16 @@ class _DoubleDiamondWorkspaceState extends State<DoubleDiamondWorkspace> {
 // ==========================================
 // 6. VALIDATION WORKSPACE (SCORECARD)
 // ==========================================
-class ValidationWorkspace extends StatefulWidget {
+class ValidationWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const ValidationWorkspace({super.key, required this.onChanged});
 
   @override
-  State<ValidationWorkspace> createState() => _ValidationWorkspaceState();
+  ConsumerState<ValidationWorkspace> createState() =>
+      _ValidationWorkspaceState();
 }
 
-class _ValidationWorkspaceState extends State<ValidationWorkspace> {
+class _ValidationWorkspaceState extends ConsumerState<ValidationWorkspace> {
   final TextEditingController _asumsiController = TextEditingController();
   final List<String> _supports = [];
   final List<String> _opposes = [];
@@ -886,6 +939,7 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
   }
 
   void _notifyChanges() {
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final buffer = StringBuffer();
     buffer.writeln('Lembar Validasi Asumsi Ide:');
     buffer.writeln('- ASUMSI UTAMA: ${_asumsiController.text.trim()}');
@@ -893,12 +947,20 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
       '- STATUS VALIDASI: ${_isValidated ? "VALID (Terbukti) 🟢" : "GUGUR (Terbantahkan) 🔴"}',
     );
     buffer.writeln('- BUKTI PENDUKUNG (Supports):');
-    if (_supports.isEmpty) buffer.writeln('  (Tidak ada)');
+    if (_supports.isEmpty) {
+      buffer.writeln('  (Tidak ada)');
+    }
     for (final s in _supports) {
       buffer.writeln('  + $s');
     }
-    buffer.writeln('- BUKTI PEMBANTAH (Opposes):');
-    if (_opposes.isEmpty) buffer.writeln('  (Tidak ada)');
+    buffer.writeln(
+      '- ${DaojiText.resolve(DaojiTextKey.validationOpposeTitle, vocabularyLevel)} (Opposes):',
+    );
+    if (_opposes.isEmpty) {
+      buffer.writeln(
+        '  ${DaojiText.resolve(DaojiTextKey.validationNoOpposes, vocabularyLevel)}',
+      );
+    }
     for (final o in _opposes) {
       buffer.writeln('  - $o');
     }
@@ -907,26 +969,37 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
 
   @override
   Widget build(BuildContext context) {
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Lembar Validasi & Verifikasi Asumsi',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.validationTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 10),
         TextFormField(
           controller: _asumsiController,
           style: const TextStyle(fontSize: 12),
           decoration: InputDecoration(
-            labelText: 'Asumsi Utama yang Ingin Divalidasi',
-            hintText: 'Misal: Pengguna bersedia membayar langganan bulanan...',
+            labelText: DaojiText.resolve(
+              DaojiTextKey.validationAssumptionLabel,
+              vocabularyLevel,
+            ),
+            hintText: DaojiText.resolve(
+              DaojiTextKey.validationAssumptionHint,
+              vocabularyLevel,
+            ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (val) {
             if (val == null || val.trim().isEmpty) {
-              return 'Harap masukkan asumsi yang ingin divalidasi';
+              return DaojiText.resolve(
+                DaojiTextKey.validationAssumptionValidator,
+                vocabularyLevel,
+              );
             }
             return null;
           },
@@ -949,7 +1022,10 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Hasil Akhir Hipotesis:',
+                DaojiText.resolve(
+                  DaojiTextKey.validationResultTitle,
+                  vocabularyLevel,
+                ),
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -959,9 +1035,12 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
               Row(
                 children: [
                   Text(
-                    _isValidated
-                        ? 'VALID (Terbukti) 🟢'
-                        : 'GUGUR (Terbantah) 🔴',
+                    DaojiText.resolve(
+                      _isValidated
+                          ? DaojiTextKey.validationValidState
+                          : DaojiTextKey.validationInvalidState,
+                      vocabularyLevel,
+                    ),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
@@ -987,9 +1066,12 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    'Bukti Pendukung (+)',
-                    style: TextStyle(
+                  Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.validationSupportTitle,
+                      vocabularyLevel,
+                    ),
+                    style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: Colors.green,
@@ -1000,8 +1082,14 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                     controller: _supportInput,
                     style: const TextStyle(fontSize: 11),
                     decoration: InputDecoration(
-                      labelText: 'Bukti Pendukung',
-                      hintText: 'Ketik bukti...',
+                      labelText: DaojiText.resolve(
+                        DaojiTextKey.validationSupportInputLabel,
+                        vocabularyLevel,
+                      ),
+                      hintText: DaojiText.resolve(
+                        DaojiTextKey.validationSupportInputHint,
+                        vocabularyLevel,
+                      ),
                       suffixIcon: GestureDetector(
                         onTap: _addSupport,
                         child: const Icon(
@@ -1053,9 +1141,12 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    'Bukti Pembantah (-)',
-                    style: TextStyle(
+                  Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.validationOpposeTitle,
+                      vocabularyLevel,
+                    ),
+                    style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
@@ -1066,8 +1157,14 @@ class _ValidationWorkspaceState extends State<ValidationWorkspace> {
                     controller: _opposeInput,
                     style: const TextStyle(fontSize: 11),
                     decoration: InputDecoration(
-                      labelText: 'Bukti Pembantah',
-                      hintText: 'Ketik bukti...',
+                      labelText: DaojiText.resolve(
+                        DaojiTextKey.validationOpposeInputLabel,
+                        vocabularyLevel,
+                      ),
+                      hintText: DaojiText.resolve(
+                        DaojiTextKey.validationOpposeInputHint,
+                        vocabularyLevel,
+                      ),
                       suffixIcon: GestureDetector(
                         onTap: _addOppose,
                         child: const Icon(
