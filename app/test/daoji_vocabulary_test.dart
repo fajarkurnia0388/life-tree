@@ -5,6 +5,13 @@ import 'package:daoji/src/core/i18n/daoji_vocabulary_level.dart';
 
 void main() {
   group('DaojiVocabularyLevel', () {
+    test('uses the mortal/human/earth/heaven labels', () {
+      expect(DaojiVocabularyLevel.practical.displayName, 'Mortal');
+      expect(DaojiVocabularyLevel.gentleCultivation.displayName, 'Human');
+      expect(DaojiVocabularyLevel.daoStream.displayName, 'Earth');
+      expect(DaojiVocabularyLevel.immortalCultivation.displayName, 'Heaven');
+    });
+
     test('parses valid values and falls back safely', () {
       expect(
         parseDaojiVocabularyLevel('practical'),

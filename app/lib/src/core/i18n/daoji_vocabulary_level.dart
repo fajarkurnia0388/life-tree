@@ -13,23 +13,23 @@ enum DaojiVocabularyLevel {
 extension DaojiVocabularyLevelX on DaojiVocabularyLevel {
   String get displayName {
     return switch (this) {
-      DaojiVocabularyLevel.practical => 'Practical',
-      DaojiVocabularyLevel.gentleCultivation => 'Gentle Cultivation',
-      DaojiVocabularyLevel.daoStream => 'Dao Stream',
-      DaojiVocabularyLevel.immortalCultivation => 'Immortal Cultivation',
+      DaojiVocabularyLevel.practical => 'Mortal',
+      DaojiVocabularyLevel.gentleCultivation => 'Human',
+      DaojiVocabularyLevel.daoStream => 'Earth',
+      DaojiVocabularyLevel.immortalCultivation => 'Heaven',
     };
   }
 
   String get description {
     return switch (this) {
       DaojiVocabularyLevel.practical =>
-        'Bahasa praktis tanpa istilah Dao/Qi/Stream.',
+        'Bahasa paling sederhana dan langsung.',
       DaojiVocabularyLevel.gentleCultivation =>
-        'Nuansa kultivasi ringan dengan istilah practice dan stream pendek.',
+        'Bahasa yang lebih manusiawi dan hangat.',
       DaojiVocabularyLevel.daoStream =>
-        'Default Daoji: Six Dao Streams, Dao Tree, Qi Log, Seclusion.',
+        'Bahasa yang lebih dekat dengan dunia dan bumi.',
       DaojiVocabularyLevel.immortalCultivation =>
-        'Nuansa xianxia penuh: Meridian, Dantian, Heart Demon, Qi Deviation.',
+        'Bahasa yang lebih tinggi dan penuh nuansa surgawi.',
     };
   }
 
