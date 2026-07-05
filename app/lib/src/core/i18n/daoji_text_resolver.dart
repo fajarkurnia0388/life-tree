@@ -32,22 +32,22 @@ class DaojiText {
     DaojiVocabularyLevel level,
   ) {
     return switch (level) {
-      DaojiVocabularyLevel.immortalCultivation => const [
-        DaojiVocabularyLevel.immortalCultivation,
-        DaojiVocabularyLevel.daoStream,
-        DaojiVocabularyLevel.gentleCultivation,
-        DaojiVocabularyLevel.practical,
+      DaojiVocabularyLevel.heaven => const [
+        DaojiVocabularyLevel.heaven,
+        DaojiVocabularyLevel.earth,
+        DaojiVocabularyLevel.human,
+        DaojiVocabularyLevel.mortal,
       ],
-      DaojiVocabularyLevel.daoStream => const [
-        DaojiVocabularyLevel.daoStream,
-        DaojiVocabularyLevel.gentleCultivation,
-        DaojiVocabularyLevel.practical,
+      DaojiVocabularyLevel.earth => const [
+        DaojiVocabularyLevel.earth,
+        DaojiVocabularyLevel.human,
+        DaojiVocabularyLevel.mortal,
       ],
-      DaojiVocabularyLevel.gentleCultivation => const [
-        DaojiVocabularyLevel.gentleCultivation,
-        DaojiVocabularyLevel.practical,
+      DaojiVocabularyLevel.human => const [
+        DaojiVocabularyLevel.human,
+        DaojiVocabularyLevel.mortal,
       ],
-      DaojiVocabularyLevel.practical => const [DaojiVocabularyLevel.practical],
+      DaojiVocabularyLevel.mortal => const [DaojiVocabularyLevel.mortal],
     };
   }
 
@@ -67,9 +67,9 @@ class DaojiText {
     final key = domain ?? 'Tubuh';
     final labels = _domainLabels[key] ?? _domainLabels['Tubuh']!;
     if (short) {
-      return labels.shortLabels[level] ?? labels.shortLabels[DaojiVocabularyLevel.daoStream]!;
+      return labels.shortLabels[level] ?? labels.shortLabels[DaojiVocabularyLevel.earth]!;
     }
-    return labels.fullLabels[level] ?? labels.fullLabels[DaojiVocabularyLevel.daoStream]!;
+    return labels.fullLabels[level] ?? labels.fullLabels[DaojiVocabularyLevel.earth]!;
   }
 
   static String streamNeedsCare(String? domain, DaojiVocabularyLevel level) {
@@ -95,86 +95,86 @@ class _DomainVocabularyLabels {
 const Map<String, _DomainVocabularyLabels> _domainLabels = {
   'Tubuh': _DomainVocabularyLabels(
     shortLabels: {
-      DaojiVocabularyLevel.practical: 'Physical',
-      DaojiVocabularyLevel.gentleCultivation: 'Physical',
-      DaojiVocabularyLevel.daoStream: 'Physical',
-      DaojiVocabularyLevel.immortalCultivation: 'Physical',
+      DaojiVocabularyLevel.mortal: 'Physical',
+      DaojiVocabularyLevel.human: 'Physical',
+      DaojiVocabularyLevel.earth: 'Physical',
+      DaojiVocabularyLevel.heaven: 'Physical',
     },
     fullLabels: {
-      DaojiVocabularyLevel.practical: 'Physical Path',
-      DaojiVocabularyLevel.gentleCultivation: 'Physical Path',
-      DaojiVocabularyLevel.daoStream: 'Physical Path',
-      DaojiVocabularyLevel.immortalCultivation: 'Physical Path',
+      DaojiVocabularyLevel.mortal: 'Physical Path',
+      DaojiVocabularyLevel.human: 'Physical Path',
+      DaojiVocabularyLevel.earth: 'Physical Path',
+      DaojiVocabularyLevel.heaven: 'Physical Path',
     },
   ),
   'Keuangan': _DomainVocabularyLabels(
     shortLabels: {
-      DaojiVocabularyLevel.practical: 'Material',
-      DaojiVocabularyLevel.gentleCultivation: 'Material',
-      DaojiVocabularyLevel.daoStream: 'Material',
-      DaojiVocabularyLevel.immortalCultivation: 'Material',
+      DaojiVocabularyLevel.mortal: 'Material',
+      DaojiVocabularyLevel.human: 'Material',
+      DaojiVocabularyLevel.earth: 'Material',
+      DaojiVocabularyLevel.heaven: 'Material',
     },
     fullLabels: {
-      DaojiVocabularyLevel.practical: 'Material Path',
-      DaojiVocabularyLevel.gentleCultivation: 'Material Path',
-      DaojiVocabularyLevel.daoStream: 'Material Path',
-      DaojiVocabularyLevel.immortalCultivation: 'Material Path',
+      DaojiVocabularyLevel.mortal: 'Material Path',
+      DaojiVocabularyLevel.human: 'Material Path',
+      DaojiVocabularyLevel.earth: 'Material Path',
+      DaojiVocabularyLevel.heaven: 'Material Path',
     },
   ),
   'Hubungan': _DomainVocabularyLabels(
     shortLabels: {
-      DaojiVocabularyLevel.practical: 'Bonding',
-      DaojiVocabularyLevel.gentleCultivation: 'Bonding',
-      DaojiVocabularyLevel.daoStream: 'Bonding',
-      DaojiVocabularyLevel.immortalCultivation: 'Bonding',
+      DaojiVocabularyLevel.mortal: 'Bonding',
+      DaojiVocabularyLevel.human: 'Bonding',
+      DaojiVocabularyLevel.earth: 'Bonding',
+      DaojiVocabularyLevel.heaven: 'Bonding',
     },
     fullLabels: {
-      DaojiVocabularyLevel.practical: 'Bonding Path',
-      DaojiVocabularyLevel.gentleCultivation: 'Bonding Path',
-      DaojiVocabularyLevel.daoStream: 'Bonding Path',
-      DaojiVocabularyLevel.immortalCultivation: 'Bonding Path',
+      DaojiVocabularyLevel.mortal: 'Bonding Path',
+      DaojiVocabularyLevel.human: 'Bonding Path',
+      DaojiVocabularyLevel.earth: 'Bonding Path',
+      DaojiVocabularyLevel.heaven: 'Bonding Path',
     },
   ),
   'Emosi': _DomainVocabularyLabels(
     shortLabels: {
-      DaojiVocabularyLevel.practical: 'Mind',
-      DaojiVocabularyLevel.gentleCultivation: 'Mind',
-      DaojiVocabularyLevel.daoStream: 'Mind',
-      DaojiVocabularyLevel.immortalCultivation: 'Mind',
+      DaojiVocabularyLevel.mortal: 'Mind',
+      DaojiVocabularyLevel.human: 'Mind',
+      DaojiVocabularyLevel.earth: 'Mind',
+      DaojiVocabularyLevel.heaven: 'Mind',
     },
     fullLabels: {
-      DaojiVocabularyLevel.practical: 'Mind Path',
-      DaojiVocabularyLevel.gentleCultivation: 'Mind Path',
-      DaojiVocabularyLevel.daoStream: 'Mind Path',
-      DaojiVocabularyLevel.immortalCultivation: 'Mind Path',
+      DaojiVocabularyLevel.mortal: 'Mind Path',
+      DaojiVocabularyLevel.human: 'Mind Path',
+      DaojiVocabularyLevel.earth: 'Mind Path',
+      DaojiVocabularyLevel.heaven: 'Mind Path',
     },
   ),
   'Karir': _DomainVocabularyLabels(
     shortLabels: {
-      DaojiVocabularyLevel.practical: 'Mastery',
-      DaojiVocabularyLevel.gentleCultivation: 'Mastery',
-      DaojiVocabularyLevel.daoStream: 'Mastery',
-      DaojiVocabularyLevel.immortalCultivation: 'Mastery',
+      DaojiVocabularyLevel.mortal: 'Mastery',
+      DaojiVocabularyLevel.human: 'Mastery',
+      DaojiVocabularyLevel.earth: 'Mastery',
+      DaojiVocabularyLevel.heaven: 'Mastery',
     },
     fullLabels: {
-      DaojiVocabularyLevel.practical: 'Mastery Path',
-      DaojiVocabularyLevel.gentleCultivation: 'Mastery Path',
-      DaojiVocabularyLevel.daoStream: 'Mastery Path',
-      DaojiVocabularyLevel.immortalCultivation: 'Mastery Path',
+      DaojiVocabularyLevel.mortal: 'Mastery Path',
+      DaojiVocabularyLevel.human: 'Mastery Path',
+      DaojiVocabularyLevel.earth: 'Mastery Path',
+      DaojiVocabularyLevel.heaven: 'Mastery Path',
     },
   ),
   'Rekreasi': _DomainVocabularyLabels(
     shortLabels: {
-      DaojiVocabularyLevel.practical: 'Spirit',
-      DaojiVocabularyLevel.gentleCultivation: 'Spirit',
-      DaojiVocabularyLevel.daoStream: 'Spirit',
-      DaojiVocabularyLevel.immortalCultivation: 'Spirit',
+      DaojiVocabularyLevel.mortal: 'Spirit',
+      DaojiVocabularyLevel.human: 'Spirit',
+      DaojiVocabularyLevel.earth: 'Spirit',
+      DaojiVocabularyLevel.heaven: 'Spirit',
     },
     fullLabels: {
-      DaojiVocabularyLevel.practical: 'Spirit Path',
-      DaojiVocabularyLevel.gentleCultivation: 'Spirit Path',
-      DaojiVocabularyLevel.daoStream: 'Spirit Path',
-      DaojiVocabularyLevel.immortalCultivation: 'Spirit Path',
+      DaojiVocabularyLevel.mortal: 'Spirit Path',
+      DaojiVocabularyLevel.human: 'Spirit Path',
+      DaojiVocabularyLevel.earth: 'Spirit Path',
+      DaojiVocabularyLevel.heaven: 'Spirit Path',
     },
   ),
 };

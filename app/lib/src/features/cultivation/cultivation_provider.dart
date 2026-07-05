@@ -25,10 +25,10 @@ CultivationLanguageLevel _legacyLevelFromVocabulary(
   DaojiVocabularyLevel vocabularyLevel,
 ) {
   return switch (vocabularyLevel) {
-    DaojiVocabularyLevel.practical => CultivationLanguageLevel.plain,
-    DaojiVocabularyLevel.gentleCultivation => CultivationLanguageLevel.plain,
-    DaojiVocabularyLevel.daoStream => CultivationLanguageLevel.hybrid,
-    DaojiVocabularyLevel.immortalCultivation => CultivationLanguageLevel.full,
+    DaojiVocabularyLevel.mortal => CultivationLanguageLevel.plain,
+    DaojiVocabularyLevel.human => CultivationLanguageLevel.plain,
+    DaojiVocabularyLevel.earth => CultivationLanguageLevel.hybrid,
+    DaojiVocabularyLevel.heaven => CultivationLanguageLevel.full,
   };
 }
 

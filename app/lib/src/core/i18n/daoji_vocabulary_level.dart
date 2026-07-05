@@ -4,43 +4,51 @@
 /// "which language?" (id/en), while vocabulary level answers "how much
 /// cultivation terminology?".
 enum DaojiVocabularyLevel {
-  practical,
-  gentleCultivation,
-  daoStream,
-  immortalCultivation,
+  mortal,
+  human,
+  earth,
+  heaven,
 }
 
 extension DaojiVocabularyLevelX on DaojiVocabularyLevel {
   String get displayName {
     return switch (this) {
-      DaojiVocabularyLevel.practical => 'Mortal',
-      DaojiVocabularyLevel.gentleCultivation => 'Human',
-      DaojiVocabularyLevel.daoStream => 'Earth',
-      DaojiVocabularyLevel.immortalCultivation => 'Heaven',
+      DaojiVocabularyLevel.mortal => 'Mortal',
+      DaojiVocabularyLevel.human => 'Human',
+      DaojiVocabularyLevel.earth => 'Earth',
+      DaojiVocabularyLevel.heaven => 'Heaven',
     };
   }
 
   String get description {
     return switch (this) {
-      DaojiVocabularyLevel.practical => 'Bahasa paling sederhana dan langsung.',
-      DaojiVocabularyLevel.gentleCultivation =>
+      DaojiVocabularyLevel.mortal => 'Bahasa paling sederhana dan langsung.',
+      DaojiVocabularyLevel.human =>
         'Bahasa yang lebih manusiawi dan hangat.',
-      DaojiVocabularyLevel.daoStream =>
+      DaojiVocabularyLevel.earth =>
         'Bahasa yang lebih dekat dengan dunia dan bumi.',
-      DaojiVocabularyLevel.immortalCultivation =>
+      DaojiVocabularyLevel.heaven =>
         'Bahasa yang lebih tinggi dan penuh nuansa surgawi.',
     };
   }
 
-  bool get cultivationThemeEnabled => this != DaojiVocabularyLevel.practical;
+  bool get cultivationThemeEnabled => this != DaojiVocabularyLevel.mortal;
 }
 
 DaojiVocabularyLevel parseDaojiVocabularyLevel(String? value) {
   if (value == null || value.trim().isEmpty) {
-    return DaojiVocabularyLevel.daoStream;
+    return DaojiVocabularyLevel.mortal; // Default updated to Mortal
   }
-  return DaojiVocabularyLevel.values.firstWhere(
-    (level) => level.name == value,
-    orElse: () => DaojiVocabularyLevel.daoStream,
-  );
+  
+  // Legacy Mapping to ensure backward compatibility with DB
+  return switch (value.trim()) {
+    'practical' => DaojiVocabularyLevel.mortal,
+    'gentleCultivation' => DaojiVocabularyLevel.human,
+    'daoStream' => DaojiVocabularyLevel.earth,
+    'immortalCultivation' => DaojiVocabularyLevel.heaven,
+    _ => DaojiVocabularyLevel.values.firstWhere(
+        (level) => level.name == value,
+        orElse: () => DaojiVocabularyLevel.mortal,
+      ),
+  };
 }

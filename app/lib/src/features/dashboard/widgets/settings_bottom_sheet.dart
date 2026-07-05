@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:drift/drift.dart' as drift;
@@ -14,6 +15,7 @@ import '../../../core/theme/theme.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../core/animations/dialog_animations.dart';
 import '../../../data/local_db/database.dart';
+import '../../onboarding/onboarding_view.dart';
 import '../dashboard_provider.dart';
 
 /// Bottom Sheet untuk Settings (Export, Reset, Theme)
@@ -157,8 +159,12 @@ class SettingsBottomSheet extends ConsumerWidget {
     await db.delete(db.wellnessPromptLogs).go();
 
     ref.invalidate(dashboardDataProvider);
+    ref.invalidate(onboardingCompletedProvider);
+    ref.invalidate(appThemeModeProvider);
 
     if (context.mounted) {
+      Navigator.of(context).pop();
+      context.go('/onboarding');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Semua data telah dihapus.')),
       );
@@ -182,6 +188,7 @@ class SettingsBottomSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final isDarkEffective = theme.brightness == Brightness.dark;
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Container(
@@ -220,8 +227,7 @@ class SettingsBottomSheet extends ConsumerWidget {
             leading: const Icon(Icons.dark_mode_outlined),
             title: const Text('Dark Mode'),
             trailing: Switch(
-              value:
-                  ref.watch(appThemeModeProvider).valueOrNull == ThemeMode.dark,
+              value: isDarkEffective,
               onChanged: (value) => _toggleThemeMode(ref, value),
             ),
           ),

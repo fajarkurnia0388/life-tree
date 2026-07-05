@@ -18,7 +18,7 @@ class RadarChartWidget extends StatelessWidget {
     required this.activeDomains,
     this.selectedDomain,
     this.onDomainSelected,
-    this.vocabularyLevel = DaojiVocabularyLevel.daoStream,
+    this.vocabularyLevel = DaojiVocabularyLevel.earth,
   });
 
   static const List<String> _domains = [
@@ -36,19 +36,19 @@ class RadarChartWidget extends StatelessWidget {
 
   String _titleForLevel() {
     return switch (vocabularyLevel) {
-      DaojiVocabularyLevel.practical => 'Keseimbangan Hidup',
-      DaojiVocabularyLevel.gentleCultivation => 'Stream Resonance',
-      DaojiVocabularyLevel.daoStream => 'Stream Resonance',
-      DaojiVocabularyLevel.immortalCultivation => 'Meridian Resonance',
+      DaojiVocabularyLevel.mortal => 'Keseimbangan Hidup',
+      DaojiVocabularyLevel.human => 'Stream Resonance',
+      DaojiVocabularyLevel.earth => 'Stream Resonance',
+      DaojiVocabularyLevel.heaven => 'Meridian Resonance',
     };
   }
 
   String _infoTitleForLevel() {
     return switch (vocabularyLevel) {
-      DaojiVocabularyLevel.practical => 'Interaksi domain',
-      DaojiVocabularyLevel.gentleCultivation => 'Interaksi stream',
-      DaojiVocabularyLevel.daoStream => 'Stream Resonance',
-      DaojiVocabularyLevel.immortalCultivation => 'Meridian Resonance',
+      DaojiVocabularyLevel.mortal => 'Interaksi domain',
+      DaojiVocabularyLevel.human => 'Interaksi stream',
+      DaojiVocabularyLevel.earth => 'Stream Resonance',
+      DaojiVocabularyLevel.heaven => 'Meridian Resonance',
     };
   }
 

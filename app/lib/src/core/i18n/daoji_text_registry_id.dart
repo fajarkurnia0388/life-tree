@@ -3,7 +3,7 @@ import 'daoji_vocabulary_level.dart';
 
 /// Indonesian UI copy with English Daoji brand terms where intentional.
 const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
-  DaojiVocabularyLevel.practical: {
+  DaojiVocabularyLevel.mortal: {
     DaojiTextKey.navHome: 'Home',
     DaojiTextKey.navJournal: 'Journal',
     DaojiTextKey.navReflection: 'Reflection',
@@ -112,7 +112,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.systemSave: 'Save',
     DaojiTextKey.systemDelete: 'Delete',
   },
-  DaojiVocabularyLevel.gentleCultivation: {
+  DaojiVocabularyLevel.human: {
     DaojiTextKey.navHome: 'Home',
     DaojiTextKey.navJournal: 'Disciplines',
     DaojiTextKey.navReflection: 'Insight',
@@ -220,7 +220,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.systemSave: 'Save',
     DaojiTextKey.systemDelete: 'Delete',
   },
-  DaojiVocabularyLevel.daoStream: {
+  DaojiVocabularyLevel.earth: {
     DaojiTextKey.navHome: 'Training Hub',
     DaojiTextKey.navJournal: 'Qi Log',
     DaojiTextKey.navReflection: 'Refinement',
@@ -324,7 +324,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.systemSave: 'Save',
     DaojiTextKey.systemDelete: 'Delete',
   },
-  DaojiVocabularyLevel.immortalCultivation: {
+  DaojiVocabularyLevel.heaven: {
     DaojiTextKey.navHome: 'Void Sanctuary',
     DaojiTextKey.navJournal: 'Heart Scripture',
     DaojiTextKey.navReflection: 'Inner Alchemy',

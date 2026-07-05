@@ -11,13 +11,13 @@ class ScoringItem {
 class MethodPickerBottomSheet extends StatefulWidget {
   final String currentMethodKey;
   final bool isPremiumUser;
-  final ValueChanged<String> onSelected;
+  final ValueChanged<String>? onSelected;
 
   const MethodPickerBottomSheet({
     super.key,
-    required this.currentMethodKey,
-    required this.isPremiumUser,
-    required this.onSelected,
+    this.currentMethodKey = '',
+    this.isPremiumUser = true,
+    this.onSelected,
   });
 
   @override
@@ -115,7 +115,7 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
             if (m.isPremium && !widget.isPremiumUser) {
               _showPremiumAdDialog();
             } else {
-              widget.onSelected(m.key);
+              widget.onSelected?.call(m.key);
               Navigator.pop(context);
             }
           },

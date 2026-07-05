@@ -15,7 +15,6 @@ class HabitLogService {
   }) async {
     final todayStart = DateTime(date.year, date.month, date.day);
     
-    // Check if log exists
     final existing = await (_db.select(_db.habitLogs)
           ..where((tbl) => tbl.habitId.equals(habit.habitId) & tbl.date.equals(todayStart)))
         .get();
@@ -23,23 +22,22 @@ class HabitLogService {
     if (existing.isNotEmpty) {
       final log = existing.first;
       if (log.status != HabitStatus.done) {
-        // Update to Done
         await (_db.update(_db.habitLogs)..where((tbl) => tbl.logId.equals(log.logId)))
             .write(HabitLogsCompanion(
               status: const drift.Value(HabitStatus.done),
               durationTargetMin: drift.Value(habit.mvaDurationMin),
               durationActualMin: drift.Value(habit.mvaDurationMin),
               frictionReasonSelected: const drift.Value(null),
-              deletedAt: const drift.Value(null), // Clean deletedAt if it was soft-deleted earlier today
+              deletedAt: const drift.Value(null),
             ));
 
-        // Increment done count
         final newCount = habit.lifetimeDoneCount + 1;
         await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
             .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+        
+        await _updateCompletionRate(habit.habitId);
       }
     } else {
-      // Insert new Done log
       final logId = const Uuid().v4();
       await _db.into(_db.habitLogs).insert(
             HabitLogsCompanion.insert(
@@ -52,11 +50,26 @@ class HabitLogService {
             ),
           );
 
-      // Increment done count
       final newCount = habit.lifetimeDoneCount + 1;
       await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
           .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+        
+      await _updateCompletionRate(habit.habitId);
     }
+  }
+
+  Future<void> _updateCompletionRate(String habitId) async {
+    final ninetyDaysAgo = DateTime.now().subtract(const Duration(days: 90));
+    final logs90d = await (_db.select(_db.habitLogs)
+        ..where((tbl) =>
+            tbl.habitId.equals(habitId) &
+            tbl.date.isBiggerOrEqualValue(ninetyDaysAgo) &
+            tbl.deletedAt.isNull()))
+        .get();
+    final done90d = logs90d.where((l) => l.status == HabitStatus.done).length;
+    final rate = logs90d.isNotEmpty ? done90d / 90.0 : 0.0;
+    await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habitId)))
+        .write(HabitsCompanion(completionRate90d: drift.Value(rate.clamp(0.0, 1.0))));
   }
 
   Future<void> markUnchecked({
@@ -64,14 +77,14 @@ class HabitLogService {
     required HabitLog log,
   }) async {
     final now = DateTime.now();
-    // Soft delete log instead of hard delete (FIX-15)
     await (_db.update(_db.habitLogs)..where((tbl) => tbl.logId.equals(log.logId)))
         .write(HabitLogsCompanion(deletedAt: drift.Value(now)));
     
-    // Decrement done count
     final newCount = (habit.lifetimeDoneCount - 1).clamp(0, 99999);
     await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
         .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+        
+    await _updateCompletionRate(habit.habitId);
   }
 
   Future<void> markMissedWithReason({
@@ -80,7 +93,6 @@ class HabitLogService {
     required String reason,
   }) async {
     final todayStart = DateTime(date.year, date.month, date.day);
-
     final existing = await (_db.select(_db.habitLogs)
           ..where((tbl) => tbl.habitId.equals(habit.habitId) & tbl.date.equals(todayStart)))
         .get();
@@ -88,7 +100,6 @@ class HabitLogService {
     if (existing.isNotEmpty) {
       final log = existing.first;
       final wasDone = log.status == HabitStatus.done;
-      
       await (_db.update(_db.habitLogs)..where((tbl) => tbl.logId.equals(log.logId)))
           .write(HabitLogsCompanion(
             status: const drift.Value(HabitStatus.missed),
@@ -99,7 +110,6 @@ class HabitLogService {
           ));
 
       if (wasDone) {
-        // If it was Done, decrement done count
         final newCount = (habit.lifetimeDoneCount - 1).clamp(0, 99999);
         await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
             .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
@@ -116,6 +126,7 @@ class HabitLogService {
             ),
           );
     }
+    await _updateCompletionRate(habit.habitId);
   }
 }
 

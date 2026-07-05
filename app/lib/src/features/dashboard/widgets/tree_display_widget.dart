@@ -756,36 +756,36 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
 
   String _realmLabel(DaojiVocabularyLevel level) {
     return switch (level) {
-      DaojiVocabularyLevel.practical => 'Tahap Saat Ini',
-      DaojiVocabularyLevel.gentleCultivation => 'Current Realm',
-      DaojiVocabularyLevel.daoStream => 'Current Realm',
-      DaojiVocabularyLevel.immortalCultivation => 'Cultivation Realm',
+      DaojiVocabularyLevel.mortal => 'Tahap Saat Ini',
+      DaojiVocabularyLevel.human => 'Current Realm',
+      DaojiVocabularyLevel.earth => 'Current Realm',
+      DaojiVocabularyLevel.heaven => 'Cultivation Realm',
     };
   }
 
   String _progressLabel(DaojiVocabularyLevel level) {
     return switch (level) {
-      DaojiVocabularyLevel.practical => 'Keseimbangan',
-      DaojiVocabularyLevel.gentleCultivation => 'Stream Balance',
-      DaojiVocabularyLevel.daoStream => 'Stream Balance',
-      DaojiVocabularyLevel.immortalCultivation => 'Meridian Resonance',
+      DaojiVocabularyLevel.mortal => 'Keseimbangan',
+      DaojiVocabularyLevel.human => 'Stream Balance',
+      DaojiVocabularyLevel.earth => 'Stream Balance',
+      DaojiVocabularyLevel.heaven => 'Meridian Resonance',
     };
   }
 
   String _statusButtonLabel(DaojiVocabularyLevel level) {
     if (_showCultivationDetails) {
       return switch (level) {
-        DaojiVocabularyLevel.practical => 'Tutup',
-        DaojiVocabularyLevel.gentleCultivation => 'Tutup',
-        DaojiVocabularyLevel.daoStream => 'Tutup',
-        DaojiVocabularyLevel.immortalCultivation => 'Conceal',
+        DaojiVocabularyLevel.mortal => 'Tutup',
+        DaojiVocabularyLevel.human => 'Tutup',
+        DaojiVocabularyLevel.earth => 'Tutup',
+        DaojiVocabularyLevel.heaven => 'Conceal',
       };
     }
     return switch (level) {
-      DaojiVocabularyLevel.practical => 'Status',
-      DaojiVocabularyLevel.gentleCultivation => 'Status',
-      DaojiVocabularyLevel.daoStream => 'Status',
-      DaojiVocabularyLevel.immortalCultivation => 'Status',
+      DaojiVocabularyLevel.mortal => 'Status',
+      DaojiVocabularyLevel.human => 'Status',
+      DaojiVocabularyLevel.earth => 'Status',
+      DaojiVocabularyLevel.heaven => 'Status',
     };
   }
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'src/app.dart';
+import 'src/core/services/notification_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  GoogleFonts.config.allowRuntimeFetching = false;
+  
+  // Initialize Notification Service
+  await NotificationService.initialize();
+  
   runApp(
     const ProviderScope(
       child: DaojiApp(),

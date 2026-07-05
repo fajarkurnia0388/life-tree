@@ -231,7 +231,7 @@ class HabitListSection extends ConsumerWidget {
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: domainColor,
-                                  ),
+                                ),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -244,6 +244,21 @@ class HabitListSection extends ConsumerWidget {
                                   ),
                                 ),
                               ),
+                              if (item.habit.lifetimeDoneCount > 0) ...[
+                                const SizedBox(width: 8),
+                                Text(
+                                  '✓ ${item.habit.lifetimeDoneCount}x',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: isDone
+                                        ? domainColor
+                                        : theme.colorScheme.onSurface.withValues(
+                                          alpha: 0.4,
+                                        ),
+                                    fontWeight: isDone ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ],

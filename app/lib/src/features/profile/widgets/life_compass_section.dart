@@ -221,6 +221,17 @@ class LifeCompassSection extends ConsumerWidget {
                 ],
               )
             else ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  '🪞 Dari pilihan-pilihanmu di Value Mirror, nilai yang paling sering kamu prioritaskan secara tidak sadar adalah:',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                ),
+              ),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -250,6 +261,15 @@ class LifeCompassSection extends ConsumerWidget {
                   );
                 }).toList(),
               ),
+              const SizedBox(height: 12),
+              Text(
+                'Jika ada perbedaan antara nilai yang kamu nyatakan dan nilai yang terungkap, itu bukan kesalahan — melainkan undangan untuk refleksi lebih dalam.',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 8),
               Text(
                 'Diperbarui dari $totalResponses refleksi · $updateDateStr',
@@ -257,6 +277,7 @@ class LifeCompassSection extends ConsumerWidget {
                   fontSize: 10,
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                 ),
+                textAlign: TextAlign.center,
               ),
             ],
 

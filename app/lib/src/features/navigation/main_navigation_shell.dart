@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_level.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../dashboard/dashboard_view.dart';
 import '../journal/journal_dashboard_tab.dart';
@@ -34,9 +35,30 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
     final currentIndex = ref.watch(navigationIndexProvider);
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
+    String navLabel(DaojiTextKey key) {
+      if (vocabularyLevel == DaojiVocabularyLevel.heaven) {
+        switch (key) {
+          case DaojiTextKey.navHome:
+            return 'Sanctuary';
+          case DaojiTextKey.navJournal:
+            return 'Scripture';
+          case DaojiTextKey.navReflection:
+            return 'Alchemy';
+          case DaojiTextKey.navMarketplace:
+            return 'Archive';
+          case DaojiTextKey.navProfile:
+            return 'Dao Heart';
+          default:
+            return DaojiText.resolve(key, vocabularyLevel);
+        }
+      }
+      return DaojiText.resolve(key, vocabularyLevel);
+    }
+
     return Scaffold(
       body: IndexedStack(index: currentIndex, children: _tabs),
       bottomNavigationBar: NavigationBar(
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         selectedIndex: currentIndex,
         onDestinationSelected: (index) {
           // Add haptic feedback on tab switch
@@ -47,27 +69,27 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
-            label: DaojiText.resolve(DaojiTextKey.navHome, vocabularyLevel),
+            label: navLabel(DaojiTextKey.navHome),
           ),
           NavigationDestination(
             icon: Icon(Icons.book_outlined),
             selectedIcon: Icon(Icons.book),
-            label: DaojiText.resolve(DaojiTextKey.navJournal, vocabularyLevel),
+            label: navLabel(DaojiTextKey.navJournal),
           ),
           NavigationDestination(
             icon: Icon(Icons.psychology_outlined),
             selectedIcon: Icon(Icons.psychology),
-            label: DaojiText.resolve(DaojiTextKey.navReflection, vocabularyLevel),
+            label: navLabel(DaojiTextKey.navReflection),
           ),
           NavigationDestination(
             icon: Icon(Icons.storefront_outlined),
             selectedIcon: Icon(Icons.storefront),
-            label: DaojiText.resolve(DaojiTextKey.navMarketplace, vocabularyLevel),
+            label: navLabel(DaojiTextKey.navMarketplace),
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
-            label: DaojiText.resolve(DaojiTextKey.navProfile, vocabularyLevel),
+            label: navLabel(DaojiTextKey.navProfile),
           ),
         ],
       ),

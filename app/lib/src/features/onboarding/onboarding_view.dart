@@ -32,7 +32,6 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
   String _selectedAgeBand = '18-24';
   double _bodyScore = 5.0;
   bool _disclaimerAccepted = false;
-  final bool _devMode = false;
 
   static const int _readGateSeconds = 5;
   Timer? _readGateTimer;
@@ -119,9 +118,10 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     final userId = const Uuid().v4();
     final now = DateTime.now();
 
-    final String domainScoresJson = _devMode
-        ? jsonEncode(_auditScores.map((k, v) => MapEntry(k, v.toInt())))
-        : '{"Tubuh": ${_bodyScore.toInt()}}';
+    // Removed _devMode: always use actual audit scores for consistency
+    final String domainScoresJson = jsonEncode(
+      _auditScores.map((k, v) => MapEntry(k, v.toInt())),
+    );
 
     final profile = UserProfilesCompanion.insert(
       userId: userId,
@@ -135,12 +135,10 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
       wellnessDisclaimerAcknowledged: const drift.Value(true),
       cultivationThemeEnabled: drift.Value(_cultivationThemeEnabled),
       vocabularyLevel: drift.Value(
-        _cultivationThemeEnabled ? 'daoStream' : 'practical',
+        _cultivationThemeEnabled ? 'earth' : 'mortal', // Updated to new Enum values
       ),
-      unlockedSkins: drift.Value(
-        _devMode ? 'Default,Sakura,Maple,Bonsai' : 'Default',
-      ),
-      isDeveloperMode: drift.Value(_devMode),
+      unlockedSkins: const drift.Value('Default'),
+      isDeveloperMode: const drift.Value(false),
       createdAt: now,
       updatedAt: now,
     );
@@ -230,7 +228,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                       },
                     ),
                     AuditStep(
-                      devMode: _devMode,
+                      devMode: false, // Removed _devMode variable
                       bodyScore: _bodyScore,
                       onBodyScoreChanged: (val) {
                         setState(() {

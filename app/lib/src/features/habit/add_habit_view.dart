@@ -15,7 +15,9 @@ import '../../data/local_db/database.dart';
 import '../cultivation/cultivation_provider.dart';
 import '../cultivation/cultivation_strings.dart';
 import '../dashboard/dashboard_provider.dart';
+import '../../core/services/notification_service.dart';
 import 'widgets/habit_templates.dart';
+import 'edit_habit_view.dart';
 
 class AddHabitView extends ConsumerStatefulWidget {
   final String? habitId;
@@ -261,6 +263,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
       await db.into(db.habits).insert(newHabit);
       await db.into(db.reminderPreferences).insert(reminder);
+
+      // Schedule Notification
+      await NotificationService.scheduleDaily(
+        id: habitId.hashCode.abs() % 100000,
+        title: 'Waktunya: ${_titleController.text.trim()}',
+        body: 'Jaga konsistensi pertumbuhanmu hari ini 🌱',
+        hour: 8,
+        minute: 0,
+      );
     }
 
     ref.invalidate(dashboardDataProvider);

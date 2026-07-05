@@ -163,6 +163,7 @@ class ThinkingCanvasSessions extends Table {
   TextColumn get userId => text()();
   TextColumn get methodKey =>
       text()(); // 'MindDump', 'Brainstorming', 'Scoring', 'PMI', 'ReverseBrainstorming', 'Validation'
+  BoolColumn get isDraft => boolean().withDefault(const Constant(true))();
   TextColumn get topic => text().nullable()();
   TextColumn get rawNotes => text().nullable()();
   TextColumn get summaryText => text().nullable()();
@@ -310,7 +311,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(

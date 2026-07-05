@@ -8,14 +8,14 @@ import 'daoji_vocabulary_level.dart';
 final daojiVocabularyLevelProvider = StreamProvider<DaojiVocabularyLevel>((ref) {
   final db = ref.watch(dbProvider);
   return (db.select(db.userProfiles)..limit(1)).watch().map((profiles) {
-    if (profiles.isEmpty) return DaojiVocabularyLevel.daoStream;
+    if (profiles.isEmpty) return DaojiVocabularyLevel.earth;
     return parseDaojiVocabularyLevel(profiles.first.vocabularyLevel);
   });
 });
 
 final daojiVocabularyLevelValueProvider = Provider<DaojiVocabularyLevel>((ref) {
   return ref.watch(daojiVocabularyLevelProvider).valueOrNull ??
-      DaojiVocabularyLevel.daoStream;
+      DaojiVocabularyLevel.earth;
 });
 
 final daojiVocabularyControllerProvider = Provider<DaojiVocabularyController>((
