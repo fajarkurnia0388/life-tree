@@ -30,10 +30,7 @@ void main() {
         DaojiVocabularyLevel.heaven,
       );
       expect(parseDaojiVocabularyLevel(null), DaojiVocabularyLevel.mortal);
-      expect(
-        parseDaojiVocabularyLevel('broken'),
-        DaojiVocabularyLevel.mortal,
-      );
+      expect(parseDaojiVocabularyLevel('broken'), DaojiVocabularyLevel.mortal);
       expect(parseDaojiVocabularyLevel('mortal'), DaojiVocabularyLevel.mortal);
       expect(parseDaojiVocabularyLevel('human'), DaojiVocabularyLevel.human);
       expect(parseDaojiVocabularyLevel('earth'), DaojiVocabularyLevel.earth);
@@ -52,10 +49,7 @@ void main() {
         'Training Hub',
       );
       expect(
-        DaojiText.resolve(
-          DaojiTextKey.navHome,
-          DaojiVocabularyLevel.heaven,
-        ),
+        DaojiText.resolve(DaojiTextKey.navHome, DaojiVocabularyLevel.heaven),
         'Void Sanctuary',
       );
     });
@@ -74,10 +68,7 @@ void main() {
         'Bonding Path',
       );
       expect(
-        DaojiText.domainLabel(
-          'Hubungan',
-          DaojiVocabularyLevel.heaven,
-        ),
+        DaojiText.domainLabel('Hubungan', DaojiVocabularyLevel.heaven),
         'Bonding Path',
       );
       expect(
