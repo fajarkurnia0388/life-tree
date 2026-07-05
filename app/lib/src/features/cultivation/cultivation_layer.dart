@@ -34,10 +34,10 @@ class CultivationLayer {
 
   /// Palace scores (0.0 - 10.0) mapped from domain scores
   /// Keys: body, resource, bond, heartSea, craft, joy
-  final Map<CultivationPalace, double> palaceScores;
+  final Map<CultivationPath, double> palaceScores;
 
   /// Dominant cultivation path (optional, can be null in early stages)
-  final CultivationPath? dominantPath;
+  final CultivationPracticePath? dominantPath;
 
   /// Current Qi level (0.0 - 1.0) representing daily capacity usage
   final double qiLevel;
@@ -216,16 +216,16 @@ class CultivationLayer {
   }
 
   /// Map domain scores (JSON string) to palace scores
-  static Map<CultivationPalace, double> _mapDomainsToPalaces(
+  static Map<CultivationPath, double> _mapDomainsToPalaces(
     String? domainScoresJson,
   ) {
-    final Map<CultivationPalace, double> result = {
-      CultivationPalace.body: 5.0,
-      CultivationPalace.resource: 5.0,
-      CultivationPalace.bond: 5.0,
-      CultivationPalace.heartSea: 5.0,
-      CultivationPalace.craft: 5.0,
-      CultivationPalace.joy: 5.0,
+    final Map<CultivationPath, double> result = {
+      CultivationPath.body: 5.0,
+      CultivationPath.resource: 5.0,
+      CultivationPath.bond: 5.0,
+      CultivationPath.heartSea: 5.0,
+      CultivationPath.craft: 5.0,
+      CultivationPath.joy: 5.0,
     };
 
     if (domainScoresJson == null || domainScoresJson.isEmpty) {
@@ -237,12 +237,12 @@ class CultivationLayer {
 
       // Map domain keys to palaces
       final mapping = {
-        'Tubuh': CultivationPalace.body,
-        'Keuangan': CultivationPalace.resource,
-        'Hubungan': CultivationPalace.bond,
-        'Emosi': CultivationPalace.heartSea,
-        'Karir': CultivationPalace.craft,
-        'Rekreasi': CultivationPalace.joy,
+        'Tubuh': CultivationPath.body,
+        'Keuangan': CultivationPath.resource,
+        'Hubungan': CultivationPath.bond,
+        'Emosi': CultivationPath.heartSea,
+        'Karir': CultivationPath.craft,
+        'Rekreasi': CultivationPath.joy,
       };
 
       for (final entry in mapping.entries) {
@@ -288,7 +288,7 @@ class CultivationLayer {
   }
 
   /// Detect dominant cultivation path from usage patterns (Phase 3 feature)
-  static CultivationPath? _detectDominantPath(DashboardData data) {
+  static CultivationPracticePath? _detectDominantPath(DashboardData data) {
     // Placeholder for Phase 3
     // Would analyze:
     // - Journal entry frequency → Word Path
@@ -313,7 +313,7 @@ class CultivationLayer {
   }
 
   /// Get lowest palace score (for Action of the Day targeting)
-  CultivationPalace getLowestPalace() {
+  CultivationPath getLowestPalace() {
     return palaceScores.entries.reduce((a, b) => a.value < b.value ? a : b).key;
   }
 

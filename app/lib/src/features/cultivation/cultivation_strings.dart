@@ -380,36 +380,36 @@ class CultivationStrings {
   // ============================================================================
 
   static String palaceName(
-    CultivationPalace palace,
+    CultivationPath palace,
     CultivationLanguageLevel level,
   ) {
     return switch (palace) {
-      CultivationPalace.body => switch (level) {
+      CultivationPath.body => switch (level) {
         CultivationLanguageLevel.plain => 'Tubuh',
         CultivationLanguageLevel.hybrid => 'Vital Stream',
         CultivationLanguageLevel.full => 'Vital Meridian',
       },
-      CultivationPalace.resource => switch (level) {
+      CultivationPath.resource => switch (level) {
         CultivationLanguageLevel.plain => 'Sumber Daya',
         CultivationLanguageLevel.hybrid => 'Reserve Stream',
         CultivationLanguageLevel.full => 'Reserve Meridian',
       },
-      CultivationPalace.bond => switch (level) {
+      CultivationPath.bond => switch (level) {
         CultivationLanguageLevel.plain => 'Relasi',
         CultivationLanguageLevel.hybrid => 'Karma Stream',
         CultivationLanguageLevel.full => 'Karmic Meridian',
       },
-      CultivationPalace.heartSea => switch (level) {
+      CultivationPath.heartSea => switch (level) {
         CultivationLanguageLevel.plain => 'Pikiran & Emosi',
         CultivationLanguageLevel.hybrid => 'Mind Stream',
         CultivationLanguageLevel.full => 'Mind Sea Meridian',
       },
-      CultivationPalace.craft => switch (level) {
+      CultivationPath.craft => switch (level) {
         CultivationLanguageLevel.plain => 'Kerja & Skill',
         CultivationLanguageLevel.hybrid => 'Mastery Stream',
         CultivationLanguageLevel.full => 'Mastery Meridian',
       },
-      CultivationPalace.joy => switch (level) {
+      CultivationPath.joy => switch (level) {
         CultivationLanguageLevel.plain => 'Rehat & Makna',
         CultivationLanguageLevel.hybrid => 'Spirit Stream',
         CultivationLanguageLevel.full => 'Spirit Meridian',

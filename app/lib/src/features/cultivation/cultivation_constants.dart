@@ -11,11 +11,11 @@ enum CultivationSeason {
   quietIntegration,
 }
 
-enum CultivationPath { sword, alchemist, formation, body, word, shadow }
+enum CultivationPracticePath { sword, alchemist, formation, body, word, shadow }
 
 enum CultivationLanguageLevel { plain, hybrid, full }
 
-enum CultivationPalace { body, resource, bond, heartSea, craft, joy }
+enum CultivationPath { body, resource, bond, heartSea, craft, joy }
 
 class CultivationRealm {
   const CultivationRealm({
@@ -44,7 +44,7 @@ class CultivationPalaceInfo {
     required this.primaryPractice,
   });
 
-  final CultivationPalace palace;
+  final CultivationPath palace;
   final String name;
   final String domainKey;
   final String element;
@@ -60,7 +60,7 @@ class CultivationPathInfo {
     required this.shadowRisk,
   });
 
-  final CultivationPath path;
+  final CultivationPracticePath path;
   final String name;
   final String core;
   final String strength;
@@ -143,42 +143,42 @@ class CultivationConstants {
 
   static const palaces = <CultivationPalaceInfo>[
     CultivationPalaceInfo(
-      palace: CultivationPalace.body,
+      palace: CultivationPath.body,
       name: 'Vital Stream',
       domainKey: 'Tubuh',
       element: 'Tanah',
       primaryPractice: 'Sleep, movement, breath, nourishment',
     ),
     CultivationPalaceInfo(
-      palace: CultivationPalace.resource,
+      palace: CultivationPath.resource,
       name: 'Reserve Stream',
       domainKey: 'Keuangan',
       element: 'Logam',
       primaryPractice: 'Money, time, tools, boundaries',
     ),
     CultivationPalaceInfo(
-      palace: CultivationPalace.bond,
+      palace: CultivationPath.bond,
       name: 'Karma Stream',
       domainKey: 'Hubungan',
       element: 'Api',
       primaryPractice: 'Relationships, support, conflict repair',
     ),
     CultivationPalaceInfo(
-      palace: CultivationPalace.heartSea,
+      palace: CultivationPath.heartSea,
       name: 'Mind Stream',
       domainKey: 'Emosi',
       element: 'Air',
       primaryPractice: 'Emotion, attention, clarity, stillness',
     ),
     CultivationPalaceInfo(
-      palace: CultivationPalace.craft,
+      palace: CultivationPath.craft,
       name: 'Mastery Stream',
       domainKey: 'Karir',
       element: 'Kayu',
       primaryPractice: 'Skill, learning, work, refinement',
     ),
     CultivationPalaceInfo(
-      palace: CultivationPalace.joy,
+      palace: CultivationPath.joy,
       name: 'Spirit Stream',
       domainKey: 'Rekreasi',
       element: 'Angin',
@@ -188,42 +188,42 @@ class CultivationConstants {
 
   static const paths = <CultivationPathInfo>[
     CultivationPathInfo(
-      path: CultivationPath.sword,
+      path: CultivationPracticePath.sword,
       name: 'Sword Path',
       core: 'Kejelasan, pemotongan ilusi',
       strength: 'Fokus tajam, tegas',
       shadowRisk: 'Kaku, dingin relasional',
     ),
     CultivationPathInfo(
-      path: CultivationPath.alchemist,
+      path: CultivationPracticePath.alchemist,
       name: 'Alchemist Path',
       core: 'Penyulingan, transformasi halus',
       strength: 'Sabar, integratif',
       shadowRisk: 'Sulit tegas',
     ),
     CultivationPathInfo(
-      path: CultivationPath.formation,
+      path: CultivationPracticePath.formation,
       name: 'Formation Path',
       core: 'Sistem, struktur, desain kehidupan',
       strength: 'Teratur, stabil',
       shadowRisk: 'Over-control',
     ),
     CultivationPathInfo(
-      path: CultivationPath.body,
+      path: CultivationPracticePath.body,
       name: 'Body Path',
       core: 'Ketahanan, eksekusi, disiplin fisik',
       strength: 'Action-oriented',
       shadowRisk: 'Mengabaikan emosi',
     ),
     CultivationPathInfo(
-      path: CultivationPath.word,
+      path: CultivationPracticePath.word,
       name: 'Word Path',
       core: 'Makna, bahasa, cerita',
       strength: 'Komunikatif',
       shadowRisk: 'Retorika tanpa aksi',
     ),
     CultivationPathInfo(
-      path: CultivationPath.shadow,
+      path: CultivationPracticePath.shadow,
       name: 'Shadow Path',
       core: 'Masuk ke area sulit: trauma, chaos',
       strength: 'Transformasi mendalam',
@@ -238,11 +238,11 @@ class CultivationConstants {
     );
   }
 
-  static CultivationPalaceInfo palaceInfo(CultivationPalace palace) {
+  static CultivationPalaceInfo palaceInfo(CultivationPath palace) {
     return palaces.firstWhere((info) => info.palace == palace);
   }
 
-  static CultivationPathInfo pathInfo(CultivationPath path) {
+  static CultivationPathInfo pathInfo(CultivationPracticePath path) {
     return paths.firstWhere((info) => info.path == path);
   }
 }

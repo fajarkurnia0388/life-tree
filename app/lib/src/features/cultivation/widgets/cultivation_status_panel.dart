@@ -142,7 +142,7 @@ class CultivationStatusPanel extends ConsumerWidget {
     CultivationLanguageLevel languageLevel,
   ) {
     return Column(
-      children: CultivationPalace.values.map((palace) {
+      children: CultivationPath.values.map((palace) {
         final score = cultivation.palaceScores[palace] ?? 5.0;
         return Padding(
           padding: const EdgeInsets.only(bottom: 6),
