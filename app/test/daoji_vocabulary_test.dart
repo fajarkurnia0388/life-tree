@@ -30,24 +30,21 @@ void main() {
         DaojiVocabularyLevel.immortalCultivation,
       );
       expect(parseDaojiVocabularyLevel(null), DaojiVocabularyLevel.daoStream);
-      expect(parseDaojiVocabularyLevel('broken'), DaojiVocabularyLevel.daoStream);
+      expect(
+        parseDaojiVocabularyLevel('broken'),
+        DaojiVocabularyLevel.daoStream,
+      );
     });
   });
 
   group('DaojiText', () {
     test('resolves navigation labels by vocabulary level', () {
       expect(
-        DaojiText.resolve(
-          DaojiTextKey.navHome,
-          DaojiVocabularyLevel.practical,
-        ),
+        DaojiText.resolve(DaojiTextKey.navHome, DaojiVocabularyLevel.practical),
         'Beranda',
       );
       expect(
-        DaojiText.resolve(
-          DaojiTextKey.navHome,
-          DaojiVocabularyLevel.daoStream,
-        ),
+        DaojiText.resolve(DaojiTextKey.navHome, DaojiVocabularyLevel.daoStream),
         'Dao Tree',
       );
       expect(

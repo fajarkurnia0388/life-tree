@@ -22,8 +22,7 @@ extension DaojiVocabularyLevelX on DaojiVocabularyLevel {
 
   String get description {
     return switch (this) {
-      DaojiVocabularyLevel.practical =>
-        'Bahasa paling sederhana dan langsung.',
+      DaojiVocabularyLevel.practical => 'Bahasa paling sederhana dan langsung.',
       DaojiVocabularyLevel.gentleCultivation =>
         'Bahasa yang lebih manusiawi dan hangat.',
       DaojiVocabularyLevel.daoStream =>
