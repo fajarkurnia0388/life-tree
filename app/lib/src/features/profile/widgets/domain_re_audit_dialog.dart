@@ -28,7 +28,9 @@ class DomainReAuditDialog extends StatelessWidget {
     // Pre-fill with existing scores
     if (profile.latestDomainScores != null) {
       try {
-        final Map<String, dynamic> scores = jsonDecode(profile.latestDomainScores!);
+        final Map<String, dynamic> scores = jsonDecode(
+          profile.latestDomainScores!,
+        );
         scores.forEach((key, val) {
           if (controllers.containsKey(key)) {
             controllers[key]!.text = val.toString();
@@ -49,7 +51,10 @@ class DomainReAuditDialog extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(entry.key, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text(
+                      entry.key,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   SizedBox(
                     width: 60,
@@ -59,7 +64,10 @@ class DomainReAuditDialog extends StatelessWidget {
                       textAlign: TextAlign.center,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
                       ),
                     ),
                   ),
@@ -77,7 +85,9 @@ class DomainReAuditDialog extends StatelessWidget {
         ElevatedButton(
           style: AppButtonStyles.primary(context),
           onPressed: () {
-            final newScores = controllers.map((k, v) => MapEntry(k, double.tryParse(v.text) ?? 5.0));
+            final newScores = controllers.map(
+              (k, v) => MapEntry(k, double.tryParse(v.text) ?? 5.0),
+            );
             Navigator.pop(context, newScores);
           },
           child: const Text('Simpan'),

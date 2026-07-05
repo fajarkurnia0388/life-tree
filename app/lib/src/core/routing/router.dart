@@ -76,9 +76,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/edit-habit/:habitId',
-        builder: (context, state) => EditHabitView(
-          habitId: state.pathParameters['habitId']!,
-        ),
+        builder: (context, state) =>
+            EditHabitView(habitId: state.pathParameters['habitId']!),
       ),
       GoRoute(
         path: '/marketplace',
