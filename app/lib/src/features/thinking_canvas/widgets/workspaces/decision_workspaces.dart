@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/i18n/daoji_text_key.dart';
+import '../../../../core/i18n/daoji_text_resolver.dart';
+import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 
 // ==========================================
 // 1. SIX THINKING HATS WORKSPACE
 // ==========================================
-class SixThinkingHatsWorkspace extends StatefulWidget {
+class SixThinkingHatsWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const SixThinkingHatsWorkspace({super.key, required this.onChanged});
 
   @override
-  State<SixThinkingHatsWorkspace> createState() =>
+  ConsumerState<SixThinkingHatsWorkspace> createState() =>
       _SixThinkingHatsWorkspaceState();
 }
 
-class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
+class _SixThinkingHatsWorkspaceState
+    extends ConsumerState<SixThinkingHatsWorkspace> {
   final List<Map<String, dynamic>> _hats = [
     {
       'color': Colors.white,
@@ -105,13 +110,14 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final activeHat = _hats[_selectedHatIndex];
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Analisis 6 Topi Berpikir (Six Hats)',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.sixThinkingHatsTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 10),
         Wrap(
@@ -197,14 +203,25 @@ class _SixThinkingHatsWorkspaceState extends State<SixThinkingHatsWorkspace> {
           controller: _controllers[_selectedHatIndex],
           maxLines: 4,
           decoration: InputDecoration(
-            labelText: 'Catatan untuk ${activeHat['name']}',
-            hintText: 'Tuliskan analisis kognitif Anda di sini...',
+            labelText: DaojiText.resolve(
+              DaojiTextKey.sixThinkingHatsNoteLabel,
+              vocabularyLevel,
+              params: {'name': activeHat['name']},
+            ),
+            hintText: DaojiText.resolve(
+              DaojiTextKey.sixThinkingHatsNoteHint,
+              vocabularyLevel,
+            ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (val) {
             if (val == null || val.trim().isEmpty) {
-              return 'Harap tuliskan analisis untuk ${activeHat['name']}';
+              return DaojiText.resolve(
+                DaojiTextKey.sixThinkingHatsValidatorMessage,
+                vocabularyLevel,
+                params: {'name': activeHat['name']},
+              );
             }
             return null;
           },

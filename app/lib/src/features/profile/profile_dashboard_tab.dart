@@ -463,7 +463,12 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                 OutlinedButton.icon(
                   onPressed: () => _showDomainReauditDialog(context, profile),
                   icon: const Icon(Icons.refresh_rounded, size: 18),
-                  label: const Text('Perbarui Penilaian Domain'),
+                  label: Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.profileDomainReauditAction,
+                      vocabularyLevel,
+                    ),
+                  ),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 44),
                     shape: RoundedRectangleBorder(

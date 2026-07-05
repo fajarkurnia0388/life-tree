@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../../../core/services/error_handler_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/i18n/daoji_text_key.dart';
+import '../../../../core/i18n/daoji_text_resolver.dart';
+import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 
 class MorphologicalTemplate {
   final String title;
@@ -92,65 +95,10 @@ class MorphologicalTemplate {
         ],
       },
     ),
-    MorphologicalTemplate(
-      title: 'Inovasi F&B / Kuliner 🍜',
-      description: 'Eksplorasi resep dan konsep bisnis kuliner unik.',
-      category: 'F&B',
-      isPremium: true,
-      dimensions: {
-        'Jenis Kuliner': [
-          'Mie Nusantara',
-          'Pastry Manis',
-          'Kopi Susu',
-          'Camilan Sehat',
-        ],
-        'Bahan Utama': [
-          'Tepung Singkong',
-          'Susu Gandum (Oat)',
-          'Gula Aren Organik',
-          'Matcha Uji',
-        ],
-        'Konsep Saji': [
-          'Drive-Thru Kontainer',
-          'Fine Dining Santai',
-          'Kemasan Bento Keranjang',
-          'Dapur Bersama',
-        ],
-      },
-    ),
-    MorphologicalTemplate(
-      title: 'Kampanye Edukasi Sosial 📣',
-      description: 'Metode menyebarkan pesan positif ke masyarakat luas.',
-      category: 'Sosial',
-      isPremium: true,
-      dimensions: {
-        'Media': [
-          'Video TikTok Pendek',
-          'Podcast Dialog',
-          'Infografis Instagram',
-          'Zine Cetak Mini',
-        ],
-        'Target Usia': [
-          'Anak SD-SMP',
-          'Remaja SMA',
-          'Keluarga Muda',
-          'Lansia Aktif',
-        ],
-        'Topik Utama': [
-          'Kesehatan Mental',
-          'Literasi Keuangan',
-          'Peduli Sampah Plastik',
-          'Gizi Sehat Stunting',
-        ],
-      },
-    ),
   ];
 }
 
-// ==========================================
-// 3. MORPHOLOGICAL ANALYSIS WORKSPACE (SLOT MACHINE SPIN)
-// ==========================================
-class MorphologicalWorkspace extends StatefulWidget {
+class MorphologicalWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   final bool isPremiumUser;
   final VoidCallback onPremiumLocked;
@@ -163,10 +111,12 @@ class MorphologicalWorkspace extends StatefulWidget {
   });
 
   @override
-  State<MorphologicalWorkspace> createState() => _MorphologicalWorkspaceState();
+  ConsumerState<MorphologicalWorkspace> createState() =>
+      _MorphologicalWorkspaceState();
 }
 
-class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
+class _MorphologicalWorkspaceState
+    extends ConsumerState<MorphologicalWorkspace> {
   final List<String> _dimensions = ['Media', 'Bahan', 'Model Bisnis'];
   final Map<String, List<String>> _options = {
     'Media': ['Mobile App', 'Website', 'Buku Fisik', 'Kantung Belanja'],
@@ -184,11 +134,14 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
     for (var dim in _dimensions) {
       _controllers[dim] = FixedExtentScrollController();
     }
+    // keep initial options as-is; UI strings are resolved at build
   }
 
   @override
   void dispose() {
-    _controllers.forEach((_, c) => c.dispose());
+    for (var c in _controllers.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -196,13 +149,11 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
     final buffer = StringBuffer();
     buffer.writeln('Analisis Morfologi Slot Machine:');
     _options.forEach((dim, list) {
-      buffer.writeln('- Dimensi $dim: ${list.join(", ")}');
+      buffer.writeln('- Dimensi $dim: ${list.join(', ')}');
     });
     if (_spinResult != null) {
-      buffer.writeln('Kombinasi Slot Terpilih 🎰:');
-      _spinResult!.forEach((key, val) {
-        buffer.writeln('  * $key -> $val');
-      });
+      buffer.writeln('Kombinasi Slot Terpilih:');
+      _spinResult!.forEach((k, v) => buffer.writeln('  * $k -> $v'));
     }
     widget.onChanged(buffer.toString());
   }
@@ -228,13 +179,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
       int currentItem = 0;
       try {
         currentItem = _controllers[dim]!.selectedItem;
-      } catch (e, stackTrace) {
-        ErrorHandlerService().logError(
-          e,
-          stackTrace,
-          context: 'MorphologicalWorkspace.getControllerSelectedItem',
-        );
-      }
+      } catch (_) {}
 
       final int spinCycles = 24 + (i * 12);
       final int baseTarget = currentItem + spinCycles;
@@ -268,34 +213,50 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+          title: Text(
+            DaojiText.resolve(
+              DaojiTextKey.morphologicalAddOptionTitle,
+              ref.read(daojiVocabularyLevelValueProvider),
+              params: {'dimension': dimension},
+            ),
           ),
-          title: Text('Tambah Opsi di "$dimension"'),
           content: TextField(
             controller: controller,
             autofocus: true,
             decoration: const InputDecoration(
-              labelText: 'Opsi',
+              // label is resolved below to avoid const use
+              labelText: '',
               border: OutlineInputBorder(),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Batal'),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.morphologicalCancel,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
-                if (controller.text.trim().isNotEmpty) {
+                final v = controller.text.trim();
+                if (v.isNotEmpty) {
                   setState(() {
-                    _options[dimension]!.add(controller.text.trim());
+                    _options[dimension] = List.from(_options[dimension] ?? [])
+                      ..add(v);
                   });
                   _notifyChanges();
                 }
                 Navigator.pop(context);
               },
-              child: const Text('Tambah'),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.morphologicalAddButton,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
             ),
           ],
         );
@@ -309,22 +270,29 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+          title: Text(
+            DaojiText.resolve(
+              DaojiTextKey.morphologicalAddDimensionTitle,
+              ref.read(daojiVocabularyLevelValueProvider),
+            ),
           ),
-          title: const Text('Tambah Dimensi Baru'),
           content: TextField(
             controller: controller,
             autofocus: true,
             decoration: const InputDecoration(
-              labelText: 'Nama Dimensi',
+              labelText: '',
               border: OutlineInputBorder(),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Batal'),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.morphologicalCancel,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -339,7 +307,12 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                 }
                 Navigator.pop(context);
               },
-              child: const Text('Tambah'),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.morphologicalAddButton,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
             ),
           ],
         );
@@ -359,12 +332,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
             color: theme.colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          padding: const EdgeInsets.only(
-            top: 16,
-            bottom: 24,
-            left: 16,
-            right: 16,
-          ),
+          padding: const EdgeInsets.all(16),
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height * 0.75,
           ),
@@ -374,22 +342,31 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Perpustakaan Dimensi 🛒',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.morphologicalMarketplaceTitle,
+                      ref.read(daojiVocabularyLevelValueProvider),
+                    ),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close_rounded),
-                    tooltip: 'Tutup',
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
-              const Text(
-                'Pilih dari set parameter siap-pakai untuk memancing kreativitas Anda secara instan!',
-                style: TextStyle(fontSize: 11, color: Colors.grey),
+              const SizedBox(height: 8),
+              Text(
+                DaojiText.resolve(
+                  DaojiTextKey.morphologicalMarketplaceDescription,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+                style: const TextStyle(fontSize: 11, color: Colors.grey),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Expanded(
                 child: ListView.builder(
                   itemCount: MorphologicalTemplate.library.length,
@@ -397,23 +374,13 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                     final t = MorphologicalTemplate.library[index];
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 6.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.08,
-                          ),
-                        ),
-                      ),
                       child: ListTile(
-                        contentPadding: const EdgeInsets.all(12),
                         title: Row(
                           children: [
                             Text(
                               t.title,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 13,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -423,8 +390,8 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withValues(
-                                  alpha: 0.1,
+                                color: theme.colorScheme.primary.withAlpha(
+                                  (0.1 * 255).round(),
                                 ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -437,14 +404,6 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                                 ),
                               ),
                             ),
-                            if (t.isPremium) ...[
-                              const SizedBox(width: 8),
-                              const Icon(
-                                Icons.star_rounded,
-                                color: Colors.amber,
-                                size: 14,
-                              ),
-                            ],
                           ],
                         ),
                         subtitle: Column(
@@ -461,26 +420,28 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                             const SizedBox(height: 8),
                             Wrap(
                               spacing: 4,
-                              children: t.dimensions.keys.map((k) {
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: theme.colorScheme.onSurface
-                                        .withValues(alpha: 0.04),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    k,
-                                    style: const TextStyle(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.bold,
+                              children: t.dimensions.keys
+                                  .map(
+                                    (k) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: theme.colorScheme.onSurface
+                                            .withAlpha((0.04 * 255).round()),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        k,
+                                        style: const TextStyle(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }).toList(),
+                                  )
+                                  .toList(),
                             ),
                           ],
                         ),
@@ -491,12 +452,12 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                             return;
                           }
                           setState(() {
-                            _controllers.forEach((_, c) => c.dispose());
+                            for (var c in _controllers.values) {
+                              c.dispose();
+                            }
                             _controllers.clear();
-
                             _dimensions.clear();
                             _options.clear();
-
                             t.dimensions.forEach((dim, opts) {
                               _dimensions.add(dim);
                               _options[dim] = List.from(opts);
@@ -508,10 +469,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(
-                                'Template "${t.title}" berhasil diterapkan!',
-                              ),
-                              backgroundColor: theme.colorScheme.primary,
+                              content: Text('Template "${t.title}" diterapkan'),
                             ),
                           );
                         },
@@ -538,7 +496,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              '4. Slot Machine Kombinasi Morfologi',
+              'Slot Machine Kombinasi Morfologi',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             Row(
@@ -564,10 +522,12 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
         Container(
           height: 160,
           decoration: BoxDecoration(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
+            color: theme.colorScheme.onSurface.withAlpha((0.04 * 255).round()),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+              color: theme.colorScheme.onSurface.withAlpha(
+                (0.08 * 255).round(),
+              ),
               width: 1.5,
             ),
           ),
@@ -575,7 +535,9 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
           child: Row(
             children: _dimensions.map((dim) {
               final opts = _options[dim] ?? [];
-              final controller = _controllers[dim]!;
+              final controller =
+                  _controllers[dim] ?? FixedExtentScrollController();
+              _controllers.putIfAbsent(dim, () => controller);
 
               return Expanded(
                 child: Column(
@@ -606,8 +568,8 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                             ),
                           ],
                           border: Border.all(
-                            color: theme.colorScheme.primary.withValues(
-                              alpha: 0.4,
+                            color: theme.colorScheme.primary.withAlpha(
+                              (0.4 * 255).round(),
                             ),
                             width: 1.5,
                           ),
@@ -624,26 +586,30 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                                   physics: const FixedExtentScrollPhysics(),
                                   childDelegate:
                                       ListWheelChildLoopingListDelegate(
-                                        children: opts.map((opt) {
-                                          return Center(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 4.0,
+                                        children: opts
+                                            .map(
+                                              (opt) => Center(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 4.0,
+                                                      ),
+                                                  child: Text(
+                                                    opt,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
                                                   ),
-                                              child: Text(
-                                                opt,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        }).toList(),
+                                            )
+                                            .toList(),
                                       ),
                                 )
                               else
@@ -662,11 +628,11 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
                                     height: 32,
                                     decoration: BoxDecoration(
                                       color: theme.colorScheme.primary
-                                          .withValues(alpha: 0.15),
+                                          .withAlpha((0.15 * 255).round()),
                                       border: Border.symmetric(
                                         horizontal: BorderSide(
                                           color: theme.colorScheme.primary
-                                              .withValues(alpha: 0.7),
+                                              .withAlpha((0.7 * 255).round()),
                                           width: 1.5,
                                         ),
                                       ),
@@ -731,7 +697,7 @@ class _MorphologicalWorkspaceState extends State<MorphologicalWorkspace> {
           icon: Icon(
             _isSpinning ? Icons.refresh_rounded : Icons.casino_rounded,
           ),
-          label: Text(_isSpinning ? 'Sedang Memutar...' : 'Putar Dadu Acak 🎲'),
+          label: Text(_isSpinning ? 'Sedang Memutar...' : 'Putar Kombinasi'),
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: theme.colorScheme.onPrimary,

@@ -11,6 +11,9 @@ enum CultivationSeason {
   quietIntegration,
 }
 
+// Backwards-compatible enum used by older tests and code references.
+enum CultivationPalace { body, resource, bond, heartSea, craft, joy }
+
 enum CultivationPracticePath { sword, alchemist, formation, body, word, shadow }
 
 enum CultivationLanguageLevel { plain, hybrid, full }

@@ -103,7 +103,13 @@ class SettingsBottomSheet extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Gagal mengekspor data: $e'),
+            content: Text(
+              DaojiText.resolve(
+                DaojiTextKey.settingsExportFailed,
+                ref.read(daojiVocabularyLevelValueProvider),
+                params: {'error': e.toString()},
+              ),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -122,14 +128,19 @@ class SettingsBottomSheet extends ConsumerWidget {
         title: Text(
           DaojiText.resolve(DaojiTextKey.settingsReset, vocabularyLevel),
         ),
-        content: const Text(
-          'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
+        content: Text(
+          DaojiText.resolve(
+            DaojiTextKey.settingsResetConfirmBody,
+            vocabularyLevel,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             style: AppButtonStyles.secondary(context),
-            child: const Text('Batal'),
+            child: Text(
+              DaojiText.resolve(DaojiTextKey.systemCancel, vocabularyLevel),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
@@ -137,7 +148,12 @@ class SettingsBottomSheet extends ConsumerWidget {
               backgroundColor: WidgetStateProperty.all(Colors.red),
               foregroundColor: WidgetStateProperty.all(Colors.white),
             ),
-            child: const Text('Hapus Semua'),
+            child: Text(
+              DaojiText.resolve(
+                DaojiTextKey.settingsResetConfirmAction,
+                vocabularyLevel,
+              ),
+            ),
           ),
         ],
       ),
@@ -166,7 +182,14 @@ class SettingsBottomSheet extends ConsumerWidget {
       Navigator.of(context).pop();
       context.go('/onboarding');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Semua data telah dihapus.')),
+        SnackBar(
+          content: Text(
+            DaojiText.resolve(
+              DaojiTextKey.settingsResetSuccess,
+              vocabularyLevel,
+            ),
+          ),
+        ),
       );
     }
   }
@@ -208,7 +231,12 @@ class SettingsBottomSheet extends ConsumerWidget {
             title: Text(
               DaojiText.resolve(DaojiTextKey.settingsExport, vocabularyLevel),
             ),
-            subtitle: const Text('Simpan semua data ke file JSON'),
+            subtitle: Text(
+              DaojiText.resolve(
+                DaojiTextKey.settingsExportSubtitle,
+                vocabularyLevel,
+              ),
+            ),
             onTap: () => _exportDataAsJson(context, ref),
           ),
           ListTile(
@@ -216,7 +244,12 @@ class SettingsBottomSheet extends ConsumerWidget {
             title: Text(
               DaojiText.resolve(DaojiTextKey.settingsReset, vocabularyLevel),
             ),
-            subtitle: const Text('Hapus semua data dan kembali ke awal'),
+            subtitle: Text(
+              DaojiText.resolve(
+                DaojiTextKey.settingsResetSubtitle,
+                vocabularyLevel,
+              ),
+            ),
             onTap: () => _resetApplication(context, ref),
             tileColor: Colors.red.withValues(alpha: 0.1),
           ),
@@ -225,7 +258,9 @@ class SettingsBottomSheet extends ConsumerWidget {
           const SizedBox(height: 16),
           ListTile(
             leading: const Icon(Icons.dark_mode_outlined),
-            title: const Text('Dark Mode'),
+            title: Text(
+              DaojiText.resolve(DaojiTextKey.settingsDarkMode, vocabularyLevel),
+            ),
             trailing: Switch(
               value: isDarkEffective,
               onChanged: (value) => _toggleThemeMode(ref, value),
@@ -286,8 +321,11 @@ class SettingsBottomSheet extends ConsumerWidget {
                         vocabularyLevel,
                       ),
                     ),
-                    subtitle: const Text(
-                      'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
+                    subtitle: Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.settingsDevModeSubtitle,
+                        vocabularyLevel,
+                      ),
                     ),
                     trailing: Switch(
                       value: devMode,

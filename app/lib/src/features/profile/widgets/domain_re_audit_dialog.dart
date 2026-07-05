@@ -1,21 +1,21 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:drift/drift.dart' as drift;
 
-import '../../../core/providers/db_provider.dart';
+import '../../../core/i18n/daoji_text_key.dart';
+import '../../../core/i18n/daoji_text_resolver.dart';
+import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
-import '../../dashboard/dashboard_provider.dart';
 
-class DomainReAuditDialog extends StatelessWidget {
+class DomainReAuditDialog extends ConsumerWidget {
   final UserProfile profile;
 
   const DomainReAuditDialog({super.key, required this.profile});
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final controllers = {
       'Tubuh': TextEditingController(text: '5.0'),
       'Keuangan': TextEditingController(text: '5.0'),
@@ -41,7 +41,12 @@ class DomainReAuditDialog extends StatelessWidget {
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: const Text('Perbarui Penilaian Domain'),
+      title: Text(
+        DaojiText.resolve(
+          DaojiTextKey.profileDomainReauditTitle,
+          vocabularyLevel,
+        ),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -80,7 +85,9 @@ class DomainReAuditDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Batal'),
+          child: Text(
+            DaojiText.resolve(DaojiTextKey.systemCancel, vocabularyLevel),
+          ),
         ),
         ElevatedButton(
           style: AppButtonStyles.primary(context),
@@ -90,7 +97,9 @@ class DomainReAuditDialog extends StatelessWidget {
             );
             Navigator.pop(context, newScores);
           },
-          child: const Text('Simpan'),
+          child: Text(
+            DaojiText.resolve(DaojiTextKey.systemSave, vocabularyLevel),
+          ),
         ),
       ],
     );

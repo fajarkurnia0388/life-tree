@@ -52,11 +52,16 @@ class _ThinkingCanvasLiteViewState
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thinking Canvas'),
+        title: Text(
+          DaojiText.resolve(DaojiTextKey.thinkingCanvasTitle, vocabularyLevel),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.history_rounded),
-            tooltip: 'Riwayat Sesi',
+            tooltip: DaojiText.resolve(
+              DaojiTextKey.thinkingCanvasHistory,
+              vocabularyLevel,
+            ),
             onPressed: () => _showSessionHistory(context),
           ),
         ],
@@ -68,6 +73,7 @@ class _ThinkingCanvasLiteViewState
   }
 
   void _showSessionHistory(BuildContext context) {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -102,7 +108,10 @@ class _ThinkingCanvasLiteViewState
                     children: [
                       const SizedBox(height: 12),
                       Text(
-                        'Riwayat Thinking Canvas',
+                        DaojiText.resolve(
+                          DaojiTextKey.thinkingCanvasSessionHistoryTitle,
+                          vocabularyLevel,
+                        ),
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Expanded(
@@ -152,7 +161,10 @@ class _ThinkingCanvasLiteViewState
         children: [
           const Icon(Icons.lightbulb_outline, size: 64, color: Colors.amber),
           const SizedBox(height: 16),
-          Text('Pilih Metode Berpikir', style: theme.textTheme.headlineSmall),
+          Text(
+            DaojiText.resolve(DaojiTextKey.methodPickerTitle, level),
+            style: theme.textTheme.headlineSmall,
+          ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () => showModalBottomSheet(
@@ -164,7 +176,12 @@ class _ThinkingCanvasLiteViewState
                     ref.read(thinkingCanvasProvider.notifier).setMethod(method),
               ),
             ),
-            child: const Text('Buka Katalog Metode'),
+            child: Text(
+              DaojiText.resolve(
+                DaojiTextKey.thinkingCanvasOpenMethodCatalog,
+                level,
+              ),
+            ),
           ),
         ],
       ),
@@ -218,25 +235,34 @@ class _ThinkingCanvasLiteViewState
   }
 }
 
-class _GenericThinkingWorkspace extends StatelessWidget {
+class _GenericThinkingWorkspace extends ConsumerWidget {
   final String title;
   final ValueChanged<String> onChanged;
 
   const _GenericThinkingWorkspace({
     required this.title,
     required this.onChanged,
+    super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     return Padding(
       padding: const EdgeInsets.all(16),
       child: TextFormField(
         maxLines: 12,
         onChanged: onChanged,
         decoration: InputDecoration(
-          labelText: 'Workspace: $title',
-          hintText: 'Tulis ide atau kerangka berpikir Anda di sini...',
+          labelText: DaojiText.resolve(
+            DaojiTextKey.thinkingCanvasWorkspaceLabel,
+            vocabularyLevel,
+            params: {'title': title},
+          ),
+          hintText: DaojiText.resolve(
+            DaojiTextKey.thinkingCanvasWorkspaceHint,
+            vocabularyLevel,
+          ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),

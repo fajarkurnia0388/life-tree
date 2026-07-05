@@ -17,7 +17,6 @@ import '../cultivation/cultivation_strings.dart';
 import '../dashboard/dashboard_provider.dart';
 import '../../core/services/notification_service.dart';
 import 'widgets/habit_templates.dart';
-import 'edit_habit_view.dart';
 
 class AddHabitView extends ConsumerStatefulWidget {
   final String? habitId;
@@ -110,7 +109,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
       builder: (context) {
         final languageLevel = ref.read(cultivationLanguageLevelProvider);
         return AlertDialog(
-          title: Text('Hapus ${CultivationStrings.habitLabel(languageLevel)}'),
+          title: Text(
+            '${DaojiText.resolve(DaojiTextKey.habitDelete, ref.read(daojiVocabularyLevelValueProvider))} ${CultivationStrings.habitLabel(languageLevel)}',
+          ),
           content: Text(
             'Apakah Anda yakin ingin menghapus ${CultivationStrings.habitLabel(languageLevel).toLowerCase()} ini? Tindakan ini tidak dapat dibatalkan.',
           ),
@@ -118,12 +119,23 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               style: AppButtonStyles.secondary(context),
-              child: const Text('Batal'),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.systemCancel,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
             ),
             TextButton(
               style: AppButtonStyles.text(context),
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.systemDelete,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );
@@ -188,7 +200,12 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Beban Canopy Terlampaui'),
+            title: Text(
+              DaojiText.resolve(
+                DaojiTextKey.habitCapacityWarning,
+                ref.read(daojiVocabularyLevelValueProvider),
+              ),
+            ),
             content: Text(
               'Total beban kapasitas harian Anda adalah $maxCapacity poin. '
               'Menambahkan/mengubah habit ini akan meningkatkan beban menjadi $nextLoad poin. '
@@ -197,11 +214,21 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Batal'),
+                child: Text(
+                  DaojiText.resolve(
+                    DaojiTextKey.systemCancel,
+                    ref.read(daojiVocabularyLevelValueProvider),
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Tetap Lanjutkan'),
+                child: Text(
+                  DaojiText.resolve(
+                    DaojiTextKey.actionUnderstand,
+                    ref.read(daojiVocabularyLevelValueProvider),
+                  ),
+                ),
               ),
             ],
           );
@@ -716,9 +743,12 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 OutlinedButton.icon(
                   onPressed: _deleteHabit,
                   icon: const Icon(Icons.delete_outline, color: Colors.red),
-                  label: const Text(
-                    'Hapus Kebiasaan',
-                    style: TextStyle(
+                  label: Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.habitDelete,
+                      vocabularyLevel,
+                    ),
+                    style: const TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
                     ),

@@ -1,0 +1,904 @@
+lib/src\app.dart:41:        home: Scaffold(body: Center(child: Text('Gagal memuat profil: $err'))),
+lib/src\core\widgets\loading_state_widget.dart:64:              child: Text(
+lib/src\core\widgets\error_state_widget.dart:63:            Text(
+lib/src\core\widgets\error_state_widget.dart:85:                label: const Text('Coba Lagi'),
+lib/src\core\widgets\error_state_widget.dart:131:          label: Text(
+lib/src\core\widgets\error_state_widget.dart:152:            child: Text(
+lib/src\core\widgets\empty_state_widget.dart:50:            Text(
+lib/src\core\widgets\empty_state_widget.dart:59:            Text(
+lib/src\core\widgets\empty_state_widget.dart:72:                label: Text(actionLabel!),
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:51:      ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:52:        const SnackBar(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:53:          content: Text('Harap jawab semua 5 pertanyaan sebelum mengirim.'),
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:178:            return AlertDialog(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:182:              title: Text(isLowMood ? 'Refleksi Diri 🌱' : 'Luar Biasa! ✨'),
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:183:              content: Text(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:199:                  child: Text(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:213:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:214:          SnackBar(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:215:            content: Text('Gagal menyimpan Weekly Pulse: $e'),
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:256:                  const Text('📋', style: TextStyle(fontSize: 24)),
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:259:                    child: Text(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:284:                    Text(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:293:                    Text(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:336:                              title: Text(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:384:              const Text(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:389:              Text(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:402:                    hintText: 'Tulis refleksi Anda di sini...',
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:426:        title: Text(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:437:                  Text('Menyimpan hasil refleksi mingguan...'),
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:455:                  child: Text(
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:496:                          child: const Text('Kembali'),
+lib/src\features\weekly_pulse\weekly_pulse_view.dart:521:                        child: Text(isLastStep ? 'Kirim' : 'Lanjut'),
+lib/src\core\animations\success_animations.dart:24:  static void showSuccessSnackBar(
+lib/src\core\animations\success_animations.dart:29:    ScaffoldMessenger.of(context).showSnackBar(
+lib/src\core\animations\success_animations.dart:30:      SnackBar(
+lib/src\core\animations\success_animations.dart:36:              child: Text(
+lib/src\core\animations\success_animations.dart:167:                      Text(
+lib/src\features\habit\edit_habit_view.dart:98:        return AlertDialog(
+lib/src\features\habit\edit_habit_view.dart:99:          title: Text('Hapus ${CultivationStrings.habitLabel(languageLevel)}'),
+lib/src\features\habit\edit_habit_view.dart:100:          content: Text(
+lib/src\features\habit\edit_habit_view.dart:107:              child: const Text('Batal'),
+lib/src\features\habit\edit_habit_view.dart:112:              child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+lib/src\features\habit\edit_habit_view.dart:149:        builder: (context) => AlertDialog(
+lib/src\features\habit\edit_habit_view.dart:150:          title: const Text('Beban Canopy Terlampaui'),
+lib/src\features\habit\edit_habit_view.dart:151:          content: Text('Beban akan menjadi $nextLoad / $maxCapacity. Lanjutkan?'),
+lib/src\features\habit\edit_habit_view.dart:153:            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Batal')),
+lib/src\features\habit\edit_habit_view.dart:154:            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Lanjut')),
+lib/src\features\habit\edit_habit_view.dart:205:        title: Text('Edit ${CultivationStrings.habitLabel(languageLevel)}'),
+lib/src\features\habit\edit_habit_view.dart:214:              Text(
+lib/src\features\habit\edit_habit_view.dart:219:              Text(DaojiText.resolve(DaojiTextKey.habitCategory, vocabularyLevel), style: const TextStyle(fontWeight: FontWeight.bold)),
+lib/src\features\habit\edit_habit_view.dart:224:                items: _domainTags.map((val) => DropdownMenuItem(value: val, child: Text(DaojiText.domainLabel(val, vocabularyLevel, short: true)))).toList(),
+lib/src\features\habit\edit_habit_view.dart:230:                decoration: AppFormTheme.inputDecoration(labelText: DaojiText.resolve(DaojiTextKey.habitNameLabel, vocabularyLevel)),
+lib/src\features\habit\edit_habit_view.dart:236:                decoration: AppFormTheme.inputDecoration(labelText: 'Goal Tag'),
+lib/src\features\habit\edit_habit_view.dart:240:                segments: const [ButtonSegment(value: 'Daily', label: Text('Daily')), ButtonSegment(value: 'Weekly', label: Text('Weekly'))],
+lib/src\features\habit\edit_habit_view.dart:251:                      label: Text('Day $dayNum'),
+lib/src\features\habit\edit_habit_view.dart:272:                child: Text(DaojiText.resolve(DaojiTextKey.habitEdit, vocabularyLevel)),
+lib/src\features\habit\edit_habit_view.dart:278:                label: const Text('Delete Habit', style: TextStyle(color: Colors.red)),
+lib/src\features\habit\edit_habit_view.dart:292:        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+lib/src\features\habit\add_habit_view.dart:112:        return AlertDialog(
+lib/src\features\habit\add_habit_view.dart:113:          title: Text('Hapus ${CultivationStrings.habitLabel(languageLevel)}'),
+lib/src\features\habit\add_habit_view.dart:114:          content: Text(
+lib/src\features\habit\add_habit_view.dart:121:              child: const Text('Batal'),
+lib/src\features\habit\add_habit_view.dart:126:              child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+lib/src\features\habit\add_habit_view.dart:190:          return AlertDialog(
+lib/src\features\habit\add_habit_view.dart:191:            title: const Text('Beban Canopy Terlampaui'),
+lib/src\features\habit\add_habit_view.dart:192:            content: Text(
+lib/src\features\habit\add_habit_view.dart:200:                child: const Text('Batal'),
+lib/src\features\habit\add_habit_view.dart:204:                child: const Text('Tetap Lanjutkan'),
+lib/src\features\habit\add_habit_view.dart:318:        title: Text(
+lib/src\features\habit\add_habit_view.dart:326:            tooltip:
+lib/src\features\habit\add_habit_view.dart:339:              Text(
+lib/src\features\habit\add_habit_view.dart:346:              Text(
+lib/src\features\habit\add_habit_view.dart:358:                  Text(
+lib/src\features\habit\add_habit_view.dart:372:                    tooltip: _showTemplates
+lib/src\features\habit\add_habit_view.dart:395:                          label: Text(
+lib/src\features\habit\add_habit_view.dart:458:                                  Text(
+lib/src\features\habit\add_habit_view.dart:469:                                    child: Text(
+lib/src\features\habit\add_habit_view.dart:485:                                      Text(
+lib/src\features\habit\add_habit_view.dart:492:                                      Text(
+lib/src\features\habit\add_habit_view.dart:514:              Text(
+lib/src\features\habit\add_habit_view.dart:535:                        child: Text(
+lib/src\features\habit\add_habit_view.dart:558:                  labelText: DaojiText.resolve(
+lib/src\features\habit\add_habit_view.dart:562:                  hintText: 'Misal: Jalan kaki pagi',
+lib/src\features\habit\add_habit_view.dart:569:              Text(
+lib/src\features\habit\add_habit_view.dart:577:                  labelText: 'Nama Target / Goal',
+lib/src\features\habit\add_habit_view.dart:578:                  hintText: 'Misal: Menurunkan berat badan 5kg',
+lib/src\features\habit\add_habit_view.dart:587:              Text(
+lib/src\features\habit\add_habit_view.dart:594:                  ButtonSegment(value: 'Daily', label: Text('Setiap Hari')),
+lib/src\features\habit\add_habit_view.dart:595:                  ButtonSegment(value: 'Weekly', label: Text('Pilih Hari')),
+lib/src\features\habit\add_habit_view.dart:607:                const Text(
+lib/src\features\habit\add_habit_view.dart:627:                      label: Text(daysAbbr[index]),
+lib/src\features\habit\add_habit_view.dart:698:                child: Text(
+lib/src\features\habit\add_habit_view.dart:719:                  label: const Text(
+lib/src\features\habit\add_habit_view.dart:760:          Text(
+lib/src\features\habit\add_habit_view.dart:765:          Text(
+lib/src\features\habit\add_habit_view.dart:784:              Text(
+lib/src\features\habit\add_habit_view.dart:799:                Text(
+lib/src\features\habit\add_habit_view.dart:806:                Text(
+lib/src\core\services\error_handler_service.dart:52:    ScaffoldMessenger.of(context).showSnackBar(
+lib/src\core\services\error_handler_service.dart:53:      SnackBar(
+lib/src\core\services\error_handler_service.dart:54:        content: Text(message),
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:43:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:44:          const SnackBar(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:45:            content: Text(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:55:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:56:          SnackBar(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:57:            content: Text('Gagal menyimpan review: $e'),
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:117:                      const Text(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:127:                        tooltip: 'Tutup',
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:133:                  Text(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:141:                  Text(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:150:                    Text(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:173:                          const Text(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:182:                            (asm) => Text(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:192:                  Text(
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:204:                      labelText: 'Refleksi Nyata (Setelah 90 Hari)',
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:205:                      hintText:
+lib/src\features\decision_journal\widgets\review_decision_sheet.dart:228:                        : const Text(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:169:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:170:          SnackBar(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:171:            content: Text(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:181:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:182:          SnackBar(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:183:            content: Text('Gagal menyimpan keputusan: $e'),
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:222:                  const Text(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:229:                    tooltip: 'Tutup',
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:235:              const Text(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:246:                    label: const Text(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:254:                    label: const Text(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:267:                  labelText: 'Judul Keputusan',
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:268:                  hintText:
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:284:                  labelText: 'Konteks & Deskripsi',
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:285:                  hintText:
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:303:                        labelText: 'Opsi A',
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:304:                        hintText: 'Misal: Beli Mobil',
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:319:                        labelText: 'Opsi B',
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:320:                        hintText: 'Misal: Taksi Online',
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:335:                  const Text(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:342:                    label: const Text(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:360:                            hintText: 'Asumsi ${index + 1}',
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:380:                        tooltip: 'Hapus asumsi',
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:387:              const Text(
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:394:                  ButtonSegment(value: 7, label: Text('7 Hari (Tes)')),
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:395:                  ButtonSegment(value: 30, label: Text('30 Hari (Taktis)')),
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:396:                  ButtonSegment(value: 90, label: Text('90 Hari (Strategis)')),
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:411:                  labelText: 'Ekspektasi Hasil Akhir (Hasil 90 Hari)',
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:412:                  hintText:
+lib/src\features\decision_journal\widgets\create_decision_sheet.dart:428:                    : const Text(
+lib/src\core\theme\accessible_colors.dart:62:  static Color onSurfaceText(
+lib/src\core\services\snackbar_service.dart:27:    _showSnackBar(
+lib/src\core\services\snackbar_service.dart:44:    _showSnackBar(
+lib/src\core\services\snackbar_service.dart:61:    _showSnackBar(
+lib/src\core\services\snackbar_service.dart:78:    _showSnackBar(
+lib/src\core\services\snackbar_service.dart:89:  static void _showSnackBar(
+lib/src\core\services\snackbar_service.dart:100:    final snackBar = SnackBar(
+lib/src\core\services\snackbar_service.dart:101:      content: Text(
+lib/src\core\services\snackbar_service.dart:120:    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+lib/src\core\theme\button_theme.dart:106:          tooltip: tooltip,
+lib/src\core\theme\button_theme.dart:146:        child: Text(cancelText),
+lib/src\core\theme\button_theme.dart:154:        child: Text(confirmText),
+lib/src\core\theme\button_theme.dart:171:        child: Text(cancelText),
+lib/src\core\theme\button_theme.dart:179:        child: Text(destructiveText),
+lib/src\core\theme\form_theme.dart:12:///     labelText: 'Email',
+lib/src\core\theme\form_theme.dart:13:///     hintText: 'nama@example.com',
+lib/src\core\theme\form_theme.dart:30:      labelText: labelText,
+lib/src\core\theme\form_theme.dart:31:      hintText: hintText,
+lib/src\features\decision_journal\decision_journal_view.dart:88:        title: Text(DaojiText.resolve(DaojiTextKey.decisionTitle, vocabularyLevel)),
+lib/src\features\decision_journal\decision_journal_view.dart:118:        error: (err, stack) => Center(child: Text('Gagal memuat jurnal: $err')),
+lib/src\features\decision_journal\decision_journal_view.dart:122:        label: const Text('Catat Keputusan'),
+lib/src\features\decision_journal\decision_journal_view.dart:191:                      child: Text(
+lib/src\features\decision_journal\decision_journal_view.dart:211:                        child: Text(
+lib/src\features\decision_journal\decision_journal_view.dart:223:                Text(
+lib/src\features\decision_journal\decision_journal_view.dart:232:                  const Text(
+lib/src\features\decision_journal\decision_journal_view.dart:237:                  Text(
+lib/src\features\decision_journal\decision_journal_view.dart:241:                  Text(
+lib/src\features\decision_journal\decision_journal_view.dart:248:                  const Text(
+lib/src\features\decision_journal\decision_journal_view.dart:256:                      child: Text(
+lib/src\features\decision_journal\decision_journal_view.dart:264:                const Text(
+lib/src\features\decision_journal\decision_journal_view.dart:269:                Text(
+lib/src\features\decision_journal\decision_journal_view.dart:283:                        Text(
+lib/src\features\decision_journal\decision_journal_view.dart:292:                        Text(
+lib/src\features\decision_journal\decision_journal_view.dart:323:                        child: const Text(
+lib/src\features\decision_journal\decision_journal_view.dart:352:                            const Text('📝', style: TextStyle(fontSize: 14)),
+lib/src\features\decision_journal\decision_journal_view.dart:354:                            Text(
+lib/src\features\decision_journal\decision_journal_view.dart:365:                        Text(
+lib/src\features\reflection\reflection_dashboard_tab.dart:62:        title: Text(DaojiText.resolve(DaojiTextKey.reflectionTitle, vocabularyLevel)),
+lib/src\features\reflection\reflection_dashboard_tab.dart:69:            Text(
+lib/src\features\reflection\reflection_dashboard_tab.dart:77:            Text(
+lib/src\features\reflection\reflection_dashboard_tab.dart:111:                    title: Text(
+lib/src\features\reflection\reflection_dashboard_tab.dart:120:                      child: Text(
+lib/src\features\cultivation\widgets\realm_breakthrough_dialog.dart:14:    return AlertDialog(
+lib/src\features\cultivation\widgets\realm_breakthrough_dialog.dart:16:      title: Text('Realm Breakthrough'),
+lib/src\features\cultivation\widgets\realm_breakthrough_dialog.dart:21:          Text(
+lib/src\features\cultivation\widgets\realm_breakthrough_dialog.dart:28:          Text(realm.indonesianName),
+lib/src\features\cultivation\widgets\realm_breakthrough_dialog.dart:30:          Text(
+lib/src\features\cultivation\widgets\realm_breakthrough_dialog.dart:41:          child: const Text('Lanjut'),
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:61:                Text(
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:69:                Text(
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:91:            Text(
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:123:              child: Text(
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:155:              child: Text(
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:179:              child: const Text(
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:219:    return AlertDialog(
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:221:      title: const Text('Alasan Pilihan (Opsional)'),
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:226:          Text(
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:234:          const Text(
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:244:              hintText: 'Misal: Karena saat ini saya fokus pada...',
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:256:          child: const Text('Lewati'),
+lib/src\features\value_compass\widgets\value_dilemma_card.dart:263:          child: const Text('Lanjut'),
+lib/src\features\value_compass\widgets\value_open_question_card.dart:47:                Text(
+lib/src\features\value_compass\widgets\value_open_question_card.dart:55:                Text(
+lib/src\features\value_compass\widgets\value_open_question_card.dart:73:            Text(
+lib/src\features\value_compass\widgets\value_open_question_card.dart:92:                  hintText: 'Tulis refleksimu di sini... (opsional)',
+lib/src\features\value_compass\widgets\value_open_question_card.dart:120:                    child: const Text('Lewati'),
+lib/src\features\value_compass\widgets\value_open_question_card.dart:133:                    child: const Text('Lanjut'),
+lib/src\features\cultivation\widgets\cultivation_progress_bar.dart:38:                  child: Text(
+lib/src\features\cultivation\widgets\cultivation_progress_bar.dart:46:                Text(
+lib/src\features\cultivation\widgets\cultivation_status_panel.dart:35:                Text(
+lib/src\features\cultivation\widgets\cultivation_status_panel.dart:72:                Text(
+lib/src\features\cultivation\widgets\cultivation_status_panel.dart:129:              Text(label, style: Theme.of(context).textTheme.labelSmall),
+lib/src\features\cultivation\widgets\cultivation_status_panel.dart:130:              Text(value, style: Theme.of(context).textTheme.bodyMedium),
+lib/src\features\cultivation\widgets\cultivation_status_panel.dart:153:                child: Text(
+lib/src\features\cultivation\widgets\cultivation_status_panel.dart:168:                child: Text(
+lib/src\features\value_compass\value_mirror_session_view.dart:120:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\value_compass\value_mirror_session_view.dart:121:          SnackBar(
+lib/src\features\value_compass\value_mirror_session_view.dart:122:            content: Text('Gagal menyimpan jawaban: $e'),
+lib/src\features\value_compass\value_mirror_session_view.dart:163:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\value_compass\value_mirror_session_view.dart:164:          SnackBar(
+lib/src\features\value_compass\value_mirror_session_view.dart:165:            content: Text('Gagal menyimpan jawaban: $e'),
+lib/src\features\value_compass\value_mirror_session_view.dart:238:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\value_compass\value_mirror_session_view.dart:239:          SnackBar(
+lib/src\features\value_compass\value_mirror_session_view.dart:240:            content: Text('Gagal menyelesaikan sesi: $e'),
+lib/src\features\value_compass\value_mirror_session_view.dart:257:        title: Text(DaojiText.resolve(DaojiTextKey.valueIntroTitle, vocabularyLevel)),
+lib/src\features\value_compass\value_mirror_session_view.dart:264:            tooltip: 'Tutup sesi',
+lib/src\features\value_compass\value_mirror_session_view.dart:269:                  return AlertDialog(
+lib/src\features\value_compass\value_mirror_session_view.dart:270:                    title: const Text('Keluar dari Sesi?'),
+lib/src\features\value_compass\value_mirror_session_view.dart:271:                    content: Text(
+lib/src\features\value_compass\value_mirror_session_view.dart:280:                        child: const Text('Lanjutkan'),
+lib/src\features\value_compass\value_mirror_session_view.dart:295:                        child: const Text('Keluar'),
+lib/src\features\value_compass\value_mirror_session_view.dart:327:              child: Text('Tidak ada pertanyaan yang tersedia.'),
+lib/src\features\value_compass\value_mirror_session_view.dart:419:                        child: Text(
+lib/src\features\value_compass\widgets\value_mirror_summary_sheet.dart:44:          const Text(
+lib/src\features\value_compass\widgets\value_mirror_summary_sheet.dart:52:            Text(
+lib/src\features\value_compass\widgets\value_mirror_summary_sheet.dart:64:              child: Text(
+lib/src\features\value_compass\widgets\value_mirror_summary_sheet.dart:71:            Text(
+lib/src\features\value_compass\widgets\value_mirror_summary_sheet.dart:90:                  child: Text(
+lib/src\features\value_compass\widgets\value_mirror_summary_sheet.dart:102:            Text(
+lib/src\features\value_compass\widgets\value_mirror_summary_sheet.dart:125:                    child: const Text('Lihat Kompas', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+lib/src\features\value_compass\widgets\value_mirror_summary_sheet.dart:139:                  child: const Text('Selesai', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+lib/src\features\value_compass\value_mirror_intro_view.dart:21:        title: Text(
+lib/src\features\value_compass\value_mirror_intro_view.dart:47:              Text(
+lib/src\features\value_compass\value_mirror_intro_view.dart:55:              Text(
+lib/src\features\value_compass\value_mirror_intro_view.dart:116:                  child: Text(
+lib/src\features\value_compass\value_mirror_intro_view.dart:136:                  child: Text(
+lib/src\features\value_compass\value_mirror_intro_view.dart:159:          child: Text(
+lib/src\features\dashboard\dashboard_view.dart:74:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\dashboard\dashboard_view.dart:75:          SnackBar(
+lib/src\features\dashboard\dashboard_view.dart:76:            content: Text('Gagal memperbarui status kebiasaan: $e'),
+lib/src\features\dashboard\dashboard_view.dart:104:            const Text('🍃', style: TextStyle(fontSize: 32)),
+lib/src\features\dashboard\dashboard_view.dart:106:            Text(
+lib/src\features\dashboard\dashboard_view.dart:115:            Text(
+lib/src\features\dashboard\dashboard_view.dart:153:                Text(
+lib/src\features\dashboard\dashboard_view.dart:159:                Text(
+lib/src\features\dashboard\dashboard_view.dart:400:                Text(
+lib/src\features\dashboard\dashboard_view.dart:423:                    title: Text(
+lib/src\features\dashboard\dashboard_view.dart:430:                    subtitle: Text(
+lib/src\features\dashboard\dashboard_view.dart:456:                    title: Text(
+lib/src\features\dashboard\dashboard_view.dart:463:                    subtitle: Text(
+lib/src\features\cultivation\widgets\cultivation_badge.dart:37:              Text(
+lib/src\features\cultivation\widgets\cultivation_badge.dart:45:              Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:96:          Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:102:          Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:137:                    Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:145:                    Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:161:                    Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:169:                    const Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:192:                                label: Text('$days Hari'),
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:222:                    Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:230:                    Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:250:            child: Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:300:                    Text(
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:305:                    Text(desc, style: const TextStyle(fontSize: 12)),
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:68:                      Text(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:94:                    child: Text(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:118:                  tooltip: DaojiText.resolve(DaojiTextKey.actionWhyTooltip, vocabularyLevel),
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:123:            Text(habit.title, style: theme.textTheme.headlineMedium),
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:125:            Text(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:135:                  avatar: Text(_getDomainEmoji(habit.domainTag ?? 'Tubuh')),
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:136:                  label: Text(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:147:                Text(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:170:                    child: Text(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:183:                  child: Text(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:246:        return AlertDialog(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:252:                child: Text(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:262:              Text(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:269:              Text(
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:282:              child: Text(
+lib/src\features\safety\safety_card_view.dart:41:        title: const Text('Dukungan Kesehatan Diri'),
+lib/src\features\safety\safety_card_view.dart:50:              child: Text('🛡️', style: TextStyle(fontSize: 60)),
+lib/src\features\safety\safety_card_view.dart:53:            Text(
+lib/src\features\safety\safety_card_view.dart:59:            Text(
+lib/src\features\safety\safety_card_view.dart:153:                        Text(
+lib/src\features\safety\safety_card_view.dart:160:                    Text(
+lib/src\features\safety\safety_card_view.dart:193:            Text(
+lib/src\features\safety\safety_card_view.dart:198:            Text(
+lib/src\features\safety\safety_card_view.dart:206:              label: Text('Hubungi $number'),
+lib/src\features\safety\safety_card_view.dart:224:        return AlertDialog(
+lib/src\features\safety\safety_card_view.dart:225:          title: const Text('Menghubungi Layanan...'),
+lib/src\features\safety\safety_card_view.dart:226:          content: Text(
+lib/src\features\safety\safety_card_view.dart:234:              child: const Text('Tutup'),
+lib/src\features\dashboard\widgets\celebration_card.dart:22:            const Text('🌳✨', style: TextStyle(fontSize: 48)),
+lib/src\features\dashboard\widgets\celebration_card.dart:24:            Text(
+lib/src\features\dashboard\widgets\celebration_card.dart:30:            Text(
+lib/src\features\dashboard\widgets\dev_toolbar_widget.dart:41:                    const Text(
+lib/src\features\dashboard\widgets\dev_toolbar_widget.dart:61:                        child: Text(
+lib/src\features\dashboard\widgets\dev_toolbar_widget.dart:83:                    const Text(
+lib/src\features\dashboard\widgets\dev_toolbar_widget.dart:116:                            Text(
+lib/src\features\dashboard\widgets\dev_toolbar_widget.dart:150:                          child: const Text(
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:314:        Text(
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:376:                      Text(
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:383:                      Text(
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:404:                  child: Text(
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:441:                        Text(
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:451:                        Text(
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:466:                  Text(
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:492:                            child: Text(
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:516:                    child: Text(
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:546:                    child: const Text('Tutup'),
+lib/src\features\dashboard\widgets\domain_insight_dialog.dart:565:                      child: const Text('Fokus Dashboard'),
+lib/src\features\marketplace\marketplace_view.dart:102:          ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\marketplace\marketplace_view.dart:103:            SnackBar(
+lib/src\features\marketplace\marketplace_view.dart:104:              content: Text('Anda sudah memiliki kebiasaan "${t.title}"!'),
+lib/src\features\marketplace\marketplace_view.dart:139:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\marketplace\marketplace_view.dart:140:          SnackBar(
+lib/src\features\marketplace\marketplace_view.dart:141:            content: Text(
+lib/src\features\marketplace\marketplace_view.dart:151:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\marketplace\marketplace_view.dart:152:          SnackBar(
+lib/src\features\marketplace\marketplace_view.dart:153:            content: Text('Gagal mengunduh: $e'),
+lib/src\features\marketplace\marketplace_view.dart:182:          ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\marketplace\marketplace_view.dart:183:            SnackBar(
+lib/src\features\marketplace\marketplace_view.dart:184:              content: Text('"${t.title}" sudah ada di nilai inti Anda!'),
+lib/src\features\marketplace\marketplace_view.dart:194:          ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\marketplace\marketplace_view.dart:195:            const SnackBar(
+lib/src\features\marketplace\marketplace_view.dart:196:              content: Text(
+lib/src\features\marketplace\marketplace_view.dart:219:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\marketplace\marketplace_view.dart:220:          SnackBar(
+lib/src\features\marketplace\marketplace_view.dart:221:            content: Text(
+lib/src\features\marketplace\marketplace_view.dart:231:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\marketplace\marketplace_view.dart:232:          SnackBar(
+lib/src\features\marketplace\marketplace_view.dart:233:            content: Text('Gagal mengunduh: $e'),
+lib/src\features\marketplace\marketplace_view.dart:250:            return AlertDialog(
+lib/src\features\marketplace\marketplace_view.dart:254:              title: const Text('Beri Rating Kebiasaan'),
+lib/src\features\marketplace\marketplace_view.dart:258:                  Text(
+lib/src\features\marketplace\marketplace_view.dart:276:                        tooltip: 'Pilih $starIndex bintang',
+lib/src\features\marketplace\marketplace_view.dart:291:                  child: const Text('Batal'),
+lib/src\features\marketplace\marketplace_view.dart:296:                  child: const Text('Kirim Rating'),
+lib/src\features\marketplace\marketplace_view.dart:308:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\marketplace\marketplace_view.dart:309:          const SnackBar(
+lib/src\features\marketplace\marketplace_view.dart:310:            content: Text('Terima kasih atas rating Anda!'),
+lib/src\features\marketplace\marketplace_view.dart:346:        title: Text(DaojiText.resolve(DaojiTextKey.marketTitle, vocabularyLevel)),
+lib/src\features\marketplace\marketplace_view.dart:350:            tooltip: 'Bagikan Template Saya',
+lib/src\features\marketplace\marketplace_view.dart:372:                    label: Text(label),
+lib/src\features\marketplace\marketplace_view.dart:392:                labelText: 'Cari Template',
+lib/src\features\marketplace\marketplace_view.dart:393:                hintText: 'Cari template...',
+lib/src\features\marketplace\marketplace_view.dart:397:                  tooltip: 'Bersihkan pencarian',
+lib/src\features\marketplace\marketplace_view.dart:423:                    label: Text(domain),
+lib/src\features\marketplace\marketplace_view.dart:443:                const Text(
+lib/src\features\marketplace\marketplace_view.dart:460:                            label: Text(
+lib/src\features\marketplace\marketplace_view.dart:495:                    child: Text('Terjadi kesalahan: ${snapshot.error}'),
+lib/src\features\onboarding\onboarding_view.dart:106:      ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\onboarding\onboarding_view.dart:107:        const SnackBar(
+lib/src\features\onboarding\onboarding_view.dart:108:          content: Text(
+lib/src\features\onboarding\onboarding_view.dart:273:                      child: Text(
+lib/src\features\onboarding\onboarding_view.dart:291:                    child: Text(_currentPage == 4 ? 'Mulai' : 'Lanjut'),
+lib/src\features\journal\journal_lite_view.dart:122:        child: Text(
+lib/src\features\journal\journal_lite_view.dart:154:            Text(
+lib/src\features\journal\journal_lite_view.dart:357:      ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\journal\journal_lite_view.dart:358:        const SnackBar(
+lib/src\features\journal\journal_lite_view.dart:359:          content: Text('Jurnal harian berhasil disimpan!'),
+lib/src\features\journal\journal_lite_view.dart:372:        return AlertDialog(
+lib/src\features\journal\journal_lite_view.dart:373:          title: const Text('💡 Pesan Dukungan Diri'),
+lib/src\features\journal\journal_lite_view.dart:374:          content: const Text(
+lib/src\features\journal\journal_lite_view.dart:388:              child: const Text('Mengerti'),
+lib/src\features\journal\journal_lite_view.dart:397:              child: const Text('Buka Safety Card'),
+lib/src\features\journal\journal_lite_view.dart:422:        title: Text(DaojiText.resolve(DaojiTextKey.journalQuickTitle, vocabularyLevel)),
+lib/src\features\journal\journal_lite_view.dart:431:              Text(
+lib/src\features\journal\journal_lite_view.dart:483:                              Text(
+lib/src\features\journal\journal_lite_view.dart:488:                              Text(
+lib/src\features\journal\journal_lite_view.dart:514:              const Text(
+lib/src\features\journal\journal_lite_view.dart:522:                  labelText: 'Kata Kunci',
+lib/src\features\journal\journal_lite_view.dart:523:                  hintText: 'Misal: bersyukur, lelah, produktif, santai',
+lib/src\features\journal\journal_lite_view.dart:541:                title: const Text('Refleksi Mendalam (Opsional) ✍️'),
+lib/src\features\journal\journal_lite_view.dart:542:                subtitle: const Text(
+lib/src\features\journal\journal_lite_view.dart:557:                        const Text(
+lib/src\features\journal\journal_lite_view.dart:569:                            labelText: 'Fokus Pikiran',
+lib/src\features\journal\journal_lite_view.dart:570:                            hintText:
+lib/src\features\journal\journal_lite_view.dart:582:                        const Text(
+lib/src\features\journal\journal_lite_view.dart:594:                            labelText: 'Respons Anda',
+lib/src\features\journal\journal_lite_view.dart:595:                            hintText:
+lib/src\features\journal\journal_lite_view.dart:607:                        const Text(
+lib/src\features\journal\journal_lite_view.dart:631:                                  label: Text(
+lib/src\features\journal\journal_lite_view.dart:651:                            labelText: 'Rasa Syukur',
+lib/src\features\journal\journal_lite_view.dart:652:                            hintText:
+lib/src\features\journal\journal_lite_view.dart:680:                child: const Text(
+lib/src\features\profile\widgets\life_compass_section.dart:92:                Text(
+lib/src\features\profile\widgets\life_compass_section.dart:101:            Text(
+lib/src\features\profile\widgets\life_compass_section.dart:114:                Text(
+lib/src\features\profile\widgets\life_compass_section.dart:124:                  label: const Text('Edit', style: TextStyle(fontSize: 12)),
+lib/src\features\profile\widgets\life_compass_section.dart:140:                child: Text(
+lib/src\features\profile\widgets\life_compass_section.dart:168:                    child: Text(
+lib/src\features\profile\widgets\life_compass_section.dart:188:            Text(
+lib/src\features\profile\widgets\life_compass_section.dart:200:                  Text(
+lib/src\features\profile\widgets\life_compass_section.dart:211:                    label: Text(
+lib/src\features\profile\widgets\life_compass_section.dart:226:                child: Text(
+lib/src\features\profile\widgets\life_compass_section.dart:253:                    child: Text(
+lib/src\features\profile\widgets\life_compass_section.dart:265:              Text(
+lib/src\features\profile\widgets\life_compass_section.dart:274:              Text(
+lib/src\features\profile\widgets\life_compass_section.dart:299:                label: const Text('Lihat Perbandingan 🪞'),
+lib/src\features\journal\journal_dashboard_tab.dart:119:      ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\journal\journal_dashboard_tab.dart:120:        SnackBar(
+lib/src\features\journal\journal_dashboard_tab.dart:121:          content: Text(
+lib/src\features\journal\journal_dashboard_tab.dart:160:        title: Text(DaojiText.resolve(DaojiTextKey.journalTabTitle, vocabularyLevel)),
+lib/src\features\journal\journal_dashboard_tab.dart:185:                          Text(
+lib/src\features\journal\journal_dashboard_tab.dart:197:                                const Text(
+lib/src\features\journal\journal_dashboard_tab.dart:205:                                Text(
+lib/src\features\journal\journal_dashboard_tab.dart:232:                            child: const Text(
+lib/src\features\journal\journal_dashboard_tab.dart:256:                    Text(
+lib/src\features\journal\journal_dashboard_tab.dart:291:                                Text(
+lib/src\features\journal\journal_dashboard_tab.dart:296:                                Text(
+lib/src\features\journal\journal_dashboard_tab.dart:323:                      label: Text(
+lib/src\features\journal\journal_dashboard_tab.dart:362:                    title: Text(
+lib/src\features\journal\journal_dashboard_tab.dart:368:                      child: Text(
+lib/src\features\journal\journal_dashboard_tab.dart:401:            Text(
+lib/src\features\journal\journal_dashboard_tab.dart:415:                      child: Text(
+lib/src\features\journal\journal_dashboard_tab.dart:444:                        leading: Text(
+lib/src\features\journal\journal_dashboard_tab.dart:448:                        title: Text(
+lib/src\features\journal\journal_dashboard_tab.dart:452:                        subtitle: Text(
+lib/src\features\journal\journal_dashboard_tab.dart:474:                                    return AlertDialog(
+lib/src\features\journal\journal_dashboard_tab.dart:478:                                      title: Text('Refleksi $dateStr'),
+lib/src\features\journal\journal_dashboard_tab.dart:484:                                          Text(
+lib/src\features\journal\journal_dashboard_tab.dart:492:                                            Text(
+lib/src\features\journal\journal_dashboard_tab.dart:501:                                            Text(
+lib/src\features\journal\journal_dashboard_tab.dart:515:                                          child: const Text('Tutup'),
+lib/src\features\journal\journal_dashboard_tab.dart:530:              error: (err, _) => Text('Gagal memuat riwayat: $err'),
+lib/src\features\profile\widgets\domain_re_audit_dialog.dart:42:    return AlertDialog(
+lib/src\features\profile\widgets\domain_re_audit_dialog.dart:44:      title: const Text('Perbarui Penilaian Domain'),
+lib/src\features\profile\widgets\domain_re_audit_dialog.dart:54:                    child: Text(
+lib/src\features\profile\widgets\domain_re_audit_dialog.dart:83:          child: const Text('Batal'),
+lib/src\features\profile\widgets\domain_re_audit_dialog.dart:93:          child: const Text('Simpan'),
+lib/src\features\dashboard\widgets\quick_actions_panel.dart:16:        Text('Refleksi & Bantuan', style: theme.textTheme.titleLarge),
+lib/src\features\dashboard\widgets\quick_actions_panel.dart:43:          label: const Text('Buat Kebiasaan Baru'),
+lib/src\features\dashboard\widgets\quick_actions_panel.dart:82:              Text(
+lib/src\features\profile\widgets\activity_heatmap_widget.dart:29:                Text(
+lib/src\features\profile\widgets\activity_heatmap_widget.dart:108:              child: Text(
+lib/src\features\profile\widgets\activity_heatmap_widget.dart:145:              child: Text(
+lib/src\features\profile\widgets\activity_heatmap_widget.dart:169:        message: _getTooltipText(date, count),
+lib/src\features\profile\widgets\activity_heatmap_widget.dart:189:        Text(
+lib/src\features\profile\widgets\activity_heatmap_widget.dart:210:        Text(
+lib/src\features\profile\widgets\activity_heatmap_widget.dart:259:  String _getTooltipText(DateTime date, int count) {
+lib/src\features\profile\profile_dashboard_tab.dart:74:          ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\profile\profile_dashboard_tab.dart:75:            const SnackBar(
+lib/src\features\profile\profile_dashboard_tab.dart:76:              content: Text('Penilaian domain berhasil diperbarui!'),
+lib/src\features\profile\profile_dashboard_tab.dart:83:          ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\profile\profile_dashboard_tab.dart:84:            SnackBar(
+lib/src\features\profile\profile_dashboard_tab.dart:85:              content: Text('Gagal memperbarui: $e'),
+lib/src\features\profile\profile_dashboard_tab.dart:121:        return AlertDialog(
+lib/src\features\profile\profile_dashboard_tab.dart:125:          title: Text(
+lib/src\features\profile\profile_dashboard_tab.dart:155:                            Text(
+lib/src\features\profile\profile_dashboard_tab.dart:166:                        const Text(
+lib/src\features\profile\profile_dashboard_tab.dart:176:                  const Text(
+lib/src\features\profile\profile_dashboard_tab.dart:181:                  const Text(
+lib/src\features\profile\profile_dashboard_tab.dart:205:                            label: Text(
+lib/src\features\profile\profile_dashboard_tab.dart:225:                      labelText: 'Nilai 1',
+lib/src\features\profile\profile_dashboard_tab.dart:226:                      hintText: 'Misal: Kesehatan',
+lib/src\features\profile\profile_dashboard_tab.dart:244:                      labelText: 'Nilai 2 (opsional)',
+lib/src\features\profile\profile_dashboard_tab.dart:245:                      hintText: 'Misal: Kebebasan',
+lib/src\features\profile\profile_dashboard_tab.dart:262:                      labelText: 'Nilai 3 (opsional)',
+lib/src\features\profile\profile_dashboard_tab.dart:263:                      hintText: 'Misal: Belajar',
+lib/src\features\profile\profile_dashboard_tab.dart:284:              child: const Text('Batal'),
+lib/src\features\profile\profile_dashboard_tab.dart:310:                    ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\profile\profile_dashboard_tab.dart:311:                      SnackBar(
+lib/src\features\profile\profile_dashboard_tab.dart:312:                        content: Text(
+lib/src\features\profile\profile_dashboard_tab.dart:321:                    ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\profile\profile_dashboard_tab.dart:322:                      SnackBar(
+lib/src\features\profile\profile_dashboard_tab.dart:323:                        content: Text('Gagal menyimpan: $e'),
+lib/src\features\profile\profile_dashboard_tab.dart:330:              child: const Text('Simpan'),
+lib/src\features\profile\profile_dashboard_tab.dart:390:        title: Text(
+lib/src\features\profile\profile_dashboard_tab.dart:396:            tooltip: DaojiText.resolve(
+lib/src\features\profile\profile_dashboard_tab.dart:450:                      child: Text(
+lib/src\features\profile\profile_dashboard_tab.dart:466:                  label: const Text('Perbarui Penilaian Domain'),
+lib/src\features\profile\profile_dashboard_tab.dart:481:        error: (err, _) => Center(child: Text('Gagal memuat profil: $err')),
+lib/src\features\dashboard\widgets\habit_list_section.dart:46:            Text(
+lib/src\features\dashboard\widgets\habit_list_section.dart:54:                label: const Text('Reset', style: TextStyle(fontSize: 12)),
+lib/src\features\dashboard\widgets\habit_list_section.dart:122:              return AlertDialog(
+lib/src\features\dashboard\widgets\habit_list_section.dart:123:                title: const Text('Hapus Kebiasaan?'),
+lib/src\features\dashboard\widgets\habit_list_section.dart:124:                content: Text('Yakin ingin menghapus "${item.habit.title}"?'),
+lib/src\features\dashboard\widgets\habit_list_section.dart:128:                    child: const Text('Batal'),
+lib/src\features\dashboard\widgets\habit_list_section.dart:133:                    child: const Text('Hapus'),
+lib/src\features\dashboard\widgets\habit_list_section.dart:200:                          Text(
+lib/src\features\dashboard\widgets\habit_list_section.dart:229:                                child: Text(
+lib/src\features\dashboard\widgets\habit_list_section.dart:238:                              Text(
+lib/src\features\dashboard\widgets\habit_list_section.dart:249:                                Text(
+lib/src\features\dashboard\widgets\habit_list_section.dart:281:                        child: Text(
+lib/src\features\dashboard\widgets\habit_list_section.dart:308:                        child: Text(
+lib/src\features\dashboard\widgets\habit_list_section.dart:333:                      tooltip: 'Edit Kebiasaan',
+lib/src\features\dashboard\widgets\season_badge_widget.dart:98:                  Text(
+lib/src\features\dashboard\widgets\season_badge_widget.dart:106:                  Text(message, style: const TextStyle(fontSize: 12)),
+lib/src\features\dashboard\widgets\season_badge_widget.dart:114:                child: const Text(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:56:    return AlertDialog(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:62:          Text(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:75:              Text(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:117:                    tooltip: 'Tambahkan ke Versi Dipilih',
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:129:          child: const Text('Tutup'),
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:155:          Text(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:161:          Text(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:167:            Text(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:185:                  label: Text(v, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:199:      ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:200:        SnackBar(content: Text('Nilai "$value" sudah ada di Versi Dipilih.'), backgroundColor: Colors.amber[800]),
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:206:      ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:207:        const SnackBar(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:208:          content: Text('Kompas Dipilih sudah penuh (maksimal 3 nilai). Silakan edit manual untuk menggantinya.'),
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:225:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:226:          SnackBar(content: Text('Nilai "$value" berhasil ditambahkan ke Versi Dipilih!'), backgroundColor: Colors.green),
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:231:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\profile\widgets\compass_comparison_dialog.dart:232:          SnackBar(content: Text('Gagal menambahkan: $e'), backgroundColor: Colors.red),
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:121:          child: Text(
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:137:        return AlertDialog(
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:141:          title: Text(_infoTitleForLevel()),
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:142:          content: const Text(
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:148:              child: const Text('Tutup'),
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:169:                  child: Text(
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:182:                  tooltip: _infoTitleForLevel(),
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:299:                child: Text(
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:304:              Text(
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:320:                  child: Text(
+lib/src\features\dashboard\widgets\radar_chart_widget.dart:331:                Text('${_scoreOf(domain)}/10', style: cellStyle),
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:157:        messenger.showSnackBar(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:158:          SnackBar(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:159:            content: Text('Gagal memperbarui status kebiasaan: $e'),
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:171:  void _showLockedStreamSnackBar(BuildContext context, BranchNode node) {
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:176:    messenger.hideCurrentSnackBar();
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:177:    messenger.showSnackBar(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:178:      SnackBar(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:219:                  Text(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:228:                  const Text(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:360:                                builder: (context) => AlertDialog(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:361:                                  title: Text('$rootLabel 🧭'),
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:366:                                            const Text(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:377:                                                  title: Text(v),
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:385:                                      child: const Text('Tutup'),
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:447:                                ? () => _showLockedStreamSnackBar(context, node)
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:609:                                child: Text(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:644:                                builder: (context) => AlertDialog(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:645:                                  title: Text(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:648:                                  content: Text(
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:654:                                      child: const Text('Tutup'),
+lib/src\features\thinking_canvas\thinking_canvas_lite_view.dart:55:        title: Text('Thinking Canvas'),
+lib/src\features\thinking_canvas\thinking_canvas_lite_view.dart:59:            tooltip: 'Riwayat Sesi',
+lib/src\features\thinking_canvas\thinking_canvas_lite_view.dart:104:                      Text(
+lib/src\features\thinking_canvas\thinking_canvas_lite_view.dart:116:                              title: Text(
+lib/src\features\thinking_canvas\thinking_canvas_lite_view.dart:121:                              subtitle: Text(
+lib/src\features\thinking_canvas\thinking_canvas_lite_view.dart:155:          Text('Pilih Metode Berpikir', style: theme.textTheme.headlineSmall),
+lib/src\features\thinking_canvas\thinking_canvas_lite_view.dart:167:            child: const Text('Buka Katalog Metode'),
+lib/src\features\thinking_canvas\thinking_canvas_lite_view.dart:238:          labelText: 'Workspace: $title',
+lib/src\features\thinking_canvas\thinking_canvas_lite_view.dart:239:          hintText: 'Tulis ide atau kerangka berpikir Anda di sini...',
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:95:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:96:          const SnackBar(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:97:            content: Text('Tampilan pohon berhasil diubah ke skin ini!'),
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:104:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:105:          SnackBar(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:106:            content: Text('Gagal menerapkan skin: $e'),
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:126:            return AlertDialog(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:130:              title: const Text('Simulasi Transaksi Premium'),
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:135:                  Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:141:                  Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:151:                  const Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:170:                        child: Text('GPay / Google Play Store'),
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:174:                        child: Text('Transfer Bank (Virtual Account)'),
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:178:                        child: Text('e-Wallet (QRIS)'),
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:195:                  child: const Text('Batal'),
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:200:                  child: const Text('Bayar Sekarang'),
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:232:          ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:233:            SnackBar(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:234:              content: Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:243:          ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:244:            SnackBar(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:245:              content: Text('Gagal memproses pembelian: $e'),
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:286:          Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:292:          Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:310:                    Text('Memproses transaksi pembayaran...'),
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:343:                    leading: Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:347:                    title: Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:354:                        Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:359:                        Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:383:                            child: const Text(
+lib/src\features\dashboard\widgets\skin_shop_bottom_sheet.dart:397:                            child: Text(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:317:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:318:          SnackBar(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:319:            content: Text('Gagal mengambil foto: $e'),
+lib/src\features\dashboard\widgets\tree_display_widget.dart:371:                        child: Text(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:402:                        Text(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:438:                          label: const Text('Bagikan / Simpan Foto'),
+lib/src\features\dashboard\widgets\tree_display_widget.dart:464:                            label: const Text('Buka Folder Downloads'),
+lib/src\features\dashboard\widgets\tree_display_widget.dart:490:                          child: Text(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:546:                  child: Text(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:565:                  label: Text(_statusButtonLabel(vocabularyLevel)),
+lib/src\features\dashboard\widgets\tree_display_widget.dart:664:                      Text(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:675:                      Text(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:709:                Text(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:717:                Text(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:815:      child: Text(
+lib/src\features\dashboard\widgets\tree_display_widget.dart:853:          Text(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:104:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:105:          SnackBar(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:106:            content: Text('Gagal mengekspor data: $e'),
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:121:      builder: (context) => AlertDialog(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:122:        title: Text(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:125:        content: const Text(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:132:            child: const Text('Batal'),
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:140:            child: const Text('Hapus Semua'),
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:168:      ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:169:        const SnackBar(content: Text('Semua data telah dihapus.')),
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:200:          Text(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:208:            title: Text(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:211:            subtitle: const Text('Simpan semua data ke file JSON'),
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:216:            title: Text(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:219:            subtitle: const Text('Hapus semua data dan kembali ke awal'),
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:228:            title: const Text('Dark Mode'),
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:248:                    title: Text(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:254:                    subtitle: Text(vocabularyLevel.description),
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:261:                          child: Text(level.displayName),
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:283:                    title: Text(
+lib/src\features\dashboard\widgets\settings_bottom_sheet.dart:289:                    subtitle: const Text(
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:89:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:90:          const SnackBar(
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:91:            content: Text('Kebiasaan Anda berhasil dibagikan ke publik!'),
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:99:        ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:100:          SnackBar(
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:101:            content: Text('Gagal membagikan: $e'),
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:144:                  const Text('😔', style: TextStyle(fontSize: 40)),
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:146:                  const Text(
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:155:                    child: const Text('Tutup'),
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:180:                    Text(
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:186:                    Text(
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:201:                        labelText: 'Pilih Kebiasaan Aktif',
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:209:                          child: Text(h.title, overflow: TextOverflow.ellipsis),
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:224:                        labelText: 'Deskripsi / Tips Sukses',
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:225:                        hintText:
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:248:                        labelText: 'Nama Pena (Opsional)',
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:249:                        hintText: 'Misal: SehatSelalu (Default: Anonim)',
+lib/src\features\marketplace\widgets\share_template_bottom_sheet.dart:276:                      child: const Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:41:                  child: Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:59:                    Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:66:                    Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:83:                  Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:90:                  child: Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:100:            Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:109:            Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:127:                  child: const Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:138:                  child: const Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:166:            Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:180:            Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:197:            Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:236:                    Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:247:                Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:266:                child: Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:296:                    child: Text(
+lib/src\features\marketplace\widgets\marketplace_template_card.dart:316:                Text(
+lib/src\features\onboarding\widgets\welcome_step.dart:12:        const Text('🌳', style: TextStyle(fontSize: 80)),
+lib/src\features\onboarding\widgets\welcome_step.dart:14:        Text(
+lib/src\features\onboarding\widgets\welcome_step.dart:20:        Text(
+lib/src\features\onboarding\widgets\disclaimer_step.dart:40:                const Text('🌱', style: TextStyle(fontSize: 28)),
+lib/src\features\onboarding\widgets\disclaimer_step.dart:43:                  child: Text(
+lib/src\features\onboarding\widgets\disclaimer_step.dart:55:          Text(
+lib/src\features\onboarding\widgets\disclaimer_step.dart:127:          title: Text(
+lib/src\features\onboarding\widgets\disclaimer_step.dart:134:              child: Text(
+lib/src\features\onboarding\widgets\disclaimer_step.dart:160:          Text(
+lib/src\features\onboarding\widgets\disclaimer_step.dart:200:                        child: Text(
+lib/src\features\onboarding\widgets\disclaimer_step.dart:222:            Text(
+lib/src\features\onboarding\widgets\disclaimer_step.dart:263:                    child: Text(
+lib/src\features\onboarding\widgets\disclaimer_step.dart:286:              Text(
+lib/src\features\onboarding\widgets\cultivation_theme_step.dart:28:          Text(
+lib/src\features\onboarding\widgets\cultivation_theme_step.dart:36:          Text(
+lib/src\features\onboarding\widgets\cultivation_theme_step.dart:70:              child: Text(
+lib/src\features\onboarding\widgets\cultivation_theme_step.dart:145:                          child: Text(
+lib/src\features\onboarding\widgets\cultivation_theme_step.dart:165:                    Text(
+lib/src\features\onboarding\widgets\audit_step.dart:46:            Text(
+lib/src\features\onboarding\widgets\audit_step.dart:52:            Text(
+lib/src\features\onboarding\widgets\audit_step.dart:75:                          Text(emoji, style: const TextStyle(fontSize: 24)),
+lib/src\features\onboarding\widgets\audit_step.dart:81:                                Text(
+lib/src\features\onboarding\widgets\audit_step.dart:85:                                Text(
+lib/src\features\onboarding\widgets\audit_step.dart:92:                          Text(
+lib/src\features\onboarding\widgets\audit_step.dart:124:        Text(
+lib/src\features\onboarding\widgets\audit_step.dart:136:                Text('🏃', style: TextStyle(fontSize: 32)),
+lib/src\features\onboarding\widgets\audit_step.dart:139:                  child: Text(
+lib/src\features\onboarding\widgets\audit_step.dart:149:        Text(
+lib/src\features\onboarding\widgets\audit_step.dart:155:        Text(
+lib/src\features\onboarding\widgets\audit_step.dart:162:        Text(
+lib/src\features\onboarding\widgets\age_step.dart:22:        Text(
+lib/src\features\onboarding\widgets\age_step.dart:28:        Text(
+lib/src\features\onboarding\widgets\age_step.dart:57:                child: Text(
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:124:  void _editNodeText(String nodeId) {
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:131:        return AlertDialog(
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:135:          title: const Text('Edit Gagasan'),
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:141:              labelText: 'Gagasan',
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:142:              hintText: 'Tuliskan gagasan Anda...',
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:149:              child: const Text('Batal'),
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:160:              child: const Text('Simpan'),
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:219:        title: const Text('Visual Mind Map Editor'),
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:223:            tooltip: 'Pusatkan Kanvas',
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:234:              label: const Text('Simpan'),
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:299:                          onDoubleTap: () => _editNodeText(node.id),
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:318:              label: const Text('Topik Baru'),
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:348:                        tooltip: 'Tambah Cabang',
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:359:                        tooltip: 'Edit Teks',
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:360:                        onPressed: () => _editNodeText(selectedNode.id),
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:409:                        tooltip: 'Hapus Node',
+lib/src\features\thinking_canvas\widgets\mind_map_canvas_view.dart:446:      child: Text(
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:74:        return AlertDialog(
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:78:          title: const Text('Fitur Premium 👑'),
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:79:          content: const Text(
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:86:              child: const Text('Tutup'),
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:136:                              child: Text(
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:164:                        child: Text(
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:176:                  Text(
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:198:                      Text(
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:229:          Text(
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:237:          Text(
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:326:              Text(
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:334:                tooltip: 'Tutup',
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:343:              labelText: 'Cari Metode',
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:344:              hintText: 'Cari metode (misal: SWOT, 5 Whys)...',
+lib/src\features\thinking_canvas\widgets\method_picker_bottom_sheet.dart:356:                    child: Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:88:          child: Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:112:    return AlertDialog(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:120:            Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:139:                      Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:146:                        Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:155:                        const Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:169:                                const Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:240:                                const Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:290:                                const Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:328:                        Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:376:                const Text(
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:394:                    child: const Text('Sebelumnya'),
+lib/src\features\thinking_canvas\widgets\thinking_canvas_onboarding_dialog.dart:413:                  child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:66:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:74:            labelText: 'Tambah Item',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:75:            hintText:
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:79:              tooltip: 'Tambah item',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:101:                Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:141:                        Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:162:                        child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:259:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:267:            labelText: 'Tambah Gagasan',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:268:            hintText: 'Ketik gagasan/ide Anda lalu tekan Enter...',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:271:              tooltip: 'Tambah gagasan',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:293:                Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:323:                        child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:340:                          return DropdownMenuItem(value: g, child: Text(g));
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:415:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:440:                      child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:464:                    labelText: index == 0
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:467:                    hintText: 'Tuliskan analisis sebab Anda...',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:548:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:573:                Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:589:                    hintText: 'Tuliskan poin hasil pemikiran Anda...',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:683:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:708:                  child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:737:              Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:746:              Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:762:            labelText:
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:882:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:891:            labelText: 'Asumsi Utama yang Ingin Divalidasi',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:892:            hintText: 'Misal: Pengguna bersedia membayar langganan bulanan...',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:920:              Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:930:                  Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:959:                  const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:972:                      labelText: 'Bukti Pendukung',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:973:                      hintText: 'Ketik bukti...',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:998:                        title: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:1025:                  const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:1038:                      labelText: 'Bukti Pembantah',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:1039:                      hintText: 'Ketik bukti...',
+lib/src\features\thinking_canvas\widgets\workspaces\synthesis_workspaces.dart:1064:                        title: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:270:        return AlertDialog(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:274:          title: Text('Tambah Opsi di "$dimension"'),
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:279:              labelText: 'Opsi',
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:286:              child: const Text('Batal'),
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:298:              child: const Text('Tambah'),
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:311:        return AlertDialog(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:315:          title: const Text('Tambah Dimensi Baru'),
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:320:              labelText: 'Nama Dimensi',
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:327:              child: const Text('Batal'),
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:342:              child: const Text('Tambah'),
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:377:                  const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:383:                    tooltip: 'Tutup',
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:388:              const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:412:                            Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:431:                              child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:454:                            Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:475:                                  child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:509:                          ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:510:                            SnackBar(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:511:                              content: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:540:            const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:549:                  label: const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:556:                  tooltip: 'Tambah dimensi',
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:583:                    Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:634:                                              child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:651:                                  child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:734:          label: Text(_isSpinning ? 'Sedang Memutar...' : 'Putar Dadu Acak 🎲'),
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:751:                child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\morphological_workspace.dart:761:                child: const Text('+ Opsi', style: TextStyle(fontSize: 11)),
+lib/src\features\thinking_canvas\widgets\workspaces\lotus_blossom_workspace.dart:65:        return AlertDialog(
+lib/src\features\thinking_canvas\widgets\workspaces\lotus_blossom_workspace.dart:69:          title: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\lotus_blossom_workspace.dart:78:              labelText: 'Teks',
+lib/src\features\thinking_canvas\widgets\workspaces\lotus_blossom_workspace.dart:85:              child: const Text('Batal'),
+lib/src\features\thinking_canvas\widgets\workspaces\lotus_blossom_workspace.dart:103:              child: const Text('Simpan'),
+lib/src\features\thinking_canvas\widgets\workspaces\lotus_blossom_workspace.dart:125:            Text(
+lib/src\features\thinking_canvas\widgets\workspaces\lotus_blossom_workspace.dart:135:                label: const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\lotus_blossom_workspace.dart:256:                              child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\lotus_blossom_workspace.dart:288:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:112:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:149:                child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:174:              Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:185:              Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:200:            labelText: 'Catatan untuk ${activeHat['name']}',
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:201:            hintText: 'Tuliskan analisis kognitif Anda di sini...',
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:295:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:322:                  child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:351:              Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:360:              Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:378:            labelText: room['label'],
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:379:            hintText: 'Tuliskan poin-poin ide Anda di sini...',
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:488:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:522:                      child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:534:                  title: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:562:                        Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:575:                            hintText: 'Tulis ide SCAMPER Anda di sini...',
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:653:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:727:                child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:748:                hintText: 'Tuliskan poin...',
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:841:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:873:                  child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:901:              Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:910:              Text(
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:925:            labelText: 'Ajukan Pertanyaan Kritis untuk ${activePoint['key']}',
+lib/src\features\thinking_canvas\widgets\workspaces\decision_workspaces.dart:926:            hintText: 'Tuliskan draf pertanyaan di sini...',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:57:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:65:            labelText: 'Tambah Ide Baru',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:66:            hintText: 'Ketik ide baru di sini lalu tekan Enter 🚀...',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:69:              tooltip: 'Tambah ide',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:80:            Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:92:                child: const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:150:                        Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:231:      ScaffoldMessenger.of(context).showSnackBar(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:232:        const SnackBar(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:233:          content: Text('Maksimal pilih 3 pertanyaan prioritas saja!'),
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:259:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:267:            labelText: 'Tambah Pertanyaan',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:268:            hintText: 'Ketik pertanyaan kritis Anda lalu tekan Enter...',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:271:              tooltip: 'Tambah pertanyaan',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:282:            Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:309:                title: Text(q['text'], style: const TextStyle(fontSize: 13)),
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:447:        const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:464:                Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:474:                Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:490:                const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:500:                label: const Text('Dapatkan Kata Acak 🎲'),
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:517:            labelText: 'Bagaimana kata ini memicu ide baru Anda?',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:518:            hintText: 'Tuliskan asosiasi atau analogi ide Anda di sini...',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:777:                          Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:788:                        tooltip: 'Tutup',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:793:                  const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:830:                                child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:836:                            title: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:843:                            subtitle: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:894:        return AlertDialog(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:901:              Text(persona.avatar, style: const TextStyle(fontSize: 24)),
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:904:                child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:915:            child: Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:923:              child: const Text('Tutup'),
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:942:            const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:949:              label: const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:1000:                      Text(p.avatar, style: const TextStyle(fontSize: 20)),
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:1002:                      Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:1035:                  Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:1046:                    label: const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:1059:              Text(
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:1074:            labelText: 'Bagaimana ${persona.name} menyelesaikan masalah ini?',
+lib/src\features\thinking_canvas\widgets\workspaces\brainstorm_workspaces.dart:1075:            hintText:
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:108:        return AlertDialog(
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:112:          title: const Text('Waktu Habis! 🎉'),
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:113:          content: const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:120:              child: const Text('Lanjut'),
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:147:            const Text(
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:158:                      DropdownMenuItem(value: 3, child: Text('3 Menit')),
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:159:                      DropdownMenuItem(value: 5, child: Text('5 Menit')),
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:160:                      DropdownMenuItem(value: 10, child: Text('10 Menit')),
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:184:                  Text(
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:207:                    hintText:
+lib/src\features\thinking_canvas\widgets\workspaces\freewriting_workspace.dart:252:                              child: Text(

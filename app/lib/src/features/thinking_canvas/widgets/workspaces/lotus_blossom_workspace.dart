@@ -1,10 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/i18n/daoji_text_key.dart';
+import '../../../../core/i18n/daoji_text_resolver.dart';
+import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 
 // ==========================================
 // 2. RADIAL LOTUS BLOSSOM WORKSPACE
 // ==========================================
-class LotusBlossomWorkspace extends StatefulWidget {
+class LotusBlossomWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   final String? initialValue;
 
@@ -15,10 +19,11 @@ class LotusBlossomWorkspace extends StatefulWidget {
   });
 
   @override
-  State<LotusBlossomWorkspace> createState() => _LotusBlossomWorkspaceState();
+  ConsumerState<LotusBlossomWorkspace> createState() =>
+      _LotusBlossomWorkspaceState();
 }
 
-class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
+class _LotusBlossomWorkspaceState extends ConsumerState<LotusBlossomWorkspace> {
   final List<String> _cells = List.filled(9, '');
   int _activePetalIndex = -1; // -1 = center grid, 0-8 = sub grids
   final Map<int, List<String>> _subGrids = {};
@@ -26,7 +31,10 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
   @override
   void initState() {
     super.initState();
-    _cells[4] = 'Topik Utama';
+    _cells[4] = DaojiText.resolve(
+      DaojiTextKey.lotusCenterPlaceholder,
+      ref.read(daojiVocabularyLevelValueProvider),
+    );
     for (int i = 0; i < 9; i++) {
       if (i != 4) {
         _subGrids[i] = List.filled(9, '');
@@ -68,21 +76,40 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
           ),
           title: Text(
             isSubGrid
-                ? 'Edit Sub-Ide Kelopak'
-                : (index == 4 ? 'Edit Topik Utama' : 'Edit Arah Gagasan'),
+                ? DaojiText.resolve(
+                    DaojiTextKey.lotusEditSubTitle,
+                    ref.read(daojiVocabularyLevelValueProvider),
+                  )
+                : (index == 4
+                      ? DaojiText.resolve(
+                          DaojiTextKey.lotusEditCenterTitle,
+                          ref.read(daojiVocabularyLevelValueProvider),
+                        )
+                      : DaojiText.resolve(
+                          DaojiTextKey.lotusEditDirectionTitle,
+                          ref.read(daojiVocabularyLevelValueProvider),
+                        )),
           ),
           content: TextField(
             controller: controller,
             autofocus: true,
-            decoration: const InputDecoration(
-              labelText: 'Teks',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: DaojiText.resolve(
+                DaojiTextKey.lotusLabelText,
+                ref.read(daojiVocabularyLevelValueProvider),
+              ),
+              border: const OutlineInputBorder(),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Batal'),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.lotusCancel,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -100,7 +127,12 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                 _notifyChanges();
                 Navigator.pop(context);
               },
-              child: const Text('Simpan'),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.lotusSave,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
             ),
           ],
         );
@@ -124,8 +156,11 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
           children: [
             Text(
               isViewingSubGrid
-                  ? 'Sub-Kelopak: "${_cells[_activePetalIndex]}"'
-                  : '4. Kelopak Radial Lotus Blossom',
+                  ? '${DaojiText.resolve(DaojiTextKey.lotusTitle, ref.read(daojiVocabularyLevelValueProvider)).split(':').first} "${_cells[_activePetalIndex]}"'
+                  : DaojiText.resolve(
+                      DaojiTextKey.lotusTitle,
+                      ref.read(daojiVocabularyLevelValueProvider),
+                    ),
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             if (isViewingSubGrid)
@@ -255,7 +290,21 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
                               padding: const EdgeInsets.all(4.0),
                               child: Text(
                                 text.isEmpty
-                                    ? (isCenter ? 'Topic' : '+ Ide')
+                                    ? (isCenter
+                                          ? DaojiText.resolve(
+                                              DaojiTextKey
+                                                  .lotusCenterPlaceholder,
+                                              ref.read(
+                                                daojiVocabularyLevelValueProvider,
+                                              ),
+                                            )
+                                          : DaojiText.resolve(
+                                              DaojiTextKey
+                                                  .lotusAddIdeaPlaceholder,
+                                              ref.read(
+                                                daojiVocabularyLevelValueProvider,
+                                              ),
+                                            ))
                                     : text,
                                 textAlign: TextAlign.center,
                                 maxLines: 2,
@@ -285,9 +334,12 @@ class _LotusBlossomWorkspaceState extends State<LotusBlossomWorkspace> {
           ),
         ),
         const SizedBox(height: 6),
-        const Text(
-          '*Kelopak berbentuk melingkar. Ketuk petal terisi untuk masuk ke sub-cabang ide.',
-          style: TextStyle(
+        Text(
+          DaojiText.resolve(
+            DaojiTextKey.lotusFootnote,
+            ref.read(daojiVocabularyLevelValueProvider),
+          ),
+          style: const TextStyle(
             fontSize: 10,
             fontStyle: FontStyle.italic,
             color: Colors.grey,

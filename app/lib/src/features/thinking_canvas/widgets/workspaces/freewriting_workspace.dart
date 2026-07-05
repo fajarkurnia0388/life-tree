@@ -1,18 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/i18n/daoji_text_key.dart';
+import '../../../../core/i18n/daoji_text_resolver.dart';
+import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 
 // ==========================================
 // 1. FREEWRITING WORKSPACE (PULSATING GLOW)
 // ==========================================
-class FreewritingWorkspace extends StatefulWidget {
+class FreewritingWorkspace extends ConsumerStatefulWidget {
   final TextEditingController controller;
   const FreewritingWorkspace({super.key, required this.controller});
 
   @override
-  State<FreewritingWorkspace> createState() => _FreewritingWorkspaceState();
+  ConsumerState<FreewritingWorkspace> createState() =>
+      _FreewritingWorkspaceState();
 }
 
-class _FreewritingWorkspaceState extends State<FreewritingWorkspace>
+class _FreewritingWorkspaceState extends ConsumerState<FreewritingWorkspace>
     with SingleTickerProviderStateMixin {
   Timer? _countdownTimer;
   Timer? _inactivityTimer;
@@ -109,15 +114,27 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Text('Waktu Habis! 🎉'),
-          content: const Text(
-            'Selamat! Sesi menulis bebas (Freewriting) tanpa henti selesai.\n\n'
-            'Kembali ke kertas coretan untuk menyeleksi poin terbaik.',
+          title: Text(
+            DaojiText.resolve(
+              DaojiTextKey.freewritingTimeFinishedTitle,
+              ref.read(daojiVocabularyLevelValueProvider),
+            ),
+          ),
+          content: Text(
+            DaojiText.resolve(
+              DaojiTextKey.freewritingTimeFinishedContent,
+              ref.read(daojiVocabularyLevelValueProvider),
+            ),
           ),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Lanjut'),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.freewritingContinueButton,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
             ),
           ],
         );
@@ -134,6 +151,7 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final double progress = _timerActive
         ? (_secondsRemaining / (_selectedDurationMinutes * 60))
         : 1.0;
@@ -144,9 +162,9 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              '4. Sesi Freewriting Tanpa Henti',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            Text(
+              DaojiText.resolve(DaojiTextKey.freewritingTitle, vocabularyLevel),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             Row(
               children: [
@@ -204,8 +222,10 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace>
                   controller: widget.controller,
                   maxLines: 8,
                   decoration: InputDecoration(
-                    hintText:
-                        'Mulai menulis apa saja di sini, jangan biarkan jari Anda berhenti mengetik...',
+                    hintText: DaojiText.resolve(
+                      DaojiTextKey.freewritingHint,
+                      vocabularyLevel,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -213,7 +233,10 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace>
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (val) {
                     if (val == null || val.trim().isEmpty) {
-                      return 'Tuliskan pemikiran Freewriting Anda';
+                      return DaojiText.resolve(
+                        DaojiTextKey.freewritingValidator,
+                        vocabularyLevel,
+                      );
                     }
                     return null;
                   },
@@ -244,14 +267,17 @@ class _FreewritingWorkspaceState extends State<FreewritingWorkspace>
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 8,
                               ),
                               child: Text(
-                                '🚨 JANGAN BERHENTI MENULIS! Alirkan pikiran...',
-                                style: TextStyle(
+                                DaojiText.resolve(
+                                  DaojiTextKey.freewritingInactivityAlert,
+                                  vocabularyLevel,
+                                ),
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 11,

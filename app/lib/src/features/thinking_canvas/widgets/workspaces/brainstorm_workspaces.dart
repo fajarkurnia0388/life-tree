@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/i18n/daoji_text_key.dart';
+import '../../../../core/i18n/daoji_text_resolver.dart';
+import '../../../../core/i18n/daoji_vocabulary_level.dart';
 
 // ==========================================
 // 1. RAPID BRAINSTORM WORKSPACE (ANIMATED BUBBLES)
@@ -54,19 +57,31 @@ class _RapidBrainstormWorkspaceState extends State<RapidBrainstormWorkspace> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Logger Ide Cepat (Rapid Brainstorm)',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(
+            DaojiTextKey.rapidBrainstormTitle,
+            DaojiVocabularyLevel.mortal,
+          ),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _inputController,
           decoration: InputDecoration(
-            labelText: 'Tambah Ide Baru',
-            hintText: 'Ketik ide baru di sini lalu tekan Enter 🚀...',
+            labelText: DaojiText.resolve(
+              DaojiTextKey.rapidBrainstormHint,
+              DaojiVocabularyLevel.mortal,
+            ),
+            hintText: DaojiText.resolve(
+              DaojiTextKey.rapidBrainstormHint,
+              DaojiVocabularyLevel.mortal,
+            ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
-              tooltip: 'Tambah ide',
+              tooltip: DaojiText.resolve(
+                DaojiTextKey.rapidBrainstormAddTooltip,
+                DaojiVocabularyLevel.mortal,
+              ),
               onPressed: _submitIdea,
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -78,7 +93,11 @@ class _RapidBrainstormWorkspaceState extends State<RapidBrainstormWorkspace> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Kuantitas Ide: ${_ideas.length}',
+              DaojiText.resolve(
+                DaojiTextKey.rapidBrainstormQuantity,
+                DaojiVocabularyLevel.mortal,
+                params: {'count': _ideas.length},
+              ),
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             ),
             if (_ideas.isNotEmpty)
@@ -89,9 +108,12 @@ class _RapidBrainstormWorkspaceState extends State<RapidBrainstormWorkspace> {
                   });
                   _notifyChanges();
                 },
-                child: const Text(
-                  'Reset',
-                  style: TextStyle(color: Colors.redAccent, fontSize: 11),
+                child: Text(
+                  DaojiText.resolve(
+                    DaojiTextKey.rapidBrainstormReset,
+                    DaojiVocabularyLevel.mortal,
+                  ),
+                  style: const TextStyle(color: Colors.redAccent, fontSize: 11),
                 ),
               ),
           ],
@@ -229,8 +251,13 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
 
     if (!isCurrentlyStarred && currentStarredCount >= 3) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Maksimal pilih 3 pertanyaan prioritas saja!'),
+        SnackBar(
+          content: Text(
+            DaojiText.resolve(
+              DaojiTextKey.questionStormMaxPriority,
+              DaojiVocabularyLevel.mortal,
+            ),
+          ),
         ),
       );
       return;
@@ -256,19 +283,31 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Logger Pertanyaan Kunci (Question Storming)',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(
+            DaojiTextKey.questionStormTitle,
+            DaojiVocabularyLevel.mortal,
+          ),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _inputController,
           decoration: InputDecoration(
-            labelText: 'Tambah Pertanyaan',
-            hintText: 'Ketik pertanyaan kritis Anda lalu tekan Enter...',
+            labelText: DaojiText.resolve(
+              DaojiTextKey.questionStormHint,
+              DaojiVocabularyLevel.mortal,
+            ),
+            hintText: DaojiText.resolve(
+              DaojiTextKey.questionStormHint,
+              DaojiVocabularyLevel.mortal,
+            ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
-              tooltip: 'Tambah pertanyaan',
+              tooltip: DaojiText.resolve(
+                DaojiTextKey.questionStormAddTooltip,
+                DaojiVocabularyLevel.mortal,
+              ),
               onPressed: _submitQuestion,
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -280,7 +319,11 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Pertanyaan: ${_questions.length} | Prioritas: $starredCount/3',
+              DaojiText.resolve(
+                DaojiTextKey.questionStormStats,
+                DaojiVocabularyLevel.mortal,
+                params: {'total': _questions.length, 'starred': starredCount},
+              ),
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             ),
           ],

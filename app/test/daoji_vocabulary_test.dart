@@ -6,79 +6,83 @@ import 'package:daoji/src/core/i18n/daoji_vocabulary_level.dart';
 void main() {
   group('DaojiVocabularyLevel', () {
     test('uses the mortal/human/earth/heaven labels', () {
-      expect(DaojiVocabularyLevel.practical.displayName, 'Mortal');
-      expect(DaojiVocabularyLevel.gentleCultivation.displayName, 'Human');
-      expect(DaojiVocabularyLevel.daoStream.displayName, 'Earth');
-      expect(DaojiVocabularyLevel.immortalCultivation.displayName, 'Heaven');
+      expect(DaojiVocabularyLevel.mortal.displayName, 'Mortal');
+      expect(DaojiVocabularyLevel.human.displayName, 'Human');
+      expect(DaojiVocabularyLevel.earth.displayName, 'Earth');
+      expect(DaojiVocabularyLevel.heaven.displayName, 'Heaven');
     });
 
     test('parses valid values and falls back safely', () {
       expect(
         parseDaojiVocabularyLevel('practical'),
-        DaojiVocabularyLevel.practical,
+        DaojiVocabularyLevel.mortal,
       );
       expect(
         parseDaojiVocabularyLevel('gentleCultivation'),
-        DaojiVocabularyLevel.gentleCultivation,
+        DaojiVocabularyLevel.human,
       );
       expect(
         parseDaojiVocabularyLevel('daoStream'),
-        DaojiVocabularyLevel.daoStream,
+        DaojiVocabularyLevel.earth,
       );
       expect(
         parseDaojiVocabularyLevel('immortalCultivation'),
-        DaojiVocabularyLevel.immortalCultivation,
+        DaojiVocabularyLevel.heaven,
       );
-      expect(parseDaojiVocabularyLevel(null), DaojiVocabularyLevel.daoStream);
+      expect(parseDaojiVocabularyLevel(null), DaojiVocabularyLevel.mortal);
       expect(
         parseDaojiVocabularyLevel('broken'),
-        DaojiVocabularyLevel.daoStream,
+        DaojiVocabularyLevel.mortal,
       );
+      expect(parseDaojiVocabularyLevel('mortal'), DaojiVocabularyLevel.mortal);
+      expect(parseDaojiVocabularyLevel('human'), DaojiVocabularyLevel.human);
+      expect(parseDaojiVocabularyLevel('earth'), DaojiVocabularyLevel.earth);
+      expect(parseDaojiVocabularyLevel('heaven'), DaojiVocabularyLevel.heaven);
     });
   });
 
   group('DaojiText', () {
     test('resolves navigation labels by vocabulary level', () {
       expect(
-        DaojiText.resolve(DaojiTextKey.navHome, DaojiVocabularyLevel.practical),
-        'Beranda',
+        DaojiText.resolve(DaojiTextKey.navHome, DaojiVocabularyLevel.mortal),
+        'Home',
       );
       expect(
-        DaojiText.resolve(DaojiTextKey.navHome, DaojiVocabularyLevel.daoStream),
-        'Dao Tree',
+        DaojiText.resolve(DaojiTextKey.navHome, DaojiVocabularyLevel.earth),
+        'Training Hub',
       );
       expect(
         DaojiText.resolve(
           DaojiTextKey.navHome,
-          DaojiVocabularyLevel.immortalCultivation,
+          DaojiVocabularyLevel.heaven,
         ),
-        'Inner World',
+        'Void Sanctuary',
       );
     });
 
-    test('keeps safety text practical across all levels', () {
+    test('keeps safety text consistent across all levels', () {
       final values = DaojiVocabularyLevel.values
           .map((level) => DaojiText.resolve(DaojiTextKey.safetyTitle, level))
           .toSet();
       expect(values.length, 1);
-      expect(values.single, 'Dukungan Kesehatan Diri');
+      expect(values.single, 'Safety Support');
     });
 
-    test('maps legacy domain keys to Six Dao Streams vocabulary', () {
+    test('maps domain keys to current vocabulary labels', () {
       expect(
-        DaojiText.domainLabel('Hubungan', DaojiVocabularyLevel.daoStream),
-        'Karma Stream',
+        DaojiText.domainLabel('Hubungan', DaojiVocabularyLevel.earth),
+        'Bonding Path',
       );
       expect(
         DaojiText.domainLabel(
           'Hubungan',
-          DaojiVocabularyLevel.immortalCultivation,
+          DaojiVocabularyLevel.heaven,
         ),
-        'Karmic Meridian',
+        'Bonding Path',
       );
       expect(
-        DaojiText.domainLabel('Rekreasi', DaojiVocabularyLevel.daoStream),
-        'Spirit Stream',
+        DaojiText.domainLabel('Rekreasi', DaojiVocabularyLevel.earth),
+        'Spirit Path',
       );
     });
 
@@ -86,10 +90,10 @@ void main() {
       expect(
         DaojiText.resolve(
           DaojiTextKey.safetyCall,
-          DaojiVocabularyLevel.practical,
+          DaojiVocabularyLevel.mortal,
           params: {'number': '119'},
         ),
-        'Hubungi 119',
+        'Call 119',
       );
     });
   });

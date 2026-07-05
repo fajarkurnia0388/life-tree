@@ -251,12 +251,21 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              title: const Text('Beri Rating Kebiasaan'),
+              title: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.marketRateDialogTitle,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Seberapa bermanfaat kebiasaan "${t.title}" ini bagi Anda?',
+                    DaojiText.resolve(
+                      DaojiTextKey.marketRateDialogQuestion,
+                      ref.read(daojiVocabularyLevelValueProvider),
+                      params: {'title': t.title},
+                    ),
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 13),
                   ),
@@ -288,12 +297,22 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
                   style: AppButtonStyles.secondary(context),
-                  child: const Text('Batal'),
+                  child: Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.systemCancel,
+                      ref.read(daojiVocabularyLevelValueProvider),
+                    ),
+                  ),
                 ),
                 ElevatedButton(
                   style: AppButtonStyles.primary(context),
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Kirim Rating'),
+                  child: Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.systemSave,
+                      ref.read(daojiVocabularyLevelValueProvider),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -306,8 +325,13 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
       await service.rateTemplate(t.templateId, selectedStars);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Terima kasih atas rating Anda!'),
+          SnackBar(
+            content: Text(
+              DaojiText.resolve(
+                DaojiTextKey.marketRatingThanks,
+                ref.read(daojiVocabularyLevelValueProvider),
+              ),
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -343,11 +367,16 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(DaojiText.resolve(DaojiTextKey.marketTitle, vocabularyLevel)),
+        title: Text(
+          DaojiText.resolve(DaojiTextKey.marketTitle, vocabularyLevel),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.share_rounded),
-            tooltip: 'Bagikan Template Saya',
+            tooltip: DaojiText.resolve(
+              DaojiTextKey.marketShareTooltip,
+              vocabularyLevel,
+            ),
             onPressed: _showShareDialog,
           ),
         ],
@@ -389,8 +418,14 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: 'Cari Template',
-                hintText: 'Cari template...',
+                labelText: DaojiText.resolve(
+                  DaojiTextKey.marketSearchLabel,
+                  vocabularyLevel,
+                ),
+                hintText: DaojiText.resolve(
+                  DaojiTextKey.marketSearchHint,
+                  vocabularyLevel,
+                ),
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.clear),
@@ -500,11 +535,23 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                 if (list.isEmpty) {
                   return EmptyStateWidget(
                     icon: Icons.inventory_2_outlined,
-                    title: 'Tidak Ada Template',
+                    title: DaojiText.resolve(
+                      DaojiTextKey.marketNoTemplatesTitle,
+                      vocabularyLevel,
+                    ),
                     message: _searchController.text.isNotEmpty
-                        ? 'Tidak ada template yang cocok dengan pencarian Anda'
-                        : 'Belum ada template kebiasaan di kategori ini',
-                    actionLabel: 'Bagikan Kebiasaan Anda',
+                        ? DaojiText.resolve(
+                            DaojiTextKey.marketNoTemplatesSearchMessage,
+                            vocabularyLevel,
+                          )
+                        : DaojiText.resolve(
+                            DaojiTextKey.marketNoTemplatesEmptyMessage,
+                            vocabularyLevel,
+                          ),
+                    actionLabel: DaojiText.resolve(
+                      DaojiTextKey.marketShareActionLabel,
+                      vocabularyLevel,
+                    ),
                     onAction: _showShareDialog,
                   );
                 }

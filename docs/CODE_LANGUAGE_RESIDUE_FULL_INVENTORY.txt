@@ -1,0 +1,272 @@
+test\daoji_vocabulary_test.dart:9:      expect(DaojiVocabularyLevel.practical.displayName, 'Mortal');
+test\daoji_vocabulary_test.dart:10:      expect(DaojiVocabularyLevel.gentleCultivation.displayName, 'Human');
+test\daoji_vocabulary_test.dart:11:      expect(DaojiVocabularyLevel.daoStream.displayName, 'Earth');
+test\daoji_vocabulary_test.dart:12:      expect(DaojiVocabularyLevel.immortalCultivation.displayName, 'Heaven');
+test\daoji_vocabulary_test.dart:17:        parseDaojiVocabularyLevel('practical'),
+test\daoji_vocabulary_test.dart:18:        DaojiVocabularyLevel.practical,
+test\daoji_vocabulary_test.dart:21:        parseDaojiVocabularyLevel('gentleCultivation'),
+test\daoji_vocabulary_test.dart:22:        DaojiVocabularyLevel.gentleCultivation,
+test\daoji_vocabulary_test.dart:25:        parseDaojiVocabularyLevel('daoStream'),
+test\daoji_vocabulary_test.dart:26:        DaojiVocabularyLevel.daoStream,
+test\daoji_vocabulary_test.dart:29:        parseDaojiVocabularyLevel('immortalCultivation'),
+test\daoji_vocabulary_test.dart:30:        DaojiVocabularyLevel.immortalCultivation,
+test\daoji_vocabulary_test.dart:32:      expect(parseDaojiVocabularyLevel(null), DaojiVocabularyLevel.daoStream);
+test\daoji_vocabulary_test.dart:35:        DaojiVocabularyLevel.daoStream,
+test\daoji_vocabulary_test.dart:43:        DaojiText.resolve(DaojiTextKey.navHome, DaojiVocabularyLevel.practical),
+test\daoji_vocabulary_test.dart:47:        DaojiText.resolve(DaojiTextKey.navHome, DaojiVocabularyLevel.daoStream),
+test\daoji_vocabulary_test.dart:53:          DaojiVocabularyLevel.immortalCultivation,
+test\daoji_vocabulary_test.dart:59:    test('keeps safety text practical across all levels', () {
+test\daoji_vocabulary_test.dart:69:        DaojiText.domainLabel('Hubungan', DaojiVocabularyLevel.daoStream),
+test\daoji_vocabulary_test.dart:75:          DaojiVocabularyLevel.immortalCultivation,
+test\daoji_vocabulary_test.dart:80:        DaojiText.domainLabel('Rekreasi', DaojiVocabularyLevel.daoStream),
+test\daoji_vocabulary_test.dart:89:          DaojiVocabularyLevel.practical,
+test\cultivation_layer_test.dart:51:      // Add a habit to generate dashboard data
+test\cultivation_layer_test.dart:56:              habitId: 'habit-1',
+test\cultivation_layer_test.dart:180:              habitId: 'habit-qi-1',
+test\cultivation_layer_test.dart:193:              habitId: 'habit-qi-2',
+test\cultivation_layer_test.dart:254:              habitId: 'habit-realm-1',
+test\cultivation_layer_test.dart:327:                habitId: 'habit-overload-$i',
+test\dashboard_provider_test.dart:49:            habitId: 'habit-1',
+test\dashboard_provider_test.dart:64:            habitId: 'habit-2',
+test\dashboard_provider_test.dart:80:    expect(data.actionOfTheDay!.habitId, 'habit-2');
+test\growth_map_accessibility_test.dart:41:    test('LeafNode semantic label contains habit title and status', () {
+test\habit_log_service_test.dart:7:import 'package:daoji/src/features/habit/services/habit_log_service.dart';
+test\habit_log_service_test.dart:48:      final habit = await createHabit('habit-mark-done-new');
+test\habit_log_service_test.dart:51:      await service.markDone(habit: habit, date: today);
+test\habit_log_service_test.dart:56:                tbl.habitId.equals('habit-mark-done-new') &
+test\habit_log_service_test.dart:64:                ..where((tbl) => tbl.habitId.equals('habit-mark-done-new')))
+test\habit_log_service_test.dart:71:      final habit = await createHabit('habit-upsert-done');
+test\habit_log_service_test.dart:79:              habitId: 'habit-upsert-done',
+test\habit_log_service_test.dart:86:      await service.markDone(habit: habit, date: now);
+test\habit_log_service_test.dart:90:                tbl.habitId.equals('habit-upsert-done') &
+test\habit_log_service_test.dart:100:      final habit = await createHabit('habit-double-done');
+test\habit_log_service_test.dart:104:      await service.markDone(habit: habit, date: now);
+test\habit_log_service_test.dart:107:                ..where((tbl) => tbl.habitId.equals('habit-double-done')))
+test\habit_log_service_test.dart:112:      await service.markDone(habit: updatedHabit, date: now);
+test\habit_log_service_test.dart:115:                ..where((tbl) => tbl.habitId.equals('habit-double-done')))
+test\habit_log_service_test.dart:125:      final habit = await createHabit('habit-mark-missed-new');
+test\habit_log_service_test.dart:130:        habit: habit,
+test\habit_log_service_test.dart:137:                tbl.habitId.equals('habit-mark-missed-new') &
+test\habit_log_service_test.dart:147:      final habit = await createHabit('habit-done-to-missed');
+test\habit_log_service_test.dart:151:      await service.markDone(habit: habit, date: now);
+test\habit_log_service_test.dart:154:                ..where((tbl) => tbl.habitId.equals('habit-done-to-missed')))
+test\habit_log_service_test.dart:161:        habit: doneHabit,
+test\habit_log_service_test.dart:169:                tbl.habitId.equals('habit-done-to-missed') &
+test\habit_log_service_test.dart:180:                ..where((tbl) => tbl.habitId.equals('habit-done-to-missed')))
+test\habit_scheduling_test.dart:39:  /// Helper: insert a habit with given frequency/scheduledDays
+test\habit_scheduling_test.dart:64:      expect(data.habitsToday.any((h) => h.habit.habitId == 'daily-1'), isTrue,
+test\habit_scheduling_test.dart:72:    // berdasarkan weekday aktual dan apakah habit seharusnya tampil atau tidak.
+test\habit_scheduling_test.dart:83:      expect(data.habitsToday.any((h) => h.habit.habitId == 'all-days'), isTrue,
+test\habit_scheduling_test.dart:96:      expect(data.habitsToday.any((h) => h.habit.habitId == 'no-days'), isFalse,
+test\habit_scheduling_test.dart:110:      expect(data.habitsToday.any((h) => h.habit.habitId == 'null-days'), isFalse,
+test\habit_scheduling_test.dart:131:      expect(data.habitsToday.any((h) => h.habit.habitId == 'today-only'), isTrue,
+test\habit_scheduling_test.dart:133:      expect(data.habitsToday.any((h) => h.habit.habitId == 'tomorrow-only'), isFalse,
+test\habit_scheduling_test.dart:140:      // Insert habit for another user
+test\habit_scheduling_test.dart:144:              habitId: 'other-user-habit',
+test\habit_scheduling_test.dart:155:          data.habitsToday.any((h) => h.habit.habitId == 'other-user-habit'),
+test\habit_scheduling_test.dart:174:      final isScheduled = data.habitsToday.any((h) => h.habit.habitId == 'spaced-days');
+test\marketplace_service_test.dart:34:      final first = templates.firstWhere((t) => t.templateId == 'habit-temp-1');
+test\marketplace_service_test.dart:46:      ); // habit-temp-1, habit-temp-2, value-temp-1 (Kesehatan)
+test\marketplace_service_test.dart:51:        templateType: 'habit',
+test\marketplace_service_test.dart:66:      expect(results.first.templateId, 'habit-temp-1');
+test\marketplace_service_test.dart:69:    test('Upload habit template baru', () async {
+test\marketplace_service_test.dart:82:        templateType: 'habit',
+test\marketplace_service_test.dart:125:      // habit-temp-1 averageRating awal: 48 / 10 = 4.8
+test\marketplace_service_test.dart:127:        (t) => t.templateId == 'habit-temp-1',
+test\marketplace_service_test.dart:133:      await service.rateTemplate('habit-temp-1', 5);
+test\marketplace_service_test.dart:136:        (t) => t.templateId == 'habit-temp-1',
+test\marketplace_service_test.dart:145:        (t) => t.templateId == 'habit-temp-2',
+test\marketplace_service_test.dart:149:      await service.incrementDownloads('habit-temp-2');
+test\marketplace_service_test.dart:152:        (t) => t.templateId == 'habit-temp-2',
+lib/src\data\local_db\database.dart:46:      text().withDefault(const Constant('daoStream'))();
+lib/src\data\local_db\database.dart:247:  TextColumn get templateType => text()(); // 'habit' or 'core_value'
+lib/src\data\local_db\database.dart:252:      text().nullable()(); // JSON: habit-specific or value-specific data
+lib/src\data\local_db\database.dart:424:        // Migrate existing habit templates to new schema
+lib/src\data\local_db\database.dart:426:          'ALTER TABLE marketplace_templates ADD COLUMN template_type TEXT NOT NULL DEFAULT "habit"',
+lib/src\data\local_db\database.dart:431:        // Move habit-specific data to metadata JSON
+lib/src\data\local_db\database.dart:440:          WHERE template_type = 'habit'
+lib/src\data\local_db\database.dart:449:            WHEN cultivation_theme_enabled = 0 THEN 'practical'
+lib/src\data\local_db\database.dart:450:            ELSE 'daoStream'
+lib/src\core\theme\button_theme.dart:79:  /// Secondary button untuk "Tidak Sanggup" pada habit
+lib/src\core\i18n\daoji_text_key.dart:69:  // Habit/practice form
+lib/src\core\i18n\daoji_vocabulary_level.dart:45:    'practical' => DaojiVocabularyLevel.mortal,
+lib/src\core\i18n\daoji_vocabulary_level.dart:46:    'gentleCultivation' => DaojiVocabularyLevel.human,
+lib/src\core\i18n\daoji_vocabulary_level.dart:47:    'daoStream' => DaojiVocabularyLevel.earth,
+lib/src\core\i18n\daoji_vocabulary_level.dart:48:    'immortalCultivation' => DaojiVocabularyLevel.heaven,
+lib/src\core\i18n\daoji_text_registry_id.dart:185:    DaojiTextKey.habitMva: 'Minimum viable discipline',
+lib/src\core\i18n\daoji_text_registry_id.dart:229:    DaojiTextKey.dashboardNoActionsTitle: 'No practice is calling today.',
+lib/src\core\i18n\daoji_text_registry_id.dart:231:        'Rest, or open a path with one practice.',
+lib/src\core\i18n\daoji_text_registry_id.dart:234:    DaojiTextKey.dashboardAddPracticeSubtitle: 'Buat practice baru di Dao Path Anda',
+lib/src\core\i18n\daoji_text_registry_id.dart:245:    DaojiTextKey.actionWhyTooltip: 'Why this practice?',
+lib/src\core\i18n\daoji_text_registry_id.dart:246:    DaojiTextKey.actionWhyTitle: 'Why this practice?',
+lib/src\core\i18n\daoji_text_registry_id.dart:290:    DaojiTextKey.habitMva: 'Minimum viable practice',
+lib/src\core\i18n\daoji_text_registry_id.dart:333:    DaojiTextKey.dashboardNoActionsTitle: 'No technique is required today.',
+lib/src\core\i18n\daoji_text_registry_id.dart:335:        'Enter stillness, or adopt a technique.',
+lib/src\core\i18n\daoji_text_registry_id.dart:338:    DaojiTextKey.dashboardAddPracticeSubtitle: 'Adopt a technique into your meridian cycle',
+lib/src\core\i18n\daoji_text_registry_id.dart:395:    DaojiTextKey.habitMva: 'Minimum viable technique',
+lib/src\features\onboarding\widgets\disclaimer_step.dart:70:                '(habit tracker) pribadi. Tujuannya membantumu berorientasi diri '
+lib/src\features\onboarding\widgets\cultivation_theme_step.dart:7:/// practical wording.
+lib/src\core\routing\router.dart:9:import '../../features/habit/add_habit_view.dart';
+lib/src\core\routing\router.dart:10:import '../../features/habit/edit_habit_view.dart';
+lib/src\core\routing\router.dart:70:        path: '/add-habit',
+lib/src\core\routing\router.dart:78:        path: '/edit-habit/:habitId',
+lib/src\features\profile\services\activity_heatmap_service.dart:4:/// Service untuk mengagregasi aktivitas habit logs menjadi data heatmap
+lib/src\features\profile\services\activity_heatmap_service.dart:16:    // Query habit logs yang status 'Done' dalam 365 hari terakhir
+lib/src\features\cultivation\cultivation_layer.dart:45:  /// Total cumulative practice days
+lib/src\features\cultivation\cultivation_layer.dart:124:        .where((hwl) => hwl.habit.completionRate90d != null)
+lib/src\features\cultivation\cultivation_layer.dart:129:              .map((hwl) => hwl.habit.completionRate90d!)
+lib/src\features\cultivation\cultivation_layer.dart:276:      final friction = hwl.habit.initiationFriction;
+lib/src\features\cultivation\cultivation_layer.dart:277:      final energy = hwl.habit.energyCost;
+lib/src\features\cultivation\cultivation_layer.dart:309:    // - Impatience demon: frequent habit changes
+lib/src\core\domain\priority_helper.dart:3:/// Computes the Action of the Day priority score for a single habit.
+lib/src\core\domain\priority_helper.dart:7:  required Habit habit,
+lib/src\core\domain\priority_helper.dart:10:  final domain = habit.domainTag ?? 'Tubuh';
+lib/src\core\domain\priority_helper.dart:14:  final totalLoad = habit.initiationFriction + habit.energyCost;
+lib/src\core\domain\priority_helper.dart:15:  return (domainDeficit * habit.impactScore) / (totalLoad > 0 ? totalLoad : 1);
+lib/src\features\cultivation\cultivation_constants.dart:4:/// system is an interpretive layer over existing habit, reflection, and profile
+lib/src\features\profile\widgets\activity_heatmap_widget.dart:4:/// GitHub-style activity heatmap showing daily habit completion over 52 weeks
+lib/src\features\cultivation\cultivation_achievement.dart:36:      description: 'Qi-mu mulai terkumpul — 100 practice.',
+lib/src\features\cultivation\cultivation_achievement.dart:37:      trigger: '100 practice selesai',
+lib/src\features\habit\add_habit_view.dart:75:    final habit = await (db.select(
+lib/src\features\habit\add_habit_view.dart:78:    if (habit != null && mounted) {
+lib/src\features\habit\add_habit_view.dart:81:        _existingHabit = habit;
+lib/src\features\habit\add_habit_view.dart:82:        _titleController.text = habit.title;
+lib/src\features\habit\add_habit_view.dart:83:        _goalTagController.text = habit.goalTag ?? '';
+lib/src\features\habit\add_habit_view.dart:84:        _initiationFriction = habit.initiationFriction;
+lib/src\features\habit\add_habit_view.dart:85:        _energyCost = habit.energyCost;
+lib/src\features\habit\add_habit_view.dart:86:        _impactScore = habit.impactScore;
+lib/src\features\habit\add_habit_view.dart:87:        _mvaDurationMin = habit.mvaDurationMin;
+lib/src\features\habit\add_habit_view.dart:88:        _frequency = habit.frequency;
+lib/src\features\habit\add_habit_view.dart:89:        _domainTag = habit.domainTag ?? 'Tubuh';
+lib/src\features\habit\add_habit_view.dart:92:        if (habit.scheduledDays != null) {
+lib/src\features\habit\add_habit_view.dart:95:            habit.scheduledDays!
+lib/src\features\habit\add_habit_view.dart:194:              'Menambahkan/mengubah habit ini akan meningkatkan beban menjadi $nextLoad poin. '
+lib/src\core\services\notification_service.dart:1:/// Service to handle local notifications for habit reminders.
+lib/src\features\habit\edit_habit_view.dart:64:    final habit = await (db.select(
+lib/src\features\habit\edit_habit_view.dart:68:    if (habit != null && mounted) {
+lib/src\features\habit\edit_habit_view.dart:70:        _existingHabit = habit;
+lib/src\features\habit\edit_habit_view.dart:71:        _titleController.text = habit.title;
+lib/src\features\habit\edit_habit_view.dart:72:        _goalTagController.text = habit.goalTag ?? '';
+lib/src\features\habit\edit_habit_view.dart:73:        _initiationFriction = habit.initiationFriction;
+lib/src\features\habit\edit_habit_view.dart:74:        _energyCost = habit.energyCost;
+lib/src\features\habit\edit_habit_view.dart:75:        _impactScore = habit.impactScore;
+lib/src\features\habit\edit_habit_view.dart:76:        _mvaDurationMin = habit.mvaDurationMin;
+lib/src\features\habit\edit_habit_view.dart:77:        _frequency = habit.frequency;
+lib/src\features\habit\edit_habit_view.dart:78:        _domainTag = habit.domainTag ?? 'Tubuh';
+lib/src\features\habit\edit_habit_view.dart:80:        if (habit.scheduledDays != null) {
+lib/src\features\habit\edit_habit_view.dart:83:            habit.scheduledDays!
+lib/src\features\marketplace\marketplace_view.dart:33:  String _selectedTemplateType = 'habit';
+lib/src\features\marketplace\marketplace_view.dart:38:  final List<String> _templateTypes = ['habit', 'core_value'];
+lib/src\features\marketplace\marketplace_view.dart:40:    'habit': '🎯 Kebiasaan',
+lib/src\features\marketplace\marketplace_service.dart:55:        id: 'habit-temp-1',
+lib/src\features\marketplace\marketplace_service.dart:71:        id: 'habit-temp-2',
+lib/src\features\marketplace\marketplace_service.dart:87:        id: 'habit-temp-3',
+lib/src\features\marketplace\marketplace_service.dart:103:        id: 'habit-temp-4',
+lib/src\features\marketplace\marketplace_service.dart:193:      templateType: 'habit',
+lib/src\features\marketplace\marketplace_service.dart:316:      templateType: 'habit',
+lib/src\features\habit\services\habit_log_service.dart:13:    required Habit habit,
+lib/src\features\habit\services\habit_log_service.dart:19:          ..where((tbl) => tbl.habitId.equals(habit.habitId) & tbl.date.equals(todayStart)))
+lib/src\features\habit\services\habit_log_service.dart:28:              durationTargetMin: drift.Value(habit.mvaDurationMin),
+lib/src\features\habit\services\habit_log_service.dart:29:              durationActualMin: drift.Value(habit.mvaDurationMin),
+lib/src\features\habit\services\habit_log_service.dart:34:        final newCount = habit.lifetimeDoneCount + 1;
+lib/src\features\habit\services\habit_log_service.dart:35:        await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
+lib/src\features\habit\services\habit_log_service.dart:38:        await _updateCompletionRate(habit.habitId);
+lib/src\features\habit\services\habit_log_service.dart:45:              habitId: habit.habitId,
+lib/src\features\habit\services\habit_log_service.dart:48:              durationTargetMin: drift.Value(habit.mvaDurationMin),
+lib/src\features\habit\services\habit_log_service.dart:49:              durationActualMin: drift.Value(habit.mvaDurationMin),
+lib/src\features\habit\services\habit_log_service.dart:53:      final newCount = habit.lifetimeDoneCount + 1;
+lib/src\features\habit\services\habit_log_service.dart:54:      await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
+lib/src\features\habit\services\habit_log_service.dart:57:      await _updateCompletionRate(habit.habitId);
+lib/src\features\habit\services\habit_log_service.dart:76:    required Habit habit,
+lib/src\features\habit\services\habit_log_service.dart:83:    final newCount = (habit.lifetimeDoneCount - 1).clamp(0, 99999);
+lib/src\features\habit\services\habit_log_service.dart:84:    await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
+lib/src\features\habit\services\habit_log_service.dart:87:    await _updateCompletionRate(habit.habitId);
+lib/src\features\habit\services\habit_log_service.dart:91:    required Habit habit,
+lib/src\features\habit\services\habit_log_service.dart:97:          ..where((tbl) => tbl.habitId.equals(habit.habitId) & tbl.date.equals(todayStart)))
+lib/src\features\habit\services\habit_log_service.dart:113:        final newCount = (habit.lifetimeDoneCount - 1).clamp(0, 99999);
+lib/src\features\habit\services\habit_log_service.dart:114:        await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habit.habitId)))
+lib/src\features\habit\services\habit_log_service.dart:122:              habitId: habit.habitId,
+lib/src\features\habit\services\habit_log_service.dart:129:    await _updateCompletionRate(habit.habitId);
+lib/src\features\dashboard\widgets\celebration_card.dart:3:/// Card widget untuk Celebration State (semua habit selesai)
+lib/src\features\dashboard\growth_map_provider.dart:109:      final domain = hwl.habit.domainTag;
+lib/src\features\dashboard\growth_map_provider.dart:143:            ? '$displayDomain — segera dibuka bertahap. Tambahkan practice di stream ini atau aktifkan Developer Mode untuk testing.'
+lib/src\features\dashboard\growth_map_provider.dart:155:    final initial = hl.habit.title
+lib/src\features\dashboard\growth_map_provider.dart:156:        .substring(0, math.min(2, hl.habit.title.length))
+lib/src\features\dashboard\growth_map_provider.dart:161:        id: hl.habit.habitId,
+lib/src\features\dashboard\growth_map_provider.dart:162:        label: hl.habit.title,
+lib/src\features\dashboard\growth_map_provider.dart:163:        domainTag: hl.habit.domainTag ?? 'Emosi',
+lib/src\features\dashboard\growth_map_provider.dart:166:        originalHabit: hl.habit,
+lib/src\features\dashboard\growth_map_provider.dart:169:            'Kebiasaan: ${hl.habit.title}, Status: ${isDone ? 'Selesai' : 'Belum selesai'}',
+lib/src\features\dashboard\dashboard_view.dart:19:import '../habit/services/habit_log_service.dart';
+lib/src\features\dashboard\dashboard_view.dart:57:    Habit habit,
+lib/src\features\dashboard\dashboard_view.dart:65:        // Uncheck habit via service (safe delete + decrement)
+lib/src\features\dashboard\dashboard_view.dart:66:        await service.markUnchecked(habit: habit, log: log);
+lib/src\features\dashboard\dashboard_view.dart:68:        // Check habit via service (safe upsert to Done)
+lib/src\features\dashboard\dashboard_view.dart:69:        await service.markDone(habit: habit, date: now);
+lib/src\features\dashboard\dashboard_view.dart:85:  void _showFrictionIntervention(BuildContext context, Habit habit) {
+lib/src\features\dashboard\dashboard_view.dart:91:        return FrictionInterventionSheet(habit: habit);
+lib/src\features\dashboard\dashboard_view.dart:183:                      (hwl) => hwl.habit.domainTag == _selectedDomainFilter,
+lib/src\features\dashboard\dashboard_view.dart:213:                habit: hwl.habit,
+lib/src\features\dashboard\dashboard_view.dart:218:                activeActionOfTheDay = hwl.habit;
+lib/src\features\dashboard\dashboard_view.dart:294:                              item.habit.habitId ==
+lib/src\features\dashboard\dashboard_view.dart:298:                          habit: activeActionOfTheDay!,
+lib/src\features\dashboard\dashboard_view.dart:438:                      context.push('/add-habit');
+lib/src\features\dashboard\dashboard_provider.dart:32:  final Habit habit;
+lib/src\features\dashboard\dashboard_provider.dart:34:  HabitWithLog({required this.habit, this.log});
+lib/src\features\dashboard\dashboard_provider.dart:165:  // Dormant: > 14 days of no habit logging or app updates (fallback to profile updatedAt)
+lib/src\features\dashboard\dashboard_provider.dart:218:  for (final habit in allActiveHabits) {
+lib/src\features\dashboard\dashboard_provider.dart:220:    if (habit.frequency == HabitFrequency.daily) {
+lib/src\features\dashboard\dashboard_provider.dart:222:    } else if (habit.scheduledDays != null && habit.scheduledDays!.isNotEmpty) {
+lib/src\features\dashboard\dashboard_provider.dart:224:      final days = habit.scheduledDays!
+lib/src\features\dashboard\dashboard_provider.dart:235:          .where((l) => l.habitId == habit.habitId)
+lib/src\features\dashboard\dashboard_provider.dart:237:      habitsToday.add(HabitWithLog(habit: habit, log: log));
+lib/src\features\dashboard\dashboard_provider.dart:267:      habit: hwl.habit,
+lib/src\features\dashboard\dashboard_provider.dart:272:      actionOfTheDay = hwl.habit;
+lib/src\features\dashboard\widgets\quick_actions_panel.dart:41:          onPressed: () => context.push('/add-habit'),
+lib/src\features\marketplace\models\marketplace_template_model.dart:6:  final String templateType; // 'habit' or 'core_value'
+lib/src\features\marketplace\models\marketplace_template_model.dart:34:  bool get isHabit => templateType == 'habit';
+lib/src\features\marketplace\models\marketplace_template_model.dart:58:        case 'habit':
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:11:import '../../habit/services/habit_log_service.dart';
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:15:  final Habit habit;
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:16:  const FrictionInterventionSheet({super.key, required this.habit});
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:37:      habit: widget.habit,
+lib/src\features\dashboard\sheets\friction_intervention_sheet.dart:146:                      'Bagaimana jika kita kurangi target besok ke versi ringkas (${widget.habit.mvaDurationMin} menit) saja?',
+lib/src\features\dashboard\widgets\domain_scores_card.dart:64:        (h) => h.habit.domainTag == domain,
+lib/src\features\dashboard\widgets\domain_scores_card.dart:106:        if (hwl.habit.domainTag != null) {
+lib/src\features\dashboard\widgets\domain_scores_card.dart:107:          activeDomains.add(hwl.habit.domainTag!);
+lib/src\core\animations\card_animations.dart:137:/// Widget untuk animasi toggle habit (scale + fade)
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:18:    required this.habit,
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:24:  final Habit habit;
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:32:    final domainColor = DomainColors.forDomain(habit.domainTag);
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:123:            Text(habit.title, style: theme.textTheme.headlineMedium),
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:135:                  avatar: Text(_getDomainEmoji(habit.domainTag ?? 'Tubuh')),
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:138:                      habit.domainTag,
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:148:                  'Beban: ${habit.initiationFriction + habit.energyCost} Poin',
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:230:    final domain = habit.domainTag ?? 'Tubuh';
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:234:    final load = habit.initiationFriction + habit.energyCost;
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:236:        (domainDeficit * habit.impactScore) / (load > 0 ? load : 1);
+lib/src\features\dashboard\widgets\action_of_the_day_card.dart:265:                '(impact ${habit.impactScore}/5), dan beban ringan ($load poin).',
+lib/src\features\dashboard\widgets\habit_list_section.dart:79:                  activeActionOfTheDay?.habitId == item.habit.habitId;
+lib/src\features\dashboard\widgets\habit_list_section.dart:95:    final domainColor = DomainColors.forDomain(item.habit.domainTag);
+lib/src\features\dashboard\widgets\habit_list_section.dart:97:    final beban = item.habit.initiationFriction + item.habit.energyCost;
+lib/src\features\dashboard\widgets\habit_list_section.dart:99:        ? 'Kebiasaan ${item.habit.title}, dijeda untuk mode istirahat'
+lib/src\features\dashboard\widgets\habit_list_section.dart:100:        : 'Kebiasaan ${item.habit.title}, ${isDone ? 'selesai' : 'belum selesai'}, beban $beban poin';
+lib/src\features\dashboard\widgets\habit_list_section.dart:106:        key: Key(item.habit.habitId),
+lib/src\features\dashboard\widgets\habit_list_section.dart:124:                content: Text('Yakin ingin menghapus "${item.habit.title}"?'),
+lib/src\features\dashboard\widgets\habit_list_section.dart:143:                ..where((tbl) => tbl.habitId.equals(item.habit.habitId)))
+lib/src\features\dashboard\widgets\habit_list_section.dart:164:                  : () => onHabitToggle(context, item.habit, item.log),
+lib/src\features\dashboard\widgets\habit_list_section.dart:201:                            item.habit.title,
+lib/src\features\dashboard\widgets\habit_list_section.dart:230:                                  item.habit.domainTag ?? 'Tubuh',
+lib/src\features\dashboard\widgets\habit_list_section.dart:247:                              if (item.habit.lifetimeDoneCount > 0) ...[
+lib/src\features\dashboard\widgets\habit_list_section.dart:250:                                  '✓ ${item.habit.lifetimeDoneCount}x',
+lib/src\features\dashboard\widgets\habit_list_section.dart:296:                            onFrictionIntervention(context, item.habit),
+lib/src\features\dashboard\widgets\habit_list_section.dart:329:                        '/add-habit?habitId=${item.habit.habitId}',
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:12:import '../../../habit/services/habit_log_service.dart';
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:135:    dynamic habit,
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:149:        await service.markUnchecked(habit: habit, log: log);
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:151:        await service.markDone(habit: habit, date: now);
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:229:                    'Tambahkan practice untuk mulai membuka stream ini. Developer Mode membuka semua stream untuk testing.',
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:244:          onPressed: () => context.push('/add-habit?domain=$domainParam'),
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:280:            // Keep only real habit nodes for a cleaner growth map.
+lib/src\features\dashboard\widgets\growth_map\growth_map_widget.dart:564:                                context.push('/add-habit');
+lib/src\features\dashboard\widgets\growth_map\growth_map_painter.dart:204:      // Line color is vibrant if habit is done, else dim

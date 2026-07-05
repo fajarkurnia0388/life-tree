@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/button_theme.dart';
+import '../../../core/i18n/daoji_text_key.dart';
+import '../../../core/i18n/daoji_text_resolver.dart';
+import '../../../core/i18n/daoji_vocabulary_provider.dart';
+import '../../../core/i18n/daoji_vocabulary_level.dart';
 import '../models/marketplace_template_model.dart';
 
-class MarketplaceTemplateCard extends StatelessWidget {
+class MarketplaceTemplateCard extends ConsumerWidget {
   final MarketplaceTemplateModel template;
   final VoidCallback onRate;
   final VoidCallback onDownload;
@@ -16,8 +21,9 @@ class MarketplaceTemplateCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -40,7 +46,15 @@ class MarketplaceTemplateCard extends StatelessWidget {
                   ),
                   child: Text(
                     template.domainTag ??
-                        (template.isHabit ? 'Kebiasaan' : 'Nilai Inti'),
+                        (template.isHabit
+                            ? DaojiText.resolve(
+                                DaojiTextKey.habitLabel,
+                                vocabularyLevel,
+                              )
+                            : DaojiText.resolve(
+                                DaojiTextKey.reflectionMarketplace,
+                                vocabularyLevel,
+                              )),
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -98,7 +112,11 @@ class MarketplaceTemplateCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Oleh: ${template.creatorPenName}',
+              DaojiText.resolve(
+                DaojiTextKey.marketByLabel,
+                vocabularyLevel,
+                params: {'author': template.creatorPenName},
+              ),
               style: TextStyle(
                 fontSize: 11,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -113,8 +131,9 @@ class MarketplaceTemplateCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            if (template.isHabit) _buildHabitMetadata(theme),
-            if (template.isCoreValue) _buildCoreValueMetadata(theme),
+            if (template.isHabit) _buildHabitMetadata(theme, vocabularyLevel),
+            if (template.isCoreValue)
+              _buildCoreValueMetadata(theme, vocabularyLevel),
             const Divider(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -124,9 +143,12 @@ class MarketplaceTemplateCard extends StatelessWidget {
                   style: AppButtonStyles.secondary(context).copyWith(
                     minimumSize: WidgetStateProperty.all(const Size(88, 44)),
                   ),
-                  child: const Text(
-                    'Beri Rating',
-                    style: TextStyle(fontSize: 12),
+                  child: Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.marketRateButton,
+                      vocabularyLevel,
+                    ),
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -135,9 +157,15 @@ class MarketplaceTemplateCard extends StatelessWidget {
                   style: AppButtonStyles.primary(context).copyWith(
                     minimumSize: WidgetStateProperty.all(const Size(88, 44)),
                   ),
-                  child: const Text(
-                    'Gunakan',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  child: Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.marketUseButton,
+                      vocabularyLevel,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -148,7 +176,10 @@ class MarketplaceTemplateCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHabitMetadata(ThemeData theme) {
+  Widget _buildHabitMetadata(
+    ThemeData theme,
+    DaojiVocabularyLevel vocabularyLevel,
+  ) {
     final meta = template.habitMetadata;
     if (meta == null) return const SizedBox();
 
@@ -164,7 +195,7 @@ class MarketplaceTemplateCard extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              'MVA: ${meta.mvaDuration}m',
+              '${DaojiText.resolve(DaojiTextKey.marketMvaPrefix, vocabularyLevel)} ${meta.mvaDuration}m',
               style: TextStyle(
                 fontSize: 12,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -207,7 +238,10 @@ class MarketplaceTemplateCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCoreValueMetadata(ThemeData theme) {
+  Widget _buildCoreValueMetadata(
+    ThemeData theme,
+    DaojiVocabularyLevel vocabularyLevel,
+  ) {
     final meta = template.coreValueMetadata;
     if (meta == null) return const SizedBox();
 
@@ -234,7 +268,10 @@ class MarketplaceTemplateCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Mengapa Penting',
+                      DaojiText.resolve(
+                        DaojiTextKey.marketWhyItMatters,
+                        vocabularyLevel,
+                      ),
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,

@@ -355,8 +355,13 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Jurnal harian berhasil disimpan!'),
+        SnackBar(
+          content: Text(
+            DaojiText.resolve(
+              DaojiTextKey.journalSavedSuccess,
+              ref.read(daojiVocabularyLevelValueProvider),
+            ),
+          ),
           backgroundColor: Colors.green,
         ),
       );
@@ -385,7 +390,12 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                 }
               },
               style: AppButtonStyles.text(context),
-              child: const Text('Mengerti'),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.actionUnderstand,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -394,7 +404,12 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
                   context.pushReplacement('/safety');
                 }
               },
-              child: const Text('Buka Safety Card'),
+              child: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.reflectionSafetyCard,
+                  ref.read(daojiVocabularyLevelValueProvider),
+                ),
+              ),
             ),
           ],
         );
@@ -419,7 +434,9 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(DaojiText.resolve(DaojiTextKey.journalQuickTitle, vocabularyLevel)),
+        title: Text(
+          DaojiText.resolve(DaojiTextKey.journalQuickTitle, vocabularyLevel),
+        ),
       ),
       body: Form(
         key: _formKey,

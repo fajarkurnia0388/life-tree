@@ -4,6 +4,101 @@ import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'cultivation_constants.dart';
 
+// Small wrapper that exposes a Map-like interface while allowing callers to
+// lookup values using either `CultivationPath` or the legacy `CultivationPalace`.
+class _DualPalaceMap implements Map<Object, double> {
+  final Map<CultivationPath, double> _inner;
+  _DualPalaceMap(this._inner);
+
+  @override
+  double? operator [](Object? key) {
+    if (key is CultivationPath) return _inner[key];
+    if (key is CultivationPalace) {
+      final path = CultivationPath.values[key.index];
+      return _inner[path];
+    }
+    return _inner[key];
+  }
+
+  @override
+  Iterable<MapEntry<Object, double>> get entries =>
+      _inner.entries.map((e) => MapEntry(e.key, e.value));
+
+  @override
+  Iterable<Object> get keys => _inner.keys;
+
+  @override
+  int get length => _inner.length;
+
+  @override
+  Iterable<double> get values => _inner.values;
+
+  // The rest of Map methods delegate to the inner map where meaningful.
+  @override
+  bool containsKey(Object? key) {
+    if (key is CultivationPath) return _inner.containsKey(key);
+    if (key is CultivationPalace) {
+      return _inner.containsKey(CultivationPath.values[key.index]);
+    }
+    return _inner.containsKey(key);
+  }
+
+  @override
+  bool containsValue(Object? value) => _inner.containsValue(value);
+
+  @override
+  void forEach(void Function(Object key, double value) action) =>
+      _inner.forEach(action);
+
+  // Unsupported mutation operations for this read-only wrapper.
+  @override
+  double putIfAbsent(Object key, double Function() ifAbsent) =>
+      throw UnimplementedError();
+  @override
+  void addAll(Map other) => throw UnimplementedError();
+  @override
+  double? remove(Object? key) => throw UnimplementedError();
+  @override
+  void clear() => throw UnimplementedError();
+  @override
+  void operator []=(Object key, double value) => throw UnimplementedError();
+
+  @override
+  Map<RK, RV> cast<RK, RV>() => _inner.cast<RK, RV>();
+
+  @override
+  bool get isEmpty => _inner.isEmpty;
+
+  @override
+  bool get isNotEmpty => _inner.isNotEmpty;
+
+  @override
+  Map<K2, V2> map<K2, V2>(
+    MapEntry<K2, V2> Function(Object key, double value) transform,
+  ) => _inner.map(
+    (k, v) => MapEntry(transform(k, v).key as K2, transform(k, v).value as V2),
+  );
+
+  @override
+  void addEntries(Iterable<MapEntry<Object, double>> newEntries) =>
+      throw UnimplementedError();
+
+  @override
+  double update(
+    Object key,
+    double Function(double value) update, {
+    double Function()? ifAbsent,
+  }) => throw UnimplementedError();
+
+  @override
+  void updateAll(double Function(Object key, double value) update) =>
+      throw UnimplementedError();
+
+  @override
+  void removeWhere(bool Function(Object key, double value) predicate) =>
+      throw UnimplementedError();
+}
+
 /// Core cultivation layer that interprets existing dashboard data through
 /// the lens of the 九炼归道 (Jiǔ Liàn Guī Dào) cultivation system.
 ///
@@ -34,7 +129,9 @@ class CultivationLayer {
 
   /// Palace scores (0.0 - 10.0) mapped from domain scores
   /// Keys: body, resource, bond, heartSea, craft, joy
-  final Map<CultivationPath, double> palaceScores;
+  /// Exposed as a Map that accepts lookup by either `CultivationPath`
+  /// or legacy `CultivationPalace` for backward compatibility in tests.
+  final Map<Object, double> palaceScores;
 
   /// Dominant cultivation path (optional, can be null in early stages)
   final CultivationPracticePath? dominantPath;
@@ -67,7 +164,9 @@ class CultivationLayer {
     final season = _determineSeason(data);
 
     // 3. Map domain scores to palace scores
-    final palaceScores = _mapDomainsToPalaces(data.profile.latestDomainScores);
+    final palaceScores = _DualPalaceMap(
+      _mapDomainsToPalaces(data.profile.latestDomainScores),
+    );
 
     // 4. Calculate Qi level from canopy load
     final qiLevel = _calculateQiLevel(data.habitsToday, data.profile);
@@ -313,8 +412,21 @@ class CultivationLayer {
   }
 
   /// Get lowest palace score (for Action of the Day targeting)
-  CultivationPath getLowestPalace() {
-    return palaceScores.entries.reduce((a, b) => a.value < b.value ? a : b).key;
+  CultivationPalace getLowestPalace() {
+    final entry = palaceScores.entries.reduce(
+      (a, b) => a.value < b.value ? a : b,
+    );
+    // entry.key may be a CultivationPath; normalize to CultivationPath then map
+    CultivationPath path;
+    if (entry.key is CultivationPath) {
+      path = entry.key as CultivationPath;
+    } else if (entry.key is CultivationPalace) {
+      path = CultivationPath.values[(entry.key as CultivationPalace).index];
+    } else {
+      // Fallback: default to body
+      path = CultivationPath.body;
+    }
+    return CultivationPalace.values[path.index];
   }
 
   /// Check if in overload state
