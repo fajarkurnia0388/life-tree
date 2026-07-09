@@ -428,4 +428,36 @@ class CultivationStrings {
       CultivationLanguageLevel.full => 'Six Meridians',
     };
   }
+
+  static String statusPanelTitle(CultivationLanguageLevel level) {
+    return switch (level) {
+      CultivationLanguageLevel.plain => 'Status Harian',
+      CultivationLanguageLevel.hybrid => 'Cultivation Status',
+      CultivationLanguageLevel.full => 'Status Kultivasi Dao',
+    };
+  }
+
+  static String realmLabel(CultivationLanguageLevel level) {
+    return switch (level) {
+      CultivationLanguageLevel.plain => 'Tahap',
+      CultivationLanguageLevel.hybrid => 'Realm',
+      CultivationLanguageLevel.full => '境界 Realm',
+    };
+  }
+
+  static String seasonLabel(CultivationLanguageLevel level) {
+    return switch (level) {
+      CultivationLanguageLevel.plain => 'Fase',
+      CultivationLanguageLevel.hybrid => 'Season',
+      CultivationLanguageLevel.full => '時節 Season',
+    };
+  }
+
+  static String dominantPathLabel(CultivationLanguageLevel level) {
+    return switch (level) {
+      CultivationLanguageLevel.plain => 'Pola Dominan',
+      CultivationLanguageLevel.hybrid => 'Dominant Path',
+      CultivationLanguageLevel.full => '主導道 Dominant Path',
+    };
+  }
 }

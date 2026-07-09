@@ -47,40 +47,53 @@ class DomainReAuditDialog extends ConsumerWidget {
           vocabularyLevel,
         ),
       ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: controllers.entries.map((entry) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      entry.key,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 60,
-                    child: TextField(
-                      controller: entry.value,
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
-                        ),
+      content: StatefulBuilder(
+        builder: (context, setLocalState) {
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: controllers.entries.map((entry) {
+                final currentValue =
+                    (double.tryParse(entry.value.text) ?? 5.0).clamp(1.0, 10.0);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            entry.key,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            currentValue.toStringAsFixed(1),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                      Slider(
+                        value: currentValue,
+                        min: 1.0,
+                        max: 10.0,
+                        divisions: 18,
+                        onChanged: (val) {
+                          setLocalState(() {
+                            entry.value.text = val.toStringAsFixed(1);
+                          });
+                        },
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
+                );
+              }).toList(),
+            ),
+          );
+        },
       ),
       actions: [
         TextButton(
@@ -93,7 +106,10 @@ class DomainReAuditDialog extends ConsumerWidget {
           style: AppButtonStyles.primary(context),
           onPressed: () {
             final newScores = controllers.map(
-              (k, v) => MapEntry(k, double.tryParse(v.text) ?? 5.0),
+              (k, v) => MapEntry(
+                k,
+                (double.tryParse(v.text) ?? 5.0).clamp(1.0, 10.0),
+              ),
             );
             Navigator.pop(context, newScores);
           },

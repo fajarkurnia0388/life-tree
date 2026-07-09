@@ -7,7 +7,6 @@ import '../../features/journal/journal_lite_view.dart';
 import '../../features/thinking_canvas/thinking_canvas_lite_view.dart';
 import '../../features/safety/safety_card_view.dart';
 import '../../features/habit/add_habit_view.dart';
-import '../../features/habit/edit_habit_view.dart';
 import '../../features/marketplace/marketplace_view.dart';
 import '../../features/weekly_pulse/weekly_pulse_view.dart';
 import '../../features/decision_journal/decision_journal_view.dart';
@@ -73,11 +72,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           final domain = state.uri.queryParameters['domain'];
           return AddHabitView(habitId: habitId, initialDomainTag: domain);
         },
-      ),
-      GoRoute(
-        path: '/edit-habit/:habitId',
-        builder: (context, state) =>
-            EditHabitView(habitId: state.pathParameters['habitId']!),
       ),
       GoRoute(
         path: '/marketplace',

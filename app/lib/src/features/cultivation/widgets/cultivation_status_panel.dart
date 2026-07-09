@@ -33,7 +33,7 @@ class CultivationStatusPanel extends ConsumerWidget {
               children: [
                 // Header
                 Text(
-                  'Cultivation Status',
+                  CultivationStrings.statusPanelTitle(languageLevel),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -44,7 +44,7 @@ class CultivationStatusPanel extends ConsumerWidget {
                 _buildSection(
                   context,
                   icon: Icons.trending_up,
-                  label: 'Realm',
+                  label: CultivationStrings.realmLabel(languageLevel),
                   value: '${cultivation.realm} - ${cultivation.realmName}',
                 ),
                 const SizedBox(height: 12),
@@ -53,7 +53,7 @@ class CultivationStatusPanel extends ConsumerWidget {
                 _buildSection(
                   context,
                   icon: _getSeasonIcon(cultivation.season),
-                  label: 'Season',
+                  label: CultivationStrings.seasonLabel(languageLevel),
                   value: _getSeasonName(cultivation.season, languageLevel),
                 ),
                 const SizedBox(height: 12),
@@ -82,7 +82,7 @@ class CultivationStatusPanel extends ConsumerWidget {
                   _buildSection(
                     context,
                     icon: Icons.explore,
-                    label: 'Dominant Path',
+                    label: CultivationStrings.dominantPathLabel(languageLevel),
                     value: CultivationConstants.pathInfo(
                       cultivation.dominantPath!,
                     ).name,

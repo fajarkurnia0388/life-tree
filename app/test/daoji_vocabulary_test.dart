@@ -69,7 +69,7 @@ void main() {
       );
       expect(
         DaojiText.domainLabel('Hubungan', DaojiVocabularyLevel.heaven),
-        'Bonding Path',
+        'Karma Path',
       );
       expect(
         DaojiText.domainLabel('Rekreasi', DaojiVocabularyLevel.earth),

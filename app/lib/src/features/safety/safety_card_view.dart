@@ -225,7 +225,7 @@ class SafetyCardView extends ConsumerWidget {
           title: const Text('Menghubungi Layanan...'),
           content: Text(
             'Aplikasi sedang membuka dialer telepon Anda untuk menghubungi:\n\n'
-            '**$serviceName**\n\n'
+            '$serviceName\n\n'
             '(Interaksi ini telah dicatat di database lokal sebagai Tapped_Hotline_CTA).'
           ),
           actions: [

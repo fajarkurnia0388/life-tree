@@ -167,6 +167,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           },
         ),
         actions: [
+          dataAsync.when(
+            data: (data) => _buildCanopyLoadBadge(context, data),
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => const SizedBox.shrink(),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Center(child: CultivationBadge()),
@@ -362,6 +367,48 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             _showQuickActionsBottomSheet(context);
           },
           child: const Icon(Icons.add),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCanopyLoadBadge(BuildContext context, DashboardData data) {
+    final currentLoad = data.habitsToday.fold<int>(
+      0,
+      (sum, hwl) => sum + hwl.habit.initiationFriction + hwl.habit.energyCost,
+    );
+    final capacity = data.profile.canopyLoadCapacity;
+    if (capacity <= 0 || currentLoad <= capacity) {
+      return const SizedBox.shrink();
+    }
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(right: 4.0),
+      child: Tooltip(
+        message:
+            'Beban hari ini: $currentLoad/$capacity — pertimbangkan menunda habit baru',
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.error.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.warning_amber_rounded,
+                  size: 14, color: theme.colorScheme.error),
+              const SizedBox(width: 4),
+              Text(
+                '$currentLoad/$capacity',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.error,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
