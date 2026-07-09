@@ -7,6 +7,7 @@ import '../../data/local_db/database.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/domain/priority_helper.dart';
 import '../../core/services/error_logger_provider.dart';
+import '../../core/services/error_handler_service.dart';
 import 'services/canopy_load_service.dart';
 
 class DashboardData {
@@ -303,7 +304,13 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
     try {
       final meta = jsonDecode(latestPulses.first.reflectionText ?? '{}') as Map<String, dynamic>;
       latestWho5Percentage = (meta['percentage'] as num?)?.toInt() ?? 100;
-    } catch (_) {/* use default */}
+    } catch (e, stackTrace) {
+      ErrorHandlerService().logError(
+        e,
+        stackTrace,
+        context: 'DashboardProvider.parseWho5Metadata',
+      );
+    }
   }
   final isLowWellBeing = CanopyLoadService.isLowWellBeing(latestWho5Percentage);
   final dynamicCanopyCapacity = CanopyLoadService.calculateDynamicCapacity(

@@ -17,12 +17,14 @@ import 'widgets/review_decision_sheet.dart';
 // Stream provider to automatically watch decisions in database
 final decisionListProvider = StreamProvider<List<DecisionEntry>>((ref) {
   final db = ref.watch(dbProvider);
-  return (db.select(db.decisionEntries)..orderBy([
-        (tbl) => drift.OrderingTerm(
-          expression: tbl.decisionDate,
-          mode: drift.OrderingMode.desc,
-        ),
-      ]))
+  return (db.select(db.decisionEntries)
+        ..where((tbl) => tbl.deletedAt.isNull())
+        ..orderBy([
+          (tbl) => drift.OrderingTerm(
+            expression: tbl.decisionDate,
+            mode: drift.OrderingMode.desc,
+          ),
+        ]))
       .watch();
 });
 

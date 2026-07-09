@@ -251,7 +251,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 );
                 balanceIndex = (total / scores.length) / 10.0;
               }
-            } catch (_) {}
+            } catch (e, stackTrace) {
+              ErrorHandlerService().logError(
+                e,
+                stackTrace,
+                context: 'DashboardView.parseBalanceIndex',
+              );
+            }
           }
 
           return RefreshIndicator(
@@ -303,7 +309,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
                   // 3. Action of the Day / Celebration State
                   if (data.allDone)
-                    const CelebrationCard()
+                    CelebrationCard(
+                      cumulativeDays: data.cumulativeDays,
+                      vocabularyLevel: vocabularyLevel,
+                    )
                   else if (activeActionOfTheDay != null) ...[
                     Builder(
                       builder: (context) {
@@ -390,7 +399,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       0,
       (sum, hwl) => sum + hwl.habit.initiationFriction + hwl.habit.energyCost,
     );
-    final capacity = data.profile.canopyLoadCapacity;
+    final capacity = data.dynamicCanopyCapacity;
     if (capacity <= 0 || currentLoad <= capacity) {
       return const SizedBox.shrink();
     }

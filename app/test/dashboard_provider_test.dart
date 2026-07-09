@@ -79,4 +79,39 @@ void main() {
     expect(data.actionOfTheDay, isNotNull);
     expect(data.actionOfTheDay!.habitId, 'habit-2');
   });
+
+  test('Dashboard provider calculates dynamic canopy capacity correctly and sets lowWellBeing flag', () async {
+    final userId = 'user-1';
+    final now = DateTime.now();
+
+    // 1. Setup profile
+    await db.into(db.userProfiles).insert(
+          UserProfilesCompanion.insert(
+            userId: userId,
+            ageBand: '25-35',
+            canopyLoadCapacity: const drift.Value(10),
+            createdAt: now,
+            updatedAt: now,
+          ),
+        );
+
+    // 2. Add WHO-5 weekly pulse indicating distress (40%)
+    await db.into(db.weeklyPulses).insert(
+          WeeklyPulsesCompanion.insert(
+            pulseId: 'pulse-1',
+            userId: userId,
+            domainTag: 'WHO-5',
+            score: 8, // Out of 25 (8/25 = 32% < 50%)
+            reflectionText: const drift.Value('{"percentage":32}'),
+            weekStartDate: now,
+          ),
+        );
+
+    final data = await container.read(dashboardDataProvider.future);
+
+    // 3. Verify lowWellBeing flag is true and capacity is reduced
+    // adjusted = 10 * (0.3 + 0.7 * 0.32) = 10 * (0.3 + 0.224) = 10 * 0.524 = 5.24 -> rounded to 5
+    expect(data.isLowWellBeing, isTrue);
+    expect(data.dynamicCanopyCapacity, 5);
+  });
 }

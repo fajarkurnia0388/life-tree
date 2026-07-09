@@ -47,6 +47,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
   ];
 
   Future<void> _submitPulse() async {
+    if (_isSaving) return;
     if (_answers.contains(null)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

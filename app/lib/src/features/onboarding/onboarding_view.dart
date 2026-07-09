@@ -33,7 +33,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
   double _bodyScore = 5.0;
   bool _disclaimerAccepted = false;
 
-  static const int _readGateSeconds = 5;
+  static const int _readGateSeconds = 15;
   Timer? _readGateTimer;
   int _readSecondsRemaining = _readGateSeconds;
   bool _readGateElapsed = false;

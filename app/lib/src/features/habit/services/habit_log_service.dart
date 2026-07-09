@@ -59,6 +59,11 @@ class HabitLogService {
   }
 
   Future<void> _updateCompletionRate(String habitId) async {
+    final habit = await (_db.select(_db.habits)
+          ..where((tbl) => tbl.habitId.equals(habitId)))
+        .getSingle();
+    final daysSinceCreation = DateTime.now().difference(habit.createdAt).inDays.clamp(1, 90);
+    
     final ninetyDaysAgo = DateTime.now().subtract(const Duration(days: 90));
     final logs90d = await (_db.select(_db.habitLogs)
         ..where((tbl) =>
@@ -67,7 +72,7 @@ class HabitLogService {
             tbl.deletedAt.isNull()))
         .get();
     final done90d = logs90d.where((l) => l.status == HabitStatus.done).length;
-    final rate = logs90d.isNotEmpty ? done90d / 90.0 : 0.0;
+    final rate = logs90d.isNotEmpty ? done90d / daysSinceCreation.toDouble() : 0.0;
     await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habitId)))
         .write(HabitsCompanion(completionRate90d: drift.Value(rate.clamp(0.0, 1.0))));
   }

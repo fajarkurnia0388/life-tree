@@ -212,7 +212,7 @@ class _FrictionInterventionSheetState
                 ),
               ),
             ),
-          if (_selectedReason == 'Lupa')
+          if (_selectedReason == FrictionReason.lupa)
             Card(
               color: Colors.amber.withValues(alpha: 0.05),
               child: const Padding(

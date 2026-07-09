@@ -45,6 +45,13 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
     state = state.copyWith(selectedMethod: method);
   }
 
+  void loadSession(ThinkingCanvasSession session) {
+    state = ThinkingCanvasState(
+      selectedMethod: session.methodKey,
+      currentDraftContent: session.rawNotes ?? '',
+    );
+  }
+
   void updateDraft(String content) {
     state = state.copyWith(currentDraftContent: content);
     _autoSave(content);

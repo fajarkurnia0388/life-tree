@@ -132,7 +132,7 @@ class _ThinkingCanvasLiteViewState
                               ),
                               onTap: () {
                                 Navigator.pop(context);
-                                // Load session logic here
+                                ref.read(thinkingCanvasProvider.notifier).loadSession(s);
                               },
                             );
                           },

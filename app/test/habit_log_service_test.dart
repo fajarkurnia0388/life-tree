@@ -183,4 +183,65 @@ void main() {
       expect(finalHabit.lifetimeDoneCount, 0);
     });
   });
+
+  group('HabitLogService - completionRate90d dynamic denominator', () {
+    test('Habit baru dibuat kemarin (1 hari lalu) memiliki denominator = 1', () async {
+      final now = DateTime.now();
+      final yesterday = now.subtract(const Duration(days: 1));
+      
+      // Buat habit dengan createdAt kemarin
+      await db.into(db.habits).insert(
+            HabitsCompanion.insert(
+              habitId: 'habit-dynamic-denom-1',
+              userId: 'user-1',
+              title: 'Dynamic Denom Test',
+              createdAt: yesterday,
+            ),
+          );
+      final habit = (await (db.select(db.habits)
+                ..where((tbl) => tbl.habitId.equals('habit-dynamic-denom-1')))
+              .get())
+          .first;
+
+      // Mark done today (1 done / 1 hari = 1.0)
+      await service.markDone(habit: habit, date: now);
+
+      final updatedHabit = (await (db.select(db.habits)
+                ..where((tbl) => tbl.habitId.equals('habit-dynamic-denom-1')))
+              .get())
+          .first;
+      
+      expect(updatedHabit.completionRate90d, 1.0);
+    });
+
+    test('Habit baru dibuat 5 hari lalu dengan 2 done memiliki rate 0.4', () async {
+      final now = DateTime.now();
+      final fiveDaysAgo = now.subtract(const Duration(days: 5));
+      
+      await db.into(db.habits).insert(
+            HabitsCompanion.insert(
+              habitId: 'habit-dynamic-denom-5',
+              userId: 'user-1',
+              title: 'Dynamic Denom Test 5',
+              createdAt: fiveDaysAgo,
+            ),
+          );
+      final habit = (await (db.select(db.habits)
+                ..where((tbl) => tbl.habitId.equals('habit-dynamic-denom-5')))
+              .get())
+          .first;
+
+      // Mark done today and yesterday
+      await service.markDone(habit: habit, date: now);
+      await service.markDone(habit: habit, date: now.subtract(const Duration(days: 1)));
+
+      final updatedHabit = (await (db.select(db.habits)
+                ..where((tbl) => tbl.habitId.equals('habit-dynamic-denom-5')))
+              .get())
+          .first;
+      
+      // 2 done / 5 hari = 0.4
+      expect(updatedHabit.completionRate90d, closeTo(0.4, 0.01));
+    });
+  });
 }
