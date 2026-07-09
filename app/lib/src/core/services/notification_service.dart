@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
@@ -7,8 +9,15 @@ class NotificationService {
   static final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
 
+  static bool get _isSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+
   /// Initializes the notification plugin for Android and iOS.
   static Future<void> initialize() async {
+    if (!_isSupported) {
+      debugPrint('NotificationService: Local notifications are not supported on this platform.');
+      return;
+    }
+
     tz_data.initializeTimeZones();
 
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -41,6 +50,10 @@ class NotificationService {
     required int hour,
     required int minute,
   }) async {
+    if (!_isSupported) {
+      debugPrint('NotificationService: scheduleDaily skipped on unsupported platform.');
+      return;
+    }
     await _plugin.zonedSchedule(
       id: id,
       title: title,
@@ -72,5 +85,8 @@ class NotificationService {
   }
 
   /// Cancels a specific notification by ID.
-  static Future<void> cancel(int id) async => _plugin.cancel(id: id);
+  static Future<void> cancel(int id) async {
+    if (!_isSupported) return;
+    await _plugin.cancel(id: id);
+  }
 }
