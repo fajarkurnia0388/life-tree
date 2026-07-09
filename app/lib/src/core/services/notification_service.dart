@@ -58,7 +58,7 @@ class NotificationService {
       id: id,
       title: title,
       body: body,
-      scheduledDate: _nextInstanceOfTime(hour, minute),
+      scheduledDate: nextInstanceOfTime(hour, minute),
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'habit_reminders',
@@ -74,8 +74,9 @@ class NotificationService {
     );
   }
 
-  static tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
-    final now = tz.TZDateTime.now(tz.local);
+  @visibleForTesting
+  static tz.TZDateTime nextInstanceOfTime(int hour, int minute, {tz.TZDateTime? nowOverride}) {
+    final now = nowOverride ?? tz.TZDateTime.now(tz.local);
     var scheduled =
         tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
     if (scheduled.isBefore(now)) {

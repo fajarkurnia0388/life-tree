@@ -41,6 +41,11 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   String _frequency = 'Daily';
   late String _domainTag;
 
+  bool _reminderEnabled = true;
+  String _reminderTime = '08:00';
+  String _quietHoursStart = '22:00';
+  String _quietHoursEnd = '07:00';
+
   static const List<String> _domainTags = [
     'Tubuh',
     'Keuangan',
@@ -74,6 +79,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     final habit = await (db.select(
       db.habits,
     )..where((tbl) => tbl.habitId.equals(widget.habitId!))).getSingleOrNull();
+    final reminder = await (db.select(db.reminderPreferences)
+          ..where((tbl) => tbl.habitId.equals(widget.habitId!)))
+        .getSingleOrNull();
     if (habit != null && mounted) {
       setState(() {
         _isEditing = true;
@@ -87,6 +95,13 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         _frequency = habit.frequency;
         _domainTag = habit.domainTag ?? 'Tubuh';
         _showTemplates = false; // Hide templates in edit mode
+
+        if (reminder != null) {
+          _reminderEnabled = reminder.reminderEnabled;
+          _reminderTime = reminder.reminderTime;
+          _quietHoursStart = reminder.quietHoursStart;
+          _quietHoursEnd = reminder.quietHoursEnd;
+        }
 
         if (habit.scheduledDays != null) {
           _selectedDays.clear();
@@ -150,6 +165,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     await (db.update(db.habits)
           ..where((tbl) => tbl.habitId.equals(_existingHabit!.habitId)))
         .write(HabitsCompanion(deletedAt: drift.Value(now)));
+
+    await NotificationService.cancel(
+      _existingHabit!.habitId.hashCode.abs() % 100000,
+    );
 
     ref.invalidate(dashboardDataProvider);
 
@@ -244,9 +263,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         : _selectedDays.join(',');
 
     if (_isEditing && _existingHabit != null) {
+      final habitId = _existingHabit!.habitId;
       await (db.update(
         db.habits,
-      )..where((tbl) => tbl.habitId.equals(widget.habitId!))).write(
+      )..where((tbl) => tbl.habitId.equals(habitId))).write(
         HabitsCompanion(
           domainTag: drift.Value(_domainTag),
           title: drift.Value(_titleController.text.trim()),
@@ -263,6 +283,31 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
           ),
         ),
       );
+
+      final reminder = ReminderPreferencesCompanion(
+        habitId: drift.Value(habitId),
+        reminderEnabled: drift.Value(_reminderEnabled),
+        reminderTime: drift.Value(_reminderTime),
+        quietHoursStart: drift.Value(_quietHoursStart),
+        quietHoursEnd: drift.Value(_quietHoursEnd),
+      );
+      await db.into(db.reminderPreferences).insertOnConflictUpdate(reminder);
+
+      final parts = _reminderTime.split(':');
+      final hour = int.parse(parts[0]);
+      final minute = int.parse(parts[1]);
+
+      if (_reminderEnabled) {
+        await NotificationService.scheduleDaily(
+          id: habitId.hashCode.abs() % 100000,
+          title: 'Waktunya: ${_titleController.text.trim()}',
+          body: 'Jaga konsistensi pertumbuhanmu hari ini 🌱',
+          hour: hour,
+          minute: minute,
+        );
+      } else {
+        await NotificationService.cancel(habitId.hashCode.abs() % 100000);
+      }
     } else {
       final habitId = const Uuid().v4();
       final newHabit = HabitsCompanion.insert(
@@ -286,19 +331,30 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         ),
       );
 
-      final reminder = ReminderPreferencesCompanion.insert(habitId: habitId);
+      final reminder = ReminderPreferencesCompanion(
+        habitId: drift.Value(habitId),
+        reminderEnabled: drift.Value(_reminderEnabled),
+        reminderTime: drift.Value(_reminderTime),
+        quietHoursStart: drift.Value(_quietHoursStart),
+        quietHoursEnd: drift.Value(_quietHoursEnd),
+      );
 
       await db.into(db.habits).insert(newHabit);
       await db.into(db.reminderPreferences).insert(reminder);
 
-      // Schedule Notification
-      await NotificationService.scheduleDaily(
-        id: habitId.hashCode.abs() % 100000,
-        title: 'Waktunya: ${_titleController.text.trim()}',
-        body: 'Jaga konsistensi pertumbuhanmu hari ini 🌱',
-        hour: 8,
-        minute: 0,
-      );
+      final parts = _reminderTime.split(':');
+      final hour = int.parse(parts[0]);
+      final minute = int.parse(parts[1]);
+
+      if (_reminderEnabled) {
+        await NotificationService.scheduleDaily(
+          id: habitId.hashCode.abs() % 100000,
+          title: 'Waktunya: ${_titleController.text.trim()}',
+          body: 'Jaga konsistensi pertumbuhanmu hari ini 🌱',
+          hour: hour,
+          minute: minute,
+        );
+      }
     }
 
     ref.invalidate(dashboardDataProvider);
@@ -717,6 +773,120 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 onChanged: (val) => setState(() => _mvaDurationMin = val),
               ),
 
+              const SizedBox(height: 20),
+              Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(Icons.notifications_active_outlined, size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                'Pengingat Kebiasaan',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          Switch(
+                            value: _reminderEnabled,
+                            onChanged: (val) =>
+                                setState(() => _reminderEnabled = val),
+                          ),
+                        ],
+                      ),
+                      if (_reminderEnabled) ...[
+                        const Divider(),
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Waktu Pengingat', style: TextStyle(fontSize: 14)),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              _reminderTime,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.onPrimaryContainer,
+                              ),
+                            ),
+                          ),
+                          onTap: () async {
+                            final time = await _pickTime(context, _reminderTime);
+                            if (time != null) {
+                              setState(() => _reminderTime = time);
+                            }
+                          },
+                        ),
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Jam Sunyi Mulai (Quiet Start)', style: TextStyle(fontSize: 14)),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              _quietHoursStart,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                          onTap: () async {
+                            final time = await _pickTime(context, _quietHoursStart);
+                            if (time != null) {
+                              setState(() => _quietHoursStart = time);
+                            }
+                          },
+                        ),
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Jam Sunyi Selesai (Quiet End)', style: TextStyle(fontSize: 14)),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              _quietHoursEnd,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                          onTap: () async {
+                            final time = await _pickTime(context, _quietHoursEnd);
+                            if (time != null) {
+                              setState(() => _quietHoursEnd = time);
+                            }
+                          },
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+
               const SizedBox(height: 32),
 
               ElevatedButton(
@@ -846,5 +1016,21 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         ],
       ),
     );
+  }
+
+  Future<String?> _pickTime(BuildContext context, String current) async {
+    final parts = current.split(':');
+    final initialTime = TimeOfDay(
+      hour: int.tryParse(parts[0]) ?? 8,
+      minute: int.tryParse(parts[1]) ?? 0,
+    );
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+    if (picked == null) return null;
+    final hourStr = picked.hour.toString().padLeft(2, '0');
+    final minuteStr = picked.minute.toString().padLeft(2, '0');
+    return '$hourStr:$minuteStr';
   }
 }

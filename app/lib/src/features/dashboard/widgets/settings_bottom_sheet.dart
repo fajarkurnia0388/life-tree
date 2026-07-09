@@ -17,6 +17,7 @@ import '../../../core/animations/dialog_animations.dart';
 import '../../../data/local_db/database.dart';
 import '../../onboarding/onboarding_view.dart';
 import '../dashboard_provider.dart';
+import '../../../core/services/notification_service.dart';
 
 /// Bottom Sheet untuk Settings (Export, Reset, Theme)
 class SettingsBottomSheet extends ConsumerWidget {
@@ -160,6 +161,16 @@ class SettingsBottomSheet extends ConsumerWidget {
     );
 
     if (confirm != true) return;
+
+    // Cancel all scheduled notifications for existing habits
+    try {
+      final habits = await db.select(db.habits).get();
+      for (final habit in habits) {
+        await NotificationService.cancel(habit.habitId.hashCode.abs() % 100000);
+      }
+    } catch (e) {
+      debugPrint('Failed to cancel notifications during reset: $e');
+    }
 
     // Delete all data
     await db.delete(db.habitLogs).go();

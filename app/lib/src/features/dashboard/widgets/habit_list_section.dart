@@ -10,6 +10,7 @@ import '../../../core/providers/db_provider.dart';
 import '../../cultivation/cultivation_provider.dart';
 import '../../cultivation/cultivation_strings.dart';
 import '../dashboard_provider.dart';
+import '../../../core/services/notification_service.dart';
 
 /// Widget untuk menampilkan daftar kebiasaan hari ini
 class HabitListSection extends ConsumerWidget {
@@ -142,6 +143,9 @@ class HabitListSection extends ConsumerWidget {
           await (db.update(db.habits)
                 ..where((tbl) => tbl.habitId.equals(item.habit.habitId)))
               .write(HabitsCompanion(deletedAt: drift.Value(DateTime.now())));
+          await NotificationService.cancel(
+            item.habit.habitId.hashCode.abs() % 100000,
+          );
           ref.invalidate(dashboardDataProvider);
         },
         child: Opacity(
