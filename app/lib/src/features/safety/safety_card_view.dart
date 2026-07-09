@@ -92,12 +92,12 @@ class SafetyCardView extends ConsumerWidget {
                   // Hotline 1: SEJIWA (119 ext 8)
                   _buildHotlineCard(
                     theme: theme,
-                    title: 'Layanan Kesehatan Jiwa SEJIWA (Kemenkes)',
+                    title: 'Layanan Kesehatan Jiwa SEJIWA (Healing119)',
                     number: '119 (Ekstensi 8)',
-                    description: 'Layanan konseling psikologis darurat bebas biaya dari Pemerintah Indonesia.',
+                    description: 'Layanan konseling psikologis darurat bebas biaya dari Pemerintah Indonesia. Terintegrasi dengan platform Healing119.id.',
                     color: color1,
                     onTap: () async {
-                      await _logHotlineTap(ref, 'SEJIWA');
+                      await _logHotlineTap(ref, 'SEJIWA_Call');
                       final uri = Uri.parse('tel:119');
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(uri);
@@ -107,6 +107,51 @@ class SafetyCardView extends ConsumerWidget {
                         }
                       }
                     },
+                    additionalActions: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              await _logHotlineTap(ref, 'SEJIWA_WhatsApp');
+                              final url = Uri.parse(
+                                'https://api.whatsapp.com/send/?phone=6281380073120&text=halo%20kak%2C%20saya%20ingin%20bercerita%20mengenai...&type=phone_number&app_absent=0',
+                              );
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                              }
+                            },
+                            icon: const Icon(Icons.chat_outlined, size: 16),
+                            label: const Text('Chat WhatsApp', style: TextStyle(fontSize: 11)),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: color1),
+                              foregroundColor: color1,
+                              minimumSize: const Size(0, 44),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              await _logHotlineTap(ref, 'SEJIWA_Website');
+                              final url = Uri.parse('https://www.healing119.id/');
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                              }
+                            },
+                            icon: const Icon(Icons.language_rounded, size: 16),
+                            label: const Text('Buka Website', style: TextStyle(fontSize: 11)),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: color1),
+                              foregroundColor: color1,
+                              minimumSize: const Size(0, 44),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
 
@@ -179,6 +224,7 @@ class SafetyCardView extends ConsumerWidget {
     required String description,
     required Color color,
     required VoidCallback onTap,
+    Widget? additionalActions,
   }) {
     return Card(
       shape: RoundedRectangleBorder(
@@ -211,6 +257,10 @@ class SafetyCardView extends ConsumerWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
+            if (additionalActions != null) ...[
+              const SizedBox(height: 12),
+              additionalActions,
+            ],
           ],
         ),
       ),
