@@ -222,8 +222,13 @@ class SettingsBottomSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDarkEffective = theme.brightness == Brightness.dark;
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
+    final profileAsync = ref.watch(userProfileProvider);
+    final profile = profileAsync.valueOrNull;
+
+    final currentMode = profile?.themeMode ?? 'System';
+    final circadianEnabled = profile?.circadianEnabled ?? false;
+    final devMode = profile?.isDeveloperMode ?? false;
 
     return Container(
       padding: const EdgeInsets.all(20.0),
@@ -267,132 +272,101 @@ class SettingsBottomSheet extends ConsumerWidget {
           const SizedBox(height: 16),
           const Divider(),
           const SizedBox(height: 16),
-          FutureBuilder<UserProfile?>(
-            future: (ref.read(dbProvider).select(ref.read(dbProvider).userProfiles)..limit(1)).getSingleOrNull(),
-            builder: (context, snapshot) {
-              final profile = snapshot.data;
-              final currentMode = profile?.themeMode ?? 'System';
-
-              return ListTile(
-                leading: const Icon(Icons.palette_outlined),
-                title: const Text('Tema Tampilan'),
-                trailing: DropdownButton<String>(
-                  value: currentMode,
-                  underline: const SizedBox.shrink(),
-                  items: const [
-                    DropdownMenuItem(value: 'Light', child: Text('Terang')),
-                    DropdownMenuItem(value: 'Dark', child: Text('Gelap')),
-                    DropdownMenuItem(value: 'System', child: Text('Sistem')),
-                  ],
-                  onChanged: (newMode) async {
-                    if (newMode == null) return;
-                    final db = ref.read(dbProvider);
-                    if (profile == null) return;
-                    await (db.update(db.userProfiles)
-                          ..where((tbl) => tbl.userId.equals(profile.userId)))
-                        .write(UserProfilesCompanion(themeMode: drift.Value(newMode)));
-                    ref.invalidate(dashboardDataProvider);
-                    ref.invalidate(appThemeModeProvider);
-                  },
-                ),
-              );
-            },
+          ListTile(
+            leading: const Icon(Icons.palette_outlined),
+            title: const Text('Tema Tampilan'),
+            trailing: DropdownButton<String>(
+              value: currentMode,
+              underline: const SizedBox.shrink(),
+              items: const [
+                DropdownMenuItem(value: 'Light', child: Text('Terang')),
+                DropdownMenuItem(value: 'Dark', child: Text('Gelap')),
+                DropdownMenuItem(value: 'System', child: Text('Sistem')),
+              ],
+              onChanged: (newMode) async {
+                if (newMode == null) return;
+                final db = ref.read(dbProvider);
+                if (profile == null) return;
+                await (db.update(db.userProfiles)
+                      ..where((tbl) => tbl.userId.equals(profile.userId)))
+                    .write(UserProfilesCompanion(themeMode: drift.Value(newMode)));
+                ref.invalidate(dashboardDataProvider);
+                ref.invalidate(appThemeModeProvider);
+              },
+            ),
           ),
           const SizedBox(height: 8),
-          FutureBuilder<UserProfile?>(
-            future: (ref.read(dbProvider).select(ref.read(dbProvider).userProfiles)..limit(1)).getSingleOrNull(),
-            builder: (context, snapshot) {
-              final profile = snapshot.data;
-              final circadianEnabled = profile?.circadianEnabled ?? false;
-
-              return ListTile(
-                leading: const Icon(Icons.wb_twilight_rounded),
-                title: const Text('Palet Sirkadian'),
-                subtitle: const Text('Warna berubah sesuai waktu alam'),
-                trailing: Switch(
-                  value: circadianEnabled,
-                  onChanged: (enabled) async {
-                    final db = ref.read(dbProvider);
-                    if (profile == null) return;
-                    await (db.update(db.userProfiles)
-                          ..where((tbl) => tbl.userId.equals(profile.userId)))
-                        .write(UserProfilesCompanion(circadianEnabled: drift.Value(enabled)));
-                    ref.invalidate(dashboardDataProvider);
-                    ref.invalidate(appThemeModeProvider);
-                  },
-                ),
-              );
-            },
+          ListTile(
+            leading: const Icon(Icons.wb_twilight_rounded),
+            title: const Text('Palet Sirkadian'),
+            subtitle: const Text('Warna berubah sesuai waktu alam'),
+            trailing: Switch(
+              value: circadianEnabled,
+              onChanged: (enabled) async {
+                final db = ref.read(dbProvider);
+                if (profile == null) return;
+                await (db.update(db.userProfiles)
+                      ..where((tbl) => tbl.userId.equals(profile.userId)))
+                    .write(UserProfilesCompanion(circadianEnabled: drift.Value(enabled)));
+                ref.invalidate(dashboardDataProvider);
+                ref.invalidate(appThemeModeProvider);
+              },
+            ),
           ),
           const SizedBox(height: 8),
-          FutureBuilder<UserProfile?>(
-            future:
-                (ref.read(dbProvider).select(ref.read(dbProvider).userProfiles)
-                      ..limit(1))
-                    .getSingleOrNull(),
-            builder: (context, snapshot) {
-              final profile = snapshot.data;
-              final devMode = profile?.isDeveloperMode ?? false;
-
-              return Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.auto_awesome_outlined),
-                    title: Text(
-                      DaojiText.resolve(
-                        DaojiTextKey.settingsVocabularyStyle,
-                        vocabularyLevel,
-                      ),
-                    ),
-                    subtitle: Text(vocabularyLevel.description),
-                    trailing: DropdownButton<DaojiVocabularyLevel>(
-                      value: vocabularyLevel,
-                      underline: const SizedBox.shrink(),
-                      items: DaojiVocabularyLevel.values.map((level) {
-                        return DropdownMenuItem(
-                          value: level,
-                          child: Text(level.displayName),
-                        );
-                      }).toList(),
-                      onChanged: (newLevel) {
-                        if (newLevel != null) {
-                          ref
-                              .read(daojiVocabularyControllerProvider)
-                              .setLevel(newLevel);
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(),
-                  const SizedBox(height: 16),
-                  ListTile(
-                    leading: Icon(
-                      devMode
-                          ? Icons.developer_mode_rounded
-                          : Icons.developer_mode_outlined,
-                      color: Colors.blueGrey,
-                    ),
-                    title: Text(
-                      DaojiText.resolve(
-                        DaojiTextKey.settingsDevMode,
-                        vocabularyLevel,
-                      ),
-                    ),
-                    subtitle: Text(
-                      DaojiText.resolve(
-                        DaojiTextKey.settingsDevModeSubtitle,
-                        vocabularyLevel,
-                      ),
-                    ),
-                    trailing: Switch(
-                      value: devMode,
-                      onChanged: (value) => _toggleDeveloperMode(ref, value),
-                    ),
-                  ),
-                ],
-              );
-            },
+          ListTile(
+            leading: const Icon(Icons.auto_awesome_outlined),
+            title: Text(
+              DaojiText.resolve(
+                DaojiTextKey.settingsVocabularyStyle,
+                vocabularyLevel,
+              ),
+            ),
+            subtitle: Text(vocabularyLevel.description),
+            trailing: DropdownButton<DaojiVocabularyLevel>(
+              value: vocabularyLevel,
+              underline: const SizedBox.shrink(),
+              items: DaojiVocabularyLevel.values.map((level) {
+                return DropdownMenuItem(
+                  value: level,
+                  child: Text(level.displayName),
+                );
+              }).toList(),
+              onChanged: (newLevel) {
+                if (newLevel != null) {
+                  ref
+                      .read(daojiVocabularyControllerProvider)
+                      .setLevel(newLevel);
+                }
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Divider(),
+          const SizedBox(height: 16),
+          ListTile(
+            leading: Icon(
+              devMode
+                  ? Icons.developer_mode_rounded
+                  : Icons.developer_mode_outlined,
+              color: Colors.blueGrey,
+            ),
+            title: Text(
+              DaojiText.resolve(
+                DaojiTextKey.settingsDevMode,
+                vocabularyLevel,
+              ),
+            ),
+            subtitle: Text(
+              DaojiText.resolve(
+                DaojiTextKey.settingsDevModeSubtitle,
+                vocabularyLevel,
+              ),
+            ),
+            trailing: Switch(
+              value: devMode,
+              onChanged: (value) => _toggleDeveloperMode(ref, value),
+            ),
           ),
         ],
       ),

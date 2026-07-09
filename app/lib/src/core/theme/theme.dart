@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/db_provider.dart';
 import '../../features/dashboard/dashboard_provider.dart';
+import '../../data/local_db/database.dart';
 
 class CalmTheme {
   // Daoji Premium Palette (Aligned with landing page)
@@ -200,6 +201,14 @@ class CalmTheme {
     );
   }
 }
+
+final userProfileProvider = StreamProvider<UserProfile?>((ref) {
+  final db = ref.watch(dbProvider);
+  return (db.select(db.userProfiles)..limit(1)).watch().map((profiles) {
+    if (profiles.isEmpty) return null;
+    return profiles.first;
+  });
+});
 
 final appThemeRawModeProvider = StreamProvider<String>((ref) {
   final db = ref.watch(dbProvider);
