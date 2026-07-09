@@ -14,10 +14,16 @@ import '../dashboard_provider.dart';
 class SeasonBadgeWidget extends ConsumerWidget {
   final String season;
   final DateTime? recoveryEndDate;
+  /// When true, the "Akhiri" (end recovery) button is locked.
+  /// This prevents users from exiting Recovery Mode while their WHO-5
+  /// well-being score remains below the 50 % health threshold.
+  final bool isLowWellBeing;
+
   const SeasonBadgeWidget({
     super.key,
     required this.season,
     this.recoveryEndDate,
+    this.isLowWellBeing = false,
   });
 
   /// Whole days remaining until recovery ends (>= 0). Returns null when unknown.
@@ -108,14 +114,34 @@ class SeasonBadgeWidget extends ConsumerWidget {
               ),
             ),
             if (season == Season.recovery)
-              TextButton(
-                onPressed: () => _endRecoveryMode(ref),
-                style: TextButton.styleFrom(minimumSize: const Size(64, 44)),
-                child: const Text(
-                  'Akhiri',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
+              isLowWellBeing
+                  ? Tooltip(
+                      message: 'Pulihkan kesehatan emosional Anda\nterlebih dahulu (skor WHO-5 ≥ 50%)',
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.lock_outline,
+                              size: 14,
+                              color: CalmTheme.secondaryBlue.withValues(alpha: 0.6)),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Terkunci',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: CalmTheme.secondaryBlue.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : TextButton(
+                      onPressed: () => _endRecoveryMode(ref),
+                      style: TextButton.styleFrom(minimumSize: const Size(64, 44)),
+                      child: const Text(
+                        'Akhiri',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
           ],
         ),
       ),

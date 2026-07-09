@@ -149,6 +149,20 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
         ),
       );
 
+      // Auto-set SupportMode based on WHO-5 well-being threshold (< 50% = Recovery).
+      // This is a protective intervention: system adapts to user's real condition.
+      final newSupportMode = percentage < 50 ? SupportMode.recovery : SupportMode.normal;
+      final recoveryEndDate = percentage < 50
+          ? drift.Value<DateTime?>(now.add(const Duration(days: 7)))
+          : const drift.Value<DateTime?>(null);
+      await (db.update(db.userProfiles)
+            ..where((tbl) => tbl.userId.equals(userId)))
+          .write(UserProfilesCompanion(
+        supportMode: drift.Value(newSupportMode),
+        recoveryEndDate: recoveryEndDate,
+        updatedAt: drift.Value(now),
+      ));
+
       ref.invalidate(dashboardDataProvider);
 
       if (mounted) {

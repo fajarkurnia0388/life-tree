@@ -268,6 +268,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   SeasonBadgeWidget(
                     season: data.season,
                     recoveryEndDate: data.profile.recoveryEndDate,
+                    isLowWellBeing: data.isLowWellBeing,
                   ),
                   const SizedBox(height: 12),
 

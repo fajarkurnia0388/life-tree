@@ -196,6 +196,30 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             ))
             .get();
 
+    // --- Anti-Guilt Protection: block NEW habit creation during low well-being ---
+    // Editing an existing habit is always allowed (preserving user agency).
+    if (!_isEditing) {
+      final dashboardAsync = ref.read(dashboardDataProvider);
+      final isLowWellBeing = dashboardAsync.whenOrNull(data: (d) => d.isLowWellBeing) ?? false;
+      if (isLowWellBeing) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              '🌿 Daoji menyarankan beristirahat sejenak.\n'
+              'Kesehatan emosional Anda sedang dalam mode pemulihan. '
+              'Selesaikan weekly pulse berikutnya untuk membuka kembali fitur ini.',
+            ),
+            backgroundColor: const Color(0xFF5B8FA8),
+            duration: const Duration(seconds: 5),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+        return;
+      }
+    }
+
     final currentLoad = activeHabits.fold<int>(
       0,
       (sum, h) => sum + h.initiationFriction + h.energyCost,

@@ -7,6 +7,7 @@ import '../../data/local_db/database.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/domain/priority_helper.dart';
 import '../../core/services/error_logger_provider.dart';
+import 'services/canopy_load_service.dart';
 
 class DashboardData {
   final UserProfile profile;
@@ -16,6 +17,12 @@ class DashboardData {
   final List<HabitWithLog> habitsToday;
   final bool allDone;
   final bool hasOverdueDecisions;
+  /// True when the user's latest WHO-5 score is below the 50% well-being threshold.
+  /// Triggers Recovery Mode protections across the UI (habit blocking, season lock).
+  final bool isLowWellBeing;
+  /// Dynamically adjusted canopy load capacity based on WHO-5 score.
+  /// Uses CanopyLoadService.calculateDynamicCapacity formula.
+  final int dynamicCanopyCapacity;
 
   DashboardData({
     required this.profile,
@@ -25,6 +32,8 @@ class DashboardData {
     required this.habitsToday,
     required this.allDone,
     required this.hasOverdueDecisions,
+    this.isLowWellBeing = false,
+    required this.dynamicCanopyCapacity,
   });
 }
 
@@ -283,7 +292,26 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
           .get();
   final hasOverdueDecisions = overdueDecisions.isNotEmpty;
 
-  // 7. Check if all scheduled habits today are done
+  // 7. Compute WHO-5 well-being flag and dynamic canopy capacity
+  int latestWho5Percentage = 100; // Default: assume full well-being
+  final latestPulses = await (db.select(db.weeklyPulses)
+        ..where((tbl) => tbl.userId.equals(profile.userId) & tbl.domainTag.equals('WHO-5'))
+        ..orderBy([(tbl) => OrderingTerm(expression: tbl.weekStartDate, mode: OrderingMode.desc)])
+        ..limit(1))
+      .get();
+  if (latestPulses.isNotEmpty) {
+    try {
+      final meta = jsonDecode(latestPulses.first.reflectionText ?? '{}') as Map<String, dynamic>;
+      latestWho5Percentage = (meta['percentage'] as num?)?.toInt() ?? 100;
+    } catch (_) {/* use default */}
+  }
+  final isLowWellBeing = CanopyLoadService.isLowWellBeing(latestWho5Percentage);
+  final dynamicCanopyCapacity = CanopyLoadService.calculateDynamicCapacity(
+    who5Percentage: latestWho5Percentage,
+    baseCapacity: profile.canopyLoadCapacity,
+  );
+
+  // 8. Check if all scheduled habits today are done
   final totalScheduledToday = habitsToday.length;
   final totalDoneToday = habitsToday
       .where((hwl) => hwl.log?.status == HabitStatus.done)
@@ -299,5 +327,7 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
     habitsToday: habitsToday,
     allDone: allDone,
     hasOverdueDecisions: hasOverdueDecisions,
+    isLowWellBeing: isLowWellBeing,
+    dynamicCanopyCapacity: dynamicCanopyCapacity,
   );
 });
