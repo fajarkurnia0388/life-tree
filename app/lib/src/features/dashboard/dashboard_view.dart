@@ -140,11 +140,15 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         title: Builder(
           builder: (context) {
             final hour = DateTime.now().hour;
-            final greeting = hour < 11
+            final greeting = hour < 4
+                ? 'Selamat Malam'
+                : hour < 11
                 ? 'Selamat Pagi'
                 : hour < 15
                 ? 'Selamat Siang'
-                : 'Selamat Sore';
+                : hour < 18
+                ? 'Selamat Sore'
+                : 'Selamat Malam';
             final now = DateTime.now();
             final dateStr = '${now.day} ${_monthName(now.month)} ${now.year}';
             return Column(
@@ -170,7 +174,15 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           dataAsync.when(
             data: (data) => _buildCanopyLoadBadge(context, data),
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.shield_outlined),
+            tooltip: 'Dukungan Kesehatan Diri',
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              context.push('/safety');
+            },
           ),
           Padding(
             padding: const EdgeInsets.only(right: 8.0),

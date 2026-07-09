@@ -11,13 +11,19 @@ enum CultivationSeason {
   quietIntegration,
 }
 
-// Backwards-compatible enum used by older tests and code references.
+// Backwards-compatible enum representing the 6 Life Domains (Palaces).
+// Preferred for general domain references.
 enum CultivationPalace { body, resource, bond, heartSea, craft, joy }
 
+// Represents the 6 styles of growth (Paths).
+// E.g., sword, alchemist, formation, body, word, shadow.
 enum CultivationPracticePath { sword, alchemist, formation, body, word, shadow }
 
 enum CultivationLanguageLevel { plain, hybrid, full }
 
+// WARNING: Legacy enum representing domains (Palaces) despite being named "Path".
+// This is a duplicate of CultivationPalace retained for compatibility. Do not confuse
+// this with CultivationPracticePath (which represents actual growth paths/styles).
 enum CultivationPath { body, resource, bond, heartSea, craft, joy }
 
 class CultivationRealm {
