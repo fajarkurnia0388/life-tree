@@ -5,6 +5,8 @@ import '../../../core/i18n/daoji_text_resolver.dart';
 
 import 'package:flutter/services.dart';
 
+import '../../../core/services/app_sound_service.dart';
+
 /// Card widget untuk Celebration State (semua habit selesai)
 class CelebrationCard extends StatefulWidget {
   final int cumulativeDays;
@@ -24,7 +26,7 @@ class _CelebrationCardState extends State<CelebrationCard> {
   @override
   void initState() {
     super.initState();
-    HapticFeedback.heavyImpact();
+    AppSoundService.playTibetanChime();
   }
 
   @override

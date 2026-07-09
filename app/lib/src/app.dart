@@ -17,9 +17,10 @@ class DaojiApp extends ConsumerWidget {
     return onboardingState.when(
       data: (completed) {
         final router = ref.watch(routerProvider);
+        final dynamicTheme = ref.watch(appDynamicThemeProvider);
         final appWidget = MaterialApp.router(
           title: 'Daoji',
-          theme: CalmTheme.lightTheme,
+          theme: dynamicTheme,
           darkTheme: CalmTheme.darkTheme,
           themeMode: themeMode,
           routerConfig: router,

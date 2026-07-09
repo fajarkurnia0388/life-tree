@@ -267,15 +267,39 @@ class SettingsBottomSheet extends ConsumerWidget {
           const SizedBox(height: 16),
           const Divider(),
           const SizedBox(height: 16),
-          ListTile(
-            leading: const Icon(Icons.dark_mode_outlined),
-            title: Text(
-              DaojiText.resolve(DaojiTextKey.settingsDarkMode, vocabularyLevel),
-            ),
-            trailing: Switch(
-              value: isDarkEffective,
-              onChanged: (value) => _toggleThemeMode(ref, value),
-            ),
+          FutureBuilder<UserProfile?>(
+            future: (ref.read(dbProvider).select(ref.read(dbProvider).userProfiles)..limit(1)).getSingleOrNull(),
+            builder: (context, snapshot) {
+              final profile = snapshot.data;
+              final currentMode = profile?.themeMode ?? 'System';
+
+              return ListTile(
+                leading: const Icon(Icons.palette_outlined),
+                title: Text(
+                  DaojiText.resolve(DaojiTextKey.settingsDarkMode, vocabularyLevel),
+                ),
+                trailing: DropdownButton<String>(
+                  value: currentMode,
+                  underline: const SizedBox.shrink(),
+                  items: const [
+                    DropdownMenuItem(value: 'Light', child: Text('Terang')),
+                    DropdownMenuItem(value: 'Dark', child: Text('Gelap')),
+                    DropdownMenuItem(value: 'System', child: Text('Sistem')),
+                    DropdownMenuItem(value: 'Circadian', child: Text('Sirkadian')),
+                  ],
+                  onChanged: (newMode) async {
+                    if (newMode == null) return;
+                    final db = ref.read(dbProvider);
+                    if (profile == null) return;
+                    await (db.update(db.userProfiles)
+                          ..where((tbl) => tbl.userId.equals(profile.userId)))
+                        .write(UserProfilesCompanion(themeMode: drift.Value(newMode)));
+                    ref.invalidate(dashboardDataProvider);
+                    ref.invalidate(appThemeModeProvider);
+                  },
+                ),
+              );
+            },
           ),
           const SizedBox(height: 8),
           FutureBuilder<UserProfile?>(

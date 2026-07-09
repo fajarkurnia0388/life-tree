@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/db_provider.dart';
+import '../../features/dashboard/dashboard_provider.dart';
 
 class CalmTheme {
   // Daoji Premium Palette (Aligned with landing page)
@@ -155,21 +156,113 @@ class CalmTheme {
           fontFamily: 'Inter',
         ),
       ),
-      buttonTheme: const ButtonThemeData(
-        minWidth: 88,
-        height: 48, // Touch target guideline
+    );
+  }
+
+  static ThemeData get fajarTheme {
+    return lightTheme.copyWith(
+      scaffoldBackgroundColor: const Color(0xFFF3EBF6),
+      colorScheme: lightTheme.colorScheme.copyWith(
+        primary: const Color(0xFF907C9E),
+        primaryContainer: const Color(0xFFD4C2DC),
+      ),
+    );
+  }
+
+  static ThemeData get siangTheme {
+    return lightTheme.copyWith(
+      scaffoldBackgroundColor: const Color(0xFFEDF2F7),
+      colorScheme: lightTheme.colorScheme.copyWith(
+        primary: const Color(0xFF4A7C9D),
+        primaryContainer: const Color(0xFFA5C3D6),
+      ),
+    );
+  }
+
+  static ThemeData get senjaTheme {
+    return lightTheme.copyWith(
+      scaffoldBackgroundColor: const Color(0xFFFDF5E6),
+      colorScheme: lightTheme.colorScheme.copyWith(
+        primary: const Color(0xFFC78550),
+        primaryContainer: const Color(0xFFEBC1A0),
+      ),
+    );
+  }
+
+  static ThemeData get malamTheme {
+    return darkTheme.copyWith(
+      scaffoldBackgroundColor: const Color(0xFF0A0F0D),
+      colorScheme: darkTheme.colorScheme.copyWith(
+        primary: const Color(0xFF55826B),
+        primaryContainer: const Color(0xFF1E3A2F),
+        surface: const Color(0xFF121B17),
       ),
     );
   }
 }
 
-final appThemeModeProvider = StreamProvider<ThemeMode>((ref) {
+final appThemeRawModeProvider = StreamProvider<String>((ref) {
   final db = ref.watch(dbProvider);
   return (db.select(db.userProfiles)..limit(1)).watch().map((profiles) {
-    if (profiles.isEmpty) return ThemeMode.system;
-    final mode = profiles.first.themeMode;
-    if (mode == 'Light') return ThemeMode.light;
-    if (mode == 'Dark') return ThemeMode.dark;
-    return ThemeMode.system;
+    if (profiles.isEmpty) return 'System';
+    return profiles.first.themeMode;
   });
+});
+
+final appThemeModeProvider = StreamProvider<ThemeMode>((ref) {
+  final rawModeAsync = ref.watch(appThemeRawModeProvider);
+  return rawModeAsync.when(
+    data: (mode) {
+      ThemeMode resolvedMode = ThemeMode.system;
+      if (mode == 'Light') resolvedMode = ThemeMode.light;
+      if (mode == 'Dark') resolvedMode = ThemeMode.dark;
+      if (mode == 'Circadian') {
+        final hour = DateTime.now().hour;
+        resolvedMode = (hour >= 18 || hour < 5) ? ThemeMode.dark : ThemeMode.light;
+      }
+      return Stream.value(resolvedMode);
+    },
+    loading: () => const Stream.empty(),
+    error: (_, __) => const Stream.empty(),
+  );
+});
+
+final appDynamicThemeProvider = Provider<ThemeData>((ref) {
+  final rawModeAsync = ref.watch(appThemeRawModeProvider);
+  final rawMode = rawModeAsync.valueOrNull ?? 'System';
+
+  final devTimeOverride = ref.watch(devTimeOfDayOverrideProvider);
+
+  if (rawMode == 'Circadian' || devTimeOverride != CelestialTime.auto) {
+    CelestialTime activeTime = devTimeOverride;
+    if (activeTime == CelestialTime.auto) {
+      final hour = DateTime.now().hour;
+      if (hour >= 5 && hour < 8) {
+        activeTime = CelestialTime.morning;
+      } else if (hour >= 8 && hour < 15) {
+        activeTime = CelestialTime.noon;
+      } else if (hour >= 15 && hour < 18) {
+        activeTime = CelestialTime.sunset;
+      } else {
+        activeTime = CelestialTime.night;
+      }
+    }
+
+    switch (activeTime) {
+      case CelestialTime.morning:
+        return CalmTheme.fajarTheme;
+      case CelestialTime.noon:
+        return CalmTheme.siangTheme;
+      case CelestialTime.sunset:
+        return CalmTheme.senjaTheme;
+      case CelestialTime.night:
+      default:
+        return CalmTheme.malamTheme;
+    }
+  }
+
+  final themeModeAsync = ref.watch(appThemeModeProvider);
+  final themeMode = themeModeAsync.valueOrNull ?? ThemeMode.system;
+  if (themeMode == ThemeMode.dark) return CalmTheme.darkTheme;
+  return CalmTheme.lightTheme;
 });

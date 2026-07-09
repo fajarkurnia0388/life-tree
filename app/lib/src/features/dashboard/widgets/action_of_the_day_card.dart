@@ -11,6 +11,7 @@ import '../../../core/services/error_handler_service.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
 import '../dashboard_provider.dart';
+import 'breathing_ritual_overlay.dart';
 
 /// Card widget untuk Action of the Day
 class ActionOfTheDayCard extends ConsumerWidget {
@@ -102,7 +103,33 @@ class ActionOfTheDayCard extends ConsumerWidget {
                     ),
                   ),
                 ],
-                const Spacer(),
+                if ((habit.initiationFriction) >= 4) ...[
+                  IconButton(
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      BreathingRitualOverlay.show(
+                        context,
+                        onComplete: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Pikiran Anda sekarang lebih tenang. Siap melangkah 🌱'),
+                              duration: Duration(seconds: 3),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(Icons.self_improvement_rounded, color: domainColor),
+                    iconSize: 20,
+                    constraints: const BoxConstraints(
+                      minWidth: 44,
+                      minHeight: 44,
+                    ),
+                    padding: EdgeInsets.zero,
+                    tooltip: 'Latihan pernapasan penenang',
+                  ),
+                  const SizedBox(width: 4),
+                ],
                 IconButton(
                   onPressed: () => _showWhyDialog(
                     context,

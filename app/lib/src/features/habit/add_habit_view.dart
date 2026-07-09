@@ -59,6 +59,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
   bool _isEditing = false;
   Habit? _existingHabit;
+  String? _stackedToHabitId;
 
   @override
   void initState() {
@@ -95,6 +96,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         _frequency = habit.frequency;
         _domainTag = habit.domainTag ?? 'Tubuh';
         _showTemplates = false; // Hide templates in edit mode
+        _stackedToHabitId = habit.stackedToHabitId;
 
         if (reminder != null) {
           _reminderEnabled = reminder.reminderEnabled;
@@ -300,6 +302,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
           energyCost: drift.Value(_energyCost),
           impactScore: drift.Value(_impactScore),
           mvaDurationMin: drift.Value(_mvaDurationMin),
+          stackedToHabitId: drift.Value(_stackedToHabitId),
           goalTag: drift.Value(
             _goalTagController.text.trim().isEmpty
                 ? null
@@ -347,6 +350,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         energyCost: drift.Value(_energyCost),
         impactScore: drift.Value(_impactScore),
         mvaDurationMin: drift.Value(_mvaDurationMin),
+        stackedToHabitId: drift.Value(_stackedToHabitId),
         createdAt: now,
         goalTag: drift.Value(
           _goalTagController.text.trim().isEmpty
@@ -688,6 +692,54 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (v) =>
                     AppFormTheme.optionalTextValidator(v, maxLength: 100),
+              ),
+              const SizedBox(height: 20),
+
+              const Text(
+                'Routine Stacking (Jangkar Kebiasaan) ☕',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              FutureBuilder<List<Habit>>(
+                future: (() async {
+                  final db = ref.read(dbProvider);
+                  final profiles = await db.select(db.userProfiles).get();
+                  if (profiles.isEmpty) return <Habit>[];
+                  return (db.select(db.habits)
+                        ..where((tbl) =>
+                            tbl.userId.equals(profiles.first.userId) &
+                            tbl.status.equals(HabitStatus.active) &
+                            tbl.deletedAt.isNull()))
+                      .get();
+                })(),
+                builder: (context, snapshot) {
+                  final habits = snapshot.data ?? [];
+                  final validHabits = habits.where((h) => h.habitId != widget.habitId).toList();
+                  
+                  return DropdownButtonFormField<String?>(
+                    value: _stackedToHabitId,
+                    decoration: AppFormTheme.inputDecoration(
+                      labelText: 'Pilih Kebiasaan Pemicu',
+                      hintText: 'Dilakukan segera setelah...',
+                      prefixIcon: const Icon(Icons.link_rounded),
+                    ),
+                    items: [
+                      const DropdownMenuItem<String?>(
+                        value: null,
+                        child: Text('Tanpa Stacking (Mulai Mandiri)'),
+                      ),
+                      ...validHabits.map((h) => DropdownMenuItem<String?>(
+                        value: h.habitId,
+                        child: Text('Setelah selesai "${h.title}"'),
+                      )),
+                    ],
+                    onChanged: (val) {
+                      setState(() {
+                        _stackedToHabitId = val;
+                      });
+                    },
+                  );
+                },
               ),
               const SizedBox(height: 24),
 

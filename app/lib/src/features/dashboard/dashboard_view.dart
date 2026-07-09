@@ -9,6 +9,7 @@ import '../../core/domain/app_constants.dart';
 import '../../core/services/error_handler_service.dart';
 import '../../core/widgets/error_state_widget.dart';
 import '../../core/widgets/loading_state_widget.dart';
+import '../../core/services/app_sound_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/local_db/database.dart';
@@ -67,6 +68,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       } else {
         // Check habit via service (safe upsert to Done)
         await service.markDone(habit: habit, date: now);
+        await AppSoundService.playChime();
       }
       ref.invalidate(dashboardDataProvider);
     } catch (e) {
