@@ -108,6 +108,17 @@ class AuditStep extends StatelessWidget {
                         inactiveColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                         onChanged: (val) => onAuditScoreChanged(domain, val),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('1 (Krisis)', style: theme.textTheme.bodySmall?.copyWith(fontSize: 9, color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+                            Text('5 (Cukup)', style: theme.textTheme.bodySmall?.copyWith(fontSize: 9, color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+                            Text('10 (Sempurna)', style: theme.textTheme.bodySmall?.copyWith(fontSize: 9, color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -175,6 +186,17 @@ class AuditStep extends StatelessWidget {
           activeColor: theme.colorScheme.primary,
           inactiveColor: theme.colorScheme.primary.withValues(alpha: 0.2),
           onChanged: onBodyScoreChanged,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('1 (Krisis)', style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+              Text('5 (Cukup)', style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+              Text('10 (Sempurna)', style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+            ],
+          ),
         ),
       ],
     );

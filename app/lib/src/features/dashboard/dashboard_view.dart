@@ -360,12 +360,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             ),
           );
         },
-        loading: () => Center(
-          child: LoadingStateWidget(
-            message: DaojiText.resolve(
-              DaojiTextKey.dashboardLoading,
-              vocabularyLevel,
-            ),
+        loading: () => const Padding(
+          padding: EdgeInsets.symmetric(vertical: 24.0),
+          child: SkeletonLoadingWidget(
+            itemCount: 4,
+            itemHeight: 76,
           ),
         ),
         error: (err, stack) => ErrorStateWidget(

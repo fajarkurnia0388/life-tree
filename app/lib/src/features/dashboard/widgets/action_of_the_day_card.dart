@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/app_constants.dart';
 import '../../../core/i18n/daoji_text_key.dart';
@@ -157,8 +158,11 @@ class ActionOfTheDayCard extends ConsumerWidget {
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: isRecovery ? null : onDonePressed,
+                  child: FilledButton(
+                    onPressed: isRecovery ? null : () {
+                      HapticFeedback.mediumImpact();
+                      onDonePressed();
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: domainColor,
                       foregroundColor: Colors.white,
@@ -174,7 +178,10 @@ class ActionOfTheDayCard extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 OutlinedButton(
-                  onPressed: isRecovery ? null : onNotCapablePressed,
+                  onPressed: isRecovery ? null : () {
+                    HapticFeedback.lightImpact();
+                    onNotCapablePressed();
+                  },
                   style: AppButtonStyles.habitSecondary(context).copyWith(
                     side: WidgetStateProperty.all(
                       const BorderSide(color: Colors.redAccent, width: 1),

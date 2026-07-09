@@ -3,8 +3,10 @@ import '../../../core/i18n/daoji_vocabulary_level.dart';
 import '../../../core/i18n/daoji_text_key.dart';
 import '../../../core/i18n/daoji_text_resolver.dart';
 
+import 'package:flutter/services.dart';
+
 /// Card widget untuk Celebration State (semua habit selesai)
-class CelebrationCard extends StatelessWidget {
+class CelebrationCard extends StatefulWidget {
   final int cumulativeDays;
   final DaojiVocabularyLevel vocabularyLevel;
 
@@ -15,21 +17,32 @@ class CelebrationCard extends StatelessWidget {
   });
 
   @override
+  State<CelebrationCard> createState() => _CelebrationCardState();
+}
+
+class _CelebrationCardState extends State<CelebrationCard> {
+  @override
+  void initState() {
+    super.initState();
+    HapticFeedback.heavyImpact();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
     // Custom dynamic celebration messages based on cumulative days milestones
-    final String emoji = _celebrationEmoji(cumulativeDays);
+    final String emoji = _celebrationEmoji(widget.cumulativeDays);
     final String title = 'Hari ini milikmu. Pohonmu sedang tumbuh.';
     
     String subtitle = 'Semua kebiasaan terjadwal untuk hari ini telah selesai dilingkari.';
-    if (cumulativeDays > 0) {
-      if (cumulativeDays % 30 == 0) {
-        subtitle = 'Luar biasa! Anda telah melangkah selama $cumulativeDays hari. Pohon Anda beresonansi dengan kuat.';
-      } else if (cumulativeDays % 7 == 0) {
-        subtitle = 'Satu minggu penuh pertumbuhan tercapai (Hari ke-$cumulativeDays). Terus pelihara lingkaran batin Anda.';
+    if (widget.cumulativeDays > 0) {
+      if (widget.cumulativeDays % 30 == 0) {
+        subtitle = 'Luar biasa! Anda telah melangkah selama ${widget.cumulativeDays} hari. Pohon Anda beresonansi dengan kuat.';
+      } else if (widget.cumulativeDays % 7 == 0) {
+        subtitle = 'Satu minggu penuh pertumbuhan tercapai (Hari ke-${widget.cumulativeDays}). Terus pelihara lingkaran batin Anda.';
       } else {
-        subtitle = 'Semua kebiasaan selesai pada Hari ke-$cumulativeDays. Pohon Anda tumbuh subur.';
+        subtitle = 'Semua kebiasaan selesai pada Hari ke-${widget.cumulativeDays}. Pohon Anda tumbuh subur.';
       }
     }
 
@@ -43,7 +56,18 @@ class CelebrationCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 20.0),
         child: Column(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 48)),
+            TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 800),
+              tween: Tween<double>(begin: 0.7, end: 1.0),
+              curve: Curves.elasticOut,
+              builder: (context, scale, child) {
+                return Transform.scale(
+                  scale: scale,
+                  child: child,
+                );
+              },
+              child: Text(emoji, style: const TextStyle(fontSize: 48)),
+            ),
             const SizedBox(height: 16),
             Text(
               title,

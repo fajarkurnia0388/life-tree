@@ -140,6 +140,8 @@ class HabitListSection extends ConsumerWidget {
         },
         onDismissed: (direction) async {
           final db = ref.read(dbProvider);
+          final deletedHabit = item.habit;
+          
           await (db.update(db.habits)
                 ..where((tbl) => tbl.habitId.equals(item.habit.habitId)))
               .write(HabitsCompanion(deletedAt: drift.Value(DateTime.now())));
@@ -147,6 +149,25 @@ class HabitListSection extends ConsumerWidget {
             item.habit.habitId.hashCode.abs() % 100000,
           );
           ref.invalidate(dashboardDataProvider);
+          
+          // Show undo snackbar
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Kebiasaan "${deletedHabit.title}" dihapus'),
+                duration: Duration(seconds: 5),
+                action: SnackBarAction(
+                  label: 'UNDO',
+                  onPressed: () async {
+                    await (db.update(db.habits)
+                          ..where((tbl) => tbl.habitId.equals(deletedHabit.habitId)))
+                        .write(HabitsCompanion(deletedAt: drift.Value(null)));
+                    ref.invalidate(dashboardDataProvider);
+                  },
+                ),
+              ),
+            );
+          }
         },
         child: Opacity(
           opacity: paused ? 0.55 : 1.0,

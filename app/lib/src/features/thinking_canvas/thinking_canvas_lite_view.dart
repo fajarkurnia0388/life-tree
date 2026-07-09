@@ -9,6 +9,7 @@ import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../core/widgets/error_state_widget.dart';
+import '../../core/widgets/empty_state_widget.dart';
 import '../../data/local_db/database.dart';
 import 'domain/thinking_method.dart';
 import 'widgets/method_picker_bottom_sheet.dart';
@@ -115,28 +116,66 @@ class _ThinkingCanvasLiteViewState
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Expanded(
-                        child: ListView.builder(
-                          controller: scrollController,
-                          itemCount: sessions.length,
-                          itemBuilder: (context, i) {
-                            final s = sessions[i];
-                            return ListTile(
-                              leading: const Icon(Icons.insights_rounded),
-                              title: Text(
-                                s.topic ?? s.methodKey,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                        child: sessions.isEmpty
+                            ? const EmptyStateWidget(
+                                icon: Icons.history_rounded,
+                                title: 'Belum Ada Sesi',
+                                message: 'Semua sesi eksplorasi ide terstruktur Anda akan tercatat di sini.',
+                              )
+                            : ListView.builder(
+                                controller: scrollController,
+                                itemCount: sessions.length,
+                                itemBuilder: (context, i) {
+                                  final s = sessions[i];
+                                  return ListTile(
+                                    leading: const Icon(Icons.insights_rounded),
+                                    title: Text(
+                                      s.topic ?? s.methodKey,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    subtitle: Text(
+                                      '${s.methodKey} • ${s.createdAt.day}/${s.createdAt.month}/${s.createdAt.year}',
+                                    ),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      
+                                      // Show loading dialog
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (dialogContext) => Center(
+                                          child: Card(
+                                            margin: const EdgeInsets.all(40),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(24),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const CircularProgressIndicator(),
+                                                  const SizedBox(height: 16),
+                                                  const Text('Memuat sesi...'),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                      
+                                      // Small delay to ensure UI updates
+                                      await Future.delayed(const Duration(milliseconds: 100));
+                                      
+                                      // Load session
+                                      ref.read(thinkingCanvasProvider.notifier).loadSession(s);
+                                      
+                                      // Close loading dialog
+                                      if (context.mounted) {
+                                        Navigator.of(context).pop();
+                                      }
+                                    },
+                                  );
+                                },
                               ),
-                              subtitle: Text(
-                                '${s.methodKey} • ${s.createdAt.day}/${s.createdAt.month}/${s.createdAt.year}',
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                                ref.read(thinkingCanvasProvider.notifier).loadSession(s);
-                              },
-                            );
-                          },
-                        ),
                       ),
                     ],
                   ),
