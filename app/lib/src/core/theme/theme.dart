@@ -216,10 +216,7 @@ final appThemeModeProvider = StreamProvider<ThemeMode>((ref) {
       ThemeMode resolvedMode = ThemeMode.system;
       if (mode == 'Light') resolvedMode = ThemeMode.light;
       if (mode == 'Dark') resolvedMode = ThemeMode.dark;
-      if (mode == 'Circadian') {
-        final hour = DateTime.now().hour;
-        resolvedMode = (hour >= 18 || hour < 5) ? ThemeMode.dark : ThemeMode.light;
-      }
+      // 'Circadian' is deprecated - now handled by circadianEnabledProvider
       return Stream.value(resolvedMode);
     },
     loading: () => const Stream.empty(),
@@ -227,13 +224,32 @@ final appThemeModeProvider = StreamProvider<ThemeMode>((ref) {
   );
 });
 
-final appDynamicThemeProvider = Provider<ThemeData>((ref) {
-  final rawModeAsync = ref.watch(appThemeRawModeProvider);
-  final rawMode = rawModeAsync.valueOrNull ?? 'System';
+final circadianEnabledProvider = StreamProvider<bool>((ref) {
+  final db = ref.watch(dbProvider);
+  return (db.select(db.userProfiles)..limit(1)).watch().map((profiles) {
+    if (profiles.isEmpty) return false;
+    return profiles.first.circadianEnabled;
+  });
+});
 
+final appDynamicThemeProvider = Provider<ThemeData>((ref) {
+  final circadianAsync = ref.watch(circadianEnabledProvider);
+  final circadianEnabled = circadianAsync.valueOrNull ?? false;
+  
+  final themeModeAsync = ref.watch(appThemeModeProvider);
+  final themeMode = themeModeAsync.valueOrNull ?? ThemeMode.system;
   final devTimeOverride = ref.watch(devTimeOfDayOverrideProvider);
 
-  if (rawMode == 'Circadian' || devTimeOverride != CelestialTime.auto) {
+  // Determine base theme from themeMode
+  ThemeData baseTheme;
+  if (themeMode == ThemeMode.dark) {
+    baseTheme = CalmTheme.darkTheme;
+  } else {
+    baseTheme = CalmTheme.lightTheme;
+  }
+
+  // If circadian is enabled, apply circadian palette overlay
+  if (circadianEnabled || devTimeOverride != CelestialTime.auto) {
     CelestialTime activeTime = devTimeOverride;
     if (activeTime == CelestialTime.auto) {
       final hour = DateTime.now().hour;
@@ -248,21 +264,31 @@ final appDynamicThemeProvider = Provider<ThemeData>((ref) {
       }
     }
 
+    // Apply circadian tint to base theme
     switch (activeTime) {
       case CelestialTime.morning:
-        return CalmTheme.fajarTheme;
+        return _applyCircadianTint(baseTheme, CalmTheme.fajarTheme);
       case CelestialTime.noon:
-        return CalmTheme.siangTheme;
+        return _applyCircadianTint(baseTheme, CalmTheme.siangTheme);
       case CelestialTime.sunset:
-        return CalmTheme.senjaTheme;
+        return _applyCircadianTint(baseTheme, CalmTheme.senjaTheme);
       case CelestialTime.night:
       default:
-        return CalmTheme.malamTheme;
+        return _applyCircadianTint(baseTheme, CalmTheme.malamTheme);
     }
   }
 
-  final themeModeAsync = ref.watch(appThemeModeProvider);
-  final themeMode = themeModeAsync.valueOrNull ?? ThemeMode.system;
-  if (themeMode == ThemeMode.dark) return CalmTheme.darkTheme;
-  return CalmTheme.lightTheme;
+  return baseTheme;
 });
+
+/// Apply circadian color palette to base theme while preserving brightness
+ThemeData _applyCircadianTint(ThemeData base, ThemeData circadian) {
+  return base.copyWith(
+    primaryColor: circadian.primaryColor,
+    scaffoldBackgroundColor: circadian.scaffoldBackgroundColor,
+    colorScheme: base.colorScheme.copyWith(
+      primary: circadian.colorScheme.primary,
+      primaryContainer: circadian.colorScheme.primaryContainer,
+    ),
+  );
+}

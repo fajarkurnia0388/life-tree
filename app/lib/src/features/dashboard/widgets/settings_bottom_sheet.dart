@@ -275,9 +275,7 @@ class SettingsBottomSheet extends ConsumerWidget {
 
               return ListTile(
                 leading: const Icon(Icons.palette_outlined),
-                title: Text(
-                  DaojiText.resolve(DaojiTextKey.settingsDarkMode, vocabularyLevel),
-                ),
+                title: const Text('Tema Tampilan'),
                 trailing: DropdownButton<String>(
                   value: currentMode,
                   underline: const SizedBox.shrink(),
@@ -285,7 +283,6 @@ class SettingsBottomSheet extends ConsumerWidget {
                     DropdownMenuItem(value: 'Light', child: Text('Terang')),
                     DropdownMenuItem(value: 'Dark', child: Text('Gelap')),
                     DropdownMenuItem(value: 'System', child: Text('Sistem')),
-                    DropdownMenuItem(value: 'Circadian', child: Text('Sirkadian')),
                   ],
                   onChanged: (newMode) async {
                     if (newMode == null) return;
@@ -294,6 +291,32 @@ class SettingsBottomSheet extends ConsumerWidget {
                     await (db.update(db.userProfiles)
                           ..where((tbl) => tbl.userId.equals(profile.userId)))
                         .write(UserProfilesCompanion(themeMode: drift.Value(newMode)));
+                    ref.invalidate(dashboardDataProvider);
+                    ref.invalidate(appThemeModeProvider);
+                  },
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          FutureBuilder<UserProfile?>(
+            future: (ref.read(dbProvider).select(ref.read(dbProvider).userProfiles)..limit(1)).getSingleOrNull(),
+            builder: (context, snapshot) {
+              final profile = snapshot.data;
+              final circadianEnabled = profile?.circadianEnabled ?? false;
+
+              return ListTile(
+                leading: const Icon(Icons.wb_twilight_rounded),
+                title: const Text('Palet Sirkadian'),
+                subtitle: const Text('Warna berubah sesuai waktu alam'),
+                trailing: Switch(
+                  value: circadianEnabled,
+                  onChanged: (enabled) async {
+                    final db = ref.read(dbProvider);
+                    if (profile == null) return;
+                    await (db.update(db.userProfiles)
+                          ..where((tbl) => tbl.userId.equals(profile.userId)))
+                        .write(UserProfilesCompanion(circadianEnabled: drift.Value(enabled)));
                     ref.invalidate(dashboardDataProvider);
                     ref.invalidate(appThemeModeProvider);
                   },

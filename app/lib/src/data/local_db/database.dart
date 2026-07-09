@@ -34,6 +34,8 @@ class UserProfiles extends Table {
   DateTimeColumn get updatedAt => dateTime()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
   TextColumn get themeMode => text().withDefault(const Constant('System'))();
+  BoolColumn get circadianEnabled =>
+      boolean().withDefault(const Constant(false))();
   TextColumn get coreValues => text().nullable()();
   BoolColumn get isDeveloperMode =>
       boolean().withDefault(const Constant(false))();
@@ -311,12 +313,18 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
+      // Safely backfill circadian_enabled if it was migrated to NULL
+      try {
+        await customStatement(
+          'UPDATE user_profiles SET circadian_enabled = 0 WHERE circadian_enabled IS NULL;',
+        );
+      } catch (_) {}
     },
     onCreate: (m) async {
       await m.createAll();
@@ -451,6 +459,11 @@ class AppDatabase extends _$AppDatabase {
           END
           WHERE vocabulary_level IS NULL OR vocabulary_level = ''
           ''');
+      }
+      if (from < 13) {
+        await m.addColumn(habits, habits.stackedToHabitId);
+        await m.addColumn(userProfiles, userProfiles.circadianEnabled);
+        await customStatement('UPDATE user_profiles SET circadian_enabled = 0 WHERE circadian_enabled IS NULL');
       }
     },
   );
