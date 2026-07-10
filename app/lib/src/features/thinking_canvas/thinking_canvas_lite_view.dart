@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart' as drift;
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/daoji_text_key.dart';
@@ -24,6 +25,7 @@ class ThinkingCanvasLiteView extends ConsumerStatefulWidget {
 class _ThinkingCanvasLiteViewState
     extends ConsumerState<ThinkingCanvasLiteView> {
   final TextEditingController _freewritingController = TextEditingController();
+  bool _draftBannerExpanded = false;
 
   @override
   void dispose() {
@@ -36,27 +38,75 @@ class _ThinkingCanvasLiteViewState
     final theme = Theme.of(context);
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final canvasState = ref.watch(thinkingCanvasProvider);
+    final hasActiveMethod = canvasState.selectedMethod != null;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          DaojiText.resolve(DaojiTextKey.thinkingCanvasTitle, vocabularyLevel),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.history_rounded),
-            tooltip: DaojiText.resolve(
-              DaojiTextKey.thinkingCanvasHistory,
-              vocabularyLevel,
-            ),
-            onPressed: () => _showSessionHistory(context),
+    return PopScope(
+      canPop: !hasActiveMethod,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && hasActiveMethod) {
+          _saveAndClearCanvas();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: hasActiveMethod
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: _saveAndClearCanvas,
+                )
+              : null,
+          title: Text(
+            DaojiText.resolve(DaojiTextKey.thinkingCanvasTitle, vocabularyLevel),
           ),
-        ],
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.history_rounded),
+              tooltip: DaojiText.resolve(
+                DaojiTextKey.thinkingCanvasHistory,
+                vocabularyLevel,
+              ),
+              onPressed: () => _showSessionHistory(context),
+            ),
+          ],
+        ),
+        body: canvasState.selectedMethod == null
+            ? _buildMethodSelection(context, theme, vocabularyLevel, canvasState)
+            : _buildActiveCanvas(context, theme, canvasState),
       ),
-      body: canvasState.selectedMethod == null
-          ? _buildMethodSelection(context, theme, vocabularyLevel, canvasState)
-          : _buildActiveCanvas(context, theme, canvasState),
     );
+  }
+
+  void _saveAndClearCanvas() {
+    final state = ref.read(thinkingCanvasProvider);
+    if (state.selectedMethod != null) {
+      _persistSession(state);
+    }
+    ref.read(thinkingCanvasProvider.notifier).clearCanvas();
+  }
+
+  Future<void> _persistSession(ThinkingCanvasState state) async {
+    try {
+      final db = ref.read(dbProvider);
+      final profiles = await db.select(db.userProfiles).get();
+      if (profiles.isEmpty) return;
+      final userId = profiles.first.userId;
+
+      final method = state.selectedMethod ?? 'Unknown';
+      final content = state.currentDraftContent;
+      // Only save if there's meaningful content
+      if (content.trim().isEmpty) return;
+      await db.into(db.thinkingCanvasSessions).insert(
+            ThinkingCanvasSessionsCompanion.insert(
+              sessionId: DateTime.now().millisecondsSinceEpoch.toString(),
+              userId: userId,
+              methodKey: method,
+              rawNotes: drift.Value(content),
+              createdAt: DateTime.now(),
+            ),
+          );
+    } catch (_) {
+      // Silent fail — non-critical
+    }
   }
 
   void _showSessionHistory(BuildContext context) {
@@ -152,6 +202,12 @@ class _ThinkingCanvasLiteViewState
                                       await Future.delayed(const Duration(milliseconds: 100));
                                       
                                       // Load session
+                                      setState(() {
+                                        _draftBannerExpanded = true;
+                                        if (s.methodKey == 'Freewriting') {
+                                          _freewritingController.text = s.rawNotes ?? '';
+                                        }
+                                      });
                                       ref.read(thinkingCanvasProvider.notifier).loadSession(s);
                                       
                                       // Close loading dialog
@@ -377,25 +433,108 @@ class _ThinkingCanvasLiteViewState
     );
   }
 
+  Widget _buildDraftBanner(BuildContext context, String content) {
+    final theme = Theme.of(context);
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 0,
+      color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: theme.colorScheme.secondary.withValues(alpha: 0.2),
+        ),
+      ),
+      child: ExpansionTile(
+        initiallyExpanded: _draftBannerExpanded,
+        onExpansionChanged: (val) {
+          setState(() {
+            _draftBannerExpanded = val;
+          });
+        },
+        leading: Icon(
+          Icons.history_edu_rounded,
+          color: theme.colorScheme.secondary,
+        ),
+        title: Text(
+          'Draf Konten Sesi Sebelumnya',
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: const Text(
+          'Gunakan ini sebagai referensi atau salin isinya.',
+          style: TextStyle(fontSize: 11, color: Colors.white70),
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.copy_rounded, size: 20),
+          tooltip: 'Salin ke Clipboard',
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: content));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Konten berhasil disalin ke clipboard!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          },
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: SelectableText(
+                content,
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  color: Colors.white70,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildActiveCanvas(
     BuildContext context,
     ThemeData theme,
     ThinkingCanvasState state,
   ) {
+    final hasDraft = state.currentDraftContent.trim().isNotEmpty;
     return Stack(
       children: [
-        _getWorkspaceForMethod(state.selectedMethod!),
+        Column(
+          children: [
+            if (hasDraft) _buildDraftBanner(context, state.currentDraftContent),
+            Expanded(
+              child: _getWorkspaceForMethod(state.selectedMethod!),
+            ),
+          ],
+        ),
         Positioned(
           bottom: 16,
           right: 16,
           child: FloatingActionButton.small(
-            onPressed: () =>
-                ref.read(thinkingCanvasProvider.notifier).clearCanvas(),
-            child: const Icon(Icons.refresh),
+            onPressed: _saveAndClearCanvas,
+            tooltip: 'Simpan & Ganti Metode',
+            child: const Icon(Icons.swap_horiz_rounded),
           ),
         ),
       ],
     );
+  }
+
+  void _onWorkspaceChanged(String content) {
+    ref.read(thinkingCanvasProvider.notifier).updateDraft(content);
   }
 
   Widget _getWorkspaceForMethod(String method) {
@@ -408,76 +547,76 @@ class _ThinkingCanvasLiteViewState
         return MindMapCanvasView(initialNodes: const [], onSaved: (_) {});
 
       case 'LotusBlossom':
-        return LotusBlossomWorkspace(onChanged: (_) {});
+        return LotusBlossomWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'MorphologicalAnalysis':
         return MorphologicalWorkspace(
           isPremiumUser: true,
           onPremiumLocked: () {},
-          onChanged: (_) {},
+          onChanged: _onWorkspaceChanged,
         );
 
       // Synthesis workspaces
       case 'MindDump':
       case 'MindDumpCluster':
-        return MindDumpWorkspace(onChanged: (_) {});
+        return MindDumpWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'AffinityMapping':
-        return AffinityMappingWorkspace(onChanged: (_) {});
+        return AffinityMappingWorkspace(onChanged: _onWorkspaceChanged);
 
       case '5Whys':
-        return FiveWhysWorkspace(onChanged: (_) {});
+        return FiveWhysWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'FirstPrinciples':
-        return FirstPrinciplesWorkspace(onChanged: (_) {});
+        return FirstPrinciplesWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'DoubleDiamond':
-        return DoubleDiamondWorkspace(onChanged: (_) {});
+        return DoubleDiamondWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'Validation':
       case 'Scoring':
-        return ValidationWorkspace(onChanged: (_) {});
+        return ValidationWorkspace(onChanged: _onWorkspaceChanged);
 
       // Decision workspaces
       case 'SixThinkingHats':
-        return SixThinkingHatsWorkspace(onChanged: (_) {});
+        return SixThinkingHatsWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'DisneyStrategy':
-        return DisneyStrategyWorkspace(onChanged: (_) {});
+        return DisneyStrategyWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'SCAMPER':
-        return ScamperWorkspace(onChanged: (_) {});
+        return ScamperWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'SWOT':
-        return SwotMatrixWorkspace(onChanged: (_) {});
+        return SwotMatrixWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'Starbursting':
-        return StarburstingWorkspace(onChanged: (_) {});
+        return StarburstingWorkspace(onChanged: _onWorkspaceChanged);
 
       // Brainstorm workspaces
       case 'Brainstorming':
       case 'ReverseBrainstorming':
       case 'WorstPossibleIdea':
-        return RapidBrainstormWorkspace(onChanged: (_) {});
+        return RapidBrainstormWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'QuestionStorming':
-        return QuestionStormWorkspace(onChanged: (_) {});
+        return QuestionStormWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'RandomWord':
-        return RandomWordWorkspace(onChanged: (_) {});
+        return RandomWordWorkspace(onChanged: _onWorkspaceChanged);
 
       case 'RoleStorming':
         return RoleStormingWorkspace(
           isPremiumUser: true,
           onPremiumLocked: () {},
-          onChanged: (_) {},
+          onChanged: _onWorkspaceChanged,
         );
 
       // Fallback untuk metode tanpa workspace khusus (PMI, dll.)
       default:
         return _GenericThinkingWorkspace(
           title: method,
-          onChanged: (_) {},
+          onChanged: _onWorkspaceChanged,
         );
     }
   }
