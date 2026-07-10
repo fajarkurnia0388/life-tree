@@ -1,29 +1,17 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_level.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
-import '../../core/widgets/loading_state_widget.dart';
-import '../../core/widgets/error_state_widget.dart';
 import '../../core/widgets/empty_state_widget.dart';
 import '../../data/local_db/database.dart';
-import 'domain/thinking_method.dart';
 import 'widgets/method_picker_bottom_sheet.dart';
 import 'widgets/mind_map_canvas_view.dart';
 import 'widgets/specialized_workspace_widgets.dart';
-import 'widgets/thinking_canvas_onboarding_dialog.dart';
-import 'widgets/workspaces/brainstorm_workspaces.dart';
-import 'widgets/workspaces/decision_workspaces.dart';
-import 'widgets/workspaces/freewriting_workspace.dart';
-import 'widgets/workspaces/lotus_blossom_workspace.dart';
-import 'widgets/workspaces/morphological_workspace.dart';
-import 'widgets/workspaces/synthesis_workspaces.dart';
 import 'thinking_canvas_state.dart';
-import 'thinking_canvas_draft_service.dart';
 
 class ThinkingCanvasLiteView extends ConsumerStatefulWidget {
   const ThinkingCanvasLiteView({super.key});
@@ -36,7 +24,6 @@ class ThinkingCanvasLiteView extends ConsumerStatefulWidget {
 class _ThinkingCanvasLiteViewState
     extends ConsumerState<ThinkingCanvasLiteView> {
   final TextEditingController _freewritingController = TextEditingController();
-  String _workspaceDraftText = '';
 
   @override
   void dispose() {
@@ -49,7 +36,6 @@ class _ThinkingCanvasLiteViewState
     final theme = Theme.of(context);
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final canvasState = ref.watch(thinkingCanvasProvider);
-    final draftService = ref.read(thinkingCanvasDraftServiceProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -257,19 +243,19 @@ class _ThinkingCanvasLiteViewState
     }
     if (method.toLowerCase().contains('lotus')) {
       return LotusBlossomWorkspace(
-        onChanged: (text) => _workspaceDraftText = text,
+        onChanged: (_) {},
       );
     }
     if (method.toLowerCase().contains('morphological')) {
       return MorphologicalWorkspace(
         isPremiumUser: true,
         onPremiumLocked: () {},
-        onChanged: (text) => _workspaceDraftText = text,
+        onChanged: (_) {},
       );
     }
     return _GenericThinkingWorkspace(
       title: method,
-      onChanged: (text) => _workspaceDraftText = text,
+      onChanged: (_) {},
     );
   }
 }
@@ -281,7 +267,6 @@ class _GenericThinkingWorkspace extends ConsumerWidget {
   const _GenericThinkingWorkspace({
     required this.title,
     required this.onChanged,
-    super.key,
   });
 
   @override

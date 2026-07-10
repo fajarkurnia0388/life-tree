@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
@@ -9,8 +10,8 @@ Future<void> resetDatabase() async {
   
   if (await file.exists()) {
     await file.delete();
-    print('✓ Database dihapus: ${file.path}');
+    debugPrint('✓ Database dihapus: ${file.path}');
   } else {
-    print('✗ Database tidak ditemukan: ${file.path}');
+    debugPrint('✗ Database tidak ditemukan: ${file.path}');
   }
 }

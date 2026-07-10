@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:drift/drift.dart' as drift;
 import '../../data/local_db/database.dart';
 import '../../core/providers/db_provider.dart';
 

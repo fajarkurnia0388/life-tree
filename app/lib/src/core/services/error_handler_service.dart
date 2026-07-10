@@ -16,23 +16,6 @@ class ErrorHandlerService {
   /// - [error]: The error object that was thrown
   /// - [stackTrace]: The stack trace at the point of error
   /// - [context]: Optional context string describing where/why the error occurred
-  static const Map<String, String> _friendlyMessages = {
-    'SqliteException': 'Gagal menyimpan data ke penyimpanan lokal. Silakan coba lagi.',
-    'FileSystemException': 'Tidak dapat mengakses file di perangkat. Periksa izin aplikasi.',
-    'FormatException': 'Format data tidak valid atau rusak.',
-    'TimeoutException': 'Koneksi lokal terlalu lama merespon.',
-  };
-
-  String _getFriendlyMessage(Object error) {
-    final errorStr = error.toString();
-    for (final entry in _friendlyMessages.entries) {
-      if (errorStr.contains(entry.key)) {
-        return entry.value;
-      }
-    }
-    return 'Terjadi kesalahan sistem. Silakan coba lagi.';
-  }
-
   void logError(Object error, StackTrace? stackTrace, {String? context}) {
     if (kDebugMode) {
       debugPrint('═══════════════════════════════════════');

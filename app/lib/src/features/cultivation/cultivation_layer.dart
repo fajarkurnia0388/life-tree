@@ -76,7 +76,7 @@ class _DualPalaceMap implements Map<Object, double> {
   Map<K2, V2> map<K2, V2>(
     MapEntry<K2, V2> Function(Object key, double value) transform,
   ) => _inner.map(
-    (k, v) => MapEntry(transform(k, v).key as K2, transform(k, v).value as V2),
+    (k, v) => MapEntry(transform(k, v).key, transform(k, v).value),
   );
 
   @override

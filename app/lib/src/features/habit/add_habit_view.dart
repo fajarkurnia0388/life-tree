@@ -60,14 +60,28 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   bool _isEditing = false;
   Habit? _existingHabit;
   String? _stackedToHabitId;
+  late final Future<List<Habit>> _habitsFuture;
 
   @override
   void initState() {
     super.initState();
     _domainTag = _normalizedInitialDomainTag(widget.initialDomainTag);
+    _habitsFuture = _loadActiveHabits();
     if (widget.habitId != null) {
       _loadHabitForEdit();
     }
+  }
+
+  Future<List<Habit>> _loadActiveHabits() async {
+    final db = ref.read(dbProvider);
+    final profiles = await db.select(db.userProfiles).get();
+    if (profiles.isEmpty) return <Habit>[];
+    return (db.select(db.habits)
+          ..where((tbl) =>
+              tbl.userId.equals(profiles.first.userId) &
+              tbl.status.equals(HabitStatus.active) &
+              tbl.deletedAt.isNull()))
+        .get();
   }
 
   String _normalizedInitialDomainTag(String? domainTag) {
@@ -701,23 +715,13 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               ),
               const SizedBox(height: 8),
               FutureBuilder<List<Habit>>(
-                future: (() async {
-                  final db = ref.read(dbProvider);
-                  final profiles = await db.select(db.userProfiles).get();
-                  if (profiles.isEmpty) return <Habit>[];
-                  return (db.select(db.habits)
-                        ..where((tbl) =>
-                            tbl.userId.equals(profiles.first.userId) &
-                            tbl.status.equals(HabitStatus.active) &
-                            tbl.deletedAt.isNull()))
-                      .get();
-                })(),
+                future: _habitsFuture,
                 builder: (context, snapshot) {
                   final habits = snapshot.data ?? [];
                   final validHabits = habits.where((h) => h.habitId != widget.habitId).toList();
                   
                   return DropdownButtonFormField<String?>(
-                    value: _stackedToHabitId,
+                    initialValue: _stackedToHabitId,
                     decoration: AppFormTheme.inputDecoration(
                       labelText: 'Pilih Kebiasaan Pemicu',
                       hintText: 'Dilakukan segera setelah...',

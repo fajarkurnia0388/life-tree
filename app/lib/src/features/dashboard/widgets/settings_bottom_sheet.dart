@@ -205,19 +205,6 @@ class SettingsBottomSheet extends ConsumerWidget {
     }
   }
 
-  Future<void> _toggleThemeMode(WidgetRef ref, bool isDark) async {
-    final db = ref.read(dbProvider);
-    final profile = await (db.select(
-      db.userProfiles,
-    )..limit(1)).getSingleOrNull();
-    if (profile == null) return;
-    await (db.update(
-      db.userProfiles,
-    )..where((tbl) => tbl.userId.equals(profile.userId))).write(
-      UserProfilesCompanion(themeMode: drift.Value(isDark ? 'Dark' : 'Light')),
-    );
-    ref.invalidate(dashboardDataProvider);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

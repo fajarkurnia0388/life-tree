@@ -229,7 +229,7 @@ final appThemeModeProvider = StreamProvider<ThemeMode>((ref) {
       return Stream.value(resolvedMode);
     },
     loading: () => const Stream.empty(),
-    error: (_, __) => const Stream.empty(),
+    error: (_, _) => const Stream.empty(),
   );
 });
 

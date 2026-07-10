@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../core/i18n/daoji_vocabulary_level.dart';
-import '../../../core/i18n/daoji_text_key.dart';
-import '../../../core/i18n/daoji_text_resolver.dart';
-
-import 'package:flutter/services.dart';
-
 import '../../../core/services/app_sound_service.dart';
 
 /// Card widget untuk Celebration State (semua habit selesai)
