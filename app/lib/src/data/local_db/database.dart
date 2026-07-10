@@ -319,8 +319,11 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
-      // Safely backfill circadian_enabled if it was migrated to NULL
+      // Safely backfill circadian_enabled and migrate legacy theme value
       try {
+        await customStatement(
+          "UPDATE user_profiles SET circadian_enabled = 1, theme_mode = 'System' WHERE theme_mode = 'Circadian';",
+        );
         await customStatement(
           'UPDATE user_profiles SET circadian_enabled = 0 WHERE circadian_enabled IS NULL;',
         );
@@ -463,6 +466,7 @@ class AppDatabase extends _$AppDatabase {
       if (from < 13) {
         await m.addColumn(habits, habits.stackedToHabitId);
         await m.addColumn(userProfiles, userProfiles.circadianEnabled);
+        await customStatement("UPDATE user_profiles SET circadian_enabled = 1, theme_mode = 'System' WHERE theme_mode = 'Circadian'");
         await customStatement('UPDATE user_profiles SET circadian_enabled = 0 WHERE circadian_enabled IS NULL');
       }
     },
