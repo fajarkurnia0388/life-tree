@@ -49,4 +49,29 @@ void main() {
     expect(list.length, 1);
     expect(list.first.title, 'Beli laptop baru');
   });
+
+  test('Decision entry confidenceScore stores and retrieves correctly', () async {
+    final now = DateTime.now();
+
+    await db.into(db.decisionEntries).insert(
+          DecisionEntriesCompanion.insert(
+            decisionId: 'decision-2',
+            userId: 'user-1',
+            title: 'Keputusan Karir',
+            description: 'Apakah pindah divisi?',
+            options: '["Pindah", "Tetap"]',
+            assumptions: '["Divisi baru seru"]',
+            expectations: 'Karir berkembang',
+            reviewPeriodDays: const drift.Value(90),
+            decisionDate: now,
+            reviewDate: now.add(const Duration(days: 90)),
+            isReviewed: const drift.Value(false),
+            confidenceScore: const drift.Value(75),
+          ),
+        );
+
+    final list = await container.read(decisionListProvider.future);
+    final careerDecision = list.firstWhere((d) => d.decisionId == 'decision-2');
+    expect(careerDecision.confidenceScore, 75);
+  });
 }

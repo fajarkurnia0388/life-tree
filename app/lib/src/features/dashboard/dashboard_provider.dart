@@ -287,6 +287,8 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
   final overdueDecisions =
       await (db.select(db.decisionEntries)..where(
             (tbl) =>
+                tbl.userId.equals(profile.userId) &
+                tbl.deletedAt.isNull() &
                 tbl.isReviewed.equals(false) &
                 tbl.reviewDate.isSmallerThanValue(DateTime.now()),
           ))

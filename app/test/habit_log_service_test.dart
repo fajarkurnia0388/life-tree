@@ -243,5 +243,44 @@ void main() {
       // 2 done / 5 hari = 0.4
       expect(updatedHabit.completionRate90d, closeTo(0.4, 0.01));
     });
+
+    test('Habit weekly (dijadwalkan 3x seminggu) sejak 7 hari lalu dengan 2 done memiliki rate 2/3 = 0.67', () async {
+      final now = DateTime.now();
+      final sevenDaysAgo = now.subtract(const Duration(days: 7));
+      
+      // Determine what weekdays occurred in the last 7 days.
+      // We will schedule it on three weekdays that we know occurred.
+      final day1 = now.subtract(const Duration(days: 1)).weekday;
+      final day2 = now.subtract(const Duration(days: 3)).weekday;
+      final day3 = now.subtract(const Duration(days: 5)).weekday;
+      final scheduledDaysStr = '$day1,$day2,$day3';
+
+      await db.into(db.habits).insert(
+            HabitsCompanion.insert(
+              habitId: 'habit-weekly-denom',
+              userId: 'user-1',
+              title: 'Weekly Denom Test',
+              frequency: const drift.Value('Weekly'),
+              scheduledDays: drift.Value(scheduledDaysStr),
+              createdAt: sevenDaysAgo,
+            ),
+          );
+      final habit = (await (db.select(db.habits)
+                ..where((tbl) => tbl.habitId.equals('habit-weekly-denom')))
+              .get())
+          .first;
+
+      // Mark done on 2 of the scheduled days (yesterday and 3 days ago)
+      await service.markDone(habit: habit, date: now.subtract(const Duration(days: 1)));
+      await service.markDone(habit: habit, date: now.subtract(const Duration(days: 3)));
+
+      final updatedHabit = (await (db.select(db.habits)
+                ..where((tbl) => tbl.habitId.equals('habit-weekly-denom')))
+              .get())
+          .first;
+      
+      // 2 done / 3 scheduled days = 0.666...
+      expect(updatedHabit.completionRate90d, closeTo(0.67, 0.01));
+    });
   });
 }

@@ -82,9 +82,11 @@ class SafetyCardView extends ConsumerWidget {
                     ];
               
               final index1 = DateTime.now().day % accentColors.length;
-              final index2 = (index1 + 2) % accentColors.length;
+              final index2 = (index1 + 1) % accentColors.length;
+              final index3 = (index1 + 2) % accentColors.length;
               final color1 = accentColors[index1];
               final color2 = accentColors[index2];
+              final color3 = accentColors[index3];
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -173,6 +175,52 @@ class SafetyCardView extends ConsumerWidget {
                         }
                       }
                     },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Hotline 3: LISA Suicide Helpline
+                  _buildHotlineCard(
+                    theme: theme,
+                    title: 'LISA Helpline (Love Inside Suicide Awareness)',
+                    number: '0811-3855-472',
+                    description: 'Layanan pencegahan tindakan melukai diri sendiri dan krisis bunuh diri 24 jam bebas stigma dari Love Inside Suicide Awareness.',
+                    color: color3,
+                    onTap: () async {
+                      await _logHotlineTap(ref, 'LISA_Call');
+                      final uri = Uri.parse('tel:08113855472');
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(uri);
+                      } else {
+                        if (context.mounted) {
+                          _showCallMockDialog(context, 'LISA Helpline (0811-3855-472)');
+                        }
+                      }
+                    },
+                    additionalActions: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              await _logHotlineTap(ref, 'LISA_WhatsApp');
+                              final url = Uri.parse(
+                                'https://wa.me/628113855472?text=Halo%20LISA%20Helpline%2C%20saya%20membutuhkan%20teman%20bicara%20dan%20bantuan%20terkait%20kesehatan%20mental%20saya',
+                              );
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                              }
+                            },
+                            icon: const Icon(Icons.chat_outlined, size: 16),
+                            label: const Text('Chat WhatsApp', style: TextStyle(fontSize: 11)),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: color3),
+                              foregroundColor: color3,
+                              minimumSize: const Size(0, 44),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               );

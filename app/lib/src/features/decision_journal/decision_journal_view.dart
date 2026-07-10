@@ -229,6 +229,27 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView>
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
+                if (d.confidenceScore != null) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.psychology_outlined,
+                        size: 14,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Keyakinan: ${d.confidenceScore}%',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
                 const Divider(height: 24),
                 if (options.length >= 2) ...[
                   const Text(

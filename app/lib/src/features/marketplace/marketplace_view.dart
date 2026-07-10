@@ -78,6 +78,27 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
   }
 
   Future<void> _downloadHabitTemplate(MarketplaceTemplateModel t) async {
+    final dashboardAsync = ref.read(dashboardDataProvider);
+    final isLowWellBeing = dashboardAsync.whenOrNull(data: (d) => d.isLowWellBeing) ?? false;
+    if (isLowWellBeing) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              '🌿 Daoji menyarankan beristirahat sejenak.\n'
+              'Kesehatan emosional Anda sedang dalam mode pemulihan. '
+              'Selesaikan weekly pulse berikutnya untuk membuka kembali fitur ini.',
+            ),
+            backgroundColor: const Color(0xFF5B8FA8),
+            duration: const Duration(seconds: 5),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+      return;
+    }
+
     final db = ref.read(dbProvider);
     final service = ref.read(marketplaceServiceProvider);
     final meta = t.habitMetadata;

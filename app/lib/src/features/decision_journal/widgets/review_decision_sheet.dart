@@ -263,6 +263,27 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
             '"${widget.decision.expectations}"',
             style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
           ),
+          if (widget.decision.confidenceScore != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(
+                  Icons.psychology_outlined,
+                  size: 14,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Keyakinan Awal: ${widget.decision.confidenceScore}%',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                  ),
+                ),
+              ],
+            ),
+          ],
           if (_isPredictionLocked) ...[
             const SizedBox(height: 6),
             Container(

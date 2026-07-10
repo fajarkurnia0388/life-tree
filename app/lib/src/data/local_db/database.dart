@@ -238,6 +238,7 @@ class DecisionEntries extends Table {
   TextColumn get reviewReflection => text().nullable()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
   IntColumn get reviewPeriodDays => integer().withDefault(const Constant(90))();
+  IntColumn get confidenceScore => integer().nullable()();
 
   @override
   Set<Column> get primaryKey => {decisionId};
@@ -313,7 +314,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 14;
+  int get schemaVersion => 15;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -463,11 +464,14 @@ class AppDatabase extends _$AppDatabase {
           WHERE vocabulary_level IS NULL OR vocabulary_level = ''
           ''');
       }
-      if (from < 13) {
+      if (from < 14) {
         await m.addColumn(habits, habits.stackedToHabitId);
         await m.addColumn(userProfiles, userProfiles.circadianEnabled);
         await customStatement("UPDATE user_profiles SET circadian_enabled = 1, theme_mode = 'System' WHERE theme_mode = 'Circadian'");
         await customStatement('UPDATE user_profiles SET circadian_enabled = 0 WHERE circadian_enabled IS NULL');
+      }
+      if (from < 15) {
+        await m.addColumn(decisionEntries, decisionEntries.confidenceScore);
       }
     },
   );

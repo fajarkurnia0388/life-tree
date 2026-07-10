@@ -58,11 +58,44 @@ class HabitLogService {
     }
   }
 
+  int _countScheduledDays({
+    required DateTime end,
+    required int daysSinceCreation,
+    required String frequency,
+    required String? scheduledDays,
+  }) {
+    if (frequency == 'Daily') {
+      return daysSinceCreation;
+    }
+
+    int count = 0;
+    final days = scheduledDays != null && scheduledDays.isNotEmpty
+        ? scheduledDays.split(',').map((e) => int.tryParse(e.trim())).whereType<int>().toSet()
+        : <int>{};
+
+    var current = DateTime(end.year, end.month, end.day);
+    for (int i = 0; i < daysSinceCreation; i++) {
+      if (days.contains(current.weekday)) {
+        count++;
+      }
+      current = current.subtract(const Duration(days: 1));
+    }
+    return count;
+  }
+
   Future<void> _updateCompletionRate(String habitId) async {
     final habit = await (_db.select(_db.habits)
           ..where((tbl) => tbl.habitId.equals(habitId)))
         .getSingle();
+    
     final daysSinceCreation = DateTime.now().difference(habit.createdAt).inDays.clamp(1, 90);
+    
+    final scheduledCount = _countScheduledDays(
+      end: DateTime.now(),
+      daysSinceCreation: daysSinceCreation,
+      frequency: habit.frequency,
+      scheduledDays: habit.scheduledDays,
+    ).clamp(1, 90);
     
     final ninetyDaysAgo = DateTime.now().subtract(const Duration(days: 90));
     final logs90d = await (_db.select(_db.habitLogs)
@@ -72,7 +105,7 @@ class HabitLogService {
             tbl.deletedAt.isNull()))
         .get();
     final done90d = logs90d.where((l) => l.status == HabitStatus.done).length;
-    final rate = logs90d.isNotEmpty ? done90d / daysSinceCreation.toDouble() : 0.0;
+    final rate = done90d / scheduledCount.toDouble();
     await (_db.update(_db.habits)..where((tbl) => tbl.habitId.equals(habitId)))
         .write(HabitsCompanion(completionRate90d: drift.Value(rate.clamp(0.0, 1.0))));
   }

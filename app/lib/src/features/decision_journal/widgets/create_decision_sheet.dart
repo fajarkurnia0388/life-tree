@@ -26,6 +26,7 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
 
   bool _isSaving = false;
   int _reviewPeriodDays = 90;
+  int _confidenceScore = 80;
 
   @override
   void initState() {
@@ -162,6 +163,7 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
               decisionDate: now,
               reviewDate: reviewDate,
               reviewPeriodDays: drift.Value(_reviewPeriodDays),
+              confidenceScore: drift.Value(_confidenceScore),
             ),
           );
 
@@ -399,6 +401,36 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
                 onSelectionChanged: (selection) {
                   setState(() {
                     _reviewPeriodDays = selection.first;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Tingkat Keyakinan (Confidence Level):',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                  Text(
+                    '$_confidenceScore%',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+              Slider(
+                value: _confidenceScore.toDouble(),
+                min: 0.0,
+                max: 100.0,
+                divisions: 20,
+                label: '$_confidenceScore%',
+                onChanged: (val) {
+                  setState(() {
+                    _confidenceScore = val.round();
                   });
                 },
               ),
