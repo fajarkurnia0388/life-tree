@@ -170,6 +170,73 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.breathingSubtitle: 'Tarik napas perlahan untuk meredakan ketegangan.',
     DaojiTextKey.reflectionReauditAction: 'Audit Mandiri Istana Batin',
     DaojiTextKey.reflectionCompassCompareAction: 'Cek Keselarasan Kompas',
+    DaojiTextKey.thinkingCanvasTitle: 'Thinking Canvas',
+    DaojiTextKey.thinkingCanvasHistory: 'Riwayat Sesi',
+    DaojiTextKey.thinkingCanvasSessionHistoryTitle: 'Riwayat Thinking Canvas',
+    DaojiTextKey.thinkingCanvasOpenMethodCatalog: 'Buka Katalog Metode',
+    DaojiTextKey.thinkingCanvasWorkspaceLabel: 'Workspace: {title}',
+    DaojiTextKey.thinkingCanvasWorkspaceHint:
+        'Tulis ide atau kerangka berpikir Anda di sini...',
+    DaojiTextKey.methodPickerTitle: 'Pilih Metode Berpikir',
+    DaojiTextKey.sixThinkingHatsTitle: '4. Analisis 6 Topi Berpikir (Six Hats)',
+    DaojiTextKey.sixThinkingHatsNoteLabel: 'Catatan untuk {name}',
+    DaojiTextKey.sixThinkingHatsNoteHint:
+        'Tuliskan analisis kognitif Anda di sini...',
+    DaojiTextKey.sixThinkingHatsValidatorMessage:
+        'Harap tuliskan analisis untuk {name}',
+    DaojiTextKey.freewritingTitle: '4. Sesi Freewriting Tanpa Henti',
+    DaojiTextKey.freewritingHint:
+        'Mulai menulis apa saja di sini, jangan biarkan jari Anda berhenti mengetik...',
+    DaojiTextKey.freewritingValidator: 'Tuliskan pemikiran Freewriting Anda',
+    DaojiTextKey.freewritingInactivityAlert:
+        '🚨 JANGAN BERHENTI MENULIS! Alirkan pikiran...',
+    DaojiTextKey.freewritingTimeFinishedTitle: 'Waktu Habis! 🎉',
+    DaojiTextKey.freewritingTimeFinishedContent:
+        'Selamat! Sesi menulis bebas (Freewriting) tanpa henti selesai.\n\nKembali ke kertas coretan untuk menyeleksi poin terbaik.',
+    DaojiTextKey.freewritingContinueButton: 'Lanjut',
+    DaojiTextKey.lotusTitle: '4. Kelopak Radial Lotus Blossom',
+    DaojiTextKey.lotusCenterPlaceholder: 'Topik Utama',
+    DaojiTextKey.lotusAddIdeaPlaceholder: '+ Ide',
+    DaojiTextKey.lotusEditSubTitle: 'Edit Sub-Ide Kelopak',
+    DaojiTextKey.lotusEditCenterTitle: 'Edit Topik Utama',
+    DaojiTextKey.lotusEditDirectionTitle: 'Edit Arah Gagasan',
+    DaojiTextKey.lotusLabelText: 'Teks',
+    DaojiTextKey.lotusCancel: 'Batal',
+    DaojiTextKey.lotusSave: 'Simpan',
+    DaojiTextKey.lotusFootnote:
+        '*Kelopak berbentuk melingkar. Ketuk petal terisi untuk masuk ke sub-cabang ide.',
+    DaojiTextKey.mindDumpTitle: '4. Kuras Pikiran (Mind Dump Sticky Notes)',
+    DaojiTextKey.mindDumpAddLabel: 'Tambah Item',
+    DaojiTextKey.mindDumpHint:
+        'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
+    DaojiTextKey.mindDumpEmptyMessage:
+        'Belum ada catatan tempel. Ketik sesuatu di atas untuk meluapkan isi kepala Anda!',
+    DaojiTextKey.affinityTitle: '4. Pengelompokan Affinity Mapping',
+    DaojiTextKey.affinityAddLabel: 'Tambah Gagasan',
+    DaojiTextKey.affinityHint: 'Ketik gagasan/ide Anda lalu tekan Enter...',
+    DaojiTextKey.affinityEmptyMessage:
+        'Belum ada ide. Tambahkan ide di atas lalu kelompokkan ke dalam grup!',
+    DaojiTextKey.fiveWhysTitle: '5 Whys (Why Chain)',
+    DaojiTextKey.fiveWhysPrompt:
+        'Tuliskan sebab pertama lalu gali 5 kali "mengapa"',
+    DaojiTextKey.morphologicalTitle: '4. Slot Machine Kombinasi Morfologi',
+    DaojiTextKey.morphologicalMarketplaceTitle: 'Perpustakaan Dimensi 🛒',
+    DaojiTextKey.morphologicalMarketplaceClose: 'Tutup',
+    DaojiTextKey.morphologicalMarketplaceDescription:
+        'Pilih dari set parameter siap-pakai untuk memancing kreativitas Anda secara instan!',
+    DaojiTextKey.morphologicalApplyTemplateSuccess:
+        'Template "{title}" berhasil diterapkan!',
+    DaojiTextKey.morphologicalAddOptionTitle: 'Tambah Opsi di "{dimension}"',
+    DaojiTextKey.morphologicalOptionLabel: 'Opsi',
+    DaojiTextKey.morphologicalAddButton: 'Tambah',
+    DaojiTextKey.morphologicalAddDimensionTitle: 'Tambah Dimensi Baru',
+    DaojiTextKey.morphologicalDimensionNameLabel: 'Nama Dimensi',
+    DaojiTextKey.morphologicalEmptyLabel: 'Kosong',
+    DaojiTextKey.morphologicalSpinningLabel: 'Sedang Memutar...',
+    DaojiTextKey.morphologicalSpinButtonLabel: 'Putar Dadu Acak 🎲',
+    DaojiTextKey.morphologicalOptionsPlusLabel: '+ Opsi',
+    DaojiTextKey.morphologicalDimensionCount: '{dim} ({count} opsi)',
+    DaojiTextKey.morphologicalCancel: 'Batal',
   },
   DaojiVocabularyLevel.human: {
     DaojiTextKey.navHome: 'Home',

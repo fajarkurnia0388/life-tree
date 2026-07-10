@@ -180,20 +180,177 @@ class _ThinkingCanvasLiteViewState
     DaojiVocabularyLevel level,
     ThinkingCanvasState state,
   ) {
-    return Center(
+    final quickMethods = [
+      {
+        'key': 'MindDump',
+        'name': 'Mind Dump 🧠',
+        'desc': 'Tuangkan seluruh beban pikiran, kecemasan, dan ide tanpa hambatan.',
+        'icon': Icons.psychology_rounded,
+        'color': Colors.teal,
+      },
+      {
+        'key': 'Brainstorming',
+        'name': 'Classic Brainstorm 💡',
+        'desc': 'Kumpulkan ide liar sebanyak mungkin dalam waktu singkat.',
+        'icon': Icons.lightbulb_outline_rounded,
+        'color': Colors.amber,
+      },
+      {
+        'key': 'SixThinkingHats',
+        'name': 'Six Thinking Hats 🎩',
+        'desc': 'Evaluasi ide terstruktur dari 6 sudut pandang kognitif.',
+        'icon': Icons.palette_rounded,
+        'color': Colors.blue,
+      },
+      {
+        'key': '5Whys',
+        'name': '5 Whys 🔍',
+        'desc': 'Gali sebab-akibat hingga ke akar permasalahan terdalam.',
+        'icon': Icons.help_outline_rounded,
+        'color': Colors.purple,
+      },
+    ];
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Icon(Icons.lightbulb_outline, size: 64, color: Colors.amber),
-          const SizedBox(height: 16),
+          // Glassmorphic Banner Card
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  theme.colorScheme.primary.withValues(alpha: 0.15),
+                  theme.colorScheme.primary.withValues(alpha: 0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                width: 1.5,
+              ),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.insights_rounded,
+                    size: 36,
+                    color: Colors.amber,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  DaojiText.resolve(DaojiTextKey.thinkingCanvasTitle, level),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Gunakan metode analitis dan kreatif terstruktur untuk mengurai kerumitan dan menemukan solusi jernih.',
+                  style: TextStyle(fontSize: 13, color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
           Text(
             DaojiText.resolve(DaojiTextKey.methodPickerTitle, level),
-            style: theme.textTheme.headlineSmall,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          const SizedBox(height: 24),
-          ElevatedButton(
+          const SizedBox(height: 16),
+          // Grid layout for quick start
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.85,
+            ),
+            itemCount: quickMethods.length,
+            itemBuilder: (context, index) {
+              final m = quickMethods[index];
+              final mColor = m['color'] as Color;
+              return Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                  ),
+                ),
+                child: InkWell(
+                  onTap: () => ref
+                      .read(thinkingCanvasProvider.notifier)
+                      .setMethod(m['key'] as String),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: mColor.withValues(alpha: 0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            m['icon'] as IconData,
+                            color: mColor,
+                            size: 24,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          m['name'] as String,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          m['desc'] as String,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 32),
+          // View all button
+          OutlinedButton.icon(
             onPressed: () => showModalBottomSheet(
               context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
               builder: (context) => MethodPickerBottomSheet(
                 currentMethodKey: state.selectedMethod ?? '',
                 isPremiumUser: true,
@@ -201,10 +358,17 @@ class _ThinkingCanvasLiteViewState
                     ref.read(thinkingCanvasProvider.notifier).setMethod(method),
               ),
             ),
-            child: Text(
+            icon: const Icon(Icons.apps_rounded, size: 18),
+            label: Text(
               DaojiText.resolve(
                 DaojiTextKey.thinkingCanvasOpenMethodCatalog,
                 level,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
           ),
@@ -235,28 +399,87 @@ class _ThinkingCanvasLiteViewState
   }
 
   Widget _getWorkspaceForMethod(String method) {
-    if (method.toLowerCase().contains('freewriting')) {
-      return FreewritingWorkspace(controller: _freewritingController);
+    switch (method) {
+      // --- Workspace dengan widget khusus ---
+      case 'Freewriting':
+        return FreewritingWorkspace(controller: _freewritingController);
+
+      case 'MindMapping':
+        return MindMapCanvasView(initialNodes: const [], onSaved: (_) {});
+
+      case 'LotusBlossom':
+        return LotusBlossomWorkspace(onChanged: (_) {});
+
+      case 'MorphologicalAnalysis':
+        return MorphologicalWorkspace(
+          isPremiumUser: true,
+          onPremiumLocked: () {},
+          onChanged: (_) {},
+        );
+
+      // Synthesis workspaces
+      case 'MindDump':
+      case 'MindDumpCluster':
+        return MindDumpWorkspace(onChanged: (_) {});
+
+      case 'AffinityMapping':
+        return AffinityMappingWorkspace(onChanged: (_) {});
+
+      case '5Whys':
+        return FiveWhysWorkspace(onChanged: (_) {});
+
+      case 'FirstPrinciples':
+        return FirstPrinciplesWorkspace(onChanged: (_) {});
+
+      case 'DoubleDiamond':
+        return DoubleDiamondWorkspace(onChanged: (_) {});
+
+      case 'Validation':
+      case 'Scoring':
+        return ValidationWorkspace(onChanged: (_) {});
+
+      // Decision workspaces
+      case 'SixThinkingHats':
+        return SixThinkingHatsWorkspace(onChanged: (_) {});
+
+      case 'DisneyStrategy':
+        return DisneyStrategyWorkspace(onChanged: (_) {});
+
+      case 'SCAMPER':
+        return ScamperWorkspace(onChanged: (_) {});
+
+      case 'SWOT':
+        return SwotMatrixWorkspace(onChanged: (_) {});
+
+      case 'Starbursting':
+        return StarburstingWorkspace(onChanged: (_) {});
+
+      // Brainstorm workspaces
+      case 'Brainstorming':
+      case 'ReverseBrainstorming':
+      case 'WorstPossibleIdea':
+        return RapidBrainstormWorkspace(onChanged: (_) {});
+
+      case 'QuestionStorming':
+        return QuestionStormWorkspace(onChanged: (_) {});
+
+      case 'RandomWord':
+        return RandomWordWorkspace(onChanged: (_) {});
+
+      case 'RoleStorming':
+        return RoleStormingWorkspace(
+          isPremiumUser: true,
+          onPremiumLocked: () {},
+          onChanged: (_) {},
+        );
+
+      // Fallback untuk metode tanpa workspace khusus (PMI, dll.)
+      default:
+        return _GenericThinkingWorkspace(
+          title: method,
+          onChanged: (_) {},
+        );
     }
-    if (method.toLowerCase().contains('mindmapping')) {
-      return MindMapCanvasView(initialNodes: const [], onSaved: (_) {});
-    }
-    if (method.toLowerCase().contains('lotus')) {
-      return LotusBlossomWorkspace(
-        onChanged: (_) {},
-      );
-    }
-    if (method.toLowerCase().contains('morphological')) {
-      return MorphologicalWorkspace(
-        isPremiumUser: true,
-        onPremiumLocked: () {},
-        onChanged: (_) {},
-      );
-    }
-    return _GenericThinkingWorkspace(
-      title: method,
-      onChanged: (_) {},
-    );
   }
 }
 
