@@ -15,6 +15,7 @@ import '../../data/local_db/database.dart';
 import '../cultivation/cultivation_provider.dart';
 import '../cultivation/cultivation_strings.dart';
 import '../dashboard/dashboard_provider.dart';
+import '../../core/theme/theme.dart';
 import '../../core/services/notification_service.dart';
 import 'widgets/habit_templates.dart';
 
@@ -853,6 +854,106 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 onChanged: (val) => setState(() => _mvaDurationMin = val),
               ),
 
+              const SizedBox(height: 20),
+              ref.watch(userProfileProvider).when(
+                    data: (profile) {
+                      final maxCapacity = profile?.canopyLoadCapacity ?? 10;
+                      return FutureBuilder<List<Habit>>(
+                        future: _habitsFuture,
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) return const SizedBox.shrink();
+                          final activeHabits = snapshot.data!;
+                          final currentLoad = activeHabits.fold<int>(
+                            0,
+                            (sum, h) => sum + h.initiationFriction + h.energyCost,
+                          );
+                          int nextLoad = currentLoad;
+                          if (_isEditing && _existingHabit != null) {
+                            nextLoad = currentLoad -
+                                (_existingHabit!.initiationFriction +
+                                    _existingHabit!.energyCost) +
+                                _initiationFriction +
+                                _energyCost;
+                          } else {
+                            nextLoad = currentLoad + _initiationFriction + _energyCost;
+                          }
+
+                          final isOverloaded = nextLoad > maxCapacity;
+                          final textColor = isOverloaded
+                              ? theme.colorScheme.error
+                              : theme.colorScheme.primary;
+                          final iconColor = isOverloaded
+                              ? theme.colorScheme.error
+                              : theme.colorScheme.primary;
+                          final bgColor = isOverloaded
+                              ? theme.colorScheme.error.withValues(alpha: 0.08)
+                              : theme.colorScheme.primary.withValues(alpha: 0.08);
+
+                          return Card(
+                            elevation: 0,
+                            color: bgColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                color: isOverloaded
+                                    ? theme.colorScheme.error.withValues(alpha: 0.3)
+                                    : theme.colorScheme.primary
+                                        .withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    isOverloaded
+                                        ? Icons.warning_amber_rounded
+                                        : Icons.info_outline,
+                                    color: iconColor,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          DaojiText.resolve(
+                                            DaojiTextKey.habitCanopyLoadStatus,
+                                            vocabularyLevel,
+                                            params: {
+                                              'load': nextLoad,
+                                              'capacity': maxCapacity,
+                                            },
+                                          ),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: textColor,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          isOverloaded
+                                              ? 'Melebihi kapasitas harian! Pertimbangkan menurunkan tingkat kesulitan/energi.'
+                                              : 'Beban kanopi Anda berada dalam batas aman dan seimbang.',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: theme.colorScheme.onSurface
+                                                .withValues(alpha: 0.6),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (err, _) => const SizedBox.shrink(),
+                  ),
               const SizedBox(height: 20),
               Card(
                 elevation: 0,

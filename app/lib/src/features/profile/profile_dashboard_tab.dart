@@ -21,9 +21,6 @@ import '../dashboard/widgets/settings_bottom_sheet.dart';
 import 'activity_heatmap_provider.dart';
 import 'widgets/activity_heatmap_widget.dart';
 import 'widgets/life_compass_section.dart';
-import 'widgets/domain_re_audit_dialog.dart';
-import 'package:uuid/uuid.dart';
-
 class ProfileDashboardTab extends ConsumerStatefulWidget {
   const ProfileDashboardTab({super.key});
 
@@ -34,62 +31,6 @@ class ProfileDashboardTab extends ConsumerStatefulWidget {
 
 class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
   String _selectedDomainFilter = 'Semua';
-
-  Future<void> _showDomainReauditDialog(
-    BuildContext context,
-    UserProfile profile,
-  ) async {
-    final result = await showDialog<Map<String, double>>(
-      context: context,
-      builder: (context) => DomainReAuditDialog(profile: profile),
-    );
-
-    if (result != null) {
-      final db = ref.read(dbProvider);
-      final newScoresJson = jsonEncode(result);
-
-      try {
-        await (db.update(
-          db.userProfiles,
-        )..where((t) => t.userId.equals(profile.userId))).write(
-          UserProfilesCompanion(
-            latestDomainScores: drift.Value(newScoresJson),
-            updatedAt: drift.Value(DateTime.now()),
-          ),
-        );
-
-        await db
-            .into(db.lifeAudits)
-            .insert(
-              LifeAuditsCompanion.insert(
-                auditId: const Uuid().v4(),
-                userId: profile.userId,
-                domainScores: newScoresJson,
-                timestamp: DateTime.now(),
-              ),
-            );
-
-        ref.invalidate(dashboardDataProvider);
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Penilaian domain berhasil diperbarui!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Gagal memperbarui: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    }
-  }
 
   void _showCoreValuesDialog(BuildContext context, UserProfile profile) {
     final languageLevel = ref.read(cultivationLanguageLevelProvider);
@@ -458,23 +399,6 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                 LifeCompassSection(
                   profile: profile,
                   onEdit: () => _showCoreValuesDialog(context, profile),
-                ),
-                const SizedBox(height: 16),
-                OutlinedButton.icon(
-                  onPressed: () => _showDomainReauditDialog(context, profile),
-                  icon: const Icon(Icons.refresh_rounded, size: 18),
-                  label: Text(
-                    DaojiText.resolve(
-                      DaojiTextKey.profileDomainReauditAction,
-                      vocabularyLevel,
-                    ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 44),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
                 ),
                 const SizedBox(height: 16),
               ],

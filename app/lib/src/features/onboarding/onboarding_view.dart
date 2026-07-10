@@ -228,7 +228,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                       },
                     ),
                     AuditStep(
-                      devMode: false, // Removed _devMode variable
+                      devMode: true,
                       bodyScore: _bodyScore,
                       onBodyScoreChanged: (val) {
                         setState(() {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/i18n/daoji_vocabulary_level.dart';
+import '../../../core/i18n/daoji_text_key.dart';
+import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/services/app_sound_service.dart';
 
 /// Card widget untuk Celebration State (semua habit selesai)
@@ -30,16 +32,28 @@ class _CelebrationCardState extends State<CelebrationCard> {
     
     // Custom dynamic celebration messages based on cumulative days milestones
     final String emoji = _celebrationEmoji(widget.cumulativeDays);
-    final String title = 'Hari ini milikmu. Pohonmu sedang tumbuh.';
+    final String title = DaojiText.resolve(DaojiTextKey.celebrationTitle, widget.vocabularyLevel);
     
-    String subtitle = 'Semua kebiasaan terjadwal untuk hari ini telah selesai dilingkari.';
+    String subtitle = DaojiText.resolve(DaojiTextKey.celebrationSubtitleDefault, widget.vocabularyLevel);
     if (widget.cumulativeDays > 0) {
       if (widget.cumulativeDays % 30 == 0) {
-        subtitle = 'Luar biasa! Anda telah melangkah selama ${widget.cumulativeDays} hari. Pohon Anda beresonansi dengan kuat.';
+        subtitle = DaojiText.resolve(
+          DaojiTextKey.celebrationSubtitleMonthly,
+          widget.vocabularyLevel,
+          params: {'days': widget.cumulativeDays},
+        );
       } else if (widget.cumulativeDays % 7 == 0) {
-        subtitle = 'Satu minggu penuh pertumbuhan tercapai (Hari ke-${widget.cumulativeDays}). Terus pelihara lingkaran batin Anda.';
+        subtitle = DaojiText.resolve(
+          DaojiTextKey.celebrationSubtitleWeekly,
+          widget.vocabularyLevel,
+          params: {'days': widget.cumulativeDays},
+        );
       } else {
-        subtitle = 'Semua kebiasaan selesai pada Hari ke-${widget.cumulativeDays}. Pohon Anda tumbuh subur.';
+        subtitle = DaojiText.resolve(
+          DaojiTextKey.celebrationSubtitleDefault,
+          widget.vocabularyLevel,
+          params: {'days': widget.cumulativeDays},
+        );
       }
     }
 

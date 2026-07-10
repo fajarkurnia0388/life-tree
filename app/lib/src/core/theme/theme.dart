@@ -223,6 +223,18 @@ final weeklyPulsesHistoryProvider = StreamProvider<List<WeeklyPulse>>((ref) {
       .watch();
 });
 
+final lifeAuditsHistoryProvider = StreamProvider<List<LifeAudit>>((ref) {
+  final db = ref.watch(dbProvider);
+  return (db.select(db.lifeAudits)
+        ..orderBy([
+          (tbl) => drift.OrderingTerm(
+                expression: tbl.timestamp,
+                mode: drift.OrderingMode.asc,
+              ),
+        ]))
+      .watch();
+});
+
 final appThemeRawModeProvider = StreamProvider<String>((ref) {
   final db = ref.watch(dbProvider);
   return (db.select(db.userProfiles)..limit(1)).watch().map((profiles) {

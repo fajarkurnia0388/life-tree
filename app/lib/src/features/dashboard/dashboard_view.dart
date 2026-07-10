@@ -178,14 +178,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             loading: () => const SizedBox.shrink(),
             error: (_, _) => const SizedBox.shrink(),
           ),
-          IconButton(
-            icon: const Icon(Icons.shield_outlined),
-            tooltip: 'Dukungan Kesehatan Diri',
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              context.push('/safety');
-            },
-          ),
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Center(child: CultivationBadge()),
@@ -539,6 +531,60 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     onTap: () {
                       Navigator.pop(context);
                       context.push('/journal');
+                    },
+                  ),
+                ),
+                const Divider(),
+                Semantics(
+                  label: DaojiText.resolve(
+                    DaojiTextKey.decisionJournalTitle,
+                    vocabularyLevel,
+                  ),
+                  hint: 'Buka jurnal keputusan untuk mencatat keputusan strategis',
+                  button: true,
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: Color(0xFFFFF9C4),
+                      child: Icon(Icons.psychology_rounded, color: Color(0xFFFBC02D)),
+                    ),
+                    title: Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.decisionJournalTitle,
+                        vocabularyLevel,
+                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: const Text('Catat keputusan penting & evaluasi keyakinan'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.push('/decision-journal');
+                    },
+                  ),
+                ),
+                const Divider(),
+                Semantics(
+                  label: DaojiText.resolve(
+                    DaojiTextKey.reflectionThinkingCanvas,
+                    vocabularyLevel,
+                  ),
+                  hint: 'Mulai analisis visual dengan Kanvas Berpikir',
+                  button: true,
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: Color(0xFFE1F5FE),
+                      child: Icon(Icons.insights_rounded, color: Color(0xFF0288D1)),
+                    ),
+                    title: Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.reflectionThinkingCanvas,
+                        vocabularyLevel,
+                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: const Text('Gunakan metode analisis terstruktur'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.push('/thinking-canvas');
                     },
                   ),
                 ),

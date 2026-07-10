@@ -141,14 +141,25 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
         }
       }
       domainScores['Emosi'] = mappedScore.toDouble();
+      final domainScoresJson = jsonEncode(domainScores);
       await (db.update(
         db.userProfiles,
       )..where((tbl) => tbl.userId.equals(userId))).write(
         UserProfilesCompanion(
-          latestDomainScores: drift.Value(jsonEncode(domainScores)),
+          latestDomainScores: drift.Value(domainScoresJson),
           updatedAt: drift.Value(now),
         ),
       );
+
+      // Log a historical snapshot of domain scores in lifeAudits table
+      await db.into(db.lifeAudits).insert(
+            LifeAuditsCompanion.insert(
+              auditId: const Uuid().v4(),
+              userId: userId,
+              domainScores: domainScoresJson,
+              timestamp: now,
+            ),
+          );
 
       // Auto-set SupportMode based on WHO-5 well-being threshold (< 50% = Recovery).
       // This is a protective intervention: system adapts to user's real condition.

@@ -44,14 +44,14 @@ class AuditStep extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Evaluasi Awal (Full Life Audit)',
+              'Evaluasi Awal (Life Audit)',
               style: theme.textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Mode Developer Aktif: Evaluasi seluruh 6 domain kehidupan.',
-              style: TextStyle(fontSize: 12, color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
+              'Evaluasi 6 area kehidupan utama Anda untuk menyesuaikan visualisasi awal Pohon Pertumbuhan Anda.',
+              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
