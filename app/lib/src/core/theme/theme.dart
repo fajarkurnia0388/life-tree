@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/db_provider.dart';
 import '../../features/dashboard/dashboard_provider.dart';
 import '../../data/local_db/database.dart';
+import 'package:drift/drift.dart' as drift;
 
 class CalmTheme {
   // Daoji Premium Palette (Aligned with landing page)
@@ -208,6 +209,18 @@ final userProfileProvider = StreamProvider<UserProfile?>((ref) {
     if (profiles.isEmpty) return null;
     return profiles.first;
   });
+});
+
+final weeklyPulsesHistoryProvider = StreamProvider<List<WeeklyPulse>>((ref) {
+  final db = ref.watch(dbProvider);
+  return (db.select(db.weeklyPulses)
+        ..orderBy([
+          (tbl) => drift.OrderingTerm(
+                expression: tbl.weekStartDate,
+                mode: drift.OrderingMode.asc,
+              ),
+        ]))
+      .watch();
 });
 
 final appThemeRawModeProvider = StreamProvider<String>((ref) {

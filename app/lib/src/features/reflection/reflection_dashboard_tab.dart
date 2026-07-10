@@ -5,9 +5,7 @@ import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import 'dart:convert';
-import 'dart:math';
 import '../../core/theme/theme.dart';
-import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import 'widgets/palace_sparkline_widget.dart';
 
@@ -18,6 +16,28 @@ class ReflectionDashboardTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
+    final profileAsync = ref.watch(userProfileProvider);
+    final historyAsync = ref.watch(weeklyPulsesHistoryProvider);
+
+    final profile = profileAsync.valueOrNull;
+    final List<WeeklyPulse> history = historyAsync.valueOrNull ?? [];
+
+    Map<String, dynamic> domainScores = {};
+    if (profile != null && profile.latestDomainScores != null) {
+      try {
+        domainScores = jsonDecode(profile.latestDomainScores!);
+      } catch (_) {}
+    }
+
+    final domains = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
+    final domainColors = {
+      'Tubuh': CalmTheme.primarySage,
+      'Keuangan': CalmTheme.daoGold,
+      'Hubungan': CalmTheme.alertMutedRed,
+      'Emosi': CalmTheme.secondaryBlue,
+      'Karir': CalmTheme.secondaryBlue,
+      'Rekreasi': CalmTheme.primarySage,
+    };
 
     final List<Map<String, dynamic>> reflectionFeatures = [
       {
@@ -88,51 +108,31 @@ class ReflectionDashboardTab extends ConsumerWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            FutureBuilder<UserProfile?>(
-              future: (ref.read(dbProvider).select(ref.read(dbProvider).userProfiles)..limit(1)).getSingleOrNull(),
-              builder: (context, snapshot) {
-                final profile = snapshot.data;
-                if (profile == null) return const SizedBox.shrink();
+            if (profile != null) ...[
+              ExpansionTile(
+                title: const Text('Tren Keseimbangan Istana Batin', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                leading: const Icon(Icons.insights_rounded, color: Colors.teal),
+                children: domains.map((d) {
+                  final currentVal = (domainScores[d] as num?)?.toDouble() ?? 5.0;
+                  
+                  // Get real historical scores from weekly pulses history
+                  final domainPulses = history.where((p) => p.domainTag == d).toList();
+                  final List<double> scores = domainPulses.map((p) => p.score.toDouble()).toList();
+                  if (scores.isEmpty) {
+                    scores.add(currentVal);
+                  }
 
-                Map<String, dynamic> domainScores = {};
-                if (profile.latestDomainScores != null) {
-                  try {
-                    domainScores = jsonDecode(profile.latestDomainScores!);
-                  } catch (_) {}
-                }
+                  final displayName = DaojiText.domainLabel(d, vocabularyLevel);
 
-                final domains = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
-                final domainColors = {
-                  'Tubuh': CalmTheme.primarySage,
-                  'Keuangan': CalmTheme.daoGold,
-                  'Hubungan': CalmTheme.alertMutedRed,
-                  'Emosi': CalmTheme.secondaryBlue,
-                  'Karir': CalmTheme.secondaryBlue,
-                  'Rekreasi': CalmTheme.primarySage,
-                };
-
-                return ExpansionTile(
-                  title: const Text('Tren Keseimbangan Istana Batin', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                  leading: const Icon(Icons.insights_rounded, color: Colors.teal),
-                  children: domains.map((d) {
-                    final currentVal = (domainScores[d] as num?)?.toDouble() ?? 5.0;
-                    // Mock trend data based on current value for visual representation
-                    final scores = [
-                      max(1.0, currentVal - 1.5),
-                      min(10.0, currentVal + 1.0),
-                      max(1.0, currentVal - 0.5),
-                      currentVal,
-                    ];
-                    return PalaceSparklineWidget(
-                      title: d,
-                      scores: scores,
-                      color: domainColors[d] ?? Colors.grey,
-                    );
-                  }).toList(),
-                );
-              },
-            ),
-            const SizedBox(height: 24),
+                  return PalaceSparklineWidget(
+                    title: displayName,
+                    scores: scores,
+                    color: domainColors[d] ?? Colors.grey,
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 24),
+            ],
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
