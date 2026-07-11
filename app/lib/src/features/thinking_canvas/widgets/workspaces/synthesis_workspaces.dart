@@ -47,22 +47,37 @@ class _MindDumpWorkspaceState extends ConsumerState<MindDumpWorkspace> {
 
   void _editNote(int index) {
     final controller = TextEditingController(text: _notes[index]);
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Edit Catatan #${index + 1}'),
+        title: Text(
+          DaojiText.resolve(
+            DaojiTextKey.mindDumpEditTitle,
+            vocabularyLevel,
+            params: {'index': index + 1},
+          ),
+        ),
         content: TextField(
           controller: controller,
           autofocus: true,
           maxLines: 3,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Catatan',
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            labelText: DaojiText.resolve(
+              DaojiTextKey.mindDumpEditLabel,
+              vocabularyLevel,
+            ),
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              DaojiText.resolve(DaojiTextKey.systemCancel, vocabularyLevel),
+            ),
+          ),
           ElevatedButton(
             onPressed: () {
               final v = controller.text.trim();
@@ -72,7 +87,9 @@ class _MindDumpWorkspaceState extends ConsumerState<MindDumpWorkspace> {
               }
               Navigator.pop(ctx);
             },
-            child: const Text('Simpan'),
+            child: Text(
+              DaojiText.resolve(DaojiTextKey.systemSave, vocabularyLevel),
+            ),
           ),
         ],
       ),
@@ -80,8 +97,11 @@ class _MindDumpWorkspaceState extends ConsumerState<MindDumpWorkspace> {
   }
 
   void _notifyChanges() {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     final buffer = StringBuffer();
-    buffer.writeln('Hasil Kuras Pikiran (Mind Dump Sticky Notes):');
+    buffer.writeln(
+      DaojiText.resolve(DaojiTextKey.mindDumpStickyHeader, vocabularyLevel),
+    );
     for (int i = 0; i < _notes.length; i++) {
       buffer.writeln('- ${_notes[i]}');
     }
@@ -278,17 +298,32 @@ class _AffinityMappingWorkspaceState
 
   void _renameGroup(int index) {
     final controller = TextEditingController(text: _groups[index]);
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Ubah Nama Grup'),
+        title: Text(
+          DaojiText.resolve(DaojiTextKey.affinityRenameGroup, vocabularyLevel),
+        ),
         content: TextField(
-          controller: controller, autofocus: true,
-          decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Nama'),
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            labelText: DaojiText.resolve(
+              DaojiTextKey.mindDumpEditLabel,
+              vocabularyLevel,
+            ),
+          ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              DaojiText.resolve(DaojiTextKey.systemCancel, vocabularyLevel),
+            ),
+          ),
           ElevatedButton(
             onPressed: () {
               final v = controller.text.trim();
@@ -304,7 +339,9 @@ class _AffinityMappingWorkspaceState
               }
               Navigator.pop(ctx);
             },
-            child: const Text('Simpan'),
+            child: Text(
+              DaojiText.resolve(DaojiTextKey.systemSave, vocabularyLevel),
+            ),
           ),
         ],
       ),
@@ -319,13 +356,18 @@ class _AffinityMappingWorkspaceState
   }
 
   void _notifyChanges() {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     final buffer = StringBuffer();
-    buffer.writeln('Pengelompokan Affinity Mapping:');
+    buffer.writeln(
+      DaojiText.resolve(DaojiTextKey.affinityGroupHeader, vocabularyLevel),
+    );
     for (final group in _groups) {
       buffer.writeln('[$group]:');
       final matched = _items.where((item) => item['group'] == group).toList();
       if (matched.isEmpty) {
-        buffer.writeln('  (Kosong)');
+        buffer.writeln(
+          '  ${DaojiText.resolve(DaojiTextKey.affinityGroupEmpty, vocabularyLevel)}',
+        );
       } else {
         for (final item in matched) {
           buffer.writeln('  - ${item['text']}');
@@ -385,8 +427,16 @@ class _AffinityMappingWorkspaceState
             TextButton.icon(
               onPressed: _addGroup,
               icon: const Icon(Icons.add_rounded, size: 16),
-              label: const Text('Tambah Grup', style: TextStyle(fontSize: 11)),
-              style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8)),
+              label: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.affinityAddGroup,
+                  vocabularyLevel,
+                ),
+                style: const TextStyle(fontSize: 11),
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+              ),
             ),
           ],
         ),
@@ -402,7 +452,11 @@ class _AffinityMappingWorkspaceState
             ),
             child: Column(
               children: [
-                Icon(Icons.label_outline_rounded, size: 40, color: Colors.grey),
+                const Icon(
+                  Icons.label_outline_rounded,
+                  size: 40,
+                  color: Colors.grey,
+                ),
                 const SizedBox(height: 8),
                 Text(
                   DaojiText.resolve(
@@ -454,8 +508,18 @@ class _AffinityMappingWorkspaceState
                         ),
                         underline: const SizedBox(),
                         items: [
-                          ..._groups.map((g) => DropdownMenuItem(value: g, child: Text(g))),
-                          const DropdownMenuItem(value: '__rename__', child: Text('✏️ Ubah Nama...')),
+                          ..._groups.map(
+                            (g) => DropdownMenuItem(value: g, child: Text(g)),
+                          ),
+                          DropdownMenuItem(
+                            value: '__rename__',
+                            child: Text(
+                              DaojiText.resolve(
+                                DaojiTextKey.affinityRenameOption,
+                                vocabularyLevel,
+                              ),
+                            ),
+                          ),
                         ],
                         onChanged: (val) {
                           if (val == '__rename__') {

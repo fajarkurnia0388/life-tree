@@ -205,6 +205,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
             if (_editingNodeId != null) _finishInlineEdit();
             setState(() => _selectedNodeId = null);
           },
+          onDoubleTap: _recenterCanvas,
           child: InteractiveViewer(
             transformationController: _transformationController,
             minScale: 0.4, maxScale: 2.0, constrained: false,

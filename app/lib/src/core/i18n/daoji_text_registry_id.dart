@@ -212,11 +212,19 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
         'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
     DaojiTextKey.mindDumpEmptyMessage:
         'Belum ada catatan tempel. Ketik sesuatu di atas untuk meluapkan isi kepala Anda!',
+    DaojiTextKey.mindDumpEditTitle: 'Edit Catatan #{index}',
+    DaojiTextKey.mindDumpEditLabel: 'Catatan',
+    DaojiTextKey.mindDumpStickyHeader: 'Hasil Kuras Pikiran (Mind Dump Sticky Notes):',
     DaojiTextKey.affinityTitle: '4. Pengelompokan Affinity Mapping',
     DaojiTextKey.affinityAddLabel: 'Tambah Gagasan',
     DaojiTextKey.affinityHint: 'Ketik gagasan/ide Anda lalu tekan Enter...',
     DaojiTextKey.affinityEmptyMessage:
         'Belum ada ide. Tambahkan ide di atas lalu kelompokkan ke dalam grup!',
+    DaojiTextKey.affinityAddGroup: 'Tambah Grup',
+    DaojiTextKey.affinityRenameGroup: 'Ubah Nama Grup',
+    DaojiTextKey.affinityRenameOption: '✏️ Ubah Nama...',
+    DaojiTextKey.affinityGroupHeader: 'Pengelompokan Affinity Mapping:',
+    DaojiTextKey.affinityGroupEmpty: '(Kosong)',
     DaojiTextKey.fiveWhysTitle: '5 Whys (Why Chain)',
     DaojiTextKey.fiveWhysPrompt:
         'Tuliskan sebab pertama lalu gali 5 kali "mengapa"',
