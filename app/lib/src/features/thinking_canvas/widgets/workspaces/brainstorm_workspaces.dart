@@ -865,9 +865,8 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: false && pkg.isPremium // residual paywall styling disabled
-                                    ? Colors.amber.withValues(alpha: 0.1)
-                                    : Colors.blue.withValues(alpha: 0.1),
+                                // Residual: was amber when pkg.isPremium; monetization disabled.
+                                color: Colors.blue.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Center(

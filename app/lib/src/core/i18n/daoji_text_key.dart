@@ -161,6 +161,7 @@ enum DaojiTextKey {
   thinkingCanvasRecentlyUsed,
   thinkingCanvasShowGuideAgain,
   thinkingCanvasDeleteAllHistory,
+  thinkingCanvasDeleteAllAction,
   thinkingCanvasDeleteAllHistoryBody,
   thinkingCanvasNoSessionsTitle,
   thinkingCanvasNoSessionsBody,

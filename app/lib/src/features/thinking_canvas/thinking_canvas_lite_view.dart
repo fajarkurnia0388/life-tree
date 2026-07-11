@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:drift/drift.dart' as drift;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,9 +6,6 @@ import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_level.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
-import '../../core/providers/db_provider.dart';
-import '../../core/widgets/empty_state_widget.dart';
-import '../../data/local_db/database.dart';
 import 'domain/thinking_method.dart';
 import 'domain/mind_map_model.dart';
 import 'widgets/method_picker_bottom_sheet.dart';
@@ -17,8 +13,8 @@ import 'widgets/mind_map_canvas_view.dart';
 import 'widgets/specialized_workspace_widgets.dart';
 import 'widgets/thinking_canvas_onboarding_dialog.dart';
 import 'thinking_canvas_state.dart';
-import 'thinking_canvas_draft_service.dart';
 import 'widgets/method_visuals.dart';
+import 'widgets/session_history_sheet.dart';
 
 class ThinkingCanvasLiteView extends ConsumerStatefulWidget {
   const ThinkingCanvasLiteView({super.key});
@@ -163,7 +159,7 @@ class _ThinkingCanvasLiteViewState
         ),
         body: canvasState.selectedMethod == null
             ? _buildMethodSelection(context, theme, vocabularyLevel, canvasState)
-            : _buildActiveCanvas(context, theme, canvasState),
+            : _buildActiveCanvas(context, theme, canvasState, vocabularyLevel),
       ),
     );
   }
@@ -198,6 +194,8 @@ class _ThinkingCanvasLiteViewState
   // ============================================
   void _confirmSaveAndClearCanvas() {
     final state = ref.read(thinkingCanvasProvider);
+    final level = ref.read(daojiVocabularyLevelValueProvider);
+    String t(DaojiTextKey key) => DaojiText.resolve(key, level);
     if (state.selectedMethod != null && state.hasContent) {
       HapticFeedback.mediumImpact();
       showDialog(
@@ -206,30 +204,29 @@ class _ThinkingCanvasLiteViewState
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text('Simpan Sesi?'),
-          content: const Text(
-            'Anda memiliki konten yang belum disimpan secara permanen. '
-            'Apa yang ingin Anda lakukan?',
-          ),
+          title: Text(t(DaojiTextKey.thinkingCanvasSaveSessionTitle)),
+          content: Text(t(DaojiTextKey.thinkingCanvasSaveSessionBody)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 ref.read(thinkingCanvasProvider.notifier).clearCanvas();
               },
-              child: Text('Buang',
-                  style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              child: Text(
+                t(DaojiTextKey.thinkingCanvasDiscard),
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Batal'),
+              child: Text(t(DaojiTextKey.systemCancel)),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
                 _saveAndClearCanvas();
               },
-              child: const Text('Simpan'),
+              child: Text(t(DaojiTextKey.systemSave)),
             ),
           ],
         ),
@@ -250,385 +247,56 @@ class _ThinkingCanvasLiteViewState
   }
 
   // ============================================
-  // SESSION HISTORY (with delete)
-  // ============================================
+  // SESSION HISTORY (reactive stream)
   void _showSessionHistory(BuildContext context) {
-    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
-    final theme = Theme.of(context);
-    showModalBottomSheet(
+    showThinkingCanvasSessionHistory(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        final db = ref.read(dbProvider);
-        return FutureBuilder<List<ThinkingCanvasSession>>(
-          future:
-              (db.select(db.thinkingCanvasSessions)
-                    ..orderBy([
-                      (tbl) => drift.OrderingTerm(
-                        expression: tbl.createdAt,
-                        mode: drift.OrderingMode.desc,
+      methodDisplayName: _getMethodDisplayName,
+      onSessionSelected: (s) async {
+        if (!mounted) return;
+        final level = ref.read(daojiVocabularyLevelValueProvider);
+        unawaited(showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (dialogContext) => Center(
+            child: Card(
+              margin: const EdgeInsets.all(40),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.thinkingCanvasLoadingSession,
+                        level,
                       ),
-                    ])
-                    ..limit(20))
-                  .get(),
-          builder: (context, snapshot) {
-            final sessions = snapshot.data ?? [];
-            return DraggableScrollableSheet(
-              initialChildSize: 0.6,
-              maxChildSize: 0.9,
-              builder: (context, scrollController) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(20),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Center(
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 12),
-                          width: 40,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.onSurface
-                                .withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                        child: Row(
-                          children: [
-                            Icon(Icons.history_rounded,
-                                color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                DaojiText.resolve(
-                                  DaojiTextKey
-                                      .thinkingCanvasSessionHistoryTitle,
-                                  vocabularyLevel,
-                                ),
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            if (sessions.isNotEmpty)
-                              TextButton(
-                                onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: const Text('Hapus Semua History?'),
-                                      content: const Text(
-                                          'Semua sesi akan dihapus permanen.'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(ctx, false),
-                                          child: const Text('Batal'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(ctx, true),
-                                          child: Text('Hapus',
-                                              style: TextStyle(
-                                                  color: theme
-                                                      .colorScheme.error)),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  if (confirm == true) {
-                                    await ref
-                                        .read(thinkingCanvasDraftServiceProvider)
-                                        .softDeleteAllHistory();
-                                    ref.invalidate(thinkingCanvasHistoryProvider);
-                                    if (context.mounted) {
-                                      Navigator.pop(context);
-                                    }
-                                  }
-                                },
-                                child: Text('Hapus Semua',
-                                    style: TextStyle(
-                                        fontSize: 11,
-                                        color: theme.colorScheme.error)),
-                              ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: sessions.isEmpty
-                            ? const EmptyStateWidget(
-                                icon: Icons.history_rounded,
-                                title: 'Belum Ada Sesi',
-                                message:
-                                    'Semua sesi eksplorasi ide terstruktur Anda akan tercatat di sini.',
-                              )
-                            : ListView.builder(
-                                controller: scrollController,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                itemCount: sessions.length,
-                                itemBuilder: (context, i) {
-                                  final s = sessions[i];
-                                  final methodColor =
-                                      _getMethodColor(s.methodKey);
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    child: Dismissible(
-                                      key: ValueKey(s.sessionId),
-                                      direction:
-                                          DismissDirection.endToStart,
-                                      background: Container(
-                                        alignment: Alignment.centerRight,
-                                        padding: const EdgeInsets.only(
-                                            right: 16),
-                                        decoration: BoxDecoration(
-                                          color: theme.colorScheme.error
-                                              .withValues(alpha: 0.1),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: Icon(Icons.delete_rounded,
-                                            color:
-                                                theme.colorScheme.error),
-                                      ),
-                                      confirmDismiss: (_) async {
-                                        return await showDialog<bool>(
-                                          context: context,
-                                          builder: (ctx) => AlertDialog(
-                                            title: const Text(
-                                                'Hapus Sesi?'),
-                                            content: Text(
-                                                'Sesi "${s.topic ?? s.methodKey}" akan dihapus.'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(
-                                                        ctx, false),
-                                                child:
-                                                    const Text('Batal'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(
-                                                        ctx, true),
-                                                child: Text('Hapus',
-                                                    style: TextStyle(
-                                                        color: theme
-                                                            .colorScheme
-                                                            .error)),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                      onDismissed: (_) async {
-                                        await ref
-                                            .read(thinkingCanvasDraftServiceProvider)
-                                            .softDeleteSession(s.sessionId); // fire-and-forget
-                                        ref.invalidate(thinkingCanvasHistoryProvider);
-                                      },
-                                      child: Material(
-                                        color: theme.colorScheme.surface,
-                                        borderRadius:
-                                            BorderRadius.circular(12),
-                                        child: InkWell(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          onTap: () async {
-                                            Navigator.pop(context);
-                                            unawaited(showDialog(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (dialogContext) =>
-                                                  Center(
-                                                child: Card(
-                                                  margin:
-                                                      const EdgeInsets.all(
-                                                          40),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets
-                                                            .all(24),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize
-                                                              .min,
-                                                      children: [
-                                                        const CircularProgressIndicator(),
-                                                        const SizedBox(
-                                                            height: 16),
-                                                        const Text(
-                                                            'Memuat sesi...'),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ));
-                                            await Future.delayed(
-                                              const Duration(
-                                                  milliseconds: 100),
-                                            );
-                                            setState(() {
-                                              _draftBannerExpanded = true;
-                                              if (s.methodKey ==
-                                                  'Freewriting') {
-                                                _freewritingController
-                                                    .text = s.rawNotes ?? '';
-                                              }
-                                            });
-                                            ref
-                                                .read(thinkingCanvasProvider
-                                                    .notifier)
-                                                .loadSession(s);
-                                            if (context.mounted) {
-                                              Navigator.of(context).pop();
-                                            }
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                color: theme.colorScheme
-                                                    .onSurface
-                                                    .withValues(alpha: 0.08),
-                                              ),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  width: 40,
-                                                  height: 40,
-                                                  decoration: BoxDecoration(
-                                                    color: methodColor
-                                                        .withValues(
-                                                            alpha: 0.12),
-                                                    borderRadius:
-                                                        BorderRadius
-                                                            .circular(10),
-                                                  ),
-                                                  child: Icon(
-                                                    _getMethodIcon(
-                                                        s.methodKey),
-                                                    color: methodColor,
-                                                    size: 18,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 10),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        s.topic ??
-                                                            _getMethodDisplayName(
-                                                                s.methodKey),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style:
-                                                            const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight
-                                                                  .bold,
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 2),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                              horizontal: 4,
-                                                              vertical: 1,
-                                                            ),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: methodColor
-                                                                  .withValues(
-                                                                      alpha:
-                                                                          0.08),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          4),
-                                                            ),
-                                                            child: Text(
-                                                              s.methodKey,
-                                                              style:
-                                                                  TextStyle(
-                                                                fontSize: 9,
-                                                                color:
-                                                                    methodColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 6),
-                                                          Text(
-                                                            '${s.createdAt.day}/${s.createdAt.month}/${s.createdAt.year}',
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              color: theme
-                                                                  .colorScheme
-                                                                  .onSurface
-                                                                  .withValues(
-                                                                      alpha:
-                                                                          0.4),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Icon(
-                                                  Icons.chevron_right_rounded,
-                                                  color: theme.colorScheme
-                                                      .onSurface
-                                                      .withValues(alpha: 0.2),
-                                                  size: 18,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
-        );
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
+        await Future.delayed(const Duration(milliseconds: 100));
+        if (!mounted) return;
+        setState(() {
+          _draftBannerExpanded = true;
+          if (s.methodKey == 'Freewriting') {
+            _freewritingController.text = s.rawNotes ?? '';
+          }
+        });
+        ref.read(thinkingCanvasProvider.notifier).loadSession(s);
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
       },
     );
   }
 
-  // ============================================
+    // ============================================
   // MOOD-BASED METHOD SELECTION
   // ============================================
   Widget _buildMethodSelection(
@@ -647,7 +315,7 @@ class _ThinkingCanvasLiteViewState
           _buildMoodPrompt(theme, level, selectedMood),
           const SizedBox(height: 24),
           Text(
-            'Mulai Cepat',
+            DaojiText.resolve(DaojiTextKey.thinkingCanvasQuickStart, level),
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.primary,
@@ -663,7 +331,7 @@ class _ThinkingCanvasLiteViewState
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
                 const SizedBox(width: 6),
                 Text(
-                  'Terakhir Digunakan',
+                  DaojiText.resolve(DaojiTextKey.thinkingCanvasRecentlyUsed, level),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
@@ -723,8 +391,10 @@ class _ThinkingCanvasLiteViewState
           TextButton.icon(
             onPressed: _showOnboardingDialog,
             icon: const Icon(Icons.help_outline_rounded, size: 16),
-            label: const Text('Lihat Panduan Lagi',
-                style: TextStyle(fontSize: 12)),
+            label: Text(
+              DaojiText.resolve(DaojiTextKey.thinkingCanvasShowGuideAgain, level),
+              style: const TextStyle(fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -772,11 +442,11 @@ class _ThinkingCanvasLiteViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Apa yang Anda rasakan saat ini?',
+        Text(DaojiText.resolve(DaojiTextKey.thinkingCanvasMoodPrompt, level),
             style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
-        Text('Pilih suasana hati untuk rekomendasi metode',
+        Text(DaojiText.resolve(DaojiTextKey.thinkingCanvasMoodPromptSubtitle, level),
             style: TextStyle(
               fontSize: 12,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
@@ -855,14 +525,17 @@ class _ThinkingCanvasLiteViewState
         ),
         if (selectedMood != null) ...[
           const SizedBox(height: 16),
-          _buildMoodRecommendations(theme, moods, selectedMood),
+          _buildMoodRecommendations(theme, moods, selectedMood, level),
         ],
       ],
     );
   }
 
   Widget _buildMoodRecommendations(
-      ThemeData theme, List<Map<String, dynamic>> moods, String selectedMood) {
+      ThemeData theme,
+      List<Map<String, dynamic>> moods,
+      String selectedMood,
+      DaojiVocabularyLevel level) {
     final moodIndex = moods.indexWhere((m) => m['key'] == selectedMood);
     if (moodIndex < 0) return const SizedBox.shrink();
     final mood = moods[moodIndex];
@@ -878,7 +551,7 @@ class _ThinkingCanvasLiteViewState
               decoration: BoxDecoration(
                   color: moodColor, borderRadius: BorderRadius.circular(2))),
           const SizedBox(width: 6),
-          Text('Rekomendasi untuk Anda',
+          Text(DaojiText.resolve(DaojiTextKey.thinkingCanvasRecommendations, level),
               style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold, color: moodColor)),
         ]),
@@ -1063,7 +736,10 @@ class _ThinkingCanvasLiteViewState
   // ACTIVE CANVAS (with guide + export)
   // ============================================
   Widget _buildActiveCanvas(
-      BuildContext context, ThemeData theme, ThinkingCanvasState state) {
+      BuildContext context,
+      ThemeData theme,
+      ThinkingCanvasState state,
+      DaojiVocabularyLevel level) {
     final hasDraft = state.currentDraftContent.trim().isNotEmpty;
     final methodColor = _getMethodColor(state.selectedMethod!);
 
@@ -1155,7 +831,7 @@ class _ThinkingCanvasLiteViewState
             child: FilledButton.icon(
               onPressed: _confirmSaveAndClearCanvas,
               icon: const Icon(Icons.check_rounded, size: 18),
-              label: const Text('Simpan & Selesai'),
+              label: Text(DaojiText.resolve(DaojiTextKey.thinkingCanvasSaveAndFinish, level)),
               style: FilledButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: theme.colorScheme.onPrimary,
