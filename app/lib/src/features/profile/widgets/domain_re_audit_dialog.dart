@@ -8,15 +8,22 @@ import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
 
-class DomainReAuditDialog extends ConsumerWidget {
+class DomainReAuditDialog extends ConsumerStatefulWidget {
   final UserProfile profile;
 
   const DomainReAuditDialog({super.key, required this.profile});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
-    final controllers = {
+  ConsumerState<DomainReAuditDialog> createState() => _DomainReAuditDialogState();
+}
+
+class _DomainReAuditDialogState extends ConsumerState<DomainReAuditDialog> {
+  late final Map<String, TextEditingController> _controllers;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = {
       'Tubuh': TextEditingController(text: '5.0'),
       'Keuangan': TextEditingController(text: '5.0'),
       'Hubungan': TextEditingController(text: '5.0'),
@@ -26,18 +33,31 @@ class DomainReAuditDialog extends ConsumerWidget {
     };
 
     // Pre-fill with existing scores
-    if (profile.latestDomainScores != null) {
+    if (widget.profile.latestDomainScores != null) {
       try {
         final Map<String, dynamic> scores = jsonDecode(
-          profile.latestDomainScores!,
+          widget.profile.latestDomainScores!,
         );
         scores.forEach((key, val) {
-          if (controllers.containsKey(key)) {
-            controllers[key]!.text = val.toString();
+          if (_controllers.containsKey(key)) {
+            _controllers[key]!.text = val.toString();
           }
         });
       } catch (_) {}
     }
+  }
+
+  @override
+  void dispose() {
+    for (final controller in _controllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -52,7 +72,7 @@ class DomainReAuditDialog extends ConsumerWidget {
           return SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: controllers.entries.map((entry) {
+              children: _controllers.entries.map((entry) {
                 final currentValue =
                     (double.tryParse(entry.value.text) ?? 5.0).clamp(1.0, 10.0);
                 return Padding(
@@ -105,7 +125,7 @@ class DomainReAuditDialog extends ConsumerWidget {
         ElevatedButton(
           style: AppButtonStyles.primary(context),
           onPressed: () {
-            final newScores = controllers.map(
+            final newScores = _controllers.map(
               (k, v) => MapEntry(
                 k,
                 (double.tryParse(v.text) ?? 5.0).clamp(1.0, 10.0),

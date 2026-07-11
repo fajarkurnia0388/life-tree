@@ -247,7 +247,7 @@ class AffinityMappingWorkspace extends ConsumerStatefulWidget {
 class _AffinityMappingWorkspaceState
     extends ConsumerState<AffinityMappingWorkspace> {
   final List<Map<String, dynamic>> _items = [];
-  List<String> _groups = ['Grup A', 'Grup B', 'Grup C'];
+  final List<String> _groups = ['Grup A', 'Grup B', 'Grup C'];
 
   final TextEditingController _inputController = TextEditingController();
 

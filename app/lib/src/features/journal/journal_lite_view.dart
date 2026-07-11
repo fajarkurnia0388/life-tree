@@ -45,7 +45,6 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
       _loadMoodContext();
     });
   }
-
   /// P2-04: Query the last 7 days of this user's journal entries and compute
   /// yesterday's mood, the 7-day average, and a per-day series for the sparkline.
   Future<void> _loadMoodContext() async {

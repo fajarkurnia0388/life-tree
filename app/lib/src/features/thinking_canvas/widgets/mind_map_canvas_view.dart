@@ -376,9 +376,11 @@ class _GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..color = dotColor..strokeWidth = 1.5;
-    for (double x = 0; x < size.width; x += 20)
-      for (double y = 0; y < size.height; y += 20)
+    for (double x = 0; x < size.width; x += 20) {
+      for (double y = 0; y < size.height; y += 20) {
         canvas.drawCircle(Offset(x, y), 1.0, paint);
+      }
+    }
   }
   @override
   bool shouldRepaint(covariant _GridPainter old) => false;
