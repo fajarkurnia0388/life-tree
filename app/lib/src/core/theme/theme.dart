@@ -266,13 +266,22 @@ final circadianEnabledProvider = StreamProvider<bool>((ref) {
   });
 });
 
+final _timeTickProvider = StreamProvider<DateTime>((ref) {
+  return Stream.periodic(const Duration(minutes: 1), (_) => DateTime.now());
+});
+
 final appDynamicThemeProvider = Provider<ThemeData>((ref) {
   final circadianAsync = ref.watch(circadianEnabledProvider);
   final circadianEnabled = circadianAsync.valueOrNull ?? false;
+
+  if (circadianEnabled) {
+    ref.watch(_timeTickProvider);
+  }
   
   final themeModeAsync = ref.watch(appThemeModeProvider);
   final themeMode = themeModeAsync.valueOrNull ?? ThemeMode.system;
   final devTimeOverride = ref.watch(devTimeOfDayOverrideProvider);
+
 
   // Determine base theme from themeMode
   ThemeData baseTheme;

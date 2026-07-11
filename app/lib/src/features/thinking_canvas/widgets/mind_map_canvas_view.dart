@@ -242,8 +242,14 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
             child: SizedBox(
               width: 1600, height: 1200,
               child: Stack(children: [
-                Positioned.fill(child: CustomPaint(
-                    painter: _GridPainter(theme.colorScheme.onSurface.withValues(alpha: 0.04)))),
+                Positioned.fill(
+                  child: RepaintBoundary(
+                    child: CustomPaint(
+                      painter: _GridPainter(theme.colorScheme.onSurface.withValues(alpha: 0.04)),
+                    ),
+                  ),
+                ),
+
                 Positioned.fill(child: CustomPaint(
                     painter: _LinesPainter(nodes: _nodes))),
                 ..._nodes.map((node) {
@@ -252,14 +258,18 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
                   return Positioned(
                     left: node.position.dx, top: node.position.dy,
                     child: GestureDetector(
-                      onPanUpdate: (d) {
+                      onPanStart: (_) {
                         if (isEditing) return;
                         _saveToUndoStack();
+                      },
+                      onPanUpdate: (d) {
+                        if (isEditing) return;
                         setState(() => node.position = Offset(
                           node.position.dx + d.delta.dx,
                           node.position.dy + d.delta.dy,
                         ));
                       },
+
                       onTap: () => setState(() => _selectedNodeId = node.id),
                       onDoubleTap: () => _startInlineEdit(node.id),
                       child: _buildNode(node, isSelected, isEditing, theme),

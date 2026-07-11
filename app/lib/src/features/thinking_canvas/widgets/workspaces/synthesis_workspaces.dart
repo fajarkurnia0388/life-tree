@@ -584,13 +584,16 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
   }
 
   void _notifyChanges() {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+    final title = DaojiText.resolve(DaojiTextKey.fiveWhysTitle, vocabularyLevel);
     final buffer = StringBuffer();
-    buffer.writeln('Analisis Rantai 5 Whys (Akar Masalah):');
+    buffer.writeln('$title:');
     for (int i = 0; i < 5; i++) {
       buffer.writeln('Why ${i + 1}: ${_controllers[i].text.trim()}');
     }
     widget.onChanged(buffer.toString());
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -657,7 +660,9 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
                         : DaojiText.resolve(
                             DaojiTextKey.fiveWhysOtherLabel,
                             vocabularyLevel,
+                            params: {'index': index + 1},
                           ),
+
                     hintText: DaojiText.resolve(
                       DaojiTextKey.fiveWhysHint,
                       vocabularyLevel,
@@ -731,13 +736,20 @@ class _FirstPrinciplesWorkspaceState
   }
 
   void _notifyChanges() {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+    final title = DaojiText.resolve(DaojiTextKey.firstPrinciplesTitle, vocabularyLevel);
+    final step1 = DaojiText.resolve(DaojiTextKey.firstPrinciplesStepOldAssumption, vocabularyLevel);
+    final step2 = DaojiText.resolve(DaojiTextKey.firstPrinciplesStepFact, vocabularyLevel);
+    final step3 = DaojiText.resolve(DaojiTextKey.firstPrinciplesStepConstruction, vocabularyLevel);
+    
     final buffer = StringBuffer();
-    buffer.writeln('Analisis First Principles (Dekonstruksi):');
-    buffer.writeln('- ASUMSI LAMA: ${_controllers[0].text.trim()}');
-    buffer.writeln('- FAKTA DASAR: ${_controllers[1].text.trim()}');
-    buffer.writeln('- KONSTRUKSI BARU: ${_controllers[2].text.trim()}');
+    buffer.writeln('$title:');
+    buffer.writeln('- $step1: ${_controllers[0].text.trim()}');
+    buffer.writeln('- $step2: ${_controllers[1].text.trim()}');
+    buffer.writeln('- $step3: ${_controllers[2].text.trim()}');
     widget.onChanged(buffer.toString());
   }
+
 
   @override
   Widget build(BuildContext context) {

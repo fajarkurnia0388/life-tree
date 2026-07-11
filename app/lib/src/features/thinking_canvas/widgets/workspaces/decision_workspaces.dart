@@ -67,62 +67,57 @@ class SixThinkingHatsWorkspace extends ConsumerStatefulWidget {
 
 class _SixThinkingHatsWorkspaceState
     extends ConsumerState<SixThinkingHatsWorkspace> {
-  final List<Map<String, dynamic>> _hats = [
+  final List<Map<String, dynamic>> _hats = const [
     {
       'color': Colors.white,
       'borderColor': Colors.black45,
       'textColor': Colors.black87,
-      'name': 'Topi Putih',
-      'label': 'Fakta & Data',
-      'hint':
-          'Informasi apa saja yang kita miliki? Data apa yang masih kurang?',
+      'nameKey': DaojiTextKey.sixThinkingHatsWhiteHatName,
+      'labelKey': DaojiTextKey.sixThinkingHatsWhiteHatLabel,
+      'hintKey': DaojiTextKey.sixThinkingHatsWhiteHatHint,
     },
     {
       'color': Colors.red,
       'borderColor': Colors.redAccent,
       'textColor': Colors.white,
-      'name': 'Topi Merah',
-      'label': 'Firasat & Emosi',
-      'hint':
-          'Bagaimana intuisi atau perasaan Anda melihat masalah ini tanpa logika?',
+      'nameKey': DaojiTextKey.sixThinkingHatsRedHatName,
+      'labelKey': DaojiTextKey.sixThinkingHatsRedHatLabel,
+      'hintKey': DaojiTextKey.sixThinkingHatsRedHatHint,
     },
     {
       'color': Colors.black,
       'borderColor': Colors.black,
       'textColor': Colors.white,
-      'name': 'Topi Hitam',
-      'label': 'Risiko & Kelemahan',
-      'hint':
-          'Mengapa ide ini bisa gagal? Apa saja risiko/hambatan terburuknya?',
+      'nameKey': DaojiTextKey.sixThinkingHatsBlackHatName,
+      'labelKey': DaojiTextKey.sixThinkingHatsBlackHatLabel,
+      'hintKey': DaojiTextKey.sixThinkingHatsBlackHatHint,
     },
     {
       'color': Colors.amber,
       'borderColor': Colors.amber,
       'textColor': Colors.black87,
-      'name': 'Topi Kuning',
-      'label': 'Manfaat & Harapan',
-      'hint':
-          'Apa keuntungan dan nilai positif dari solusi ini? Mengapa ini berhasil?',
+      'nameKey': DaojiTextKey.sixThinkingHatsYellowHatName,
+      'labelKey': DaojiTextKey.sixThinkingHatsYellowHatLabel,
+      'hintKey': DaojiTextKey.sixThinkingHatsYellowHatHint,
     },
     {
       'color': Colors.green,
       'borderColor': Colors.green,
       'textColor': Colors.white,
-      'name': 'Topi Hijau',
-      'label': 'Kreativitas & Opsi',
-      'hint':
-          'Opsi alternatif apa lagi yang belum kita coba? Pikirkan solusi liar!',
+      'nameKey': DaojiTextKey.sixThinkingHatsGreenHatName,
+      'labelKey': DaojiTextKey.sixThinkingHatsGreenHatLabel,
+      'hintKey': DaojiTextKey.sixThinkingHatsGreenHatHint,
     },
     {
       'color': Colors.blue,
       'borderColor': Colors.blue,
       'textColor': Colors.white,
-      'name': 'Topi Biru',
-      'label': 'Kontrol Proses',
-      'hint':
-          'Apa kesimpulan akhir kita? Apa langkah selanjutnya yang harus diambil?',
+      'nameKey': DaojiTextKey.sixThinkingHatsBlueHatName,
+      'labelKey': DaojiTextKey.sixThinkingHatsBlueHatLabel,
+      'hintKey': DaojiTextKey.sixThinkingHatsBlueHatHint,
     },
   ];
+
 
   int _selectedHatIndex = 0;
   final Map<int, TextEditingController> _controllers = {};
@@ -143,12 +138,16 @@ class _SixThinkingHatsWorkspaceState
   }
 
   void _notifyChanges() {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+    final title = DaojiText.resolve(DaojiTextKey.sixThinkingHatsTitle, vocabularyLevel);
     final buffer = StringBuffer();
-    buffer.writeln('Analisis Six Thinking Hats:');
+    buffer.writeln('$title:');
     for (int i = 0; i < _hats.length; i++) {
       final text = _controllers[i]!.text.trim();
       if (text.isNotEmpty) {
-        buffer.writeln('- ${_hats[i]['name']} (${_hats[i]['label']}): $text');
+        final name = DaojiText.resolve(_hats[i]['nameKey'] as DaojiTextKey, vocabularyLevel);
+        final label = DaojiText.resolve(_hats[i]['labelKey'] as DaojiTextKey, vocabularyLevel);
+        buffer.writeln('- $name ($label): $text');
       }
     }
     widget.onChanged(buffer.toString());
@@ -159,6 +158,9 @@ class _SixThinkingHatsWorkspaceState
     final theme = Theme.of(context);
     final activeHat = _hats[_selectedHatIndex];
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
+    final activeName = DaojiText.resolve(activeHat['nameKey'] as DaojiTextKey, vocabularyLevel);
+    final activeLabel = DaojiText.resolve(activeHat['labelKey'] as DaojiTextKey, vocabularyLevel);
+    final activeHint = DaojiText.resolve(activeHat['hintKey'] as DaojiTextKey, vocabularyLevel);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -192,6 +194,7 @@ class _SixThinkingHatsWorkspaceState
           children: List.generate(_hats.length, (index) {
             final h = _hats[index];
             final isSelected = index == _selectedHatIndex;
+            final labelStr = DaojiText.resolve(h['labelKey'] as DaojiTextKey, vocabularyLevel);
 
             return GestureDetector(
               onTap: () {
@@ -219,7 +222,7 @@ class _SixThinkingHatsWorkspaceState
                   ],
                 ),
                 child: Text(
-                  h['label'] as String,
+                  labelStr,
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
@@ -244,7 +247,7 @@ class _SixThinkingHatsWorkspaceState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${activeHat['name']} — ${activeHat['label']}:',
+                '$activeName — $activeLabel:',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -255,7 +258,7 @@ class _SixThinkingHatsWorkspaceState
               ),
               const SizedBox(height: 4),
               Text(
-                activeHat['hint'] as String,
+                activeHint,
                 style: const TextStyle(
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
@@ -272,7 +275,7 @@ class _SixThinkingHatsWorkspaceState
             labelText: DaojiText.resolve(
               DaojiTextKey.sixThinkingHatsNoteLabel,
               vocabularyLevel,
-              params: {'name': activeHat['name']},
+              params: {'name': activeName},
             ),
             hintText: DaojiText.resolve(
               DaojiTextKey.sixThinkingHatsNoteHint,
@@ -296,7 +299,7 @@ class _SixThinkingHatsWorkspaceState
                 },
                 icon: const Icon(Icons.arrow_back_rounded, size: 16),
                 label: Text(
-                  _hats[_selectedHatIndex - 1]['label'] as String,
+                  DaojiText.resolve(_hats[_selectedHatIndex - 1]['labelKey'] as DaojiTextKey, vocabularyLevel),
                   style: const TextStyle(fontSize: 12),
                 ),
                 style: OutlinedButton.styleFrom(
@@ -316,7 +319,7 @@ class _SixThinkingHatsWorkspaceState
                 },
                 icon: const Icon(Icons.arrow_forward_rounded, size: 16),
                 label: Text(
-                  _hats[_selectedHatIndex + 1]['label'] as String,
+                  DaojiText.resolve(_hats[_selectedHatIndex + 1]['labelKey'] as DaojiTextKey, vocabularyLevel),
                   style: const TextStyle(fontSize: 12),
                 ),
                 style: FilledButton.styleFrom(
@@ -333,48 +336,46 @@ class _SixThinkingHatsWorkspaceState
       ],
     );
   }
+
 }
 
 // ==========================================
 // 2. DISNEY STRATEGY WORKSPACE (THREE ROOMS)
 // ==========================================
-class DisneyStrategyWorkspace extends StatefulWidget {
+class DisneyStrategyWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const DisneyStrategyWorkspace({super.key, required this.onChanged});
 
   @override
-  State<DisneyStrategyWorkspace> createState() =>
+  ConsumerState<DisneyStrategyWorkspace> createState() =>
       _DisneyStrategyWorkspaceState();
 }
 
-class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
+class _DisneyStrategyWorkspaceState extends ConsumerState<DisneyStrategyWorkspace> {
   int _activeRoomIndex = 0;
 
-  final List<Map<String, String>> _rooms = const [
+  final List<Map<String, dynamic>> _rooms = const [
     {
-      'title': '1. Ruang Dreamer ☁️',
-      'tabLabel': 'Dreamer',
-      'hint':
-          'Tuliskan visi terbesar Anda tanpa batasan logistik atau finansial. Berimajinasilah!',
-      'label': 'Visi Dreamer (Impian)',
+      'titleKey': DaojiTextKey.disneyDreamerTitle,
+      'tabKey': DaojiTextKey.disneyDreamerTab,
+      'hintKey': DaojiTextKey.disneyDreamerHint,
+      'labelKey': DaojiTextKey.disneyDreamerLabel,
       'gradientStart': '0xFF4F83CC',
       'gradientEnd': '0xFF96C0CE',
     },
     {
-      'title': '2. Ruang Realist 🛠️',
-      'tabLabel': 'Realist',
-      'hint':
-          'Bagaimana cara merealisasikan mimpi ini? Tulis rencana taktis dan langkah konkret.',
-      'label': 'Langkah Realist (Rencana)',
+      'titleKey': DaojiTextKey.disneyRealistTitle,
+      'tabKey': DaojiTextKey.disneyRealistTab,
+      'hintKey': DaojiTextKey.disneyRealistHint,
+      'labelKey': DaojiTextKey.disneyRealistLabel,
       'gradientStart': '0xFF5C8D89',
       'gradientEnd': '0xFF8FB9A8',
     },
     {
-      'title': '3. Ruang Critic 🔎',
-      'tabLabel': 'Critic',
-      'hint':
-          'Temukan celah, risiko, dan kelemahan rencana ini secara kritis untuk memolesnya.',
-      'label': 'Analisis Critic (Evaluasi)',
+      'titleKey': DaojiTextKey.disneyCriticTitle,
+      'tabKey': DaojiTextKey.disneyCriticTab,
+      'hintKey': DaojiTextKey.disneyCriticHint,
+      'labelKey': DaojiTextKey.disneyCriticLabel,
       'gradientStart': '0xFF7E8A97',
       'gradientEnd': '0xFFB2BEC3',
     },
@@ -398,27 +399,37 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
   }
 
   void _notifyChanges() {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+    final title = DaojiText.resolve(DaojiTextKey.disneyTitle, vocabularyLevel);
+    final dreamerLabel = DaojiText.resolve(DaojiTextKey.disneyDreamerLabel, vocabularyLevel);
+    final realistLabel = DaojiText.resolve(DaojiTextKey.disneyRealistLabel, vocabularyLevel);
+    final criticLabel = DaojiText.resolve(DaojiTextKey.disneyCriticLabel, vocabularyLevel);
+
     final buffer = StringBuffer();
-    buffer.writeln('Analisis Disney Strategy:');
-    buffer.writeln('- DREAMER: ${_controllers[0]!.text.trim()}');
-    buffer.writeln('- REALIST: ${_controllers[1]!.text.trim()}');
-    buffer.writeln('- CRITIC: ${_controllers[2]!.text.trim()}');
+    buffer.writeln('$title:');
+    buffer.writeln('- $dreamerLabel: ${_controllers[0]!.text.trim()}');
+    buffer.writeln('- $realistLabel: ${_controllers[1]!.text.trim()}');
+    buffer.writeln('- $criticLabel: ${_controllers[2]!.text.trim()}');
     widget.onChanged(buffer.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final room = _rooms[_activeRoomIndex];
-    final colorStart = Color(int.parse(room['gradientStart']!));
-    final colorEnd = Color(int.parse(room['gradientEnd']!));
+    final colorStart = Color(int.parse(room['gradientStart'] as String));
+    final colorEnd = Color(int.parse(room['gradientEnd'] as String));
+    final roomTitle = DaojiText.resolve(room['titleKey'] as DaojiTextKey, vocabularyLevel);
+    final roomHint = DaojiText.resolve(room['hintKey'] as DaojiTextKey, vocabularyLevel);
+    final roomLabel = DaojiText.resolve(room['labelKey'] as DaojiTextKey, vocabularyLevel);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Lembar Kerja Disney Strategy',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.disneyTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 6),
         StepProgressIndicator(
@@ -430,6 +441,7 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
           children: List.generate(3, (index) {
             final r = _rooms[index];
             final isActive = index == _activeRoomIndex;
+            final tabText = DaojiText.resolve(r['tabKey'] as DaojiTextKey, vocabularyLevel);
 
             return Expanded(
               child: GestureDetector(
@@ -449,7 +461,7 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
                     ),
                   ),
                   child: Text(
-                    r['tabLabel']!,
+                    tabText,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 11,
@@ -478,7 +490,7 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                room['title']!,
+                roomTitle,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
@@ -487,12 +499,12 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
               ),
               const SizedBox(height: 4),
               Text(
-                room['hint']!,
+                roomHint,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 10,
-                  color: Colors.white70, // Disney subtitle — intentional for gradient card
+                  color: Colors.white70,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -504,8 +516,8 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
           controller: _controllers[_activeRoomIndex],
           maxLines: 5,
           decoration: InputDecoration(
-            labelText: room['label'],
-            hintText: 'Tuliskan poin-poin ide Anda di sini...',
+            labelText: roomLabel,
+            hintText: DaojiText.resolve(DaojiTextKey.disneyPlaceholder, vocabularyLevel),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
             fillColor: Theme.of(context).colorScheme.surfaceContainerHighest
@@ -517,59 +529,54 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
   }
 }
 
+
 // ==========================================
 // 3. SCAMPER ACCORDION WORKSPACE
 // ==========================================
-class ScamperWorkspace extends StatefulWidget {
+class ScamperWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const ScamperWorkspace({super.key, required this.onChanged});
 
   @override
-  State<ScamperWorkspace> createState() => _ScamperWorkspaceState();
+  ConsumerState<ScamperWorkspace> createState() => _ScamperWorkspaceState();
 }
 
-class _ScamperWorkspaceState extends State<ScamperWorkspace> {
-  final List<Map<String, String>> _panels = const [
+class _ScamperWorkspaceState extends ConsumerState<ScamperWorkspace> {
+  final List<Map<String, dynamic>> _panels = const [
     {
       'key': 'S',
-      'name': 'Substitute (Substitusi)',
-      'hint': 'Komponen, bahan, atau proses apa yang bisa kita ganti?',
+      'nameKey': DaojiTextKey.scamperSubstituteName,
+      'hintKey': DaojiTextKey.scamperSubstituteHint,
     },
     {
       'key': 'C',
-      'name': 'Combine (Kombinasi)',
-      'hint':
-          'Bagaimana cara menggabungkan ide ini dengan produk/layanan lain?',
+      'nameKey': DaojiTextKey.scamperCombineName,
+      'hintKey': DaojiTextKey.scamperCombineHint,
     },
     {
       'key': 'A',
-      'name': 'Adapt (Adaptasi)',
-      'hint':
-          'Bagaimana cara mengadaptasi ide sukses dari industri lain ke masalah ini?',
+      'nameKey': DaojiTextKey.scamperAdaptName,
+      'hintKey': DaojiTextKey.scamperAdaptHint,
     },
     {
       'key': 'M',
-      'name': 'Modify (Modifikasi)',
-      'hint':
-          'Apakah kita bisa mengubah bentuk, ukuran, atau kemasan menjadi lebih besar/kecil?',
+      'nameKey': DaojiTextKey.scamperModifyName,
+      'hintKey': DaojiTextKey.scamperModifyHint,
     },
     {
       'key': 'P',
-      'name': 'Put to another use',
-      'hint':
-          'Bagaimana jika ide ini digunakan untuk segmen pasar/tujuan yang berbeda?',
+      'nameKey': DaojiTextKey.scamperPutUseName,
+      'hintKey': DaojiTextKey.scamperPutUseHint,
     },
     {
       'key': 'E',
-      'name': 'Eliminate (Eliminasi)',
-      'hint':
-          'Bagian/fitur apa yang paling tidak penting dan bisa kita hilangkan saja?',
+      'nameKey': DaojiTextKey.scamperEliminateName,
+      'hintKey': DaojiTextKey.scamperEliminateHint,
     },
     {
       'key': 'R',
-      'name': 'Reverse (Pembalikan)',
-      'hint':
-          'Bagaimana jika kita membalik alur prosesnya dari belakang ke depan?',
+      'nameKey': DaojiTextKey.scamperReverseName,
+      'hintKey': DaojiTextKey.scamperReverseHint,
     },
   ];
 
@@ -592,12 +599,15 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
   }
 
   void _notifyChanges() {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+    final title = DaojiText.resolve(DaojiTextKey.scamperTitle, vocabularyLevel);
     final buffer = StringBuffer();
-    buffer.writeln('Analisis Kerangka Kerja SCAMPER:');
+    buffer.writeln('$title:');
     for (int i = 0; i < _panels.length; i++) {
       final text = _controllers[i]!.text.trim();
       if (text.isNotEmpty) {
-        buffer.writeln('- [${_panels[i]['key']}] ${_panels[i]['name']}: $text');
+        final name = DaojiText.resolve(_panels[i]['nameKey'] as DaojiTextKey, vocabularyLevel);
+        buffer.writeln('- [${_panels[i]['key']}] $name: $text');
       }
     }
     widget.onChanged(buffer.toString());
@@ -606,18 +616,21 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Check-List Kreatif SCAMPER',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.scamperTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 10),
         ...List.generate(_panels.length, (index) {
           final p = _panels[index];
           final isExpanded = index == _expandedIndex;
+          final panelName = DaojiText.resolve(p['nameKey'] as DaojiTextKey, vocabularyLevel);
+          final panelHint = DaojiText.resolve(p['hintKey'] as DaojiTextKey, vocabularyLevel);
 
           return Card(
             margin: const EdgeInsets.symmetric(vertical: 4),
@@ -657,7 +670,7 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                     ),
                   ),
                   title: Text(
-                    p['name']!,
+                    panelName,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
@@ -685,7 +698,7 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          p['hint']!,
+                          panelHint,
                           style: const TextStyle(
                             fontSize: 11,
                             fontStyle: FontStyle.italic,
@@ -697,7 +710,7 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                           controller: _controllers[index],
                           maxLines: 2,
                           decoration: InputDecoration(
-                            hintText: 'Tulis ide SCAMPER Anda di sini...',
+                            hintText: DaojiText.resolve(DaojiTextKey.scamperPlaceholder, vocabularyLevel),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -722,15 +735,15 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
 // ==========================================
 // 4. SWOT MATRIX WORKSPACE (2x2 GRID)
 // ==========================================
-class SwotMatrixWorkspace extends StatefulWidget {
+class SwotMatrixWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const SwotMatrixWorkspace({super.key, required this.onChanged});
 
   @override
-  State<SwotMatrixWorkspace> createState() => _SwotMatrixWorkspaceState();
+  ConsumerState<SwotMatrixWorkspace> createState() => _SwotMatrixWorkspaceState();
 }
 
-class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
+class _SwotMatrixWorkspaceState extends ConsumerState<SwotMatrixWorkspace> {
   final Map<String, TextEditingController> _controllers = {
     'S': TextEditingController(),
     'W': TextEditingController(),
@@ -752,29 +765,38 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
   }
 
   void _notifyChanges() {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+    final title = DaojiText.resolve(DaojiTextKey.swotTitle, vocabularyLevel);
+    final strengthsLabel = DaojiText.resolve(DaojiTextKey.swotStrengthsLabel, vocabularyLevel);
+    final weaknessesLabel = DaojiText.resolve(DaojiTextKey.swotWeaknessesLabel, vocabularyLevel);
+    final opportunitiesLabel = DaojiText.resolve(DaojiTextKey.swotOpportunitiesLabel, vocabularyLevel);
+    final threatsLabel = DaojiText.resolve(DaojiTextKey.swotThreatsLabel, vocabularyLevel);
+
     final buffer = StringBuffer();
-    buffer.writeln('Analisis Matriks SWOT:');
-    buffer.writeln('- STRENGTHS (Kekuatan): ${_controllers['S']!.text.trim()}');
-    buffer.writeln(
-      '- WEAKNESSES (Kelemahan): ${_controllers['W']!.text.trim()}',
-    );
-    buffer.writeln(
-      '- OPPORTUNITIES (Peluang): ${_controllers['O']!.text.trim()}',
-    );
-    buffer.writeln('- THREATS (Ancaman): ${_controllers['T']!.text.trim()}');
+    buffer.writeln('$title:');
+    buffer.writeln('- $strengthsLabel: ${_controllers['S']!.text.trim()}');
+    buffer.writeln('- $weaknessesLabel: ${_controllers['W']!.text.trim()}');
+    buffer.writeln('- $opportunitiesLabel: ${_controllers['O']!.text.trim()}');
+    buffer.writeln('- $threatsLabel: ${_controllers['T']!.text.trim()}');
     widget.onChanged(buffer.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
+    final strengthsLabel = DaojiText.resolve(DaojiTextKey.swotStrengthsLabel, vocabularyLevel);
+    final weaknessesLabel = DaojiText.resolve(DaojiTextKey.swotWeaknessesLabel, vocabularyLevel);
+    final opportunitiesLabel = DaojiText.resolve(DaojiTextKey.swotOpportunitiesLabel, vocabularyLevel);
+    final threatsLabel = DaojiText.resolve(DaojiTextKey.swotThreatsLabel, vocabularyLevel);
+    final placeholder = DaojiText.resolve(DaojiTextKey.swotPlaceholder, vocabularyLevel);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Matriks SWOT (Kuadran 2x2)',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.swotTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 12),
         GridView.count(
@@ -786,28 +808,32 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
           childAspectRatio: 0.85,
           children: [
             _buildSwotBox(
-              'STRENGTHS (S)',
+              strengthsLabel,
               _controllers['S']!,
               Colors.green,
               theme,
+              placeholder,
             ),
             _buildSwotBox(
-              'WEAKNESSES (W)',
+              weaknessesLabel,
               _controllers['W']!,
               Colors.red,
               theme,
+              placeholder,
             ),
             _buildSwotBox(
-              'OPPORTUNITIES (O)',
+              opportunitiesLabel,
               _controllers['O']!,
               Colors.blue,
               theme,
+              placeholder,
             ),
             _buildSwotBox(
-              'THREATS (T)',
+              threatsLabel,
               _controllers['T']!,
               Colors.orange,
               theme,
+              placeholder,
             ),
           ],
         ),
@@ -820,6 +846,7 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
     TextEditingController controller,
     Color accentColor,
     ThemeData theme,
+    String placeholder,
   ) {
     return Container(
       decoration: BoxDecoration(
@@ -867,8 +894,8 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
               expands: true,
               style: TextStyle(fontSize: 11,
                   color: theme.colorScheme.onSurface),
-              decoration: const InputDecoration(
-                hintText: 'Tuliskan poin...',
+              decoration: InputDecoration(
+                hintText: placeholder,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
               ),
@@ -878,45 +905,45 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
       ),
     );
   }
+
 }
 
 // ==========================================
 // 5. STARBURSTING WORKSPACE (6-POINT STAR)
 // ==========================================
-class StarburstingWorkspace extends StatefulWidget {
+class StarburstingWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const StarburstingWorkspace({super.key, required this.onChanged});
 
   @override
-  State<StarburstingWorkspace> createState() => _StarburstingWorkspaceState();
+  ConsumerState<StarburstingWorkspace> createState() => _StarburstingWorkspaceState();
 }
 
-class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
-  final List<Map<String, String>> _points = const [
+class _StarburstingWorkspaceState extends ConsumerState<StarburstingWorkspace> {
+  final List<Map<String, dynamic>> _points = const [
     {
       'key': 'WHO',
-      'question': 'Siapa target pengguna, pesaing, atau aktor kunci utama?',
+      'questionKey': DaojiTextKey.starburstingWhoQuestion,
     },
     {
       'key': 'WHAT',
-      'question': 'Apa masalah inti, solusi alternatif, atau fiturnya?',
+      'questionKey': DaojiTextKey.starburstingWhatQuestion,
     },
     {
       'key': 'WHERE',
-      'question': 'Di mana produk ini dipasarkan atau diimplementasikan?',
+      'questionKey': DaojiTextKey.starburstingWhereQuestion,
     },
     {
       'key': 'WHEN',
-      'question': 'Kapan waktu rilis terbaik, deadline, atau batas peluncuran?',
+      'questionKey': DaojiTextKey.starburstingWhenQuestion,
     },
     {
       'key': 'WHY',
-      'question': 'Mengapa ide ini harus dibuat? Apa nilai keunikannya?',
+      'questionKey': DaojiTextKey.starburstingWhyQuestion,
     },
     {
       'key': 'HOW',
-      'question':
-          'Bagaimana cara mendistribusikan, membiayai, atau mempromosikannya?',
+      'questionKey': DaojiTextKey.starburstingHowQuestion,
     },
   ];
 
@@ -939,14 +966,15 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
   }
 
   void _notifyChanges() {
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+    final title = DaojiText.resolve(DaojiTextKey.starburstingTitle, vocabularyLevel);
     final buffer = StringBuffer();
-    buffer.writeln('Starbursting 5W1H Questions:');
+    buffer.writeln('$title:');
     for (int i = 0; i < _points.length; i++) {
       final text = _controllers[i]!.text.trim();
       if (text.isNotEmpty) {
-        buffer.writeln(
-          '- [${_points[i]['key']}] ${_points[i]['question']}: $text',
-        );
+        final q = DaojiText.resolve(_points[i]['questionKey'] as DaojiTextKey, vocabularyLevel);
+        buffer.writeln('- [${_points[i]['key']}] $q: $text');
       }
     }
     widget.onChanged(buffer.toString());
@@ -955,14 +983,16 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final activePoint = _points[_selectedPointIndex];
+    final activeQuestion = DaojiText.resolve(activePoint['questionKey'] as DaojiTextKey, vocabularyLevel);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '4. Starbursting (Analisis 5W + 1H)',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Text(
+          DaojiText.resolve(DaojiTextKey.starburstingTitle, vocabularyLevel),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 10),
         GridView.count(
@@ -1030,7 +1060,7 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
               ),
               const SizedBox(height: 4),
               Text(
-                activePoint['question']!,
+                activeQuestion,
                 style: const TextStyle(
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
@@ -1044,8 +1074,15 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
           controller: _controllers[_selectedPointIndex],
           maxLines: 3,
           decoration: InputDecoration(
-            labelText: 'Ajukan Pertanyaan Kritis untuk ${activePoint['key']}',
-            hintText: 'Tuliskan draf pertanyaan di sini...',
+            labelText: DaojiText.resolve(
+              DaojiTextKey.starburstingLabel,
+              vocabularyLevel,
+              params: {'key': activePoint['key']},
+            ),
+            hintText: DaojiText.resolve(
+              DaojiTextKey.starburstingHint,
+              vocabularyLevel,
+            ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
             fillColor: Theme.of(context).colorScheme.surfaceContainerHighest
