@@ -1,9 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/i18n/daoji_text_key.dart';
+import '../../../core/i18n/daoji_text_resolver.dart';
+import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../domain/mind_map_model.dart';
 
-class MindMapCanvasView extends StatefulWidget {
+class MindMapCanvasView extends ConsumerStatefulWidget {
   final List<MindMapNode> initialNodes;
   final ValueChanged<List<MindMapNode>> onSaved;
 
@@ -14,10 +18,10 @@ class MindMapCanvasView extends StatefulWidget {
   });
 
   @override
-  State<MindMapCanvasView> createState() => _MindMapCanvasViewState();
+  ConsumerState<MindMapCanvasView> createState() => _MindMapCanvasViewState();
 }
 
-class _MindMapCanvasViewState extends State<MindMapCanvasView> {
+class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
   final List<MindMapNode> _nodes = [];
   final TransformationController _transformationController =
       TransformationController();
@@ -36,10 +40,12 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
   @override
   void initState() {
     super.initState();
+    _transformationController.addListener(_onZoomChanged);
     if (widget.initialNodes.isEmpty) {
+      final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
       _nodes.add(MindMapNode(
         id: 'root_${DateTime.now().millisecondsSinceEpoch}',
-        text: 'Topik Utama',
+        text: DaojiText.resolve(DaojiTextKey.mindMapDefaultRootText, vocabularyLevel),
         position: const Offset(400, 300),
         colorValue: 0xFF7D9B76,
       ));
@@ -54,8 +60,18 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _recenterCanvas());
   }
 
+  void _onZoomChanged() {
+    final scale = _transformationController.value.storage[0];
+    if (scale != _currentScale) {
+      setState(() {
+        _currentScale = scale;
+      });
+    }
+  }
+
   @override
   void dispose() {
+    _transformationController.removeListener(_onZoomChanged);
     _transformationController.dispose();
     _inlineEditController.dispose();
     _inlineEditFocusNode.dispose();
@@ -94,11 +110,12 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
   void _addNewRootNode() {
     _saveToUndoStack();
     HapticFeedback.selectionClick();
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     setState(() {
       final id = 'node_${DateTime.now().millisecondsSinceEpoch}';
       final rng = Random();
       _nodes.add(MindMapNode(
-        id: id, text: 'Ide Baru',
+        id: id, text: DaojiText.resolve(DaojiTextKey.mindMapNewNodeText, vocabularyLevel),
         position: Offset(350 + rng.nextDouble() * 100, 250 + rng.nextDouble() * 100),
         colorValue: _palette[rng.nextInt(_palette.length)],
       ));
@@ -110,12 +127,13 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
     _saveToUndoStack();
     HapticFeedback.selectionClick();
     final parent = _nodes.firstWhere((n) => n.id == parentId);
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     setState(() {
       final id = 'node_${DateTime.now().millisecondsSinceEpoch}';
       final rng = Random();
       final angle = rng.nextDouble() * 2 * pi;
       _nodes.add(MindMapNode(
-        id: id, text: 'Sub-ide',
+        id: id, text: DaojiText.resolve(DaojiTextKey.mindMapNewChildNodeText, vocabularyLevel),
         position: Offset(
           parent.position.dx + cos(angle) * 130,
           parent.position.dy + sin(angle) * 130,
@@ -137,10 +155,12 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
 
   void _finishInlineEdit() {
     if (_editingNodeId == null) return;
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     setState(() {
       final node = _nodes.firstWhere((n) => n.id == _editingNodeId);
       node.text = _inlineEditController.text.trim().isEmpty
-          ? 'Gagasan' : _inlineEditController.text.trim();
+          ? DaojiText.resolve(DaojiTextKey.mindMapDefaultNodeText, vocabularyLevel)
+          : _inlineEditController.text.trim();
       _editingNodeId = null;
     });
     _inlineEditController.clear();
@@ -172,6 +192,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final selectedNode = _selectedNodeId != null
         ? _nodes.firstWhere((n) => n.id == _selectedNodeId, orElse: () => _nodes.first)
         : null;
@@ -179,18 +200,24 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Mind Map Editor'),
+        title: Text(DaojiText.resolve(DaojiTextKey.mindMapEditorTitle, vocabularyLevel)),
         actions: [
-          IconButton(icon: const Icon(Icons.undo_rounded), tooltip: 'Batalkan',
-              onPressed: _undoStack.isNotEmpty ? _undo : null),
-          IconButton(icon: const Icon(Icons.center_focus_strong_rounded),
-              tooltip: 'Pusatkan', onPressed: _recenterCanvas),
+          IconButton(
+            icon: const Icon(Icons.undo_rounded),
+            tooltip: DaojiText.resolve(DaojiTextKey.mindMapUndoTooltip, vocabularyLevel),
+            onPressed: _undoStack.isNotEmpty ? _undo : null,
+          ),
+          IconButton(
+            icon: const Icon(Icons.center_focus_strong_rounded),
+            tooltip: DaojiText.resolve(DaojiTextKey.mindMapRecenterTooltip, vocabularyLevel),
+            onPressed: _recenterCanvas,
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 12, top: 8, bottom: 8),
             child: ElevatedButton.icon(
               onPressed: () { widget.onSaved(_nodes); Navigator.pop(context); },
               icon: const Icon(Icons.check_rounded),
-              label: const Text('Simpan'),
+              label: Text(DaojiText.resolve(DaojiTextKey.mindMapSaveButton, vocabularyLevel)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: theme.colorScheme.onPrimary,
@@ -200,19 +227,18 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
         ],
       ),
       body: Stack(children: [
-        GestureDetector(
-          onTap: () {
-            if (_editingNodeId != null) _finishInlineEdit();
-            setState(() => _selectedNodeId = null);
-          },
-          onDoubleTap: _recenterCanvas,
-          child: InteractiveViewer(
-            transformationController: _transformationController,
-            minScale: 0.4, maxScale: 2.0, constrained: false,
-            boundaryMargin: const EdgeInsets.all(500),
-            onInteractionUpdate: (details) {
-              if (details.scale != 1.0) setState(() => _currentScale = details.scale);
+        InteractiveViewer(
+          transformationController: _transformationController,
+          minScale: 0.4,
+          maxScale: 2.0,
+          constrained: false,
+          boundaryMargin: const EdgeInsets.all(500),
+          child: GestureDetector(
+            onTap: () {
+              if (_editingNodeId != null) _finishInlineEdit();
+              setState(() => _selectedNodeId = null);
             },
+            onDoubleTap: _recenterCanvas,
             child: SizedBox(
               width: 1600, height: 1200,
               child: Stack(children: [
@@ -277,7 +303,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
             heroTag: 'add_root',
             onPressed: _addNewRootNode,
             icon: const Icon(Icons.add_circle_outline_rounded),
-            label: const Text('Topik Baru'),
+            label: Text(DaojiText.resolve(DaojiTextKey.mindMapNewTopicButton, vocabularyLevel)),
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: theme.colorScheme.onPrimary,
           ),
@@ -290,13 +316,17 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Row(children: [
-                  IconButton(icon: const Icon(Icons.account_tree_rounded,
-                      color: Colors.blueAccent), tooltip: 'Tambah Cabang',
-                      onPressed: () => _addChildNode(selectedNode.id)),
+                  IconButton(
+                    icon: const Icon(Icons.account_tree_rounded, color: Colors.blueAccent),
+                    tooltip: DaojiText.resolve(DaojiTextKey.mindMapAddBranchTooltip, vocabularyLevel),
+                    onPressed: () => _addChildNode(selectedNode.id),
+                  ),
                   const SizedBox(width: 4),
-                  IconButton(icon: const Icon(Icons.edit_rounded,
-                      color: Colors.green), tooltip: 'Edit',
-                      onPressed: () => _startInlineEdit(selectedNode.id)),
+                  IconButton(
+                    icon: const Icon(Icons.edit_rounded, color: Colors.green),
+                    tooltip: DaojiText.resolve(DaojiTextKey.mindMapEditTooltip, vocabularyLevel),
+                    onPressed: () => _startInlineEdit(selectedNode.id),
+                  ),
                   const SizedBox(width: 4),
                   Expanded(child: SingleChildScrollView(scrollDirection: Axis.horizontal,
                     child: Row(children: _palette.map((c) {
@@ -315,9 +345,11 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                     }).toList()),
                   )),
                   const SizedBox(width: 4),
-                  IconButton(icon: const Icon(Icons.delete_outline_rounded,
-                      color: Colors.redAccent), tooltip: 'Hapus',
-                      onPressed: () => _deleteNode(selectedNode.id)),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
+                    tooltip: DaojiText.resolve(DaojiTextKey.mindMapDeleteTooltip, vocabularyLevel),
+                    onPressed: () => _deleteNode(selectedNode.id),
+                  ),
                 ]),
               ),
             ),

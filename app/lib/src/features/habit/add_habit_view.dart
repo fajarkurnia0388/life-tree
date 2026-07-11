@@ -140,12 +140,17 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
       context: context,
       builder: (context) {
         final languageLevel = ref.read(cultivationLanguageLevelProvider);
+        final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
         return AlertDialog(
           title: Text(
-            '${DaojiText.resolve(DaojiTextKey.habitDelete, ref.read(daojiVocabularyLevelValueProvider))} ${CultivationStrings.habitLabel(languageLevel)}',
+            '${DaojiText.resolve(DaojiTextKey.habitDelete, vocabularyLevel)} ${CultivationStrings.habitLabel(languageLevel)}',
           ),
           content: Text(
-            'Apakah Anda yakin ingin menghapus ${CultivationStrings.habitLabel(languageLevel).toLowerCase()} ini? Tindakan ini tidak dapat dibatalkan.',
+            DaojiText.resolve(
+              DaojiTextKey.habitDeleteConfirm,
+              vocabularyLevel,
+              params: {'label': CultivationStrings.habitLabel(languageLevel).toLowerCase()},
+            ),
           ),
           actions: [
             TextButton(
@@ -154,7 +159,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               child: Text(
                 DaojiText.resolve(
                   DaojiTextKey.systemCancel,
-                  ref.read(daojiVocabularyLevelValueProvider),
+                  vocabularyLevel,
                 ),
               ),
             ),
@@ -164,7 +169,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               child: Text(
                 DaojiText.resolve(
                   DaojiTextKey.systemDelete,
-                  ref.read(daojiVocabularyLevelValueProvider),
+                  vocabularyLevel,
                 ),
                 style: const TextStyle(color: Colors.red),
               ),
@@ -199,6 +204,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
     final db = ref.read(dbProvider);
     final now = DateTime.now();
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+    final languageLevel = ref.read(cultivationLanguageLevelProvider);
 
     final profiles = await db.select(db.userProfiles).get();
     if (profiles.isEmpty) return;
@@ -222,10 +229,11 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text(
-              '🌿 Daoji menyarankan beristirahat sejenak.\n'
-              'Kesehatan emosional Anda sedang dalam mode pemulihan. '
-              'Selesaikan weekly pulse berikutnya untuk membuka kembali fitur ini.',
+            content: Text(
+              DaojiText.resolve(
+                DaojiTextKey.marketRestPrompt,
+                vocabularyLevel,
+              ),
             ),
             backgroundColor: const Color(0xFF5B8FA8),
             duration: const Duration(seconds: 5),
@@ -263,13 +271,19 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             title: Text(
               DaojiText.resolve(
                 DaojiTextKey.habitCapacityWarning,
-                ref.read(daojiVocabularyLevelValueProvider),
+                vocabularyLevel,
               ),
             ),
             content: Text(
-              'Total beban kapasitas harian Anda adalah $maxCapacity poin. '
-              'Menambahkan/mengubah habit ini akan meningkatkan beban menjadi $nextLoad poin. '
-              '\n\nDaoji menyarankan untuk menjaga beban di bawah batas agar tidak kelelahan. Tetap lanjutkan?',
+              DaojiText.resolve(
+                DaojiTextKey.habitCapacityWarningBody,
+                vocabularyLevel,
+                params: {
+                  'maxCapacity': maxCapacity,
+                  'nextLoad': nextLoad,
+                  'label': CultivationStrings.habitLabel(languageLevel).toLowerCase(),
+                },
+              ),
             ),
             actions: [
               TextButton(
@@ -277,7 +291,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 child: Text(
                   DaojiText.resolve(
                     DaojiTextKey.systemCancel,
-                    ref.read(daojiVocabularyLevelValueProvider),
+                    vocabularyLevel,
                   ),
                 ),
               ),
@@ -286,7 +300,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 child: Text(
                   DaojiText.resolve(
                     DaojiTextKey.actionUnderstand,
-                    ref.read(daojiVocabularyLevelValueProvider),
+                    vocabularyLevel,
                   ),
                 ),
               ),
@@ -342,8 +356,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
       if (_reminderEnabled) {
         await NotificationService.scheduleDaily(
           id: habitId.hashCode.abs() % 100000,
-          title: 'Waktunya: ${_titleController.text.trim()}',
-          body: 'Jaga konsistensi pertumbuhanmu hari ini 🌱',
+          title: DaojiText.resolve(
+            DaojiTextKey.habitReminderTitle,
+            vocabularyLevel,
+            params: {'title': _titleController.text.trim()},
+          ),
+          body: DaojiText.resolve(
+            DaojiTextKey.habitReminderBody,
+            vocabularyLevel,
+          ),
           hour: hour,
           minute: minute,
         );
@@ -392,8 +413,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
       if (_reminderEnabled) {
         await NotificationService.scheduleDaily(
           id: habitId.hashCode.abs() % 100000,
-          title: 'Waktunya: ${_titleController.text.trim()}',
-          body: 'Jaga konsistensi pertumbuhanmu hari ini 🌱',
+          title: DaojiText.resolve(
+            DaojiTextKey.habitReminderTitle,
+            vocabularyLevel,
+            params: {'title': _titleController.text.trim()},
+          ),
+          body: DaojiText.resolve(
+            DaojiTextKey.habitReminderBody,
+            vocabularyLevel,
+          ),
           hour: hour,
           minute: minute,
         );

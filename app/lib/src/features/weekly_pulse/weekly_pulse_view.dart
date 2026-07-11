@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_level.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
@@ -29,29 +30,35 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
   int _currentStep = 0;
   final PageController _pageController = PageController();
 
-  final List<String> _questions = [
-    'Saya merasa ceria dan bersemangat',
-    'Saya merasa tenang dan rileks',
-    'Saya merasa aktif dan penuh vitalitas',
-    'Saya bangun tidur dengan perasaan segar dan istirahat yang cukup',
-    'Kehidupan sehari-hari saya dipenuhi dengan hal-hal yang menarik bagi saya',
-  ];
+  List<String> _getQuestions(DaojiVocabularyLevel level) => [
+        DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion1, level),
+        DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion2, level),
+        DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion3, level),
+        DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion4, level),
+        DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion5, level),
+      ];
 
-  final List<Map<String, dynamic>> _options = [
-    {'value': 5, 'label': 'Sepanjang waktu'},
-    {'value': 4, 'label': 'Sebagian besar waktu'},
-    {'value': 3, 'label': 'Lebih dari separuh waktu'},
-    {'value': 2, 'label': 'Kurang dari separuh waktu'},
-    {'value': 1, 'label': 'Sesekali'},
-    {'value': 0, 'label': 'Tidak pernah'},
-  ];
+  List<Map<String, dynamic>> _getOptions(DaojiVocabularyLevel level) => [
+        {'value': 5, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption5, level)},
+        {'value': 4, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption4, level)},
+        {'value': 3, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption3, level)},
+        {'value': 2, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption2, level)},
+        {'value': 1, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption1, level)},
+        {'value': 0, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption0, level)},
+      ];
 
   Future<void> _submitPulse() async {
     if (_isSaving) return;
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     if (_answers.contains(null)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Harap jawab semua 5 pertanyaan sebelum mengirim.'),
+        SnackBar(
+          content: Text(
+            DaojiText.resolve(
+              DaojiTextKey.weeklyPulseAlertAnswerAll,
+              vocabularyLevel,
+            ),
+          ),
           backgroundColor: Colors.orange,
         ),
       );
@@ -205,11 +212,22 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              title: Text(isLowMood ? 'Refleksi Diri 🌱' : 'Luar Biasa! ✨'),
+              title: Text(
+                DaojiText.resolve(
+                  isLowMood
+                      ? DaojiTextKey.weeklyPulseTitleLow
+                      : DaojiTextKey.weeklyPulseTitleHigh,
+                  vocabularyLevel,
+                ),
+              ),
               content: Text(
-                isLowMood
-                    ? 'Skor kesejahteraan emosional Anda berada di angka $percentage%. Minggu ini mungkin terasa berat. Beristirahatlah sejenak dan pertimbangkan untuk mengaktifkan Recovery Mode.'
-                    : 'Skor kesejahteraan emosional Anda sangat baik ($percentage%). Pertahankan konsistensi pertumbuhan pohon Anda minggu depan!',
+                DaojiText.resolve(
+                  isLowMood
+                      ? DaojiTextKey.weeklyPulseDescriptionLow
+                      : DaojiTextKey.weeklyPulseDescriptionHigh,
+                  vocabularyLevel,
+                  params: {'percentage': percentage},
+                ),
               ),
               actions: [
                 ElevatedButton(
@@ -236,9 +254,16 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
       }
     } catch (e) {
       if (mounted) {
+        final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Gagal menyimpan Weekly Pulse: $e'),
+            content: Text(
+              DaojiText.resolve(
+                DaojiTextKey.weeklyPulseSaveError,
+                vocabularyLevel,
+                params: {'error': e.toString()},
+              ),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -308,7 +333,11 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Pertanyaan ${qIndex + 1} dari 5',
+                      DaojiText.resolve(
+                        DaojiTextKey.weeklyPulseQuestionCount,
+                        vocabularyLevel,
+                        params: {'step': qIndex + 1, 'total': 5},
+                      ),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -317,7 +346,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _questions[qIndex],
+                      _getQuestions(vocabularyLevel)[qIndex],
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -327,7 +356,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                     Expanded(
                       child: ListView(
                         shrinkWrap: true,
-                        children: _options.map((opt) {
+                        children: _getOptions(vocabularyLevel).map((opt) {
                           final isSelected = _answers[qIndex] == opt['value'];
                           return Card(
                             color: isSelected
@@ -399,6 +428,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
 
   Widget _buildReflectionCard(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Card(
@@ -407,13 +437,19 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'Refleksi Diri (Opsional) ✍️',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              Text(
+                DaojiText.resolve(
+                  DaojiTextKey.weeklyPulseOptionalReflection,
+                  vocabularyLevel,
+                ),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 12),
               Text(
-                'Tuliskan catatan refleksi mingguan Anda, hambatan terbesar Anda, atau hal yang paling disyukuri minggu ini.',
+                DaojiText.resolve(
+                  DaojiTextKey.weeklyPulseReflectionHint,
+                  vocabularyLevel,
+                ),
                 style: TextStyle(
                   fontSize: 13,
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -425,7 +461,10 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                   controller: _reflectionController,
                   maxLines: 8,
                   decoration: InputDecoration(
-                    hintText: 'Tulis refleksi Anda di sini...',
+                    hintText: DaojiText.resolve(
+                      DaojiTextKey.weeklyPulseReflectionPlaceholder,
+                      vocabularyLevel,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -454,13 +493,13 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
         ),
       ),
       body: _isSaving
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Menyimpan hasil refleksi mingguan...'),
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(DaojiText.resolve(DaojiTextKey.weeklyPulseSaving, vocabularyLevel)),
                 ],
               ),
             )
@@ -479,7 +518,11 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                 Padding(
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   child: Text(
-                    'Langkah ${_currentStep + 1} dari $totalSteps',
+                    DaojiText.resolve(
+                      DaojiTextKey.weeklyPulseStep,
+                      vocabularyLevel,
+                      params: {'step': _currentStep + 1, 'total': totalSteps},
+                    ),
                     style: theme.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -519,7 +562,12 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text('Kembali'),
+                          child: Text(
+                            DaojiText.resolve(
+                              DaojiTextKey.systemBack,
+                              vocabularyLevel,
+                            ),
+                          ),
                         )
                       else
                         const SizedBox(width: 100),
@@ -544,7 +592,17 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(isLastStep ? 'Kirim' : 'Lanjut'),
+                        child: Text(
+                          isLastStep
+                              ? DaojiText.resolve(
+                                  DaojiTextKey.systemSubmit,
+                                  vocabularyLevel,
+                                )
+                              : DaojiText.resolve(
+                                  DaojiTextKey.systemNext,
+                                  vocabularyLevel,
+                                ),
+                        ),
                       ),
                     ],
                   ),

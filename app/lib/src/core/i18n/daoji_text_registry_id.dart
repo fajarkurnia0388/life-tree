@@ -290,6 +290,62 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.validationOpposeInputHint: 'Ketik bukti lalu tekan Enter...',
     DaojiTextKey.validationNoSupports: 'Belum ada bukti mendukung',
     DaojiTextKey.validationNoOpposes: 'Belum ada bukti menentang',
+
+    // Mind Map Canvas
+    DaojiTextKey.mindMapEditorTitle: 'Mind Map Editor',
+    DaojiTextKey.mindMapUndoTooltip: 'Batalkan',
+    DaojiTextKey.mindMapRecenterTooltip: 'Pusatkan',
+    DaojiTextKey.mindMapAddBranchTooltip: 'Tambah Cabang',
+    DaojiTextKey.mindMapEditTooltip: 'Edit',
+    DaojiTextKey.mindMapDeleteTooltip: 'Hapus',
+    DaojiTextKey.mindMapDefaultNodeText: 'Gagasan',
+    DaojiTextKey.mindMapDefaultRootText: 'Topik Utama',
+    DaojiTextKey.mindMapNewNodeText: 'Ide Baru',
+    DaojiTextKey.mindMapNewChildNodeText: 'Sub-ide',
+    DaojiTextKey.mindMapSaveButton: 'Simpan',
+    DaojiTextKey.mindMapNewTopicButton: 'Topik Baru',
+
+    // Weekly Pulse
+    DaojiTextKey.weeklyPulseTitleLow: 'Refleksi Diri 🌱',
+    DaojiTextKey.weeklyPulseTitleHigh: 'Luar Biasa! ✨',
+    DaojiTextKey.weeklyPulseDescriptionLow: 'Skor kesejahteraan emosional Anda berada di angka {percentage}%. Minggu ini mungkin terasa berat. Beristirahatlah sejenak dan pertimbangkan untuk mengaktifkan Recovery Mode.',
+    DaojiTextKey.weeklyPulseDescriptionHigh: 'Skor kesejahteraan emosional Anda sangat baik ({percentage}%). Pertahankan konsistensi pertumbuhan pohon Anda minggu depan!',
+    DaojiTextKey.weeklyPulseQuestion1: 'Saya merasa ceria dan bersemangat',
+    DaojiTextKey.weeklyPulseQuestion2: 'Saya merasa tenang dan rileks',
+    DaojiTextKey.weeklyPulseQuestion3: 'Saya merasa aktif dan penuh vitalitas',
+    DaojiTextKey.weeklyPulseQuestion4: 'Saya bangun tidur dengan perasaan segar dan istirahat yang cukup',
+    DaojiTextKey.weeklyPulseQuestion5: 'Kehidupan sehari-hari saya dipenuhi dengan hal-hal yang menarik bagi saya',
+    DaojiTextKey.weeklyPulseOption5: 'Sepanjang waktu',
+    DaojiTextKey.weeklyPulseOption4: 'Sebagian besar waktu',
+    DaojiTextKey.weeklyPulseOption3: 'Lebih dari separuh waktu',
+    DaojiTextKey.weeklyPulseOption2: 'Kurang dari separuh waktu',
+    DaojiTextKey.weeklyPulseOption1: 'Sesekali',
+    DaojiTextKey.weeklyPulseOption0: 'Tidak pernah',
+    DaojiTextKey.weeklyPulseAlertAnswerAll: 'Harap jawab semua 5 pertanyaan sebelum mengirim.',
+    DaojiTextKey.weeklyPulseSaveError: 'Gagal menyimpan Weekly Pulse: {error}',
+    DaojiTextKey.weeklyPulseSaving: 'Menyimpan hasil refleksi mingguan...',
+    DaojiTextKey.weeklyPulseStep: 'Langkah {step} dari {total}',
+    DaojiTextKey.weeklyPulseQuestionCount: 'Pertanyaan {step} dari {total}',
+    DaojiTextKey.weeklyPulseOptionalReflection: 'Refleksi Diri (Opsional) ✍️',
+    DaojiTextKey.weeklyPulseReflectionHint: 'Tuliskan catatan refleksi mingguan Anda, hambatan terbesar Anda, atau hal yang paling disyukuri minggu ini.',
+    DaojiTextKey.weeklyPulseReflectionPlaceholder: 'Tulis refleksi Anda di sini...',
+    DaojiTextKey.systemBack: 'Kembali',
+    DaojiTextKey.systemNext: 'Lanjut',
+    DaojiTextKey.systemSubmit: 'Kirim',
+
+    // Marketplace
+    DaojiTextKey.marketTemplateTypeHabit: '🎯 Kebiasaan',
+    DaojiTextKey.marketTemplateTypeCoreValue: '💎 Nilai Inti',
+    DaojiTextKey.marketSortByPopular: 'Terpopuler',
+    DaojiTextKey.marketSortByBest: 'Terbaik',
+    DaojiTextKey.marketSortByLatest: 'Terbaru',
+    DaojiTextKey.marketRestPrompt: '🌿 Daoji menyarankan beristirahat sejenak.\nKesehatan emosional Anda sedang dalam mode pemulihan. Selesaikan weekly pulse berikutnya untuk membuka kembali fitur ini.',
+
+    // Habit Form Additions
+    DaojiTextKey.habitCapacityWarningBody: 'Total beban kapasitas harian Anda adalah {maxCapacity} poin. Menambahkan/mengubah {label} ini akan meningkatkan beban menjadi {nextLoad} poin. \n\nDaoji menyarankan untuk menjaga beban di bawah batas agar tidak kelelahan. Tetap lanjutkan?',
+    DaojiTextKey.habitReminderTitle: 'Waktunya: {title}',
+    DaojiTextKey.habitReminderBody: 'Jaga konsistensi pertumbuhanmu hari ini 🌱',
+    DaojiTextKey.habitDeleteConfirm: 'Apakah Anda yakin ingin menghapus {label} ini? Tindakan ini tidak dapat dibatalkan.',
   },
   DaojiVocabularyLevel.human: {
     DaojiTextKey.navHome: 'Home',
@@ -458,6 +514,17 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.breathingSubtitle: 'Atur napas Anda untuk menjernihkan pikiran.',
     DaojiTextKey.reflectionReauditAction: 'Audit Mandiri Keseimbangan Hidup',
     DaojiTextKey.reflectionCompassCompareAction: 'Lihat Perbandingan Kompas',
+
+    // Weekly Pulse (Human Register)
+    DaojiTextKey.weeklyPulseTitleLow: 'Rest Mode Suggested 🌱',
+    DaojiTextKey.weeklyPulseTitleHigh: 'Mind in Balance ✨',
+    DaojiTextKey.weeklyPulseDescriptionLow: 'Skor kesejahteraan mental Anda berada di angka {percentage}%. Pertimbangkan mengaktifkan Rest Mode untuk mengembalikan energi.',
+    DaojiTextKey.weeklyPulseDescriptionHigh: 'Kesejahteraan mental Anda sangat baik ({percentage}%). Pertahankan konsistensi disiplin Anda!',
+
+    // Marketplace (Human Register)
+    DaojiTextKey.marketTemplateTypeHabit: '🎯 Disiplin',
+    DaojiTextKey.marketTemplateTypeCoreValue: '💎 Nilai Hidup',
+    DaojiTextKey.marketRestPrompt: '🌿 Daoji menyarankan Rest Mode.\nEnergi mental Anda memerlukan pengisian ulang. Selesaikan kuis berikutnya untuk membuka fitur.',
   },
   DaojiVocabularyLevel.earth: {
     DaojiTextKey.navHome: 'Training Hub',
@@ -623,6 +690,17 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.breathingSubtitle: 'Harmonize your breath to steady the Dao heart.',
     DaojiTextKey.reflectionReauditAction: 'Refine Path Resonance',
     DaojiTextKey.reflectionCompassCompareAction: 'Dao Heart Mirror Comparison',
+
+    // Weekly Pulse (Earth Register)
+    DaojiTextKey.weeklyPulseTitleLow: 'Refinement Needed 🌱',
+    DaojiTextKey.weeklyPulseTitleHigh: 'Qi Resonance Stable ✨',
+    DaojiTextKey.weeklyPulseDescriptionLow: 'Keseimbangan jalur energi Anda berada di angka {percentage}%. Sebaiknya masuk ke Seclusion Mode untuk pemulihan.',
+    DaojiTextKey.weeklyPulseDescriptionHigh: 'Keseimbangan jalur energi Anda sangat stabil ({percentage}%). Teruskan progres latihan Anda!',
+
+    // Marketplace (Earth Register)
+    DaojiTextKey.marketTemplateTypeHabit: '🎯 Latihan',
+    DaojiTextKey.marketTemplateTypeCoreValue: '💎 Fondasi',
+    DaojiTextKey.marketRestPrompt: '🌿 Daoji menyarankan Seclusion Mode.\nKondisi mental Anda memerlukan pemulihan. Selesaikan evaluasi berikutnya untuk membuka fitur.',
   },
   DaojiVocabularyLevel.heaven: {
     DaojiTextKey.thinkingCanvasTitle: 'Thinking Canvas',
@@ -858,5 +936,16 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.breathingSubtitle: 'Harmonize your breath to steady the Dao heart.',
     DaojiTextKey.reflectionReauditAction: 'Refine Path Resonance',
     DaojiTextKey.reflectionCompassCompareAction: 'Dao Heart Mirror Comparison',
+
+    // Weekly Pulse (Heaven Register)
+    DaojiTextKey.weeklyPulseTitleLow: 'Heart Demon Warning 😈',
+    DaojiTextKey.weeklyPulseTitleHigh: 'Dao Heart Stable ✨',
+    DaojiTextKey.weeklyPulseDescriptionLow: 'Qi Anda berada di angka {percentage}%. Ada tanda gejolak Dantian. Lakukan Closed-Door Seclusion untuk memulihkan meridian Anda.',
+    DaojiTextKey.weeklyPulseDescriptionHigh: 'Qi Anda sangat stabil ({percentage}%). Teruskan meditasi dan pemeliharaan meridian Anda!',
+
+    // Marketplace (Heaven Register)
+    DaojiTextKey.marketTemplateTypeHabit: '🎯 Teknik',
+    DaojiTextKey.marketTemplateTypeCoreValue: '💎 Dao Heart',
+    DaojiTextKey.marketRestPrompt: '🌿 Daoji menyarankan Closed-Door Seclusion.\nAliran Qi Anda sedang tidak stabil. Selesaikan pertapaan berikutnya untuk membuka kembali penyerapan teknik.',
   },
 };

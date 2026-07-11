@@ -273,6 +273,53 @@ enum DaojiTextKey {
   settingsDevMode,
   settingsDevModeSubtitle,
 
+  // Mind Map Canvas
+  mindMapEditorTitle,
+  mindMapUndoTooltip,
+  mindMapRecenterTooltip,
+  mindMapAddBranchTooltip,
+  mindMapEditTooltip,
+  mindMapDeleteTooltip,
+  mindMapDefaultNodeText,
+  mindMapDefaultRootText,
+  mindMapNewNodeText,
+  mindMapNewChildNodeText,
+  mindMapSaveButton,
+  mindMapNewTopicButton,
+
+  // Weekly Pulse
+  weeklyPulseTitleLow,
+  weeklyPulseTitleHigh,
+  weeklyPulseDescriptionLow,
+  weeklyPulseDescriptionHigh,
+  weeklyPulseQuestion1,
+  weeklyPulseQuestion2,
+  weeklyPulseQuestion3,
+  weeklyPulseQuestion4,
+  weeklyPulseQuestion5,
+  weeklyPulseOption5,
+  weeklyPulseOption4,
+  weeklyPulseOption3,
+  weeklyPulseOption2,
+  weeklyPulseOption1,
+  weeklyPulseOption0,
+  weeklyPulseAlertAnswerAll,
+  weeklyPulseSaveError,
+  weeklyPulseSaving,
+  weeklyPulseStep,
+  weeklyPulseQuestionCount,
+  weeklyPulseOptionalReflection,
+  weeklyPulseReflectionHint,
+  weeklyPulseReflectionPlaceholder,
+
+  // Marketplace
+  marketTemplateTypeHabit,
+  marketTemplateTypeCoreValue,
+  marketSortByPopular,
+  marketSortByBest,
+  marketSortByLatest,
+  marketRestPrompt,
+
   // System
   systemLoading,
   systemRetry,
@@ -280,4 +327,13 @@ enum DaojiTextKey {
   systemClose,
   systemSave,
   systemDelete,
+  systemBack,
+  systemNext,
+  systemSubmit,
+
+  // Habit Form Additions
+  habitCapacityWarningBody,
+  habitReminderTitle,
+  habitReminderBody,
+  habitDeleteConfirm,
 }
