@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// RESIDUAL: avoid "premium" in user copy — no paid tier is implemented.
 class ThinkingCanvasOnboardingDialog extends StatefulWidget {
   final ValueChanged<String> onMethodSelected;
   final bool initialDontShowAgain;
@@ -39,7 +40,7 @@ class _ThinkingCanvasOnboardingDialogState
     {
       'title': '2. Pilih Metode Berpikir 🧠',
       'desc':
-          'Kami mendukung 21 metode kognitif premium dengan panduan coretan kertas dan editor interaktif (seperti Mind Map, Slot Machine, Teratai Radial, dll) untuk memicu ide terbaik Anda.',
+          'Kami mendukung puluhan metode berpikir terpandu dengan panduan coretan kertas dan editor interaktif (seperti Mind Map, Slot Machine, Teratai Radial, dll) untuk memicu ide terbaik Anda.',
     },
     {
       'title': '3. Corat-Coret Tanpa Gangguan ✍️',

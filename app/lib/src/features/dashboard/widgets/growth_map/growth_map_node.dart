@@ -151,7 +151,7 @@ class FruitNode extends GrowthMapNode {
   const FruitNode({
     required super.id,
     required super.label,
-    super.icon = Icons.workspace_premium_outlined,
+    super.icon = Icons.workspace_premium_outlined, // Material icon name only; not app billing
     super.position,
     required super.semanticLabel,
     required this.domainTag,

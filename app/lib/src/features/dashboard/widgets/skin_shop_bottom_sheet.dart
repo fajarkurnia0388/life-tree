@@ -1,3 +1,12 @@
+// =============================================================================
+// RESIDUAL MONETIZATION UI (NOT REAL BILLING)
+// -----------------------------------------------------------------------------
+// Tree skin "prices" and "Bayar Sekarang" are local simulation only.
+// No Play Billing / StoreKit / payment gateway is integrated.
+// Agents: do NOT wire real IAP from this file without an explicit product decision.
+// Prefer treating all skins as free unlock (dev/cosmetic sandbox).
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
@@ -40,6 +49,7 @@ class _TreeSkinShopBottomSheetState
       'name': 'Sakura Jepang 🌸',
       'description':
           'Pohon sakura dengan kelopak bunga merah muda yang mekar indah.',
+      // residual display price only — not charged
       'price': 15000,
       'preview': '🌸🌱 🌸🌿 🌸🌳 🌸🌲',
     },
@@ -48,6 +58,7 @@ class _TreeSkinShopBottomSheetState
       'name': 'Golden Maple 🍁',
       'description':
           'Penampilan musim gugur dengan warna emas kemerahan yang hangat.',
+      // residual display price only — not charged
       'price': 15000,
       'preview': '🍁🌱 🍁🌿 🍁🌳 🍁🌲',
     },
@@ -116,13 +127,13 @@ class _TreeSkinShopBottomSheetState
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              title: const Text('Simulasi Transaksi Premium'),
+              title: const Text('Simulasi unlock skin (bukan pembayaran)'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Anda akan membeli skin premium:\n"${skin['name']}"',
+                    'RESIDUAL UI: ini unlock lokal, bukan transaksi sungguhan.\nSkin: "${skin['name']}"',
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -186,7 +197,7 @@ class _TreeSkinShopBottomSheetState
                 ElevatedButton(
                   style: AppButtonStyles.primary(context),
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Bayar Sekarang'),
+                  child: const Text('Unlock lokal (simulasi)'),
                 ),
               ],
             );
@@ -217,7 +228,7 @@ class _TreeSkinShopBottomSheetState
           Navigator.pop(context);
           SnackBarService.showSuccess(
             context,
-            'Pembelian berhasil! Skin "${skin['name']}" telah diaktifkan.',
+            'Skin "${skin['name']}" di-unlock secara lokal (simulasi, bukan pembayaran).',
           );
         }
       } catch (e) {
@@ -261,13 +272,14 @@ class _TreeSkinShopBottomSheetState
           ),
           const SizedBox(height: 20),
           Text(
-            'Toko Skin Pohon 🎨',
+            'Koleksi Skin Pohon 🎨',
             style: theme.textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(
-            'Visualisasikan konsistensi Anda dengan gaya pohon unik.',
+            // Residual: was framed as a paid shop; still local unlock only.
+            'Pilih tampilan pohon. Harga di bawah bersifat simulasi (belum ada billing).',
             style: TextStyle(
               fontSize: 12,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -284,7 +296,7 @@ class _TreeSkinShopBottomSheetState
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(height: 16),
-                    Text('Memproses transaksi pembayaran...'),
+                    Text('Memproses unlock lokal (simulasi)...'),
                   ],
                 ),
               ),

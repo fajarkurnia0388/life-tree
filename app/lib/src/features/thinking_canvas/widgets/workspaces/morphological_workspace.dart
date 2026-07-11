@@ -1,3 +1,5 @@
+// RESIDUAL: MorphologicalTemplate.isPremium is NOT billing.
+// All templates are free. Do not gate UI on isPremium.
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ class MorphologicalTemplate {
   final String title;
   final String description;
   final String category;
+  /// Residual catalog flag — unused for paywall. Prefer ignoring.
   final bool isPremium;
   final Map<String, List<String>> dimensions;
 
@@ -78,7 +81,7 @@ class MorphologicalTemplate {
       title: 'Game Indie Kreatif 🎮',
       description: 'Kombinasi mekanik dan gaya visual untuk game indie Anda.',
       category: 'Game',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       dimensions: {
         'Genre': ['Roguelike', 'Cozy Puzzle', 'Deckbuilder', 'Metroidvania'],
         'Gaya Visual': [

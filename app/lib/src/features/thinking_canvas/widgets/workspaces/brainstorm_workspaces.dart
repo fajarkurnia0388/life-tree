@@ -600,6 +600,7 @@ class PersonaPackage {
   final String id;
   final String title;
   final String desc;
+  /// Residual only — not billing. Do not lock packs on this flag.
   final bool isPremium;
   final List<PersonaModel> personas;
 
@@ -658,7 +659,7 @@ class PersonaPackage {
       title: 'Bisnis & Produk 👑',
       desc:
           'Set persona eksternal untuk menguji kelayakan pasar, profitabilitas, dan kenyamanan pengguna.',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       personas: [
         PersonaModel(
           name: 'Pelanggan Cerewet',
@@ -691,7 +692,7 @@ class PersonaPackage {
       title: 'Karir & Self-Growth 👑',
       desc:
           'Persona pendukung untuk memoles kualitas portofolio, masa depan karir, dan kebiasaan harian Anda.',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       personas: [
         PersonaModel(
           name: 'Mentor Bijaksana',
@@ -724,7 +725,7 @@ class PersonaPackage {
       title: 'Hubungan & Konflik 👑',
       desc:
           'Set persona netral untuk menengahi gesekan komunikasi dengan teman, pasangan, atau rekan tim.',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       personas: [
         PersonaModel(
           name: 'Mediator Netral',
@@ -864,7 +865,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: pkg.isPremium
+                                color: false && pkg.isPremium // residual paywall styling disabled
                                     ? Colors.amber.withValues(alpha: 0.1)
                                     : Colors.blue.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,

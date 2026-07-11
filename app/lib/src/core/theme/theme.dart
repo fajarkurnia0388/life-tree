@@ -8,7 +8,8 @@ import '../../data/local_db/database.dart';
 import 'package:drift/drift.dart' as drift;
 
 class CalmTheme {
-  // Daoji Premium Palette (Aligned with landing page)
+  // Daoji brand palette (aligned with landing page).
+  // NOTE: "Premium" here means visual quality only — NOT a paid product tier.
   static const Color obsidian = Color(0xFF050807);
   static const Color daoSurface = Color(0xFF13231C);
   static const Color daoSurfaceElevated = Color(0xFF1A332A);

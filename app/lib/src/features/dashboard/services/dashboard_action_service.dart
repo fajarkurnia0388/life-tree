@@ -20,6 +20,9 @@ class DashboardActionService {
     );
   }
 
+  /// RESIDUAL NAME: not a store purchase.
+  /// Locally unlocks a tree skin in SQLite. No money, no IAP, no receipt.
+  /// Prefer [unlockUserSkinLocally] mentally; keep name for call-site compatibility.
   Future<void> purchaseUserSkin(String userId, String updatedUnlockedSkins, String skinId) async {
     await (db.update(db.userProfiles)
           ..where((tbl) => tbl.userId.equals(userId)))

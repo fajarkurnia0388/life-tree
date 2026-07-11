@@ -1,3 +1,12 @@
+// =============================================================================
+// RESIDUAL / DISABLED: monetization & premium paywall
+// -----------------------------------------------------------------------------
+// There is NO real billing (no IAP/Play Billing/StoreKit) in this app.
+// `isPremium` on ThinkingMethod is legacy catalog metadata only.
+// All values are forced to false so agents do NOT implement paywalls from this.
+// Do not re-enable true as a product gate without an explicit monetization decision.
+// =============================================================================
+
 enum WorkspaceTemplate {
   freeform,
   multiColumn,
@@ -11,6 +20,8 @@ class ThinkingMethod {
   final String category; // 'Divergen', 'Konvergen', 'Sesi Lengkap'
   final String desc;
   final String level; // 'Pemula', 'Menengah', 'Lanjutan', 'Kerangka Kerja'
+  /// RESIDUAL ONLY — not a billing flag. Always treat as false for product logic.
+  /// Historical "premium method" markers were speculative scaffolding.
   final bool isPremium;
   final WorkspaceTemplate template;
   final List<String> steps;
@@ -108,7 +119,7 @@ class ThinkingMethod {
       category: 'Divergen',
       desc: 'Modifikasi ide yang sudah ada lewat 7 sudut pandang kognitif.',
       level: 'Menengah',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       steps: [
         'Pilih satu ide dasar atau produk yang ingin dikembangkan.',
@@ -123,7 +134,7 @@ class ThinkingMethod {
       category: 'Divergen',
       desc: 'Cari cara untuk merusak atau menggagalkan masalah terlebih dahulu.',
       level: 'Menengah',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.sequential,
       stepLabels: [
         'Masalah Utama',
@@ -145,7 +156,7 @@ class ThinkingMethod {
       category: 'Divergen',
       desc: 'Tabrakan ide secara paksa dengan kata acak untuk memicu lompatan kreatif.',
       level: 'Menengah',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       steps: [
         'Tulis masalah utama Anda di kertas.',
@@ -161,7 +172,7 @@ class ThinkingMethod {
       category: 'Divergen',
       desc: 'Mulai dari ide terburuk untuk menghilangkan rasa takut gagal.',
       level: 'Menengah',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       placeholder: 'Tulis ide-ide paling bodoh, paling rugi, dan paling aneh yang terlintas...',
       steps: [
@@ -177,7 +188,7 @@ class ThinkingMethod {
       category: 'Divergen',
       desc: 'Jawab masalah dari sudut pandang tokoh atau peran orang lain.',
       level: 'Menengah',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       steps: [
         'Pilih satu tokoh terkenal, karakter fiksi, atau profesi berbeda (misal: Detektif, Petani).',
@@ -192,7 +203,7 @@ class ThinkingMethod {
       category: 'Divergen',
       desc: 'Uji satu ide dari 6 sudut pertanyaan 5W1H secara mendalam.',
       level: 'Menengah',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       steps: [
         'Gambarkan bintang bersudut enam di kertas dengan ide Anda di tengahnya.',
@@ -207,7 +218,7 @@ class ThinkingMethod {
       category: 'Divergen',
       desc: 'Kembangkan 1 ide utama menjadi 8 cabang, dan kembangkan tiap cabang menjadi 8 detail.',
       level: 'Lanjutan',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       placeholder: 'Ide Pusat -> 8 Cabang (A-H) -> Masing-masing cabang berkembang menjadi 8 sub-ide...',
       steps: [
@@ -223,7 +234,7 @@ class ThinkingMethod {
       category: 'Divergen',
       desc: 'Petakan variabel-variabel solusi ke dalam tabel kombinasi untuk menemukan ide unik.',
       level: 'Lanjutan',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       placeholder: 'Tabel Variabel: Dimensi A (Bahan) × Dimensi B (Metode) × Dimensi C (Target)...',
       steps: [
@@ -241,7 +252,7 @@ class ThinkingMethod {
       category: 'Konvergen',
       desc: 'Kelompokkan tumpukan ide acak ke dalam beberapa kategori tema.',
       level: 'Menengah',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       placeholder: 'Klaster A (Nama Kategori): [Ide 1, Ide 2...]\nKlaster B (Nama Kategori): [Ide 3, Ide 4...]',
       steps: [
@@ -289,7 +300,7 @@ class ThinkingMethod {
       category: 'Konvergen',
       desc: 'Evaluasi ide dari sisi internal (Kekuatan & Kelemahan) dan eksternal (Peluang & Ancaman).',
       level: 'Menengah',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       steps: [
         'Bagi kertas Anda menjadi 4 kuadran: Strengths, Weaknesses, Opportunities, Threats.',
@@ -304,7 +315,7 @@ class ThinkingMethod {
       category: 'Konvergen',
       desc: 'Pertanyakan semua asumsi, bongkar masalah ke fakta dasar, lalu susun solusi baru dari nol.',
       level: 'Lanjutan',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       steps: [
         'Tuliskan keyakinan atau asumsi umum tentang masalah Anda saat ini.',
@@ -321,7 +332,7 @@ class ThinkingMethod {
       category: 'Sesi Lengkap',
       desc: 'Analisis satu topik secara objektif dari 6 kacamata berpikir yang berbeda secara bergantian.',
       level: 'Lanjutan',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       steps: [
         'Tuliskan topik yang ingin dibahas.',
@@ -336,7 +347,7 @@ class ThinkingMethod {
       category: 'Sesi Lengkap',
       desc: 'Gunakan 3 peran bergantian untuk mematangkan ide: Pemimpi, Realis, dan Pengkritik.',
       level: 'Kerangka Kerja',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       steps: [
         'Peran Pemimpi (Dreamer): Tulis ide seliar mungkin seolah tidak ada batas uang/waktu.',
@@ -351,7 +362,7 @@ class ThinkingMethod {
       category: 'Sesi Lengkap',
       desc: 'Kerangka kerja desain dari memetakan masalah hingga menguji solusi.',
       level: 'Kerangka Kerja',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       steps: [
         'Discover: Buka pikiran, kumpulkan semua keluhan atau riset.',
@@ -367,7 +378,7 @@ class ThinkingMethod {
       category: 'Sesi Lengkap',
       desc: 'Curah pendapat berisi daftar pertanyaan alih-alih langsung mencari jawaban.',
       level: 'Kerangka Kerja',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       placeholder: 'Tulis minimal 15-20 pertanyaan kritis mengenai masalah Anda...',
       steps: [
@@ -419,7 +430,7 @@ class ThinkingMethod {
       category: 'Sesi Lengkap',
       desc: 'Uji sinyal minat nyata atas ide Anda ke dunia luar dalam waktu singkat.',
       level: 'Kerangka Kerja',
-      isPremium: true,
+      isPremium: false, // residual: was true; monetization disabled
       template: WorkspaceTemplate.freeform,
       steps: [
         'Tuliskan asumsi terbesar dari ide Anda (misal: "Orang butuh jasa kurir sayur organik").',
