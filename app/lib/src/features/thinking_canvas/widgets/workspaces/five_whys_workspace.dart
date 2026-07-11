@@ -21,6 +21,7 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
     5,
     (_) => TextEditingController(),
   );
+  final TextEditingController _rootCauseController = TextEditingController();
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
     for (final c in _controllers) {
       c.addListener(_notifyChanges);
     }
+    _rootCauseController.addListener(_notifyChanges);
   }
 
   @override
@@ -35,6 +37,7 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
     for (final c in _controllers) {
       c.dispose();
     }
+    _rootCauseController.dispose();
     super.dispose();
   }
 
@@ -45,6 +48,10 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
     buffer.writeln('$title:');
     for (int i = 0; i < 5; i++) {
       buffer.writeln('Why ${i + 1}: ${_controllers[i].text.trim()}');
+    }
+    final root = _rootCauseController.text.trim();
+    if (root.isNotEmpty) {
+      buffer.writeln('Akar penyebab sejati: $root');
     }
     widget.onChanged(buffer.toString());
   }
@@ -145,6 +152,45 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
             ],
           );
         }),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: theme.colorScheme.primary.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Akar penyebab sejati',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _rootCauseController,
+                maxLines: 3,
+                style: const TextStyle(fontSize: 12),
+                decoration: InputDecoration(
+                  hintText:
+                      'Setelah 5 Why, ringkas akar masalah yang paling dalam…',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  filled: true,
+                  fillColor: theme.colorScheme.surface,
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

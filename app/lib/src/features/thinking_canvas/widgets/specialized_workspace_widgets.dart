@@ -14,6 +14,8 @@ export 'workspaces/rapid_brainstorm_workspace.dart';
 export 'workspaces/question_storm_workspace.dart';
 export 'workspaces/random_word_workspace.dart';
 export 'workspaces/role_storming_workspace.dart';
+export 'workspaces/worst_possible_idea_workspace.dart';
+export 'workspaces/reverse_brainstorm_workspace.dart';
 export 'workspaces/mind_dump_workspace.dart';
 export 'workspaces/affinity_mapping_workspace.dart';
 export 'workspaces/five_whys_workspace.dart';

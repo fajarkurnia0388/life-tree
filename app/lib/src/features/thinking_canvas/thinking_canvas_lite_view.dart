@@ -887,9 +887,11 @@ class _ThinkingCanvasLiteViewState
       case 'Starbursting':
         return StarburstingWorkspace(onChanged: _onWorkspaceChanged);
       case 'Brainstorming':
-      case 'ReverseBrainstorming':
-      case 'WorstPossibleIdea':
         return RapidBrainstormWorkspace(onChanged: _onWorkspaceChanged);
+      case 'ReverseBrainstorming':
+        return ReverseBrainstormWorkspace(onChanged: _onWorkspaceChanged);
+      case 'WorstPossibleIdea':
+        return WorstPossibleIdeaWorkspace(onChanged: _onWorkspaceChanged);
       case 'QuestionStorming':
         return QuestionStormWorkspace(onChanged: _onWorkspaceChanged);
       case 'RandomWord':

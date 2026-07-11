@@ -41,7 +41,13 @@ class _LotusBlossomWorkspaceState extends ConsumerState<LotusBlossomWorkspace> {
         _subGrids[i] = List.filled(9, '');
       }
     }
-    _notifyChanges();
+    // Defer initial notify: calling widget.onChanged (which modifies a Riverpod
+    // provider) inside initState is forbidden — it mutates state while the
+    // widget tree is still being built. addPostFrameCallback fires after the
+    // first frame, safely outside the build phase.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _notifyChanges();
+    });
   }
 
   void _notifyChanges() {
