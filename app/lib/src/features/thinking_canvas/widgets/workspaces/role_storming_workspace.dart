@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_spacing.dart';
 
 // ==========================================
@@ -172,7 +173,7 @@ class PersonaPackage {
 }
 
 
-class RoleStormingWorkspace extends StatefulWidget {
+class RoleStormingWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const RoleStormingWorkspace({
     super.key,
@@ -180,39 +181,71 @@ class RoleStormingWorkspace extends StatefulWidget {
   });
 
   @override
-  State<RoleStormingWorkspace> createState() => _RoleStormingWorkspaceState();
+  ConsumerState<RoleStormingWorkspace> createState() => _RoleStormingWorkspaceState();
 }
 
-
-class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
+class _RoleStormingWorkspaceState extends ConsumerState<RoleStormingWorkspace> {
   PersonaPackage _activePackage = PersonaPackage.library[0];
   int _selectedPersonaIndex = 0;
   final TextEditingController _notesController = TextEditingController();
+  final TextEditingController _summaryController = TextEditingController();
+  final Map<String, String> _personaNotes = {}; // key: packageId_personaName
 
   void _notifyChanges() {
     if (_selectedPersonaIndex >= _activePackage.personas.length) {
       _selectedPersonaIndex = 0;
     }
-    final persona = _activePackage.personas[_selectedPersonaIndex];
+    
+    // Save current persona note to map
+    final activePersona = _activePackage.personas[_selectedPersonaIndex];
+    final activeKey = '${_activePackage.id}_${activePersona.name}';
+    _personaNotes[activeKey] = _notesController.text;
+
     final buffer = StringBuffer();
     buffer.writeln('Sudut Pandang Persona (Role Storming):');
     buffer.writeln('- Paket Aktif: ${_activePackage.title}');
-    buffer.writeln('- Persona Aktif: ${persona.name} ${persona.avatar}');
-    buffer.writeln('- Pola Pikir: ${persona.mindset}');
-    buffer.writeln('- Catatan Ide Persona: ${_notesController.text.trim()}');
+    
+    _personaNotes.forEach((key, note) {
+      if (note.trim().isNotEmpty) {
+        final name = key.split('_').last;
+        buffer.writeln('  • $name: ${note.trim()}');
+      }
+    });
+
+    final summary = _summaryController.text.trim();
+    if (summary.isNotEmpty) {
+      buffer.writeln('- Ringkasan Lintas Persona: $summary');
+    }
     widget.onChanged(buffer.toString());
+  }
+
+  void _selectPersona(int index) {
+    final oldPersona = _activePackage.personas[_selectedPersonaIndex];
+    final oldKey = '${_activePackage.id}_${oldPersona.name}';
+    _personaNotes[oldKey] = _notesController.text;
+
+    setState(() {
+      _selectedPersonaIndex = index;
+      final newPersona = _activePackage.personas[index];
+      final newKey = '${_activePackage.id}_${newPersona.name}';
+      _notesController.text = _personaNotes[newKey] ?? '';
+    });
+    _notifyChanges();
   }
 
   @override
   void initState() {
     super.initState();
     _notesController.addListener(_notifyChanges);
+    _summaryController.addListener(_notifyChanges);
   }
 
   @override
   void dispose() {
     _notesController.removeListener(_notifyChanges);
     _notesController.dispose();
+    _summaryController.removeListener(_notifyChanges);
+    _summaryController.dispose();
     super.dispose();
   }
 
@@ -290,7 +323,6 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                // Residual: was amber when pkg.isPremium; monetization disabled.
                                 color: Colors.blue.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
@@ -323,8 +355,17 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                                 : const Icon(Icons.chevron_right_rounded),
                             onTap: () {
                               setState(() {
+                                // Save current persona's note first
+                                final oldPersona = _activePackage.personas[_selectedPersonaIndex];
+                                final oldKey = '${_activePackage.id}_${oldPersona.name}';
+                                _personaNotes[oldKey] = _notesController.text;
+
                                 _activePackage = pkg;
                                 _selectedPersonaIndex = 0;
+
+                                final newPersona = pkg.personas[0];
+                                final newKey = '${pkg.id}_${newPersona.name}';
+                                _notesController.text = _personaNotes[newKey] ?? '';
                               });
                               _notifyChanges();
                               Navigator.pop(context);
@@ -397,7 +438,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              '4. Pilih Persona Berpikir',
+              'Pilih Persona Berpikir',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             TextButton.icon(
@@ -428,12 +469,7 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
               final isSelected = index == _selectedPersonaIndex;
 
               return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedPersonaIndex = index;
-                  });
-                  _notifyChanges();
-                },
+                onTap: () => _selectPersona(index),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   margin: const EdgeInsets.only(right: 8),
@@ -533,15 +569,19 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                 'Tuliskan analisis atau pemikiran dari sudut pandang ini...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: (val) {
-            if (val == null || val.trim().isEmpty) {
-              return 'Harap tuliskan pemikiran dari sudut pandang ${persona.name}';
-            }
-            return null;
-          },
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _summaryController,
+          maxLines: 3,
+          decoration: InputDecoration(
+            labelText: 'Ringkasan Lintas Persona (Kesimpulan)',
+            hintText: 'Sintesis semua sudut pandang di atas menjadi solusi cerdas...',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
         ),
       ],
     );
   }
 }
+

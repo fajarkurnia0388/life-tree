@@ -1,30 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
 import '../../../../core/i18n/daoji_text_resolver.dart';
-import '../../../../core/i18n/daoji_vocabulary_level.dart';
+import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 
 // ==========================================
-// 2. QUESTION STORM WORKSPACE (QUESTION LIST & STARS)
+// 2. QUESTION STORM WORKSPACE (QUESTION LIST & STARS & ACTIONS)
 // ==========================================
-class QuestionStormWorkspace extends StatefulWidget {
+class QuestionStormWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   const QuestionStormWorkspace({super.key, required this.onChanged});
 
   @override
-  State<QuestionStormWorkspace> createState() => _QuestionStormWorkspaceState();
+  ConsumerState<QuestionStormWorkspace> createState() => _QuestionStormWorkspaceState();
 }
 
-
-class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
+class _QuestionStormWorkspaceState extends ConsumerState<QuestionStormWorkspace> {
   final List<Map<String, dynamic>> _questions = [];
   final TextEditingController _inputController = TextEditingController();
+  final Map<String, String> _questionActions = {}; // keyed by question text
 
   void _notifyChanges() {
     final buffer = StringBuffer();
     buffer.writeln('Question Storming List:');
     for (var q in _questions) {
-      final star = q['starred'] == true ? ' ⭐️ (PRIORITAS)' : '';
+      final isStarred = q['starred'] == true;
+      final star = isStarred ? ' ⭐️ (PRIORITAS)' : '';
       buffer.writeln('- ${q['text']}$star');
+      if (isStarred) {
+        final action = _questionActions[q['text']] ?? '';
+        if (action.trim().isNotEmpty) {
+          buffer.writeln('  ↳ Tindak Lanjut: ${action.trim()}');
+        }
+      }
     }
     widget.onChanged(buffer.toString());
   }
@@ -46,13 +54,15 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
         .length;
     final isCurrentlyStarred = _questions[index]['starred'] == true;
 
+    final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+
     if (!isCurrentlyStarred && currentStarredCount >= 3) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             DaojiText.resolve(
               DaojiTextKey.questionStormMaxPriority,
-              DaojiVocabularyLevel.mortal,
+              vocabularyLevel,
             ),
           ),
         ),
@@ -75,7 +85,9 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final starredCount = _questions.where((q) => q['starred'] == true).length;
+    final starredQuestions = _questions.where((q) => q['starred'] == true).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -83,7 +95,7 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
         Text(
           DaojiText.resolve(
             DaojiTextKey.questionStormTitle,
-            DaojiVocabularyLevel.mortal,
+            vocabularyLevel,
           ),
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
@@ -93,17 +105,17 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
           decoration: InputDecoration(
             labelText: DaojiText.resolve(
               DaojiTextKey.questionStormHint,
-              DaojiVocabularyLevel.mortal,
+              vocabularyLevel,
             ),
             hintText: DaojiText.resolve(
               DaojiTextKey.questionStormHint,
-              DaojiVocabularyLevel.mortal,
+              vocabularyLevel,
             ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_rounded),
               tooltip: DaojiText.resolve(
                 DaojiTextKey.questionStormAddTooltip,
-                DaojiVocabularyLevel.mortal,
+                vocabularyLevel,
               ),
               onPressed: _submitQuestion,
             ),
@@ -118,7 +130,7 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
             Text(
               DaojiText.resolve(
                 DaojiTextKey.questionStormStats,
-                DaojiVocabularyLevel.mortal,
+                vocabularyLevel,
                 params: {'total': _questions.length, 'starred': starredCount},
               ),
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
@@ -170,11 +182,36 @@ class _QuestionStormWorkspaceState extends State<QuestionStormWorkspace> {
             );
           },
         ),
+        if (starredQuestions.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          const Text(
+            'Rencana Aksi / Jawaban Pertanyaan Prioritas:',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+          const SizedBox(height: 8),
+          ...starredQuestions.map((q) {
+            final text = q['text'] as String;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: TextFormField(
+                initialValue: _questionActions[text] ?? '',
+                maxLines: 2,
+                style: const TextStyle(fontSize: 12),
+                decoration: InputDecoration(
+                  labelText: 'Tindak lanjut: "$text"',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onChanged: (val) {
+                  _questionActions[text] = val;
+                  _notifyChanges();
+                },
+              ),
+            );
+          }),
+        ]
       ],
     );
   }
 }
-
-// ==========================================
-// 3. RANDOM WORD WORKSPACE
-// ==========================================
