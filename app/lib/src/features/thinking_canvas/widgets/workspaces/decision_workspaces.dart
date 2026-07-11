@@ -249,6 +249,7 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
   final List<Map<String, String>> _rooms = const [
     {
       'title': '1. Ruang Dreamer ☁️',
+      'tabLabel': 'Dreamer',
       'hint':
           'Tuliskan visi terbesar Anda tanpa batasan logistik atau finansial. Berimajinasilah!',
       'label': 'Visi Dreamer (Impian)',
@@ -257,6 +258,7 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
     },
     {
       'title': '2. Ruang Realist 🛠️',
+      'tabLabel': 'Realist',
       'hint':
           'Bagaimana cara merealisasikan mimpi ini? Tulis rencana taktis dan langkah konkret.',
       'label': 'Langkah Realist (Rencana)',
@@ -265,6 +267,7 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
     },
     {
       'title': '3. Ruang Critic 🔎',
+      'tabLabel': 'Critic',
       'hint':
           'Temukan celah, risiko, dan kelemahan rencana ini secara kritis untuk memolesnya.',
       'label': 'Analisis Critic (Evaluasi)',
@@ -337,7 +340,7 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
                     ),
                   ),
                   child: Text(
-                    r['title']!.split(' ')[1],
+                    r['tabLabel']!,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 11,

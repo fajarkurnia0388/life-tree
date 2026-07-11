@@ -666,11 +666,13 @@ class _DoubleDiamondPhaseDefinition {
   final DaojiTextKey title;
   final DaojiTextKey label;
   final DaojiTextKey hint;
+  final String tabLabel;
 
   const _DoubleDiamondPhaseDefinition({
     required this.title,
     required this.label,
     required this.hint,
+    required this.tabLabel,
   });
 }
 
@@ -696,21 +698,25 @@ class _DoubleDiamondWorkspaceState
       title: DaojiTextKey.doubleDiamondPhaseDiscoverTitle,
       label: DaojiTextKey.doubleDiamondPhaseDiscoverLabel,
       hint: DaojiTextKey.doubleDiamondPhaseDiscoverHint,
+      tabLabel: 'Discover',
     ),
     _DoubleDiamondPhaseDefinition(
       title: DaojiTextKey.doubleDiamondPhaseDefineTitle,
       label: DaojiTextKey.doubleDiamondPhaseDefineLabel,
       hint: DaojiTextKey.doubleDiamondPhaseDefineHint,
+      tabLabel: 'Define',
     ),
     _DoubleDiamondPhaseDefinition(
       title: DaojiTextKey.doubleDiamondPhaseDevelopTitle,
       label: DaojiTextKey.doubleDiamondPhaseDevelopLabel,
       hint: DaojiTextKey.doubleDiamondPhaseDevelopHint,
+      tabLabel: 'Develop',
     ),
     _DoubleDiamondPhaseDefinition(
       title: DaojiTextKey.doubleDiamondPhaseDeliverTitle,
       label: DaojiTextKey.doubleDiamondPhaseDeliverLabel,
       hint: DaojiTextKey.doubleDiamondPhaseDeliverHint,
+      tabLabel: 'Deliver',
     ),
   ];
 
@@ -775,10 +781,7 @@ class _DoubleDiamondWorkspaceState
                     ),
                   ),
                   child: Text(
-                    DaojiText.resolve(
-                      phase.title,
-                      vocabularyLevel,
-                    ).split(' ')[1],
+                    _phases[index].tabLabel,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 9,
@@ -835,10 +838,7 @@ class _DoubleDiamondWorkspaceState
               DaojiTextKey.doubleDiamondNoteLabel,
               vocabularyLevel,
               params: {
-                'phase': DaojiText.resolve(
-                  phase.title,
-                  vocabularyLevel,
-                ).split(' ')[1],
+                'phase': phase.tabLabel,
               },
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

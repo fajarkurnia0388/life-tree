@@ -516,7 +516,10 @@ class _ThinkingCanvasLiteViewState
           children: [
             if (hasDraft) _buildDraftBanner(context, state.currentDraftContent),
             Expanded(
-              child: _getWorkspaceForMethod(state.selectedMethod!),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 80),
+                child: _getWorkspaceForMethod(state.selectedMethod!),
+              ),
             ),
           ],
         ),
