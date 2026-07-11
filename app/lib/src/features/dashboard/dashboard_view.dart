@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../core/domain/priority_helper.dart';
+import 'dashboard_selection.dart';
 import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/domain/app_constants.dart';
-import '../../core/services/error_handler_service.dart';
 import '../../core/services/error_logger_provider.dart';
 import '../../core/services/snackbar_service.dart';
 import '../../core/widgets/error_state_widget.dart';
@@ -186,73 +184,34 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       ),
       body: dataAsync.when(
         data: (data) {
-          // Filter habits today based on the selected focus domain
-          final filteredHabits = _selectedDomainFilter == 'Semua'
-              ? data.habitsToday
-              : data.habitsToday
-                    .where(
-                      (hwl) => hwl.habit.domainTag == _selectedDomainFilter,
-                    )
-                    .toList();
-
           // Whether recovery (rest) mode is currently active.
           final isRecoveryActive = data.season == Season.recovery;
 
-          // Calculate dynamic Action of the Day inside the filtered view
-          Habit? activeActionOfTheDay;
-          if (_selectedDomainFilter == 'Semua') {
-            activeActionOfTheDay = data.actionOfTheDay;
-          } else {
-            Map<String, dynamic> domainScores = {};
-            if (data.profile.latestDomainScores != null) {
-              try {
-                domainScores = jsonDecode(data.profile.latestDomainScores!);
-              } catch (e, stackTrace) {
-                ref.read(errorLoggerProvider).logError(
+          final filteredHabits = filterHabitsByDomain(
+            data.habitsToday,
+            _selectedDomainFilter,
+          );
+
+          Map<String, dynamic> domainScores = {};
+          try {
+            domainScores =
+                parseDomainScoresJson(data.profile.latestDomainScores);
+          } catch (e, stackTrace) {
+            ref.read(errorLoggerProvider).logError(
                   e,
                   stackTrace,
-                  context: 'DashboardView.calculateFilteredAction',
+                  context: 'DashboardView.parseDomainScores',
                 );
-              }
-            }
-            double highestPriority = -1.0;
-            final uncompletedFiltered = filteredHabits
-                .where((hwl) => hwl.log?.status != HabitStatus.done)
-                .toList();
-            for (final hwl in uncompletedFiltered) {
-              final score = computeHabitPriorityScore(
-                habit: hwl.habit,
-                domainScores: domainScores,
-              );
-              if (score > highestPriority) {
-                highestPriority = score;
-                activeActionOfTheDay = hwl.habit;
-              }
-            }
           }
 
-          // Calculate balance index (average domain score / 10.0)
-          double balanceIndex = 0.5; // default fallback
-          if (data.profile.latestDomainScores != null) {
-            try {
-              final Map<String, dynamic> scores = jsonDecode(
-                data.profile.latestDomainScores!,
-              );
-              if (scores.isNotEmpty) {
-                final total = scores.values.fold<double>(
-                  0.0,
-                  (sum, val) => sum + (val as num).toDouble(),
-                );
-                balanceIndex = (total / scores.length) / 10.0;
-              }
-            } catch (e, stackTrace) {
-              ref.read(errorLoggerProvider).logError(
-                e,
-                stackTrace,
-                context: 'DashboardView.parseBalanceIndex',
-              );
-            }
-          }
+          final Habit? activeActionOfTheDay = resolveActiveActionOfTheDay(
+            domainFilter: _selectedDomainFilter,
+            globalActionOfTheDay: data.actionOfTheDay,
+            filteredHabits: filteredHabits,
+            domainScores: domainScores,
+          );
+
+          final balanceIndex = computeBalanceIndex(domainScores);
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -310,22 +269,21 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   else if (activeActionOfTheDay != null) ...[
                     Builder(
                       builder: (context) {
+                        final aotd = activeActionOfTheDay;
                         final hwl = data.habitsToday.firstWhere(
-                          (item) =>
-                              item.habit.habitId ==
-                              activeActionOfTheDay!.habitId,
+                          (item) => item.habit.habitId == aotd.habitId,
                         );
                         return ActionOfTheDayCard(
-                          habit: activeActionOfTheDay!,
+                          habit: aotd,
                           data: data,
                           onDonePressed: () => _toggleHabit(
                             context,
-                            activeActionOfTheDay!,
+                            aotd,
                             hwl.log,
                           ),
                           onNotCapablePressed: () => _showFrictionIntervention(
                             context,
-                            activeActionOfTheDay!,
+                            aotd,
                           ),
                         );
                       },

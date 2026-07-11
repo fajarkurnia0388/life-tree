@@ -443,6 +443,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             icon: const Icon(Icons.storefront_outlined),
             tooltip:
                 'Marketplace ${CultivationStrings.habitLabel(languageLevel)}',
+            // Full-screen catalog mode; filters shared via marketplaceUiProvider.
             onPressed: () => context.push('/marketplace'),
           ),
         ],

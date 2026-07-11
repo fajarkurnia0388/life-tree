@@ -20,10 +20,17 @@ import '../../core/widgets/empty_state_widget.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'marketplace_service.dart';
+import 'marketplace_ui_state.dart';
 import 'models/marketplace_template_model.dart';
 import 'widgets/share_template_bottom_sheet.dart';
 import 'widgets/marketplace_template_card.dart';
 
+/// Marketplace catalog UI.
+///
+/// Dual entry policy:
+/// - **Tab** in [MainNavigationShell] (IndexedStack) — browse home.
+/// - **Push** route `/marketplace` (e.g. from add-habit) — catalog mode; pop returns.
+/// Filters/search/sort live in [marketplaceUiProvider] so both entries share state.
 class MarketplaceView extends ConsumerStatefulWidget {
   const MarketplaceView({super.key});
 
@@ -33,9 +40,6 @@ class MarketplaceView extends ConsumerStatefulWidget {
 
 class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
   final _searchController = TextEditingController();
-  String _selectedTemplateType = 'habit';
-  String _selectedDomain = 'Semua';
-  String _sortBy = 'Terpopuler';
   late Future<List<MarketplaceTemplateModel>> _templatesFuture;
 
   final List<String> _templateTypes = ['habit', 'core_value'];
@@ -57,17 +61,21 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
   @override
   void initState() {
     super.initState();
+    // Sync text field with shared UI state (tab vs push entry).
+    final ui = ref.read(marketplaceUiProvider);
+    _searchController.text = ui.query;
     _refreshTemplates();
   }
 
   void _refreshTemplates() {
     final service = ref.read(marketplaceServiceProvider);
+    final ui = ref.read(marketplaceUiProvider);
     setState(() {
       _templatesFuture = service.fetchTemplates(
-        templateType: _selectedTemplateType,
-        domain: _selectedDomain,
-        query: _searchController.text,
-        sortBy: _sortBy,
+        templateType: ui.templateType,
+        domain: ui.domain,
+        query: ui.query,
+        sortBy: ui.sortBy,
       );
     });
   }
@@ -349,6 +357,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
 
   @override
   Widget build(BuildContext context) {
+    final ui = ref.watch(marketplaceUiProvider);
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Scaffold(
@@ -380,7 +389,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
               itemBuilder: (context, index) {
                 final type = _templateTypes[index];
                 final label = _templateTypeLabels[type]!;
-                final isSelected = _selectedTemplateType == type;
+                final isSelected = ui.templateType == type;
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: ChoiceChip(
@@ -388,9 +397,9 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                     selected: isSelected,
                     onSelected: (selected) {
                       if (selected) {
-                        setState(() {
-                          _selectedTemplateType = type;
-                        });
+                        ref
+                            .read(marketplaceUiProvider.notifier)
+                            .setTemplateType(type);
                         _refreshTemplates();
                       }
                     },
@@ -418,6 +427,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                   tooltip: 'Bersihkan pencarian',
                   onPressed: () {
                     _searchController.clear();
+                    ref.read(marketplaceUiProvider.notifier).clearQuery();
                     _refreshTemplates();
                   },
                 ),
@@ -425,7 +435,10 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onChanged: (_) => _refreshTemplates(),
+              onChanged: (v) {
+                ref.read(marketplaceUiProvider.notifier).setQuery(v);
+                _refreshTemplates();
+              },
             ),
           ),
 
@@ -437,7 +450,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
               itemCount: _domains.length,
               itemBuilder: (context, index) {
                 final domain = _domains[index];
-                final isSelected = _selectedDomain == domain;
+                final isSelected = ui.domain == domain;
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: ChoiceChip(
@@ -445,9 +458,9 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                     selected: isSelected,
                     onSelected: (selected) {
                       if (selected) {
-                        setState(() {
-                          _selectedDomain = domain;
-                        });
+                        ref
+                            .read(marketplaceUiProvider.notifier)
+                            .setDomain(domain);
                         _refreshTemplates();
                       }
                     },
@@ -474,7 +487,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                       itemCount: _sortOptions.length,
                       itemBuilder: (context, index) {
                         final option = _sortOptions[index];
-                        final isSelected = _sortBy == option;
+                        final isSelected = ui.sortBy == option;
                         return Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: ChoiceChip(
@@ -485,9 +498,9 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
                             selected: isSelected,
                             onSelected: (selected) {
                               if (selected) {
-                                setState(() {
-                                  _sortBy = option;
-                                });
+                                ref
+                                    .read(marketplaceUiProvider.notifier)
+                                    .setSortBy(option);
                                 _refreshTemplates();
                               }
                             },
