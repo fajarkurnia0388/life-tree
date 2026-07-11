@@ -7,6 +7,9 @@ import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../domain/mind_map_model.dart';
 
+/// Approximate laid-out node size for line anchors (matches padding + 1–2 lines).
+const Size kMindMapNodeDesignSize = Size(140, 36);
+
 class MindMapCanvasView extends ConsumerStatefulWidget {
   final List<MindMapNode> initialNodes;
   final ValueChanged<List<MindMapNode>> onSaved;
@@ -32,6 +35,7 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
   final List<List<MindMapNode>> _undoStack = [];
   static const int _maxUndoSteps = 20;
   double _currentScale = 1.0;
+  bool _isDraggingNode = false;
 
   final List<int> _palette = const [
     0xFF7D9B76, 0xFFD4728A, 0xFFE05C2F, 0xFF4A7360, 0xFF5C789B, 0xFF8E719B,
@@ -215,7 +219,11 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
           Padding(
             padding: const EdgeInsets.only(right: 12, top: 8, bottom: 8),
             child: ElevatedButton.icon(
-              onPressed: () { widget.onSaved(_nodes); Navigator.pop(context); },
+              onPressed: () {
+                widget.onSaved(List<MindMapNode>.from(_nodes));
+                // Support both MaterialRoute and go_router pops.
+                Navigator.of(context).pop(List<MindMapNode>.from(_nodes));
+              },
               icon: const Icon(Icons.check_rounded),
               label: Text(DaojiText.resolve(DaojiTextKey.mindMapSaveButton, vocabularyLevel)),
               style: ElevatedButton.styleFrom(
@@ -232,6 +240,9 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
           minScale: 0.4,
           maxScale: 2.0,
           constrained: false,
+          // Disable canvas pan while dragging a node to avoid gesture fights.
+          panEnabled: !_isDraggingNode,
+          scaleEnabled: !_isDraggingNode,
           boundaryMargin: const EdgeInsets.all(500),
           child: GestureDetector(
             onTap: () {
@@ -260,14 +271,30 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
                     child: GestureDetector(
                       onPanStart: (_) {
                         if (isEditing) return;
+                        _isDraggingNode = true;
                         _saveToUndoStack();
+                        setState(() {});
                       },
                       onPanUpdate: (d) {
                         if (isEditing) return;
+                        // InteractiveViewer applies scale; convert delta to canvas space.
+                        final scale = _transformationController.value
+                            .getMaxScaleOnAxis()
+                            .clamp(0.01, 10.0);
                         setState(() => node.position = Offset(
-                          node.position.dx + d.delta.dx,
-                          node.position.dy + d.delta.dy,
+                          node.position.dx + d.delta.dx / scale,
+                          node.position.dy + d.delta.dy / scale,
                         ));
+                      },
+                      onPanEnd: (_) {
+                        if (_isDraggingNode) {
+                          setState(() => _isDraggingNode = false);
+                        }
+                      },
+                      onPanCancel: () {
+                        if (_isDraggingNode) {
+                          setState(() => _isDraggingNode = false);
+                        }
                       },
 
                       onTap: () => setState(() => _selectedNodeId = node.id),
@@ -300,7 +327,7 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
             border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
           ),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.account_tree_rounded, size: 10, color: theme.colorScheme.primary),
+            Icon(Icons.account_tree_rounded, size: 12, color: theme.colorScheme.primary),
             const SizedBox(width: 3),
             Text('${_nodes.length}',
                 style: TextStyle(fontSize: 12,
@@ -309,13 +336,17 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
         )),
         // Add node FAB
         Positioned(left: 16, bottom: 80,
-          child: FloatingActionButton.extended(
-            heroTag: 'add_root',
-            onPressed: _addNewRootNode,
-            icon: const Icon(Icons.add_circle_outline_rounded),
-            label: Text(DaojiText.resolve(DaojiTextKey.mindMapNewTopicButton, vocabularyLevel)),
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.onPrimary,
+          child: Semantics(
+            button: true,
+            label: DaojiText.resolve(DaojiTextKey.mindMapNewTopicButton, vocabularyLevel),
+            child: FloatingActionButton.extended(
+              heroTag: 'add_root',
+              onPressed: _addNewRootNode,
+              icon: const Icon(Icons.add_circle_outline_rounded),
+              label: Text(DaojiText.resolve(DaojiTextKey.mindMapNewTopicButton, vocabularyLevel)),
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+            ),
           ),
         ),
         // Selected node toolbar
@@ -405,10 +436,15 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
           width: isSelected ? 3 : 1.5,
         ),
       ),
-      child: Text(node.text, textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white, fontSize: 13,
-              fontWeight: FontWeight.bold),
-          maxLines: 2, overflow: TextOverflow.ellipsis),
+      child: Semantics(
+        label: node.text,
+        button: true,
+        selected: isSelected,
+        child: Text(node.text, textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.white, fontSize: 13,
+                fontWeight: FontWeight.bold),
+            maxLines: 2, overflow: TextOverflow.ellipsis),
+      ),
     );
   }
 }
@@ -440,8 +476,12 @@ class _LinesPainter extends CustomPainter {
       final parent = nodes.firstWhere((n) => n.id == node.parentId,
           orElse: () => node);
       if (parent == node) continue;
-      final start = Offset(parent.position.dx + 70, parent.position.dy + 18);
-      final end = Offset(node.position.dx + 70, node.position.dy + 18);
+      final half = Offset(
+        kMindMapNodeDesignSize.width / 2,
+        kMindMapNodeDesignSize.height / 2,
+      );
+      final start = parent.position + half;
+      final end = node.position + half;
       final path = Path()..moveTo(start.dx, start.dy)
         ..cubicTo(start.dx + (end.dx - start.dx) / 2, start.dy,
             start.dx + (end.dx - start.dx) / 2, end.dy, end.dx, end.dy);

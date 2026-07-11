@@ -2,14 +2,15 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/i18n/daoji_text_key.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_level.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import 'domain/thinking_method.dart';
 import 'domain/mind_map_model.dart';
 import 'widgets/method_picker_bottom_sheet.dart';
-import 'widgets/mind_map_canvas_view.dart';
 import 'widgets/specialized_workspace_widgets.dart';
 import 'widgets/thinking_canvas_onboarding_dialog.dart';
 import 'thinking_canvas_state.dart';
@@ -308,7 +309,7 @@ class _ThinkingCanvasLiteViewState
     final selectedMood = state.selectedMood;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.sm, AppSpacing.xl, AppSpacing.xxxl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -505,7 +506,7 @@ class _ThinkingCanvasLiteViewState
                           const SizedBox(height: 2),
                           Text(mood['subtitle'] as String,
                               style: TextStyle(
-                                fontSize: 9,
+                                fontSize: 12,
                                 color: isSelected
                                     ? moodColor.withValues(alpha: 0.8)
                                     : theme.colorScheme.onSurface
@@ -636,7 +637,7 @@ class _ThinkingCanvasLiteViewState
                                   fontWeight: FontWeight.bold, fontSize: 12)),
                           const SizedBox(height: 4),
                           Text(m['desc'] as String,
-                              style: TextStyle(fontSize: 9,
+                              style: TextStyle(fontSize: 12,
                                   color: theme.colorScheme.onSurface
                                       .withValues(alpha: 0.6)),
                               maxLines: 3, overflow: TextOverflow.ellipsis),
@@ -693,7 +694,7 @@ class _ThinkingCanvasLiteViewState
             style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold)),
         subtitle: Text('Gunakan sebagai referensi atau salin isinya.',
-            style: TextStyle(fontSize: 10,
+            style: TextStyle(fontSize: 12,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
         trailing: IconButton(
           icon: const Icon(Icons.copy_rounded, size: 18),
@@ -722,7 +723,7 @@ class _ThinkingCanvasLiteViewState
               ),
               child: SelectableText(content,
                   style: TextStyle(
-                    fontFamily: 'monospace', fontSize: 11,
+                    fontFamily: 'monospace', fontSize: 12,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   )),
             ),
@@ -803,7 +804,7 @@ class _ThinkingCanvasLiteViewState
         // Workspace content
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, 100),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),
               child: KeyedSubtree(
@@ -815,7 +816,7 @@ class _ThinkingCanvasLiteViewState
         ),
         // Bottom action bar
         Container(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.lg),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -928,25 +929,20 @@ class _MindMapInlineState extends ConsumerState<_MindMapInline> {
         onTap: () async {
           unawaited(HapticFeedback.selectionClick());
           final canvasState = ref.read(thinkingCanvasProvider);
-          final result = await Navigator.of(context).push<Map<String, dynamic>>(
-            MaterialPageRoute(
-              builder: (_) => MindMapCanvasView(
-                initialNodes: canvasState.mindMapNodes.map((m) => MindMapNode.fromJson(m)).toList(),
-                onSaved: (nodes) {
-                  final serialized = nodes
-                      .map((n) => '${n.text} (${n.id})')
-                      .join('\n');
-                  widget.onChanged(serialized);
-                  ref.read(thinkingCanvasProvider.notifier)
-                      .updateMindMapNodes(
-                    nodes.map((n) => n.toJson()).toList(),
-                  );
-                },
-              ),
-            ),
+          final initial = canvasState.mindMapNodes
+              .map((m) => MindMapNode.fromJson(m))
+              .toList();
+          final result = await context.push<List<MindMapNode>>(
+            '/thinking-canvas/mind-map',
+            extra: initial,
           );
-          if (result != null) {
-            widget.onChanged(result.toString());
+          if (result != null && result.isNotEmpty) {
+            final serialized =
+                result.map((n) => '${n.text} (${n.id})').join('\n');
+            widget.onChanged(serialized);
+            ref.read(thinkingCanvasProvider.notifier).updateMindMapNodes(
+                  result.map((n) => n.toJson()).toList(),
+                );
           }
         },
         child: Column(
@@ -955,14 +951,22 @@ class _MindMapInlineState extends ConsumerState<_MindMapInline> {
             Icon(Icons.account_tree_rounded,
                 size: 40, color: theme.colorScheme.primary),
             const SizedBox(height: 8),
-            Text('Ketuk untuk Buka Mind Map Editor',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 13,
-                    color: theme.colorScheme.primary)),
-            const SizedBox(height: 4),
-            Text('Editor visual full-screen dengan drag & drop',
-                style: TextStyle(fontSize: 11,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+            Text(
+              'Ketuk untuk buka editor Mind Map',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              'Editor visual full-screen dengan drag & drop',
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+              ),
+            ),
           ],
         ),
       ),

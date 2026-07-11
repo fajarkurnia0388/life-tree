@@ -5,6 +5,8 @@ import '../../features/onboarding/onboarding_view.dart';
 import '../../features/navigation/main_navigation_shell.dart';
 import '../../features/journal/journal_lite_view.dart';
 import '../../features/thinking_canvas/thinking_canvas_lite_view.dart';
+import '../../features/thinking_canvas/widgets/mind_map_canvas_view.dart';
+import '../../features/thinking_canvas/domain/mind_map_model.dart';
 import '../../features/safety/safety_card_view.dart';
 import '../../features/habit/add_habit_view.dart';
 import '../../features/marketplace/marketplace_view.dart';
@@ -60,6 +62,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/thinking-canvas',
         builder: (context, state) => const ThinkingCanvasLiteView(),
+        routes: [
+          GoRoute(
+            path: 'mind-map',
+            builder: (context, state) {
+              final extra = state.extra;
+              List<MindMapNode> initial = const [];
+              if (extra is List<MindMapNode>) {
+                initial = extra;
+              } else if (extra is Map && extra['nodes'] is List<MindMapNode>) {
+                initial = extra['nodes'] as List<MindMapNode>;
+              }
+              return MindMapCanvasView(
+                initialNodes: initial,
+                onSaved: (_) {
+                  // Pop value is primary; onSaved kept for back-compat call sites.
+                },
+              );
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: '/safety',
