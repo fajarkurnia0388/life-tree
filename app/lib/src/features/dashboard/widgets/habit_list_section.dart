@@ -10,6 +10,7 @@ import '../../../core/providers/db_provider.dart';
 import '../../cultivation/cultivation_provider.dart';
 import '../../cultivation/cultivation_strings.dart';
 import '../dashboard_provider.dart';
+import '../services/dashboard_action_service.dart';
 import '../../../core/services/notification_service.dart';
 
 /// Widget untuk menampilkan daftar kebiasaan hari ini
@@ -139,12 +140,9 @@ class HabitListSection extends ConsumerWidget {
           );
         },
         onDismissed: (direction) async {
-          final db = ref.read(dbProvider);
           final deletedHabit = item.habit;
           
-          await (db.update(db.habits)
-                ..where((tbl) => tbl.habitId.equals(item.habit.habitId)))
-              .write(HabitsCompanion(deletedAt: drift.Value(DateTime.now())));
+          await ref.read(dashboardActionServiceProvider).deleteHabit(item.habit.habitId);
           await NotificationService.cancel(
             item.habit.habitId.hashCode.abs() % 100000,
           );
@@ -159,9 +157,7 @@ class HabitListSection extends ConsumerWidget {
                 action: SnackBarAction(
                   label: 'UNDO',
                   onPressed: () async {
-                    await (db.update(db.habits)
-                          ..where((tbl) => tbl.habitId.equals(deletedHabit.habitId)))
-                        .write(HabitsCompanion(deletedAt: drift.Value(null)));
+                    await ref.read(dashboardActionServiceProvider).restoreHabit(deletedHabit.habitId);
                     ref.invalidate(dashboardDataProvider);
                   },
                 ),

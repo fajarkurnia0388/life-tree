@@ -6,7 +6,10 @@ import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/providers/user_profile_provider.dart';
+import '../../core/services/snackbar_service.dart';
 import '../../core/theme/form_theme.dart';
+import 'services/journal_service.dart';
 import '../../core/theme/button_theme.dart';
 import '../../data/local_db/database.dart';
 import 'package:drift/drift.dart' as drift;
@@ -48,25 +51,15 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
   /// P2-04: Query the last 7 days of this user's journal entries and compute
   /// yesterday's mood, the 7-day average, and a per-day series for the sparkline.
   Future<void> _loadMoodContext() async {
-    final db = ref.read(dbProvider);
+    final userId = await ref.read(currentUserIdProvider.future);
+    if (userId == null) return;
+    
     final now = DateTime.now();
     final todayStart = DateTime(now.year, now.month, now.day);
     final yesterdayStart = todayStart.subtract(const Duration(days: 1));
-    // Window covers the last 7 calendar days, inclusive of today.
     final windowStart = todayStart.subtract(const Duration(days: 6));
-
-    final profiles = await db.select(db.userProfiles).get();
-    if (profiles.isEmpty) return;
-    final userId = profiles.first.userId;
-
-    final entries =
-        await (db.select(db.journalEntries)..where(
-              (tbl) =>
-                  tbl.userId.equals(userId) &
-                  tbl.deletedAt.isNull() &
-                  tbl.date.isBiggerOrEqualValue(windowStart),
-            ))
-            .get();
+ 
+    final entries = await ref.read(journalServiceProvider).getRecentJournalEntries(userId, windowStart);
 
     // Map normalized day -> moodScore for quick lookup.
     final moodByDate = <DateTime, int>{};
@@ -202,22 +195,12 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
   }
 
   Future<void> _loadExistingEntry() async {
-    final db = ref.read(dbProvider);
-    final now = DateTime.now();
-    final todayStart = DateTime(now.year, now.month, now.day);
-
-    final profiles = await db.select(db.userProfiles).get();
-    if (profiles.isEmpty) return;
-    final userId = profiles.first.userId;
-
-    final existing =
-        await (db.select(db.journalEntries)..where(
-              (tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart),
-            ))
-            .get();
-
-    if (existing.isNotEmpty && mounted) {
-      final entry = existing.first;
+    final userId = await ref.read(currentUserIdProvider.future);
+    if (userId == null) return;
+ 
+    final entry = await ref.read(journalServiceProvider).getTodayJournalEntry(userId);
+ 
+    if (entry != null && mounted) {
       setState(() {
         _selectedMood = entry.moodScore;
         _keywordController.text = entry.keyword ?? '';
@@ -246,122 +229,43 @@ class _JournalLiteViewState extends ConsumerState<JournalLiteView> {
 
   Future<void> _saveJournalEntry() async {
     if (!_formKey.currentState!.validate()) return;
-
-    final db = ref.read(dbProvider);
-    final now = DateTime.now();
-    final todayStart = DateTime(now.year, now.month, now.day);
-
-    // Get user id
-    final profiles = await db.select(db.userProfiles).get();
-    if (profiles.isEmpty) return;
-    final userId = profiles.first.userId;
-
-    final entryId = const Uuid().v4();
-
+ 
+    final userId = await ref.read(currentUserIdProvider.future);
+    if (userId == null) return;
+ 
     final keywordText = _keywordController.text.trim();
-
+ 
     // Deep reflection fields mapping
-    final String? textContent = _showDeepReflection
+    final String textContent = _showDeepReflection
         ? 'Pikiran: ${_q1Controller.text.trim()}\n\nRespons: ${_q2Controller.text.trim()}'
-        : null;
-    final String? gratitudeText = _showDeepReflection
+        : '';
+    final String gratitudeText = _showDeepReflection
         ? _q3Controller.text.trim()
-        : null;
-    final String entryType = _showDeepReflection ? 'Deep' : 'Lite';
-
-    // Check if entry already exists for today
-    final existing =
-        await (db.select(db.journalEntries)..where(
-              (tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart),
-            ))
-            .get();
-
-    if (existing.isNotEmpty) {
-      // Update existing
-      await (db.update(
-        db.journalEntries,
-      )..where((tbl) => tbl.entryId.equals(existing.first.entryId))).write(
-        JournalEntriesCompanion(
-          moodScore: drift.Value(_selectedMood),
-          keyword: drift.Value(keywordText.isEmpty ? null : keywordText),
-          textContent: drift.Value(textContent),
-          gratitudeText: drift.Value(gratitudeText),
-          entryType: drift.Value(entryType),
-        ),
-      );
-    } else {
-      // Insert new
-      await db
-          .into(db.journalEntries)
-          .insert(
-            JournalEntriesCompanion.insert(
-              entryId: entryId,
-              userId: userId,
-              date: todayStart,
-              moodScore: _selectedMood,
-              keyword: drift.Value(keywordText.isEmpty ? null : keywordText),
-              textContent: drift.Value(textContent),
-              gratitudeText: drift.Value(gratitudeText),
-              entryType: drift.Value(entryType),
-              createdAt: now,
-            ),
-          );
-    }
-
-    // Trigger low mood warning if mood_score <= 2 for exactly 3 consecutive days
-    // We check hari ini (H-0), kemarin (H-1), dan 2 hari lalu (H-2) secara ketat.
-    final now2 = DateTime.now();
-    final dayH0 = DateTime(now2.year, now2.month, now2.day);
-    final dayH1 = dayH0.subtract(const Duration(days: 1));
-    final dayH2 = dayH0.subtract(const Duration(days: 2));
-
-    final consecutiveEntries =
-        await (db.select(db.journalEntries)..where(
-              (tbl) =>
-                  tbl.userId.equals(userId) &
-                  tbl.date.isIn([dayH0, dayH1, dayH2]),
-            ))
-            .get();
-
-    // Build a map from date -> moodScore for quick lookup
-    final moodByDate = {
-      for (final e in consecutiveEntries) e.date: e.moodScore,
-    };
-
-    // All 3 consecutive days must have an entry AND moodScore <= 2
-    final hasConsecutiveLowMood =
-        moodByDate.containsKey(dayH0) &&
-        moodByDate.containsKey(dayH1) &&
-        moodByDate.containsKey(dayH2) &&
-        moodByDate[dayH0]! <= 2 &&
-        moodByDate[dayH1]! <= 2 &&
-        moodByDate[dayH2]! <= 2;
-
+        : '';
+ 
+    await ref.read(journalServiceProvider).saveJournalEntry(
+          userId: userId,
+          moodScore: _selectedMood,
+          keywordText: keywordText,
+          textContent: textContent,
+          gratitudeText: gratitudeText,
+          showDeepReflection: _showDeepReflection,
+        );
+ 
+    final hasConsecutiveLowMood = await ref.read(journalServiceProvider).checkConsecutiveLowMood(userId);
+ 
     if (hasConsecutiveLowMood) {
-      await db
-          .into(db.wellnessPromptLogs)
-          .insert(
-            WellnessPromptLogsCompanion.insert(
-              promptId: const Uuid().v4(),
-              userId: userId,
-              triggerType: WellnessPromptTrigger.lowMood,
-              promptedAt: DateTime.now(),
-            ),
-          );
+      await ref.read(journalServiceProvider).logWellnessPrompt(userId);
       _showLowMoodWarning();
       return;
     }
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            DaojiText.resolve(
-              DaojiTextKey.journalSavedSuccess,
-              ref.read(daojiVocabularyLevelValueProvider),
-            ),
-          ),
-          backgroundColor: Colors.green,
+      SnackBarService.showSuccess(
+        context,
+        DaojiText.resolve(
+          DaojiTextKey.journalSavedSuccess,
+          ref.read(daojiVocabularyLevelValueProvider),
         ),
       );
       context.pop();

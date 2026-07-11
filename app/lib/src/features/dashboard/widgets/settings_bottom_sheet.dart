@@ -11,12 +11,14 @@ import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/i18n/daoji_vocabulary_level.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/providers/db_provider.dart';
+import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../core/animations/dialog_animations.dart';
 import '../../../data/local_db/database.dart';
 import '../../onboarding/onboarding_view.dart';
 import '../dashboard_provider.dart';
+import '../services/dashboard_action_service.dart';
 import '../../../core/services/notification_service.dart';
 
 /// Bottom Sheet untuk Settings (Export, Reset, Theme)
@@ -24,66 +26,19 @@ class SettingsBottomSheet extends ConsumerWidget {
   const SettingsBottomSheet({super.key});
 
   Future<void> _toggleDeveloperMode(WidgetRef ref, bool enabled) async {
-    final db = ref.read(dbProvider);
-    final profile = await (db.select(
-      db.userProfiles,
-    )..limit(1)).getSingleOrNull();
+    final profile = await ref.read(userProfileProvider.future);
     if (profile == null) return;
 
-    await (db.update(db.userProfiles)
-          ..where((tbl) => tbl.userId.equals(profile.userId)))
-        .write(UserProfilesCompanion(isDeveloperMode: drift.Value(enabled)));
-
+    await ref.read(dashboardActionServiceProvider).toggleDeveloperMode(profile.userId, enabled);
     ref.invalidate(dashboardDataProvider);
   }
 
   Future<void> _exportDataAsJson(BuildContext context, WidgetRef ref) async {
-    final db = ref.read(dbProvider);
-    final profile = await (db.select(
-      db.userProfiles,
-    )..limit(1)).getSingleOrNull();
+    final profile = await ref.read(userProfileProvider.future);
     if (profile == null) return;
 
-    // Gather all data scoped to the current user
-    final habits =
-        await (db.select(db.habits)..where(
-              (tbl) =>
-                  tbl.userId.equals(profile.userId) & tbl.deletedAt.isNull(),
-            ))
-            .get();
-    final habitIds = habits.map((h) => h.habitId).toList();
-    final habitLogs = habitIds.isEmpty
-        ? <HabitLog>[]
-        : await (db.select(db.habitLogs)..where(
-                (tbl) => tbl.habitId.isIn(habitIds) & tbl.deletedAt.isNull(),
-              ))
-              .get();
-    final journalEntries =
-        await (db.select(db.journalEntries)..where(
-              (tbl) =>
-                  tbl.userId.equals(profile.userId) & tbl.deletedAt.isNull(),
-            ))
-            .get();
-    final weeklyPulses =
-        await (db.select(db.weeklyPulses)..where(
-              (tbl) =>
-                  tbl.userId.equals(profile.userId) & tbl.deletedAt.isNull(),
-            ))
-            .get();
-
-    final Map<String, dynamic> exportData = {
-      'export_date': DateTime.now().toIso8601String(),
-      'profile': {
-        'userId': profile.userId,
-        'ageBand': profile.ageBand,
-        'supportMode': profile.supportMode,
-        'timezone': profile.timezone,
-      },
-      'habits': habits.map((h) => h.toJson()).toList(),
-      'habitLogs': habitLogs.map((l) => l.toJson()).toList(),
-      'journalEntries': journalEntries.map((e) => e.toJson()).toList(),
-      'weeklyPulses': weeklyPulses.map((p) => p.toJson()).toList(),
-    };
+    final exportData = await ref.read(dashboardActionServiceProvider).exportAllUserData(profile.userId);
+    if (exportData.isEmpty) return;
 
     final jsonString = const JsonEncoder.withIndent('  ').convert(exportData);
 
@@ -119,7 +74,6 @@ class SettingsBottomSheet extends ConsumerWidget {
   }
 
   Future<void> _resetApplication(BuildContext context, WidgetRef ref) async {
-    final db = ref.read(dbProvider);
     final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
 
     // Confirm reset
@@ -143,17 +97,11 @@ class SettingsBottomSheet extends ConsumerWidget {
               DaojiText.resolve(DaojiTextKey.systemCancel, vocabularyLevel),
             ),
           ),
-          ElevatedButton(
+          TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: AppButtonStyles.destructive(context).copyWith(
-              backgroundColor: WidgetStateProperty.all(Colors.red),
-              foregroundColor: WidgetStateProperty.all(Colors.white),
-            ),
+            style: AppButtonStyles.destructive(context),
             child: Text(
-              DaojiText.resolve(
-                DaojiTextKey.settingsResetConfirmAction,
-                vocabularyLevel,
-              ),
+              DaojiText.resolve(DaojiTextKey.settingsResetConfirmAction, vocabularyLevel),
             ),
           ),
         ],
@@ -162,28 +110,8 @@ class SettingsBottomSheet extends ConsumerWidget {
 
     if (confirm != true) return;
 
-    // Cancel all scheduled notifications for existing habits
-    try {
-      final habits = await db.select(db.habits).get();
-      for (final habit in habits) {
-        await NotificationService.cancel(habit.habitId.hashCode.abs() % 100000);
-      }
-    } catch (e) {
-      debugPrint('Failed to cancel notifications during reset: $e');
-    }
-
     // Delete all data
-    await db.delete(db.habitLogs).go();
-    await db.delete(db.habits).go();
-    await db.delete(db.journalEntries).go();
-    await db.delete(db.thinkingCanvasSessions).go();
-    await db.delete(db.weeklyPulses).go();
-    await db.delete(db.decisionEntries).go();
-    await db.delete(db.lifeAudits).go();
-    await db.delete(db.consentLogs).go();
-    await db.delete(db.reminderPreferences).go();
-    await db.delete(db.userProfiles).go();
-    await db.delete(db.wellnessPromptLogs).go();
+    await ref.read(dashboardActionServiceProvider).resetAllUserData();
 
     ref.invalidate(dashboardDataProvider);
     ref.invalidate(onboardingCompletedProvider);
@@ -272,11 +200,8 @@ class SettingsBottomSheet extends ConsumerWidget {
               ],
               onChanged: (newMode) async {
                 if (newMode == null) return;
-                final db = ref.read(dbProvider);
                 if (profile == null) return;
-                await (db.update(db.userProfiles)
-                      ..where((tbl) => tbl.userId.equals(profile.userId)))
-                    .write(UserProfilesCompanion(themeMode: drift.Value(newMode)));
+                await ref.read(dashboardActionServiceProvider).updateThemeMode(profile.userId, newMode);
                 ref.invalidate(dashboardDataProvider);
                 ref.invalidate(appThemeModeProvider);
               },
@@ -290,11 +215,8 @@ class SettingsBottomSheet extends ConsumerWidget {
             trailing: Switch(
               value: circadianEnabled,
               onChanged: (enabled) async {
-                final db = ref.read(dbProvider);
                 if (profile == null) return;
-                await (db.update(db.userProfiles)
-                      ..where((tbl) => tbl.userId.equals(profile.userId)))
-                    .write(UserProfilesCompanion(circadianEnabled: drift.Value(enabled)));
+                await ref.read(dashboardActionServiceProvider).toggleCircadianTheme(profile.userId, enabled);
                 ref.invalidate(dashboardDataProvider);
                 ref.invalidate(appThemeModeProvider);
               },

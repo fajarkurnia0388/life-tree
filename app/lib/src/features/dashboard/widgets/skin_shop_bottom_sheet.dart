@@ -5,6 +5,8 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
 import '../../../core/providers/db_provider.dart';
+import '../../../core/services/snackbar_service.dart';
+import '../services/dashboard_action_service.dart';
 
 class TreeSkinShopBottomSheet extends ConsumerStatefulWidget {
   final UserProfile profile;
@@ -84,29 +86,16 @@ class _TreeSkinShopBottomSheetState
   ];
 
   Future<void> _selectSkin(String skinId) async {
-    final db = ref.read(dbProvider);
     try {
-      await (db.update(db.userProfiles)
-            ..where((tbl) => tbl.userId.equals(widget.profile.userId)))
-          .write(UserProfilesCompanion(selectedSkin: drift.Value(skinId)));
+      await ref.read(dashboardActionServiceProvider).updateUserSkin(widget.profile.userId, skinId);
       widget.onSuccess();
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Tampilan pohon berhasil diubah ke skin ini!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarService.showSuccess(context, 'Tampilan pohon berhasil diubah ke skin ini!');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal menerapkan skin: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarService.showError(context, 'Gagal menerapkan skin: $e');
       }
     }
   }
@@ -216,36 +205,24 @@ class _TreeSkinShopBottomSheetState
 
       try {
         final updatedUnlocked = '${widget.profile.unlockedSkins},$skinId';
-        await (db.update(
-          db.userProfiles,
-        )..where((tbl) => tbl.userId.equals(widget.profile.userId))).write(
-          UserProfilesCompanion(
-            unlockedSkins: drift.Value(updatedUnlocked),
-            selectedSkin: drift.Value(skinId),
-          ),
+        await ref.read(dashboardActionServiceProvider).purchaseUserSkin(
+          widget.profile.userId,
+          updatedUnlocked,
+          skinId,
         );
 
         widget.onSuccess();
 
         if (mounted) {
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Pembelian berhasil! Skin "${skin['name']}" telah diaktifkan.',
-              ),
-              backgroundColor: Colors.green,
-            ),
+          SnackBarService.showSuccess(
+            context,
+            'Pembelian berhasil! Skin "${skin['name']}" telah diaktifkan.',
           );
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Gagal memproses pembelian: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          SnackBarService.showError(context, 'Transaksi gagal: $e');
         }
       } finally {
         if (mounted) {

@@ -9,6 +9,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/services/error_logger_provider.dart';
+import '../../core/services/snackbar_service.dart';
 import '../../core/theme/theme.dart';
 import '../../core/theme/button_theme.dart';
 import '../../core/widgets/error_state_widget.dart';
@@ -64,7 +66,7 @@ class _ValueMirrorSessionViewState
       final excludeKeys = recent.map((r) => r.dilemmaKey).toSet();
       return ValueDilemmaPool.drawSession(excludeKeys: excludeKeys);
     } catch (e, stackTrace) {
-      ErrorHandlerService().logError(
+      ref.read(errorLoggerProvider).logError(
         e,
         stackTrace,
         context: 'ValueMirrorSessionView.loadRecentResponses',
@@ -117,11 +119,9 @@ class _ValueMirrorSessionViewState
       _nextPage(totalCards);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal menyimpan jawaban: $e'),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarService.showError(
+          context,
+          'Gagal menyimpan jawaban: $e',
         );
       }
     } finally {
@@ -160,11 +160,9 @@ class _ValueMirrorSessionViewState
       _nextPage(totalCards);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal menyimpan jawaban: $e'),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarService.showError(
+          context,
+          'Gagal menyimpan jawaban: $e',
         );
       }
     } finally {
@@ -209,7 +207,7 @@ class _ValueMirrorSessionViewState
             totalResponses += v as int;
           }
         } catch (e, stackTrace) {
-          ErrorHandlerService().logError(
+          ref.read(errorLoggerProvider).logError(
             e,
             stackTrace,
             context: 'ValueMirrorSessionView.parseRevealedValueScores',
@@ -235,11 +233,9 @@ class _ValueMirrorSessionViewState
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal menyelesaikan sesi: $e'),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarService.showError(
+          context,
+          'Gagal menyelesaikan sesi: $e',
         );
       }
     } finally {

@@ -7,6 +7,8 @@ import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/services/error_logger_provider.dart';
+import '../../core/services/snackbar_service.dart';
 import '../../core/widgets/error_state_widget.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../core/services/app_sound_service.dart';
@@ -73,11 +75,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       ref.invalidate(dashboardDataProvider);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal memperbarui status kebiasaan: $e'),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarService.showError(
+          context,
+          'Gagal memperbarui status kebiasaan: $e',
         );
       }
     }
@@ -208,7 +208,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               try {
                 domainScores = jsonDecode(data.profile.latestDomainScores!);
               } catch (e, stackTrace) {
-                ErrorHandlerService().logError(
+                ref.read(errorLoggerProvider).logError(
                   e,
                   stackTrace,
                   context: 'DashboardView.calculateFilteredAction',
@@ -246,7 +246,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 balanceIndex = (total / scores.length) / 10.0;
               }
             } catch (e, stackTrace) {
-              ErrorHandlerService().logError(
+              ref.read(errorLoggerProvider).logError(
                 e,
                 stackTrace,
                 context: 'DashboardView.parseBalanceIndex',

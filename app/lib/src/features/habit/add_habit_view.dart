@@ -8,6 +8,9 @@ import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/providers/user_profile_provider.dart';
+import 'services/habit_crud_service.dart';
+import '../../core/services/snackbar_service.dart';
 import '../../core/theme/form_theme.dart';
 import '../../core/theme/button_theme.dart';
 import '../../core/animations/dialog_animations.dart';
@@ -18,6 +21,7 @@ import '../dashboard/dashboard_provider.dart';
 import '../../core/theme/theme.dart';
 import '../../core/services/notification_service.dart';
 import 'widgets/habit_templates.dart';
+import 'widgets/habit_sliders_section.dart';
 
 class AddHabitView extends ConsumerStatefulWidget {
   final String? habitId;
@@ -74,15 +78,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   }
 
   Future<List<Habit>> _loadActiveHabits() async {
-    final db = ref.read(dbProvider);
-    final profiles = await db.select(db.userProfiles).get();
-    if (profiles.isEmpty) return <Habit>[];
-    return (db.select(db.habits)
-          ..where((tbl) =>
-              tbl.userId.equals(profiles.first.userId) &
-              tbl.status.equals(HabitStatus.active) &
-              tbl.deletedAt.isNull()))
-        .get();
+    final userId = await ref.read(currentUserIdProvider.future);
+    if (userId == null) return <Habit>[];
+    return await ref.read(habitCrudServiceProvider).getActiveHabits(userId);
   }
 
   String _normalizedInitialDomainTag(String? domainTag) {
@@ -91,14 +89,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   }
 
   Future<void> _loadHabitForEdit() async {
-    final db = ref.read(dbProvider);
-    final habit = await (db.select(
-      db.habits,
-    )..where((tbl) => tbl.habitId.equals(widget.habitId!))).getSingleOrNull();
-    final reminder = await (db.select(db.reminderPreferences)
-          ..where((tbl) => tbl.habitId.equals(widget.habitId!)))
-        .getSingleOrNull();
-    if (habit != null && mounted) {
+    final detail = await ref.read(habitCrudServiceProvider).getHabitDetail(widget.habitId!);
+    if (detail != null && mounted) {
+      final habit = detail.habit;
+      final reminder = detail.reminder;
       setState(() {
         _isEditing = true;
         _existingHabit = habit;
@@ -181,12 +175,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
     if (proceed != true) return;
 
-    final db = ref.read(dbProvider);
-    final now = DateTime.now();
-
-    await (db.update(db.habits)
-          ..where((tbl) => tbl.habitId.equals(_existingHabit!.habitId)))
-        .write(HabitsCompanion(deletedAt: drift.Value(now)));
+    await ref.read(habitCrudServiceProvider).deleteHabit(_existingHabit!.habitId);
 
     await NotificationService.cancel(
       _existingHabit!.habitId.hashCode.abs() % 100000,
@@ -202,23 +191,14 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   Future<void> _saveHabit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final db = ref.read(dbProvider);
     final now = DateTime.now();
     final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     final languageLevel = ref.read(cultivationLanguageLevelProvider);
 
-    final profiles = await db.select(db.userProfiles).get();
-    if (profiles.isEmpty) return;
-    final userId = profiles.first.userId;
+    final userId = await ref.read(currentUserIdProvider.future);
+    if (userId == null) return;
 
-    final activeHabits =
-        await (db.select(db.habits)..where(
-              (tbl) =>
-                  tbl.userId.equals(userId) &
-                  tbl.status.equals(HabitStatus.active) &
-                  tbl.deletedAt.isNull(),
-            ))
-            .get();
+    final activeHabits = await ref.read(habitCrudServiceProvider).getActiveHabits(userId);
 
     // --- Anti-Guilt Protection: block NEW habit creation during low well-being ---
     // Editing an existing habit is always allowed (preserving user agency).
@@ -227,18 +207,11 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
       final isLowWellBeing = dashboardAsync.whenOrNull(data: (d) => d.isLowWellBeing) ?? false;
       if (isLowWellBeing) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              DaojiText.resolve(
-                DaojiTextKey.marketRestPrompt,
-                vocabularyLevel,
-              ),
-            ),
-            backgroundColor: const Color(0xFF5B8FA8),
-            duration: const Duration(seconds: 5),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        SnackBarService.showInfo(
+          context,
+          DaojiText.resolve(
+            DaojiTextKey.marketRestPrompt,
+            vocabularyLevel,
           ),
         );
         return;
@@ -260,7 +233,8 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
       nextLoad = currentLoad + _initiationFriction + _energyCost;
     }
 
-    final maxCapacity = profiles.first.canopyLoadCapacity;
+    final profile = await ref.read(userProfileProvider.future);
+    final maxCapacity = profile?.canopyLoadCapacity ?? 10;
 
     if (nextLoad > maxCapacity) {
       if (!mounted) return;
@@ -319,35 +293,23 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
     if (_isEditing && _existingHabit != null) {
       final habitId = _existingHabit!.habitId;
-      await (db.update(
-        db.habits,
-      )..where((tbl) => tbl.habitId.equals(habitId))).write(
-        HabitsCompanion(
-          domainTag: drift.Value(_domainTag),
-          title: drift.Value(_titleController.text.trim()),
-          frequency: drift.Value(_frequency),
-          scheduledDays: drift.Value(scheduledDaysStr),
-          initiationFriction: drift.Value(_initiationFriction),
-          energyCost: drift.Value(_energyCost),
-          impactScore: drift.Value(_impactScore),
-          mvaDurationMin: drift.Value(_mvaDurationMin),
-          stackedToHabitId: drift.Value(_stackedToHabitId),
-          goalTag: drift.Value(
-            _goalTagController.text.trim().isEmpty
-                ? null
-                : _goalTagController.text.trim(),
-          ),
-        ),
-      );
-
-      final reminder = ReminderPreferencesCompanion(
-        habitId: drift.Value(habitId),
-        reminderEnabled: drift.Value(_reminderEnabled),
-        reminderTime: drift.Value(_reminderTime),
-        quietHoursStart: drift.Value(_quietHoursStart),
-        quietHoursEnd: drift.Value(_quietHoursEnd),
-      );
-      await db.into(db.reminderPreferences).insertOnConflictUpdate(reminder);
+      await ref.read(habitCrudServiceProvider).updateHabit(
+            habitId: habitId,
+            domainTag: _domainTag,
+            title: _titleController.text.trim(),
+            frequency: _frequency,
+            scheduledDays: scheduledDaysStr,
+            initiationFriction: _initiationFriction,
+            energyCost: _energyCost,
+            impactScore: _impactScore,
+            mvaDurationMin: _mvaDurationMin,
+            stackedToHabitId: _stackedToHabitId,
+            goalTag: _goalTagController.text.trim().isEmpty ? null : _goalTagController.text.trim(),
+            reminderEnabled: _reminderEnabled,
+            reminderTime: _reminderTime,
+            quietHoursStart: _quietHoursStart,
+            quietHoursEnd: _quietHoursEnd,
+          );
 
       final parts = _reminderTime.split(':');
       final hour = int.parse(parts[0]);
@@ -403,8 +365,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         quietHoursEnd: drift.Value(_quietHoursEnd),
       );
 
-      await db.into(db.habits).insert(newHabit);
-      await db.into(db.reminderPreferences).insert(reminder);
+      await ref.read(habitCrudServiceProvider).createHabit(
+            newHabit: newHabit,
+            reminder: reminder,
+          );
 
       final parts = _reminderTime.split(':');
       final hour = int.parse(parts[0]);
@@ -834,154 +798,19 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 const SizedBox(height: 16),
               ],
 
-              _buildSliderSection(
-                title:
-                    '🚀 ${DaojiText.resolve(DaojiTextKey.habitFriction, vocabularyLevel)}',
-                helperText:
-                    'Contoh: olahraga ke gym = susah (4-5), baca 1 halaman = mudah (1-2)',
-                value: _initiationFriction,
-                minLabel: 'Sangat Mudah',
-                maxLabel: 'Sangat Susah',
-                onChanged: (val) => setState(() => _initiationFriction = val),
+              HabitSlidersSection(
+                initiationFriction: _initiationFriction,
+                energyCost: _energyCost,
+                impactScore: _impactScore,
+                mvaDurationMin: _mvaDurationMin,
+                onFrictionChanged: (val) => setState(() => _initiationFriction = val),
+                onEnergyChanged: (val) => setState(() => _energyCost = val),
+                onImpactChanged: (val) => setState(() => _impactScore = val),
+                onDurationChanged: (val) => setState(() => _mvaDurationMin = val),
+                habitsFuture: _habitsFuture,
+                isEditing: _isEditing,
+                existingHabit: _existingHabit,
               ),
-
-              _buildSliderSection(
-                title:
-                    '⚡ ${DaojiText.resolve(DaojiTextKey.habitEnergy, vocabularyLevel)}',
-                helperText:
-                    'Contoh: lari 30 menit = banyak energi (4-5), nulis jurnal = sedikit (1-2)',
-                value: _energyCost,
-                minLabel: 'Sedikit Energi',
-                maxLabel: 'Banyak Energi',
-                onChanged: (val) => setState(() => _energyCost = val),
-              ),
-
-              _buildSliderSection(
-                title:
-                    '🎯 ${DaojiText.resolve(DaojiTextKey.habitImpact, vocabularyLevel)}',
-                helperText:
-                    'Contoh: olahraga rutin = dampak besar (5), minum vitamin = menengah (3)',
-                value: _impactScore,
-                minLabel: 'Dampak Kecil',
-                maxLabel: 'Dampak Besar',
-                onChanged: (val) => setState(() => _impactScore = val),
-              ),
-
-              _buildSliderSection(
-                title:
-                    '⏱️ ${DaojiText.resolve(DaojiTextKey.habitMva, vocabularyLevel)} (menit)',
-                helperText:
-                    'MVA: Minimum Viable Action — durasi terpendek agar tetap "valid dilakukan"',
-                value: _mvaDurationMin,
-                minLabel: '1 menit',
-                maxLabel: '30 menit',
-                minVal: 1,
-                maxVal: 30,
-                divisions: 29,
-                unit: ' menit',
-                onChanged: (val) => setState(() => _mvaDurationMin = val),
-              ),
-
-              const SizedBox(height: 20),
-              ref.watch(userProfileProvider).when(
-                    data: (profile) {
-                      final maxCapacity = profile?.canopyLoadCapacity ?? 10;
-                      return FutureBuilder<List<Habit>>(
-                        future: _habitsFuture,
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) return const SizedBox.shrink();
-                          final activeHabits = snapshot.data!;
-                          final currentLoad = activeHabits.fold<int>(
-                            0,
-                            (sum, h) => sum + h.initiationFriction + h.energyCost,
-                          );
-                          int nextLoad = currentLoad;
-                          if (_isEditing && _existingHabit != null) {
-                            nextLoad = currentLoad -
-                                (_existingHabit!.initiationFriction +
-                                    _existingHabit!.energyCost) +
-                                _initiationFriction +
-                                _energyCost;
-                          } else {
-                            nextLoad = currentLoad + _initiationFriction + _energyCost;
-                          }
-
-                          final isOverloaded = nextLoad > maxCapacity;
-                          final textColor = isOverloaded
-                              ? theme.colorScheme.error
-                              : theme.colorScheme.primary;
-                          final iconColor = isOverloaded
-                              ? theme.colorScheme.error
-                              : theme.colorScheme.primary;
-                          final bgColor = isOverloaded
-                              ? theme.colorScheme.error.withValues(alpha: 0.08)
-                              : theme.colorScheme.primary.withValues(alpha: 0.08);
-
-                          return Card(
-                            elevation: 0,
-                            color: bgColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(
-                                color: isOverloaded
-                                    ? theme.colorScheme.error.withValues(alpha: 0.3)
-                                    : theme.colorScheme.primary
-                                        .withValues(alpha: 0.3),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    isOverloaded
-                                        ? Icons.warning_amber_rounded
-                                        : Icons.info_outline,
-                                    color: iconColor,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          DaojiText.resolve(
-                                            DaojiTextKey.habitCanopyLoadStatus,
-                                            vocabularyLevel,
-                                            params: {
-                                              'load': nextLoad,
-                                              'capacity': maxCapacity,
-                                            },
-                                          ),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: textColor,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          isOverloaded
-                                              ? 'Melebihi kapasitas harian! Pertimbangkan menurunkan tingkat kesulitan/energi.'
-                                              : 'Beban kanopi Anda berada dalam batas aman dan seimbang.',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: theme.colorScheme.onSurface
-                                                .withValues(alpha: 0.6),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    loading: () => const SizedBox.shrink(),
-                    error: (err, _) => const SizedBox.shrink(),
-                  ),
               const SizedBox(height: 20),
               Card(
                 elevation: 0,
@@ -1148,84 +977,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     );
   }
 
-  Widget _buildSliderSection({
-    required String title,
-    required String helperText,
-    required int value,
-    required String minLabel,
-    required String maxLabel,
-    int minVal = 1,
-    int maxVal = 5,
-    int divisions = 4,
-    String unit = '',
-    required ValueChanged<int> onChanged,
-  }) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            helperText,
-            style: TextStyle(
-              fontSize: 12,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Slider(
-                  value: value.toDouble(),
-                  min: minVal.toDouble(),
-                  max: maxVal.toDouble(),
-                  divisions: divisions,
-                  activeColor: theme.colorScheme.primary,
-                  onChanged: (val) => onChanged(val.toInt()),
-                ),
-              ),
-              Text(
-                '$value$unit',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  minLabel,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-                Text(
-                  maxLabel,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Future<String?> _pickTime(BuildContext context, String current) async {
     final parts = current.split(':');

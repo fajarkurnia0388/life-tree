@@ -7,8 +7,10 @@ import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/providers/db_provider.dart';
+import '../../../core/providers/user_profile_provider.dart';
 import '../../../data/local_db/database.dart';
 import '../dashboard_provider.dart';
+import '../services/dashboard_action_service.dart';
 
 /// Displays the current season badge (Growth / Recovery / Dormant).
 class SeasonBadgeWidget extends ConsumerWidget {
@@ -149,17 +151,9 @@ class SeasonBadgeWidget extends ConsumerWidget {
   }
 
   Future<void> _endRecoveryMode(WidgetRef ref) async {
-    final db = ref.read(dbProvider);
-    final profiles = await db.select(db.userProfiles).get();
-    if (profiles.isNotEmpty) {
-      await (db.update(
-        db.userProfiles,
-      )..where((tbl) => tbl.userId.equals(profiles.first.userId))).write(
-        const UserProfilesCompanion(
-          supportMode: drift.Value('Normal'),
-          recoveryEndDate: drift.Value(null),
-        ),
-      );
+    final userId = await ref.read(currentUserIdProvider.future);
+    if (userId != null) {
+      await ref.read(dashboardActionServiceProvider).endRecoveryMode(userId);
       ref.invalidate(dashboardDataProvider);
     }
   }

@@ -9,7 +9,10 @@ import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/services/snackbar_service.dart';
 import '../../core/widgets/loading_state_widget.dart';
+import '../../core/utils/profile_json_helpers.dart';
+
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/button_theme.dart';
 import '../../core/animations/dialog_animations.dart';
@@ -82,18 +85,11 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
     final isLowWellBeing = dashboardAsync.whenOrNull(data: (d) => d.isLowWellBeing) ?? false;
     if (isLowWellBeing) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
-              '🌿 Daoji menyarankan beristirahat sejenak.\n'
-              'Kesehatan emosional Anda sedang dalam mode pemulihan. '
-              'Selesaikan weekly pulse berikutnya untuk membuka kembali fitur ini.',
-            ),
-            backgroundColor: const Color(0xFF5B8FA8),
-            duration: const Duration(seconds: 5),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
+        SnackBarService.showInfo(
+          context,
+          '🌿 Daoji menyarankan beristirahat sejenak.\n'
+          'Kesehatan emosional Anda sedang dalam mode pemulihan. '
+          'Selesaikan weekly pulse berikutnya untuk membuka kembali fitur ini.',
         );
       }
       return;
@@ -120,11 +116,9 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
 
       if (existing.isNotEmpty) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Anda sudah memiliki kebiasaan "${t.title}"!'),
-              backgroundColor: Colors.orange,
-            ),
+          SnackBarService.showWarning(
+            context,
+            'Anda sudah memiliki kebiasaan "${t.title}"!',
           );
         }
         return;
@@ -157,23 +151,17 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
       ref.invalidate(dashboardDataProvider);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Kebiasaan "${t.title}" berhasil diunduh ke daftar lokal!',
-            ),
-            backgroundColor: Colors.green,
-          ),
+        SnackBarService.showSuccess(
+          context,
+          'Kebiasaan "${t.title}" berhasil diunduh ke daftar lokal!',
         );
         _refreshTemplates();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal mengunduh: $e'),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarService.showError(
+          context,
+          'Gagal mengunduh: $e',
         );
       }
     }
@@ -189,22 +177,13 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
       final profile = profiles.first;
 
       // Parse existing core values
-      List<String> currentValues = [];
-      if (profile.coreValues != null && profile.coreValues!.isNotEmpty) {
-        try {
-          currentValues = List<String>.from(
-            const JsonDecoder().convert(profile.coreValues!),
-          );
-        } catch (_) {}
-      }
+      final currentValues = profile.parsedCoreValues;
 
       if (currentValues.contains(t.title)) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('"${t.title}" sudah ada di nilai inti Anda!'),
-              backgroundColor: Colors.orange,
-            ),
+          SnackBarService.showWarning(
+            context,
+            '"${t.title}" sudah ada di nilai inti Anda!',
           );
         }
         return;
@@ -212,13 +191,9 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
 
       if (currentValues.length >= 3) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Nilai inti maksimal 3. Hapus salah satu terlebih dahulu.',
-              ),
-              backgroundColor: Colors.orange,
-            ),
+          SnackBarService.showWarning(
+            context,
+            'Nilai inti maksimal 3. Hapus salah satu terlebih dahulu.',
           );
         }
         return;
@@ -237,23 +212,17 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
       ref.invalidate(dashboardDataProvider);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Nilai "${t.title}" berhasil ditambahkan ke Life Compass!',
-            ),
-            backgroundColor: Colors.green,
-          ),
+        SnackBarService.showSuccess(
+          context,
+          'Nilai "${t.title}" berhasil ditambahkan ke Life Compass!',
         );
         _refreshTemplates();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal mengunduh: $e'),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarService.showError(
+          context,
+          'Gagal mengunduh: $e',
         );
       }
     }
@@ -345,15 +314,11 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
     if (proceed == true) {
       await service.rateTemplate(t.templateId, selectedStars);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              DaojiText.resolve(
-                DaojiTextKey.marketRatingThanks,
-                ref.read(daojiVocabularyLevelValueProvider),
-              ),
-            ),
-            backgroundColor: Colors.green,
+        SnackBarService.showSuccess(
+          context,
+          DaojiText.resolve(
+            DaojiTextKey.marketRatingThanks,
+            ref.read(daojiVocabularyLevelValueProvider),
           ),
         );
         _refreshTemplates();

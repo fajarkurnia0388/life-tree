@@ -12,18 +12,20 @@ import '../cultivation/cultivation_provider.dart';
 import '../cultivation/cultivation_strings.dart';
 import '../dashboard/dashboard_provider.dart';
 import '../../core/widgets/loading_state_widget.dart';
+import '../../core/providers/user_profile_provider.dart';
+import 'services/journal_service.dart';
 
 final _moodHistoryProvider = StreamProvider<List<JournalEntry>>((ref) {
-  final db = ref.watch(dbProvider);
-  return (db.select(db.journalEntries)
-        ..orderBy([
-          (tbl) => drift.OrderingTerm(
-            expression: tbl.date,
-            mode: drift.OrderingMode.desc,
-          ),
-        ])
-        ..limit(30))
-      .watch();
+  // Use userProfileProvider to watch the current profile asynchronously
+  final profileAsync = ref.watch(userProfileProvider);
+  return profileAsync.when(
+    data: (profile) {
+      if (profile == null) return const Stream.empty();
+      return ref.watch(journalServiceProvider).watchJournalEntries(profile.userId);
+    },
+    loading: () => const Stream.empty(),
+    error: (_, __) => const Stream.empty(),
+  );
 });
 
 final _decisionSummaryProvider = StreamProvider<Map<String, int>>((ref) {
@@ -39,19 +41,10 @@ final _decisionSummaryProvider = StreamProvider<Map<String, int>>((ref) {
 });
 
 final _todayMoodProvider = FutureProvider.autoDispose<int?>((ref) async {
-  final db = ref.watch(dbProvider);
-  final now = DateTime.now();
-  final todayStart = DateTime(now.year, now.month, now.day);
-  final profiles = await db.select(db.userProfiles).get();
-  if (profiles.isEmpty) return null;
-  final existing =
-      await (db.select(db.journalEntries)..where(
-            (tbl) =>
-                tbl.userId.equals(profiles.first.userId) &
-                tbl.date.equals(todayStart),
-          ))
-          .get();
-  return existing.isEmpty ? null : existing.first.moodScore;
+  final userId = await ref.watch(currentUserIdProvider.future);
+  if (userId == null) return null;
+  final entry = await ref.watch(journalServiceProvider).getTodayJournalEntry(userId);
+  return entry?.moodScore;
 });
 
 class JournalDashboardTab extends ConsumerStatefulWidget {
@@ -78,38 +71,10 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
       _selectedMoodOverride = score;
     });
 
-    final db = ref.read(dbProvider);
-    final now = DateTime.now();
-    final todayStart = DateTime(now.year, now.month, now.day);
+    final userId = await ref.read(currentUserIdProvider.future);
+    if (userId == null) return;
 
-    final profiles = await db.select(db.userProfiles).get();
-    if (profiles.isEmpty) return;
-    final userId = profiles.first.userId;
-
-    final existing =
-        await (db.select(db.journalEntries)..where(
-              (tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart),
-            ))
-            .get();
-
-    if (existing.isNotEmpty) {
-      await (db.update(db.journalEntries)
-            ..where((tbl) => tbl.entryId.equals(existing.first.entryId)))
-          .write(JournalEntriesCompanion(moodScore: drift.Value(score)));
-    } else {
-      await db
-          .into(db.journalEntries)
-          .insert(
-            JournalEntriesCompanion.insert(
-              entryId: const Uuid().v4(),
-              userId: userId,
-              date: todayStart,
-              moodScore: score,
-              entryType: const drift.Value('Lite'),
-              createdAt: now,
-            ),
-          );
-    }
+    await ref.read(journalServiceProvider).saveMoodScore(userId: userId, score: score);
 
     ref.invalidate(_todayMoodProvider);
     ref.invalidate(_moodHistoryProvider);

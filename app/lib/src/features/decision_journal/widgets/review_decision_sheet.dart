@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/providers/db_provider.dart';
+import '../services/decision_journal_service.dart';
 import '../../../core/services/error_handler_service.dart';
+import '../../../core/services/error_logger_provider.dart';
+import '../../../core/services/snackbar_service.dart';
 import '../../../data/local_db/database.dart';
 
 /// Review sheet for decision entries.
@@ -15,16 +18,16 @@ import '../../../data/local_db/database.dart';
 ///    (clearly locked), while the right panel provides the reflection form for
 ///    honest outcome analysis. The visual contrast helps users recognise cognitive
 ///    biases objectively.
-class ReviewDecisionSheet extends StatefulWidget {
+class ReviewDecisionSheet extends ConsumerStatefulWidget {
   final DecisionEntry decision;
 
   const ReviewDecisionSheet({super.key, required this.decision});
 
   @override
-  State<ReviewDecisionSheet> createState() => _ReviewDecisionSheetState();
+  ConsumerState<ReviewDecisionSheet> createState() => _ReviewDecisionSheetState();
 }
 
-class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
+class _ReviewDecisionSheetState extends ConsumerState<ReviewDecisionSheet> {
   final _formKey = GlobalKey<FormState>();
   final _reflectionController = TextEditingController();
   bool _isSaving = false;
@@ -34,43 +37,31 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
   bool get _isPredictionLocked =>
       DateTime.now().difference(widget.decision.decisionDate).inHours >= 24;
 
-  Future<void> _submitReview(WidgetRef ref) async {
+  Future<void> _submitReview() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
       _isSaving = true;
     });
 
-    final db = ref.read(dbProvider);
-
     try {
-      await (db.update(db.decisionEntries)
-            ..where((tbl) => tbl.decisionId.equals(widget.decision.decisionId)))
-          .write(
-            DecisionEntriesCompanion(
-              isReviewed: const drift.Value(true),
-              reviewReflection: drift.Value(_reflectionController.text.trim()),
-            ),
+      await ref.read(decisionJournalServiceProvider).reviewDecisionEntry(
+            decisionId: widget.decision.decisionId,
+            reviewReflection: _reflectionController.text.trim(),
           );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Review keputusan berhasil disimpan! Terima kasih telah berefleksi.',
-            ),
-            backgroundColor: Colors.green,
-          ),
+        SnackBarService.showSuccess(
+          context,
+          'Review keputusan berhasil disimpan! Terima kasih telah berefleksi.',
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal menyimpan review: $e'),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarService.showError(
+          context,
+          'Gagal menyimpan review: $e',
         );
       }
     } finally {
@@ -98,16 +89,14 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
       options = List<String>.from(jsonDecode(widget.decision.options));
       assumptions = List<String>.from(jsonDecode(widget.decision.assumptions));
     } catch (e, stackTrace) {
-      ErrorHandlerService().logError(
+      ref.read(errorLoggerProvider).logError(
         e,
         stackTrace,
         context: 'ReviewDecisionSheet.parseDecisionData',
       );
     }
 
-    return Consumer(
-      builder: (context, ref, child) {
-        return Container(
+    return Container(
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -162,7 +151,7 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
                         const SizedBox(width: 12),
                         // ── RIGHT PANEL: Reflection form ──
                         Expanded(
-                          child: _buildReflectionPanel(theme, ref),
+                          child: _buildReflectionPanel(theme),
                         ),
                       ],
                     ),
@@ -173,8 +162,6 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
             ),
           ),
         );
-      },
-    );
   }
 
   /// Left panel: displays the original decision context, frozen in time.
@@ -307,7 +294,7 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
   }
 
   /// Right panel: the reflection form for honest outcome analysis.
-  Widget _buildReflectionPanel(ThemeData theme, WidgetRef ref) {
+  Widget _buildReflectionPanel(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -352,7 +339,7 @@ class _ReviewDecisionSheetState extends State<ReviewDecisionSheet> {
         ),
         const SizedBox(height: 12),
         ElevatedButton(
-          onPressed: _isSaving ? null : () => _submitReview(ref),
+          onPressed: _isSaving ? null : _submitReview,
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: theme.colorScheme.onPrimary,

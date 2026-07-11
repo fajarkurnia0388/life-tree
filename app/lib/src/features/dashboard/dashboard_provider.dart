@@ -8,6 +8,8 @@ import '../../core/domain/app_constants.dart';
 import '../../core/domain/priority_helper.dart';
 import '../../core/services/error_logger_provider.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/utils/profile_json_helpers.dart';
+import '../../core/providers/user_profile_provider.dart';
 import 'services/canopy_load_service.dart';
 
 class DashboardData {
@@ -151,86 +153,89 @@ final devTimePlayProvider = StateNotifierProvider<DevTimePlayNotifier, bool>((
   return notifier;
 });
 
-final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
+
+
+class WellBeingStatus {
+  final bool isLowWellBeing;
+  final int dynamicCanopyCapacity;
+  WellBeingStatus({required this.isLowWellBeing, required this.dynamicCanopyCapacity});
+}
+
+final cumulativeDaysProvider = FutureProvider<int>((ref) async {
   final db = ref.watch(dbProvider);
+  final profile = await ref.watch(userProfileProvider.future);
+  if (profile == null) return 0;
 
-  // 1. Get User Profile
-  final profiles = await db.select(db.userProfiles).get();
-  if (profiles.isEmpty) {
-    throw Exception('User profile not initialized');
-  }
-  final profile = profiles.first;
-
-  // 2. Get Cumulative success days (with Developer Override support)
   final overrideDays = ref.watch(devCumulativeDaysOverrideProvider);
-  int cumulativeDays = 0;
-
   if (overrideDays != null) {
-    cumulativeDays = overrideDays;
-  } else {
-    cumulativeDays = await db.countUniqueDoneDates(profile.userId);
+    return overrideDays;
   }
+  return await db.countUniqueDoneDates(profile.userId);
+});
 
-  // 3. Determine Current Season
-  // Dormant: > 14 days of no habit logging or app updates (fallback to profile updatedAt)
-  String season = Season.growth;
+final currentSeasonProvider = FutureProvider<String>((ref) async {
+  final db = ref.watch(dbProvider);
+  final profile = await ref.watch(userProfileProvider.future);
+  if (profile == null) return Season.growth;
+
   if (profile.supportMode == SupportMode.recovery) {
-    season = Season.recovery;
-  } else {
-    final now = DateTime.now();
-    DateTime lastActivity = profile.updatedAt;
-    final latestLog =
-        await (db.select(db.habitLogs)
-              ..orderBy([
-                (tbl) =>
-                    OrderingTerm(expression: tbl.date, mode: OrderingMode.desc),
-              ])
-              ..limit(1))
-            .getSingleOrNull();
-    if (latestLog != null) {
-      lastActivity = latestLog.date;
-    }
-    if (now.difference(lastActivity).inDays > 14) {
-      season = Season.dormant;
-    }
+    return Season.recovery;
   }
 
-  // 4. Get active habits scheduled for today
   final now = DateTime.now();
-  final weekday = now.weekday; // 1 = Monday, 7 = Sunday
+  DateTime lastActivity = profile.updatedAt;
+  final latestLog = await (db.select(db.habitLogs)
+        ..orderBy([
+          (tbl) => OrderingTerm(expression: tbl.date, mode: OrderingMode.desc),
+        ])
+        ..limit(1))
+      .getSingleOrNull();
+  if (latestLog != null) {
+    lastActivity = latestLog.date;
+  }
+  if (now.difference(lastActivity).inDays > 14) {
+    return Season.dormant;
+  }
+  return Season.growth;
+});
 
-  // Filter habits by userId for data integrity
-  final allActiveHabits =
-      await (db.select(db.habits)..where(
-            (tbl) =>
-                tbl.userId.equals(profile.userId) &
-                tbl.status.equals(HabitStatus.active) &
-                tbl.deletedAt.isNull(),
-          ))
-          .get();
+final habitsTodayProvider = FutureProvider<List<HabitWithLog>>((ref) async {
+  final db = ref.watch(dbProvider);
+  final profile = await ref.watch(userProfileProvider.future);
+  if (profile == null) return const [];
+
+  final now = DateTime.now();
+  final weekday = now.weekday;
+
+  final allActiveHabits = await (db.select(db.habits)
+        ..where(
+          (tbl) =>
+              tbl.userId.equals(profile.userId) &
+              tbl.status.equals(HabitStatus.active) &
+              tbl.deletedAt.isNull(),
+        ))
+      .get();
 
   final todayStart = DateTime(now.year, now.month, now.day);
   final userHabitIds = allActiveHabits.map((h) => h.habitId).toList();
 
-  // Only fetch logs for this user's habits
   final todayLogs = userHabitIds.isEmpty
       ? <HabitLog>[]
-      : await (db.select(db.habitLogs)..where(
+      : await (db.select(db.habitLogs)
+            ..where(
               (tbl) =>
                   tbl.date.equals(todayStart) &
                   tbl.habitId.isIn(userHabitIds) &
                   tbl.deletedAt.isNull(),
             ))
-            .get();
+          .get();
 
   final List<HabitWithLog> habitsToday = [];
-
   for (final habit in allActiveHabits) {
     bool isScheduled = false;
     if (habit.frequency == HabitFrequency.daily) {
       isScheduled = true;
     } else if (habit.scheduledDays != null && habit.scheduledDays!.isNotEmpty) {
-      // Safely parse scheduledDays, ignoring non-numeric tokens
       final days = habit.scheduledDays!
           .split(',')
           .map((e) => int.tryParse(e.trim()))
@@ -241,33 +246,23 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
     }
 
     if (isScheduled) {
-      final log = todayLogs
-          .where((l) => l.habitId == habit.habitId)
-          .firstOrNull;
+      final log = todayLogs.where((l) => l.habitId == habit.habitId).firstOrNull;
       habitsToday.add(HabitWithLog(habit: habit, log: log));
     }
   }
+  return habitsToday;
+});
 
-  // 5. Calculate Action of the Day (Priority Score)
-  Map<String, dynamic> domainScores = {};
-  if (profile.latestDomainScores != null) {
-    try {
-      domainScores = jsonDecode(profile.latestDomainScores!);
-    } catch (e, stackTrace) {
-      ref
-          .read(errorLoggerProvider)
-          .logError(
-            e,
-            stackTrace,
-            context: 'DashboardProvider.parseDomainScores',
-          );
-    }
-  }
+final actionOfTheDayProvider = FutureProvider<Habit?>((ref) async {
+  final profile = await ref.watch(userProfileProvider.future);
+  if (profile == null) return null;
+
+  final habitsToday = await ref.watch(habitsTodayProvider.future);
+  final domainScores = profile.parsedDomainScores;
 
   Habit? actionOfTheDay;
   double highestPriority = -1.0;
 
-  // We filter to scheduled habits for today that are not completed yet
   final uncompletedToday = habitsToday
       .where((hwl) => hwl.log?.status != HabitStatus.done)
       .toList();
@@ -282,45 +277,78 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
       actionOfTheDay = hwl.habit;
     }
   }
+  return actionOfTheDay;
+});
 
-  // 6. Check if there are overdue decisions
-  final overdueDecisions =
-      await (db.select(db.decisionEntries)..where(
-            (tbl) =>
-                tbl.userId.equals(profile.userId) &
-                tbl.deletedAt.isNull() &
-                tbl.isReviewed.equals(false) &
-                tbl.reviewDate.isSmallerThanValue(DateTime.now()),
-          ))
-          .get();
-  final hasOverdueDecisions = overdueDecisions.isNotEmpty;
+final overdueDecisionsProvider = FutureProvider<bool>((ref) async {
+  final db = ref.watch(dbProvider);
+  final profile = await ref.watch(userProfileProvider.future);
+  if (profile == null) return false;
 
-  // 7. Compute WHO-5 well-being flag and dynamic canopy capacity
-  int latestWho5Percentage = 100; // Default: assume full well-being
+  final overdueDecisions = await (db.select(db.decisionEntries)
+        ..where(
+          (tbl) =>
+              tbl.userId.equals(profile.userId) &
+              tbl.deletedAt.isNull() &
+              tbl.isReviewed.equals(false) &
+              tbl.reviewDate.isSmallerThanValue(DateTime.now()),
+        ))
+      .get();
+  return overdueDecisions.isNotEmpty;
+});
+
+final wellBeingStatusProvider = FutureProvider<WellBeingStatus>((ref) async {
+  final db = ref.watch(dbProvider);
+  final profile = await ref.watch(userProfileProvider.future);
+  if (profile == null) {
+    return WellBeingStatus(isLowWellBeing: false, dynamicCanopyCapacity: 10);
+  }
+
+  int latestWho5Percentage = 100;
   final latestPulses = await (db.select(db.weeklyPulses)
         ..where((tbl) => tbl.userId.equals(profile.userId) & tbl.domainTag.equals('WHO-5'))
         ..orderBy([(tbl) => OrderingTerm(expression: tbl.weekStartDate, mode: OrderingMode.desc)])
         ..limit(1))
       .get();
+
   if (latestPulses.isNotEmpty) {
     try {
       final meta = jsonDecode(latestPulses.first.reflectionText ?? '{}') as Map<String, dynamic>;
       latestWho5Percentage = (meta['percentage'] as num?)?.toInt() ?? 100;
     } catch (e, stackTrace) {
-      ErrorHandlerService().logError(
+      ref.read(errorLoggerProvider).logError(
         e,
         stackTrace,
         context: 'DashboardProvider.parseWho5Metadata',
       );
     }
   }
+
   final isLowWellBeing = CanopyLoadService.isLowWellBeing(latestWho5Percentage);
   final dynamicCanopyCapacity = CanopyLoadService.calculateDynamicCapacity(
     who5Percentage: latestWho5Percentage,
     baseCapacity: profile.canopyLoadCapacity,
   );
 
-  // 8. Check if all scheduled habits today are done
+  return WellBeingStatus(
+    isLowWellBeing: isLowWellBeing,
+    dynamicCanopyCapacity: dynamicCanopyCapacity,
+  );
+});
+
+final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
+  final profile = await ref.watch(userProfileProvider.future);
+  if (profile == null) {
+    throw Exception('User profile not initialized');
+  }
+
+  final cumulativeDays = await ref.watch(cumulativeDaysProvider.future);
+  final season = await ref.watch(currentSeasonProvider.future);
+  final habitsToday = await ref.watch(habitsTodayProvider.future);
+  final actionOfTheDay = await ref.watch(actionOfTheDayProvider.future);
+  final hasOverdueDecisions = await ref.watch(overdueDecisionsProvider.future);
+  final wellBeing = await ref.watch(wellBeingStatusProvider.future);
+
   final totalScheduledToday = habitsToday.length;
   final totalDoneToday = habitsToday
       .where((hwl) => hwl.log?.status == HabitStatus.done)
@@ -336,7 +364,7 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
     habitsToday: habitsToday,
     allDone: allDone,
     hasOverdueDecisions: hasOverdueDecisions,
-    isLowWellBeing: isLowWellBeing,
-    dynamicCanopyCapacity: dynamicCanopyCapacity,
+    isLowWellBeing: wellBeing.isLowWellBeing,
+    dynamicCanopyCapacity: wellBeing.dynamicCanopyCapacity,
   );
 });

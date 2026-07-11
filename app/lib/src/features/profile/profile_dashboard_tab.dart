@@ -8,7 +8,9 @@ import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/utils/profile_json_helpers.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/services/error_logger_provider.dart';
 import '../../core/theme/button_theme.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../data/local_db/database.dart';
@@ -36,20 +38,9 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
   void _showCoreValuesDialog(BuildContext context, UserProfile profile) {
     final languageLevel = ref.read(cultivationLanguageLevelProvider);
     List<String> currentValues = ['', '', ''];
-    try {
-      final jsonStr = profile.coreValues;
-      if (jsonStr != null && jsonStr.isNotEmpty) {
-        final parsed = List<String>.from(jsonDecode(jsonStr));
-        for (int i = 0; i < parsed.length && i < 3; i++) {
-          currentValues[i] = parsed[i];
-        }
-      }
-    } catch (e, stackTrace) {
-      ErrorHandlerService().logError(
-        e,
-        stackTrace,
-        context: 'ProfileDashboardTab.parseCoreValues',
-      );
+    final parsed = profile.parsedCoreValues;
+    for (int i = 0; i < parsed.length && i < 3; i++) {
+      currentValues[i] = parsed[i];
     }
 
     showDialog(
@@ -66,26 +57,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
 
   Widget _buildVitalityRadarCard(DashboardData data) {
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
-    Map<String, double> scores = Map.from(DomainDefaults.scores);
-    if (data.profile.latestDomainScores != null) {
-      try {
-        final Map<String, dynamic> parsed = jsonDecode(
-          data.profile.latestDomainScores!,
-        );
-        parsed.forEach((key, value) {
-          final numVal = value as num;
-          if (scores.containsKey(key)) {
-            scores[key] = numVal.toDouble();
-          }
-        });
-      } catch (e, stackTrace) {
-        ErrorHandlerService().logError(
-          e,
-          stackTrace,
-          context: 'ProfileDashboardTab._buildVitalityRadarCard',
-        );
-      }
-    }
+    final scores = data.profile.parsedDomainScores;
 
     return DomainScoresCard(
       data: data,

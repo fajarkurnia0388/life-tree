@@ -8,6 +8,8 @@ import '../../../core/i18n/daoji_text_key.dart';
 import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/services/error_handler_service.dart';
+import '../../../core/services/error_logger_provider.dart';
+import '../../../core/utils/profile_json_helpers.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
 import '../dashboard_provider.dart';
@@ -135,6 +137,7 @@ class ActionOfTheDayCard extends ConsumerWidget {
                     context,
                     domainColor,
                     vocabularyLevel,
+                    ref,
                   ),
                   icon: Icon(Icons.info_outline, color: domainColor),
                   iconSize: 20,
@@ -237,33 +240,19 @@ class ActionOfTheDayCard extends ConsumerWidget {
 
   /// Parses the user's latest domain scores safely and returns the score
   /// for the given domain. Defaults to 5.0 when missing or unparseable.
-  double _domainScoreFor(String domain) {
-    final raw = data.profile.latestDomainScores;
-    if (raw == null) return 5.0;
-    try {
-      final decoded = jsonDecode(raw);
-      if (decoded is Map) {
-        final value = decoded[domain];
-        if (value is num) return value.toDouble();
-      }
-    } catch (e, stackTrace) {
-      ErrorHandlerService().logError(
-        e,
-        stackTrace,
-        context: 'ActionOfTheDayCard._domainScoreFor',
-      );
-    }
-    return 5.0;
+  double _domainScoreFor(String domain, WidgetRef ref) {
+    return data.profile.parsedDomainScores[domain] ?? 5.0;
   }
 
   void _showWhyDialog(
     BuildContext context,
     Color domainColor,
     vocabularyLevel,
+    WidgetRef ref,
   ) {
     final domain = habit.domainTag ?? 'Tubuh';
     final domainLabel = DaojiText.domainLabel(domain, vocabularyLevel);
-    final domainScore = _domainScoreFor(domain);
+    final domainScore = _domainScoreFor(domain, ref);
     final domainDeficit = 10.0 - domainScore;
     final load = habit.initiationFriction + habit.energyCost;
     final priority =

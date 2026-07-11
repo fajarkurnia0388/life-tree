@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/providers/db_provider.dart';
+import '../../../core/providers/user_profile_provider.dart';
+import '../services/decision_journal_service.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
 
@@ -130,12 +132,9 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
       _isSaving = true;
     });
 
-    final db = ref.read(dbProvider);
-
     try {
-      final profiles = await db.select(db.userProfiles).get();
-      if (profiles.isEmpty) throw Exception('Profil pengguna tidak ditemukan');
-      final userId = profiles.first.userId;
+      final userId = await ref.read(currentUserIdProvider.future);
+      if (userId == null) throw Exception('Profil pengguna tidak ditemukan');
 
       final now = DateTime.now();
       final reviewDate = now.add(Duration(days: _reviewPeriodDays));
@@ -149,22 +148,16 @@ class _CreateDecisionSheetState extends ConsumerState<CreateDecisionSheet> {
           .where((t) => t.isNotEmpty)
           .toList();
 
-      await db
-          .into(db.decisionEntries)
-          .insert(
-            DecisionEntriesCompanion.insert(
-              decisionId: const Uuid().v4(),
-              userId: userId,
-              title: _titleController.text.trim(),
-              description: _descController.text.trim(),
-              options: jsonEncode(optionsList),
-              assumptions: jsonEncode(assumptionsList),
-              expectations: _expectationsController.text.trim(),
-              decisionDate: now,
-              reviewDate: reviewDate,
-              reviewPeriodDays: drift.Value(_reviewPeriodDays),
-              confidenceScore: drift.Value(_confidenceScore),
-            ),
+      await ref.read(decisionJournalServiceProvider).createDecisionEntry(
+            userId: userId,
+            title: _titleController.text.trim(),
+            description: _descController.text.trim(),
+            options: jsonEncode(optionsList),
+            assumptions: jsonEncode(assumptionsList),
+            expectations: _expectationsController.text.trim(),
+            reviewDate: reviewDate,
+            reviewPeriodDays: _reviewPeriodDays,
+            confidenceScore: _confidenceScore,
           );
 
       if (mounted) {

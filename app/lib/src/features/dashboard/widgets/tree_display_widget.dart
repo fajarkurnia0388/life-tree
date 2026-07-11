@@ -14,6 +14,7 @@ import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/i18n/daoji_vocabulary_level.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/services/error_handler_service.dart';
+import '../../../core/services/error_logger_provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../cultivation/cultivation_constants.dart';
 import '../../cultivation/cultivation_provider.dart';
@@ -294,7 +295,7 @@ class _TreeVitalityCardState extends ConsumerState<TreeVitalityCard> {
             await downloadsFile.writeAsBytes(pngBytes);
           }
         } catch (e, stackTrace) {
-          ErrorHandlerService().logError(
+          ref.read(errorLoggerProvider).logError(
             e,
             stackTrace,
             context: 'TreeDisplayWidget.saveToDownloads',

@@ -8,6 +8,8 @@ import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
 
+import '../../../core/utils/profile_json_helpers.dart';
+
 class DomainReAuditDialog extends ConsumerStatefulWidget {
   final UserProfile profile;
 
@@ -18,33 +20,27 @@ class DomainReAuditDialog extends ConsumerStatefulWidget {
 }
 
 class _DomainReAuditDialogState extends ConsumerState<DomainReAuditDialog> {
-  late final Map<String, TextEditingController> _controllers;
+  final _formKey = GlobalKey<FormState>();
+  final Map<String, TextEditingController> _controllers = {
+    'Tubuh': TextEditingController(text: '5.0'),
+    'Keuangan': TextEditingController(text: '5.0'),
+    'Hubungan': TextEditingController(text: '5.0'),
+    'Emosi': TextEditingController(text: '5.0'),
+    'Karir': TextEditingController(text: '5.0'),
+    'Rekreasi': TextEditingController(text: '5.0'),
+  };
 
   @override
   void initState() {
     super.initState();
-    _controllers = {
-      'Tubuh': TextEditingController(text: '5.0'),
-      'Keuangan': TextEditingController(text: '5.0'),
-      'Hubungan': TextEditingController(text: '5.0'),
-      'Emosi': TextEditingController(text: '5.0'),
-      'Karir': TextEditingController(text: '5.0'),
-      'Rekreasi': TextEditingController(text: '5.0'),
-    };
 
     // Pre-fill with existing scores
-    if (widget.profile.latestDomainScores != null) {
-      try {
-        final Map<String, dynamic> scores = jsonDecode(
-          widget.profile.latestDomainScores!,
-        );
-        scores.forEach((key, val) {
-          if (_controllers.containsKey(key)) {
-            _controllers[key]!.text = val.toString();
-          }
-        });
-      } catch (_) {}
-    }
+    final scores = widget.profile.parsedDomainScores;
+    scores.forEach((key, val) {
+      if (_controllers.containsKey(key)) {
+        _controllers[key]!.text = val.toString();
+      }
+    });
   }
 
   @override

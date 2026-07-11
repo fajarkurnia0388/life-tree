@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/db_provider.dart';
+import '../providers/user_profile_provider.dart';
+import '../providers/data_history_providers.dart';
 import '../../features/dashboard/dashboard_provider.dart';
 import '../../data/local_db/database.dart';
 import 'package:drift/drift.dart' as drift;
@@ -203,37 +205,7 @@ class CalmTheme {
   }
 }
 
-final userProfileProvider = StreamProvider<UserProfile?>((ref) {
-  final db = ref.watch(dbProvider);
-  return (db.select(db.userProfiles)..limit(1)).watch().map((profiles) {
-    if (profiles.isEmpty) return null;
-    return profiles.first;
-  });
-});
 
-final weeklyPulsesHistoryProvider = StreamProvider<List<WeeklyPulse>>((ref) {
-  final db = ref.watch(dbProvider);
-  return (db.select(db.weeklyPulses)
-        ..orderBy([
-          (tbl) => drift.OrderingTerm(
-                expression: tbl.weekStartDate,
-                mode: drift.OrderingMode.asc,
-              ),
-        ]))
-      .watch();
-});
-
-final lifeAuditsHistoryProvider = StreamProvider<List<LifeAudit>>((ref) {
-  final db = ref.watch(dbProvider);
-  return (db.select(db.lifeAudits)
-        ..orderBy([
-          (tbl) => drift.OrderingTerm(
-                expression: tbl.timestamp,
-                mode: drift.OrderingMode.asc,
-              ),
-        ]))
-      .watch();
-});
 
 final appThemeRawModeProvider = StreamProvider<String>((ref) {
   final db = ref.watch(dbProvider);
@@ -258,13 +230,7 @@ final appThemeModeProvider = StreamProvider<ThemeMode>((ref) {
   );
 });
 
-final circadianEnabledProvider = StreamProvider<bool>((ref) {
-  final db = ref.watch(dbProvider);
-  return (db.select(db.userProfiles)..limit(1)).watch().map((profiles) {
-    if (profiles.isEmpty) return false;
-    return profiles.first.circadianEnabled;
-  });
-});
+
 
 final _timeTickProvider = StreamProvider<DateTime>((ref) {
   return Stream.periodic(const Duration(minutes: 1), (_) => DateTime.now());

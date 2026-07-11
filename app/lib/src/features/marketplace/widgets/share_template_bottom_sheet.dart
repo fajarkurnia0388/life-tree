@@ -4,6 +4,7 @@ import 'package:drift/drift.dart' as drift;
 import '../../../core/domain/app_constants.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../core/theme/button_theme.dart';
+import '../../../core/services/snackbar_service.dart';
 import '../../../core/widgets/loading_state_widget.dart';
 import '../../../data/local_db/database.dart';
 import '../marketplace_service.dart';
@@ -86,21 +87,17 @@ class _ShareTemplateBottomSheetState
       widget.onSuccess();
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Kebiasaan Anda berhasil dibagikan ke publik!'),
-            backgroundColor: Colors.green,
-          ),
+        SnackBarService.showSuccess(
+          context,
+          'Kebiasaan Anda berhasil dibagikan ke publik!',
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal membagikan: $e'),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarService.showError(
+          context,
+          'Gagal membagikan: $e',
         );
       }
     }

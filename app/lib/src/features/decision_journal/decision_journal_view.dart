@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +9,10 @@ import '../../core/providers/db_provider.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../core/widgets/empty_state_widget.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/services/error_logger_provider.dart';
 import '../../data/local_db/database.dart';
+import '../../core/providers/user_profile_provider.dart';
+import 'services/decision_journal_service.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'package:drift/drift.dart' as drift;
 import 'widgets/create_decision_sheet.dart';
@@ -16,16 +20,18 @@ import 'widgets/review_decision_sheet.dart';
 
 // Stream provider to automatically watch decisions in database
 final decisionListProvider = StreamProvider<List<DecisionEntry>>((ref) {
-  final db = ref.watch(dbProvider);
-  return (db.select(db.decisionEntries)
-        ..where((tbl) => tbl.deletedAt.isNull())
-        ..orderBy([
-          (tbl) => drift.OrderingTerm(
-            expression: tbl.decisionDate,
-            mode: drift.OrderingMode.desc,
-          ),
-        ]))
-      .watch();
+  final profileAsync = ref.watch(userProfileProvider);
+  return profileAsync.maybeWhen(
+    data: (profile) {
+      if (profile == null) return const Stream.empty();
+      return ref.watch(decisionJournalServiceProvider).watchDecisionEntries(profile.userId);
+    },
+    orElse: () {
+      final controller = StreamController<List<DecisionEntry>>();
+      ref.onDispose(controller.close);
+      return controller.stream;
+    },
+  );
 });
 
 class DecisionJournalView extends ConsumerStatefulWidget {
@@ -163,7 +169,7 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView>
           options = List<String>.from(jsonDecode(d.options));
           assumptions = List<String>.from(jsonDecode(d.assumptions));
         } catch (e, stackTrace) {
-          ErrorHandlerService().logError(
+          ref.read(errorLoggerProvider).logError(
             e,
             stackTrace,
             context: 'DecisionJournalView.parseDecisionData',

@@ -9,6 +9,9 @@ import '../../core/i18n/daoji_vocabulary_level.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/services/error_handler_service.dart';
+import '../../core/services/error_logger_provider.dart';
+import '../../core/services/snackbar_service.dart';
+import '../../core/utils/profile_json_helpers.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
@@ -51,15 +54,11 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
     if (_isSaving) return;
     final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     if (_answers.contains(null)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            DaojiText.resolve(
-              DaojiTextKey.weeklyPulseAlertAnswerAll,
-              vocabularyLevel,
-            ),
-          ),
-          backgroundColor: Colors.orange,
+      SnackBarService.showWarning(
+        context,
+        DaojiText.resolve(
+          DaojiTextKey.weeklyPulseAlertAnswerAll,
+          vocabularyLevel,
         ),
       );
       return;
@@ -135,18 +134,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
 
       // Sync WHO-5 score to 'Emosi' domain in userProfiles.latestDomainScores
       final currentProfile = profiles.first;
-      Map<String, dynamic> domainScores = {};
-      if (currentProfile.latestDomainScores != null) {
-        try {
-          domainScores = jsonDecode(currentProfile.latestDomainScores!);
-        } catch (e, stackTrace) {
-          ErrorHandlerService().logError(
-            e,
-            stackTrace,
-            context: 'WeeklyPulseView.parseDomainScores',
-          );
-        }
-      }
+      final domainScores = Map<String, double>.from(currentProfile.parsedDomainScores);
       domainScores['Emosi'] = mappedScore.toDouble();
       final domainScoresJson = jsonEncode(domainScores);
       await (db.update(
@@ -255,16 +243,12 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
     } catch (e) {
       if (mounted) {
         final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              DaojiText.resolve(
-                DaojiTextKey.weeklyPulseSaveError,
-                vocabularyLevel,
-                params: {'error': e.toString()},
-              ),
-            ),
-            backgroundColor: Colors.red,
+        SnackBarService.showError(
+          context,
+          DaojiText.resolve(
+            DaojiTextKey.weeklyPulseSaveError,
+            vocabularyLevel,
+            params: {'error': e.toString()},
           ),
         );
       }

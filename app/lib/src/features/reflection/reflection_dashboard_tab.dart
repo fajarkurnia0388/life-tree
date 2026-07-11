@@ -7,7 +7,13 @@ import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/providers/user_profile_provider.dart';
+import '../../core/providers/data_history_providers.dart';
+import '../../core/domain/app_constants.dart';
+import '../../core/utils/profile_json_helpers.dart';
 import 'dart:convert';
+import '../../core/services/snackbar_service.dart';
+import '../../core/services/error_logger_provider.dart';
 import '../../core/theme/theme.dart';
 import '../../data/local_db/database.dart';
 import 'widgets/palace_sparkline_widget.dart';
@@ -60,20 +66,16 @@ class _ReflectionDashboardTabState extends ConsumerState<ReflectionDashboardTab>
 
         ref.invalidate(dashboardDataProvider);
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Penilaian domain berhasil diperbarui!'),
-              backgroundColor: Colors.green,
-            ),
+          SnackBarService.showSuccess(
+            context,
+            'Penilaian domain berhasil diperbarui!',
           );
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Gagal memperbarui: $e'),
-              backgroundColor: Colors.red,
-            ),
+          SnackBarService.showError(
+            context,
+            'Gagal memperbarui: $e',
           );
         }
       }
@@ -82,28 +84,9 @@ class _ReflectionDashboardTabState extends ConsumerState<ReflectionDashboardTab>
 
   void _showCompassComparisonDialog(BuildContext context, UserProfile profile) {
     // Parse declared values
-    List<String> declaredValues = [];
-    try {
-      final jsonStr = profile.coreValues;
-      if (jsonStr != null && jsonStr.isNotEmpty) {
-        declaredValues = List<String>.from(jsonDecode(jsonStr));
-      }
-    } catch (_) {}
-
-    // Parse revealed values
-    int totalResponses = 0;
-    Map<String, int> revealedScores = {};
-    if (profile.revealedValueScores != null) {
-      try {
-        final Map<String, dynamic> raw = jsonDecode(
-          profile.revealedValueScores!,
-        );
-        raw.forEach((key, val) {
-          revealedScores[key] = val as int;
-          totalResponses += revealedScores[key]!;
-        });
-      } catch (_) {}
-    }
+    final declaredValues = profile.parsedCoreValues;
+    final revealedScores = profile.parsedRevealedValueScores;
+    final totalResponses = revealedScores.values.fold<int>(0, (sum, val) => sum + val);
 
     final hasEnoughData = totalResponses >= 5;
     List<String> revealedValues = [];
@@ -137,12 +120,7 @@ class _ReflectionDashboardTabState extends ConsumerState<ReflectionDashboardTab>
     final profile = profileAsync.valueOrNull;
     final List<LifeAudit> history = historyAsync.valueOrNull ?? [];
 
-    Map<String, dynamic> domainScores = {};
-    if (profile != null && profile.latestDomainScores != null) {
-      try {
-        domainScores = jsonDecode(profile.latestDomainScores!);
-      } catch (_) {}
-    }
+    final domainScores = profile?.parsedDomainScores ?? DomainDefaults.scores;
 
     final domains = ['Tubuh', 'Keuangan', 'Hubungan', 'Emosi', 'Karir', 'Rekreasi'];
     final domainColors = {
@@ -261,7 +239,13 @@ class _ReflectionDashboardTabState extends ConsumerState<ReflectionDashboardTab>
                       if (val is num) {
                         scores.add(val.toDouble());
                       }
-                    } catch (_) {}
+                    } catch (e, stackTrace) {
+                      ref.read(errorLoggerProvider).logError(
+                            e,
+                            stackTrace,
+                            context: 'ReflectionDashboardTab.parseHistoryScores',
+                          );
+                    }
                   }
                   if (scores.isEmpty) {
                     scores.add(currentVal);

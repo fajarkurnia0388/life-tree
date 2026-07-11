@@ -8,6 +8,7 @@ import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/services/error_logger_provider.dart';
+import '../../core/utils/profile_json_helpers.dart';
 import 'dashboard_provider.dart';
 import 'widgets/growth_map/growth_map_node.dart';
 
@@ -48,40 +49,10 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
   final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
   // 1. Parse Core Values (Declared)
-  List<String> coreValues = [];
-  if (dashboardData.profile.coreValues != null) {
-    try {
-      final List<dynamic> raw = jsonDecode(dashboardData.profile.coreValues!);
-      coreValues = raw.map((v) => v.toString()).toList();
-    } catch (e, stackTrace) {
-      ref
-          .read(errorLoggerProvider)
-          .logError(
-            e,
-            stackTrace,
-            context: 'GrowthMapProvider.parseCoreValues',
-          );
-    }
-  }
+  final coreValues = dashboardData.profile.parsedCoreValues;
 
   // 2. Parse Domain Scores (latestDomainScores)
-  Map<String, double> domainScores = {};
-  if (dashboardData.profile.latestDomainScores != null) {
-    try {
-      final Map<String, dynamic> raw = jsonDecode(
-        dashboardData.profile.latestDomainScores!,
-      );
-      raw.forEach((k, v) => domainScores[k] = (v as num).toDouble());
-    } catch (e, stackTrace) {
-      ref
-          .read(errorLoggerProvider)
-          .logError(
-            e,
-            stackTrace,
-            context: 'GrowthMapProvider.parseDomainScores',
-          );
-    }
-  }
+  final domainScores = dashboardData.profile.parsedDomainScores;
 
   final domains = [
     'Tubuh',
@@ -91,14 +62,7 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
     'Karir',
     'Rekreasi',
   ];
-  final domainColors = {
-    'Tubuh': Colors.green,
-    'Keuangan': Colors.orange,
-    'Hubungan': Colors.blue,
-    'Emosi': Colors.teal,
-    'Karir': Colors.indigo,
-    'Rekreasi': Colors.purple,
-  };
+
 
   final activeDomains = <String>{'Tubuh'};
   if (dashboardData.profile.isDeveloperMode) {
@@ -137,7 +101,7 @@ final growthMapProvider = FutureProvider<GrowthMapViewModel>((ref) async {
         icon: _getDomainIcon(domain),
         score: score,
         statusLabel: isLocked ? 'Soon' : statusLabel,
-        color: domainColors[domain] ?? Colors.green,
+        color: DomainColors.forDomain(domain),
         isLocked: isLocked,
         semanticLabel: isLocked
             ? '$displayDomain — segera dibuka bertahap. Tambahkan practice di stream ini atau aktifkan Developer Mode untuk testing.'

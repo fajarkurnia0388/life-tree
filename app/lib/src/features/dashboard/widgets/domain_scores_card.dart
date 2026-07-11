@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/app_constants.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/services/error_handler_service.dart';
+import '../../../core/services/error_logger_provider.dart';
+import '../../../core/utils/profile_json_helpers.dart';
 import '../dashboard_provider.dart';
 import 'radar_chart_widget.dart';
 
@@ -23,33 +25,7 @@ class DomainScoresCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
-    Map<String, double> scores = {
-      'Tubuh': 5.0,
-      'Keuangan': 3.0,
-      'Hubungan': 3.0,
-      'Emosi': 3.0,
-      'Karir': 3.0,
-      'Rekreasi': 3.0,
-    };
-
-    try {
-      final jsonStr = data.profile.latestDomainScores;
-      if (jsonStr != null && jsonStr.isNotEmpty) {
-        final Map<String, dynamic> parsed = jsonDecode(jsonStr);
-        parsed.forEach((key, value) {
-          final numVal = value as num;
-          if (scores.containsKey(key)) {
-            scores[key] = numVal.toDouble();
-          }
-        });
-      }
-    } catch (e, stackTrace) {
-      ErrorHandlerService().logError(
-        e,
-        stackTrace,
-        context: 'DomainScoresCard.parseDomainScores',
-      );
-    }
+    final scores = data.profile.parsedDomainScores;
 
     final List<String> domains = [
       'Tubuh',
@@ -89,19 +65,7 @@ class DomainScoresCard extends ConsumerWidget {
         'Rekreasi',
       ]);
     } else {
-      try {
-        final jsonStr = data.profile.latestDomainScores;
-        if (jsonStr != null && jsonStr.isNotEmpty) {
-          final Map<String, dynamic> parsed = jsonDecode(jsonStr);
-          activeDomains.addAll(parsed.keys);
-        }
-      } catch (e, stackTrace) {
-        ErrorHandlerService().logError(
-          e,
-          stackTrace,
-          context: 'DomainScoresCard.parseActiveDomains',
-        );
-      }
+      activeDomains.addAll(data.profile.parsedDomainScores.keys);
       for (final hwl in data.habitsToday) {
         if (hwl.habit.domainTag != null) {
           activeDomains.add(hwl.habit.domainTag!);

@@ -7,6 +7,8 @@ import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
 import '../../core/providers/db_provider.dart';
+import '../../core/services/snackbar_service.dart';
+import 'services/onboarding_service.dart';
 import '../../core/theme/button_theme.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
@@ -103,71 +105,35 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
 
   Future<void> _completeOnboarding() async {
     if (!_disclaimerAccepted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Anda harus menyetujui pernyataan persetujuan keselamatan sebelum melanjutkan.',
-          ),
-          backgroundColor: Colors.redAccent,
-        ),
+      SnackBarService.showError(
+        context,
+        'Anda harus menyetujui pernyataan persetujuan keselamatan sebelum melanjutkan.',
       );
       return;
     }
 
-    final db = ref.read(dbProvider);
     final userId = const Uuid().v4();
-    final now = DateTime.now();
-
-    // Removed _devMode: always use actual audit scores for consistency
     final String domainScoresJson = jsonEncode(
       _auditScores.map((k, v) => MapEntry(k, v.toInt())),
     );
 
-    final profile = UserProfilesCompanion.insert(
-      userId: userId,
-      ageBand: _selectedAgeBand,
-      supportMode: const drift.Value(SupportMode.normal),
-      engagementState: const drift.Value(HabitStatus.active),
-      timezone: const drift.Value('Asia/Jakarta'),
-      weekStartDay: const drift.Value(1),
-      latestDomainScores: drift.Value(domainScoresJson),
-      canopyLoadCapacity: const drift.Value(10),
-      wellnessDisclaimerAcknowledged: const drift.Value(true),
-      cultivationThemeEnabled: drift.Value(_cultivationThemeEnabled),
-      vocabularyLevel: drift.Value(
-        _cultivationThemeEnabled ? 'earth' : 'mortal', // Updated to new Enum values
-      ),
-      unlockedSkins: const drift.Value('Default'),
-      isDeveloperMode: const drift.Value(false),
-      createdAt: now,
-      updatedAt: now,
-    );
+    try {
+      await ref.read(onboardingServiceProvider).completeOnboarding(
+            userId: userId,
+            ageBand: _selectedAgeBand,
+            domainScoresJson: domainScoresJson,
+            cultivationThemeEnabled: _cultivationThemeEnabled,
+          );
 
-    final audit = LifeAuditsCompanion.insert(
-      auditId: const Uuid().v4(),
-      userId: userId,
-      domainScores: domainScoresJson,
-      timestamp: now,
-    );
-
-    final consent = ConsentLogsCompanion.insert(
-      consentId: const Uuid().v4(),
-      userId: userId,
-      consentType: 'Wellness_Disclaimer',
-      grantedAt: now,
-      version: 'Wellness_v1.0',
-    );
-
-    await db.transaction(() async {
-      await db.into(db.userProfiles).insert(profile);
-      await db.into(db.lifeAudits).insert(audit);
-      await db.into(db.consentLogs).insert(consent);
-    });
-
-    ref.invalidate(onboardingCompletedProvider);
-    ref.invalidate(dashboardDataProvider);
-    if (mounted) {
-      context.go('/');
+      ref.invalidate(onboardingCompletedProvider);
+      ref.invalidate(dashboardDataProvider);
+      if (mounted) {
+        context.go('/');
+      }
+    } catch (e) {
+      if (mounted) {
+        SnackBarService.showError(context, 'Gagal menyelesaikan onboarding: $e');
+      }
     }
   }
 
@@ -301,8 +267,5 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
 }
 
 final onboardingCompletedProvider = FutureProvider<bool>((ref) async {
-  final db = ref.watch(dbProvider);
-  final profiles = await db.select(db.userProfiles).get();
-  if (profiles.isEmpty) return false;
-  return profiles.first.wellnessDisclaimerAcknowledged;
+  return await ref.watch(onboardingServiceProvider).isOnboardingCompleted();
 });

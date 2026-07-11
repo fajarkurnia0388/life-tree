@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/services/error_handler_service.dart';
+import '../../../core/services/error_logger_provider.dart';
+import '../../../core/utils/profile_json_helpers.dart';
 import '../../../data/local_db/database.dart';
 import '../../cultivation/cultivation_provider.dart';
 import '../../cultivation/cultivation_strings.dart';
@@ -26,40 +28,11 @@ class LifeCompassSection extends ConsumerWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     // 1. Parse declared values (Versi Dipilih)
-    List<String> declaredValues = [];
-    try {
-      final jsonStr = profile.coreValues;
-      if (jsonStr != null && jsonStr.isNotEmpty) {
-        declaredValues = List<String>.from(jsonDecode(jsonStr));
-      }
-    } catch (e, stackTrace) {
-      ErrorHandlerService().logError(
-        e,
-        stackTrace,
-        context: 'LifeCompassSection.parseDeclaredValues',
-      );
-    }
+    final declaredValues = profile.parsedCoreValues;
 
     // 2. Parse revealed values (Versi Tersirat)
-    int totalResponses = 0;
-    Map<String, int> revealedScores = {};
-    if (profile.revealedValueScores != null) {
-      try {
-        final Map<String, dynamic> raw = jsonDecode(
-          profile.revealedValueScores!,
-        );
-        raw.forEach((key, val) {
-          revealedScores[key] = val as int;
-          totalResponses += revealedScores[key]!;
-        });
-      } catch (e, stackTrace) {
-        ErrorHandlerService().logError(
-          e,
-          stackTrace,
-          context: 'LifeCompassSection.parseRevealedValues',
-        );
-      }
-    }
+    final revealedScores = profile.parsedRevealedValueScores;
+    final totalResponses = revealedScores.values.fold<int>(0, (sum, val) => sum + val);
 
     final hasEnoughData = totalResponses >= 5;
     List<String> revealedValues = [];
