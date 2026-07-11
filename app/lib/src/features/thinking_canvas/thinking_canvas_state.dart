@@ -12,7 +12,8 @@ class ThinkingCanvasState {
   final DateTime? lastSavedAt;
   final List<String> recentMethods;
   final List<String> favoriteMethods;
-  final String? selectedMood; // 'overwhelmed', 'creative', 'analytical', 'deciding'
+  final String? selectedMood;
+  final bool hasSeenOnboarding;
 
   ThinkingCanvasState({
     this.selectedMethod,
@@ -24,6 +25,7 @@ class ThinkingCanvasState {
     this.recentMethods = const [],
     this.favoriteMethods = const [],
     this.selectedMood,
+    this.hasSeenOnboarding = false,
   });
 
   ThinkingCanvasState copyWith({
@@ -36,6 +38,7 @@ class ThinkingCanvasState {
     List<String>? recentMethods,
     List<String>? favoriteMethods,
     String? selectedMood,
+    bool? hasSeenOnboarding,
     bool clearMood = false,
     bool clearMethod = false,
   }) {
@@ -49,6 +52,7 @@ class ThinkingCanvasState {
       recentMethods: recentMethods ?? this.recentMethods,
       favoriteMethods: favoriteMethods ?? this.favoriteMethods,
       selectedMood: clearMood ? null : (selectedMood ?? this.selectedMood),
+      hasSeenOnboarding: hasSeenOnboarding ?? this.hasSeenOnboarding,
     );
   }
 
@@ -72,10 +76,7 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
   ThinkingCanvasController(this.db) : super(ThinkingCanvasState());
 
   void setMethod(String method) {
-    state = state.copyWith(
-      selectedMethod: method,
-      clearMood: true,
-    );
+    state = state.copyWith(selectedMethod: method);
     _addToRecent(method);
   }
 
@@ -91,12 +92,17 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
     state = state.copyWith(clearMood: true);
   }
 
+  void markOnboardingSeen() {
+    state = state.copyWith(hasSeenOnboarding: true);
+  }
+
   void loadSession(ThinkingCanvasSession session) {
     state = ThinkingCanvasState(
       selectedMethod: session.methodKey,
       currentDraftContent: session.rawNotes ?? '',
       recentMethods: state.recentMethods,
       favoriteMethods: state.favoriteMethods,
+      hasSeenOnboarding: state.hasSeenOnboarding,
     );
   }
 
@@ -105,9 +111,12 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
     _autoSave(content);
   }
 
+  void updateMindMapNodes(List<Map<String, dynamic>> nodes) {
+    state = state.copyWith(mindMapNodes: nodes);
+  }
+
   Future<void> _autoSave(String content) async {
     state = state.copyWith(isSaving: true);
-    // Simulate brief save delay for UX feedback
     await Future.delayed(const Duration(milliseconds: 300));
     state = state.copyWith(
       isSaving: false,
@@ -131,19 +140,18 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
 
   void _addToRecent(String method) {
     final current = List<String>.from(state.recentMethods);
-    current.remove(method); // remove if exists
-    current.insert(0, method); // add to front
-    if (current.length > 5) current.removeLast(); // keep max 5
+    current.remove(method);
+    current.insert(0, method);
+    if (current.length > 5) current.removeLast();
     state = state.copyWith(recentMethods: current);
   }
 
+  /// Clear canvas but preserve favorites, recents, and onboarding status
   void clearCanvas() {
-    state = state.copyWith(
-      clearMethod: true,
-      currentDraftContent: '',
-      mindMapNodes: [],
-      scoringItems: [],
-      clearMood: true,
+    state = ThinkingCanvasState(
+      recentMethods: state.recentMethods,
+      favoriteMethods: state.favoriteMethods,
+      hasSeenOnboarding: state.hasSeenOnboarding,
     );
   }
 }

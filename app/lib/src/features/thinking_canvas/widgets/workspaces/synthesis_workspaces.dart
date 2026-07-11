@@ -45,6 +45,40 @@ class _MindDumpWorkspaceState extends ConsumerState<MindDumpWorkspace> {
     _notifyChanges();
   }
 
+  void _editNote(int index) {
+    final controller = TextEditingController(text: _notes[index]);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('Edit Catatan #${index + 1}'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          maxLines: 3,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Catatan',
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+          ElevatedButton(
+            onPressed: () {
+              final v = controller.text.trim();
+              if (v.isNotEmpty) {
+                setState(() => _notes[index] = v);
+                _notifyChanges();
+              }
+              Navigator.pop(ctx);
+            },
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _notifyChanges() {
     final buffer = StringBuffer();
     buffer.writeln('Hasil Kuras Pikiran (Mind Dump Sticky Notes):');
@@ -135,57 +169,60 @@ class _MindDumpWorkspaceState extends ConsumerState<MindDumpWorkspace> {
             ),
             itemBuilder: (context, index) {
               final color = _stickyColors[index % _stickyColors.length];
-              return Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 3,
-                      offset: Offset(1, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '#${index + 1}',
-                          style: const TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
+              return GestureDetector(
+                onTap: () => _editNote(index),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: color.withValues(alpha: 0.3),
+                        blurRadius: 3,
+                        offset: const Offset(1, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '#${index + 1}',
+                            style: const TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                            ),
                           ),
-                        ),
-                        GestureDetector(
-                          onTap: () => _removeNote(index),
-                          child: const Icon(
-                            Icons.close_rounded,
-                            size: 14,
-                            color: Colors.black54,
+                          GestureDetector(
+                            onTap: () => _removeNote(index),
+                            child: const Icon(
+                              Icons.close_rounded,
+                              size: 14,
+                              color: Colors.black54,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Text(
-                          _notes[index],
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w500,
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Text(
+                            _notes[index],
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
@@ -210,11 +247,7 @@ class AffinityMappingWorkspace extends ConsumerStatefulWidget {
 class _AffinityMappingWorkspaceState
     extends ConsumerState<AffinityMappingWorkspace> {
   final List<Map<String, dynamic>> _items = [];
-  final List<String> _groups = const [
-    'Grup A (Hijau)',
-    'Grup B (Biru)',
-    'Grup C (Orange)',
-  ];
+  List<String> _groups = ['Grup A', 'Grup B', 'Grup C'];
 
   final TextEditingController _inputController = TextEditingController();
 
@@ -239,6 +272,48 @@ class _AffinityMappingWorkspaceState
   void _removeItem(int index) {
     setState(() {
       _items.removeAt(index);
+    });
+    _notifyChanges();
+  }
+
+  void _renameGroup(int index) {
+    final controller = TextEditingController(text: _groups[index]);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Ubah Nama Grup'),
+        content: TextField(
+          controller: controller, autofocus: true,
+          decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Nama'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+          ElevatedButton(
+            onPressed: () {
+              final v = controller.text.trim();
+              if (v.isNotEmpty) {
+                final old = _groups[index];
+                setState(() {
+                  _groups[index] = v;
+                  for (final item in _items) {
+                    if (item['group'] == old) item['group'] = v;
+                  }
+                });
+                _notifyChanges();
+              }
+              Navigator.pop(ctx);
+            },
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _addGroup() {
+    setState(() {
+      _groups.add('Grup ${String.fromCharCode(65 + _groups.length)}');
     });
     _notifyChanges();
   }
@@ -303,6 +378,18 @@ class _AffinityMappingWorkspaceState
           onSubmitted: (_) => _addItem(),
         ),
         const SizedBox(height: 12),
+        // Group management row
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton.icon(
+              onPressed: _addGroup,
+              icon: const Icon(Icons.add_rounded, size: 16),
+              label: const Text('Tambah Grup', style: TextStyle(fontSize: 11)),
+              style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8)),
+            ),
+          ],
+        ),
         if (_items.isEmpty)
           Container(
             padding: const EdgeInsets.all(30),
@@ -366,11 +453,17 @@ class _AffinityMappingWorkspaceState
                           fontWeight: FontWeight.bold,
                         ),
                         underline: const SizedBox(),
-                        items: _groups.map((g) {
-                          return DropdownMenuItem(value: g, child: Text(g));
-                        }).toList(),
+                        items: [
+                          ..._groups.map((g) => DropdownMenuItem(value: g, child: Text(g))),
+                          const DropdownMenuItem(value: '__rename__', child: Text('✏️ Ubah Nama...')),
+                        ],
                         onChanged: (val) {
-                          if (val != null) _changeGroup(index, val);
+                          if (val == '__rename__') {
+                            final gIdx = _groups.indexOf(activeGroup);
+                            if (gIdx >= 0) _renameGroup(gIdx);
+                          } else if (val != null) {
+                            _changeGroup(index, val);
+                          }
                         },
                       ),
                       const SizedBox(width: 8),
@@ -992,17 +1085,9 @@ class _ValidationWorkspaceState extends ConsumerState<ValidationWorkspace> {
               vocabularyLevel,
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
           ),
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: (val) {
-            if (val == null || val.trim().isEmpty) {
-              return DaojiText.resolve(
-                DaojiTextKey.validationAssumptionValidator,
-                vocabularyLevel,
-              );
-            }
-            return null;
-          },
         ),
         const SizedBox(height: 12),
         Container(

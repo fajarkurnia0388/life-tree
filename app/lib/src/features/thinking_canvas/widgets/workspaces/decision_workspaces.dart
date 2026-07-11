@@ -279,18 +279,9 @@ class _SixThinkingHatsWorkspaceState
               vocabularyLevel,
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
           ),
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: (val) {
-            if (val == null || val.trim().isEmpty) {
-              return DaojiText.resolve(
-                DaojiTextKey.sixThinkingHatsValidatorMessage,
-                vocabularyLevel,
-                params: {'name': activeHat['name']},
-              );
-            }
-            return null;
-          },
         ),
         const SizedBox(height: 12),
         // Navigation buttons
@@ -501,7 +492,7 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 10,
-                  color: Colors.white70,
+                  color: Colors.white70, // Disney subtitle — intentional for gradient card
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -516,14 +507,10 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
             labelText: room['label'],
             hintText: 'Tuliskan poin-poin ide Anda di sini...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surfaceContainerHighest
+                .withValues(alpha: 0.3),
           ),
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: (val) {
-            if (val == null || val.trim().isEmpty) {
-              return 'Harap tuliskan ide untuk ${room['label']}';
-            }
-            return null;
-          },
         ),
       ],
     );
@@ -714,14 +701,11 @@ class _ScamperWorkspaceState extends State<ScamperWorkspace> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
+                            filled: true,
+                            fillColor: Theme.of(context)
+                                .colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.2),
                           ),
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (val) {
-                            if (val == null || val.trim().isEmpty) {
-                              return 'Harap tuliskan ide untuk ${p['key']}';
-                            }
-                            return null;
-                          },
                         ),
                       ],
                     ),
@@ -881,13 +865,13 @@ class _SwotMatrixWorkspaceState extends State<SwotMatrixWorkspace> {
               controller: controller,
               maxLines: null,
               expands: true,
-              style: const TextStyle(fontSize: 11),
+              style: TextStyle(fontSize: 11,
+                  color: theme.colorScheme.onSurface),
               decoration: const InputDecoration(
                 hintText: 'Tuliskan poin...',
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
               ),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
           ),
         ],
@@ -1063,14 +1047,10 @@ class _StarburstingWorkspaceState extends State<StarburstingWorkspace> {
             labelText: 'Ajukan Pertanyaan Kritis untuk ${activePoint['key']}',
             hintText: 'Tuliskan draf pertanyaan di sini...',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surfaceContainerHighest
+                .withValues(alpha: 0.3),
           ),
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: (val) {
-            if (val == null || val.trim().isEmpty) {
-              return 'Harap tuliskan pertanyaan untuk ${activePoint['key']}';
-            }
-            return null;
-          },
         ),
       ],
     );

@@ -367,16 +367,6 @@ class _FreewritingWorkspaceState extends ConsumerState<FreewritingWorkspace>
                     fillColor: theme.colorScheme.surfaceContainerHighest
                         .withValues(alpha: 0.3),
                   ),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (val) {
-                    if (val == null || val.trim().isEmpty) {
-                      return DaojiText.resolve(
-                        DaojiTextKey.freewritingValidator,
-                        vocabularyLevel,
-                      );
-                    }
-                    return null;
-                  },
                 ),
                 // Gentle inactivity nudge — bottom bar, not blocking overlay
                 if (_inactivityAlert)

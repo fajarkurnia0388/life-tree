@@ -7,3 +7,4 @@ export 'workspaces/morphological_workspace.dart';
 export 'workspaces/brainstorm_workspaces.dart';
 export 'workspaces/decision_workspaces.dart';
 export 'workspaces/synthesis_workspaces.dart';
+export 'workspace_shared_widgets.dart';

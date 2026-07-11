@@ -140,14 +140,15 @@ class _RapidBrainstormWorkspaceState extends State<RapidBrainstormWorkspace> {
                     ),
                 child: ScaleTransition(
                   scale: animation,
-                  child: Container(
+                    child: Container(
+                    constraints: const BoxConstraints(maxWidth: 160),
                     margin: const EdgeInsets.symmetric(
                       horizontal: 6.0,
                       vertical: 8.0,
                     ),
                     alignment: Alignment.center,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
+                      horizontal: 12.0,
                       vertical: 8.0,
                     ),
                     decoration: BoxDecoration(
@@ -169,14 +170,18 @@ class _RapidBrainstormWorkspaceState extends State<RapidBrainstormWorkspace> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          idea,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(
+                            idea,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         GestureDetector(
                           onTap: () {
                             setState(() {
