@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../domain/mind_map_model.dart';
 
 class MindMapCanvasView extends StatefulWidget {
@@ -22,6 +23,13 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
       TransformationController();
 
   String? _selectedNodeId;
+  String? _editingNodeId;
+  final TextEditingController _inlineEditController = TextEditingController();
+  final FocusNode _inlineEditFocusNode = FocusNode();
+
+  // Undo stack
+  final List<List<MindMapNode>> _undoStack = [];
+  static const int _maxUndoSteps = 20;
 
   // Predefined soft pastel palette colors
   final List<int> _palette = const [
@@ -33,11 +41,12 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
     0xFF8E719B, // Calm Purple
   ];
 
+  double _currentScale = 1.0;
+
   @override
   void initState() {
     super.initState();
     if (widget.initialNodes.isEmpty) {
-      // Add a default root node in the center
       _nodes.add(
         MindMapNode(
           id: 'root_${DateTime.now().millisecondsSinceEpoch}',
@@ -47,7 +56,6 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
         ),
       );
     } else {
-      // Deep copy initial nodes
       for (var node in widget.initialNodes) {
         _nodes.add(
           MindMapNode(
@@ -61,25 +69,62 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
       }
     }
 
-    // Recenter view on startup after frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _recenterCanvas();
     });
   }
 
+  @override
+  void dispose() {
+    _transformationController.dispose();
+    _inlineEditController.dispose();
+    _inlineEditFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _saveToUndoStack() {
+    _undoStack.add(
+      _nodes
+          .map((n) => MindMapNode(
+                id: n.id,
+                text: n.text,
+                position: n.position,
+                parentId: n.parentId,
+                colorValue: n.colorValue,
+              ))
+          .toList(),
+    );
+    if (_undoStack.length > _maxUndoSteps) {
+      _undoStack.removeAt(0);
+    }
+  }
+
+  void _undo() {
+    if (_undoStack.isEmpty) return;
+    HapticFeedback.lightImpact();
+    setState(() {
+      _nodes.clear();
+      _nodes.addAll(_undoStack.removeLast());
+      _selectedNodeId = null;
+      _editingNodeId = null;
+    });
+  }
+
   void _recenterCanvas() {
-    // Canvas dimensions are 1600x1200. Recenter around center (800, 600)
     final size = MediaQuery.of(context).size;
     final double xVal = -400.0 + (size.width / 2);
     final double yVal = -300.0 + (size.height / 2);
     _transformationController.value = Matrix4.identity()
       ..translateByDouble(xVal, yVal, 0.0, 1.0);
+    _currentScale = 1.0;
+    setState(() {});
   }
 
   void _addNewRootNode() {
+    _saveToUndoStack();
+    HapticFeedback.selectionClick();
     setState(() {
       final id = 'node_${DateTime.now().millisecondsSinceEpoch}';
-      // Place near center with slight offset
       final rng = Random();
       final dx = 350.0 + rng.nextDouble() * 100.0;
       final dy = 250.0 + rng.nextDouble() * 100.0;
@@ -97,11 +142,12 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
   }
 
   void _addChildNode(String parentId) {
+    _saveToUndoStack();
+    HapticFeedback.selectionClick();
     final parent = _nodes.firstWhere((n) => n.id == parentId);
     setState(() {
       final id = 'node_${DateTime.now().millisecondsSinceEpoch}';
 
-      // Position child slightly offset from parent
       final rng = Random();
       final double angle = rng.nextDouble() * 2 * pi;
       final double distance = 130.0;
@@ -114,59 +160,38 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
           text: 'Sub-ide',
           position: Offset(dx, dy),
           parentId: parentId,
-          colorValue: parent.colorValue, // inherits color
+          colorValue: parent.colorValue,
         ),
       );
       _selectedNodeId = id;
     });
   }
 
-  void _editNodeText(String nodeId) {
+  void _startInlineEdit(String nodeId) {
     final node = _nodes.firstWhere((n) => n.id == nodeId);
-    final controller = TextEditingController(text: node.text);
+    _saveToUndoStack();
+    setState(() {
+      _editingNodeId = nodeId;
+      _inlineEditController.text = node.text;
+    });
+    _inlineEditFocusNode.requestFocus();
+  }
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Text('Edit Gagasan'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            maxLines: 2,
-            decoration: const InputDecoration(
-              labelText: 'Gagasan',
-              hintText: 'Tuliskan gagasan Anda...',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Batal'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  node.text = controller.text.trim().isEmpty
-                      ? 'Gagasan'
-                      : controller.text.trim();
-                });
-                Navigator.pop(context);
-              },
-              child: const Text('Simpan'),
-            ),
-          ],
-        );
-      },
-    );
+  void _finishInlineEdit() {
+    if (_editingNodeId == null) return;
+    setState(() {
+      final node = _nodes.firstWhere((n) => n.id == _editingNodeId);
+      node.text = _inlineEditController.text.trim().isEmpty
+          ? 'Gagasan'
+          : _inlineEditController.text.trim();
+      _editingNodeId = null;
+    });
+    _inlineEditController.clear();
   }
 
   void _deleteNode(String nodeId) {
-    // Delete target node and all its child nodes recursively
+    _saveToUndoStack();
+    HapticFeedback.mediumImpact();
     setState(() {
       final idsToRemove = <String>{nodeId};
       bool addedMore = true;
@@ -197,6 +222,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
   }
 
   void _changeNodeColor(String nodeId, int colorValue) {
+    _saveToUndoStack();
     setState(() {
       final node = _nodes.firstWhere((n) => n.id == nodeId);
       node.colorValue = colorValue;
@@ -218,13 +244,20 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
       appBar: AppBar(
         title: const Text('Visual Mind Map Editor'),
         actions: [
+          // Undo button
+          IconButton(
+            icon: const Icon(Icons.undo_rounded),
+            tooltip: 'Batalkan',
+            onPressed: _undoStack.isNotEmpty ? _undo : null,
+          ),
           IconButton(
             icon: const Icon(Icons.center_focus_strong_rounded),
             tooltip: 'Pusatkan Kanvas',
             onPressed: _recenterCanvas,
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+            padding:
+                const EdgeInsets.only(right: 16, top: 8, bottom: 8),
             child: ElevatedButton.icon(
               onPressed: () {
                 widget.onSaved(_nodes);
@@ -245,16 +278,27 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
           // Infinite Drag & Drop Canvas
           GestureDetector(
             onTap: () {
+              // Finish any inline edit
+              if (_editingNodeId != null) {
+                _finishInlineEdit();
+              }
               setState(() {
-                _selectedNodeId = null; // deselect
+                _selectedNodeId = null;
               });
             },
             child: InteractiveViewer(
               transformationController: _transformationController,
               minScale: 0.4,
               maxScale: 2.0,
-              constrained: false, // allow canvas to be larger than screen
+              constrained: false,
               boundaryMargin: const EdgeInsets.all(500),
+              onInteractionUpdate: (details) {
+                if (details.scale != 1.0) {
+                  setState(() {
+                    _currentScale = details.scale;
+                  });
+                }
+              },
               child: SizedBox(
                 width: 1600,
                 height: 1200,
@@ -279,11 +323,14 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                     // Nodes layer
                     ..._nodes.map((node) {
                       final isSelected = _selectedNodeId == node.id;
+                      final isEditing = _editingNodeId == node.id;
                       return Positioned(
                         left: node.position.dx,
                         top: node.position.dy,
                         child: GestureDetector(
                           onPanUpdate: (details) {
+                            if (isEditing) return;
+                            _saveToUndoStack();
                             setState(() {
                               node.position = Offset(
                                 node.position.dx + details.delta.dx,
@@ -296,13 +343,75 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                               _selectedNodeId = node.id;
                             });
                           },
-                          onDoubleTap: () => _editNodeText(node.id),
-                          child: _buildNodeWidget(node, isSelected, theme),
+                          onDoubleTap: () => _startInlineEdit(node.id),
+                          child: _buildNodeWidget(
+                            node,
+                            isSelected,
+                            isEditing,
+                            theme,
+                          ),
                         ),
                       );
                     }),
                   ],
                 ),
+              ),
+            ),
+          ),
+
+          // Zoom indicator
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                ),
+              ),
+              child: Text(
+                '${(_currentScale * 100).round()}%',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
+              ),
+            ),
+          ),
+
+          // Node count indicator
+          Positioned(
+            top: 8,
+            left: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.account_tree_rounded,
+                    size: 12,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${_nodes.length} node',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -348,7 +457,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                         tooltip: 'Tambah Cabang',
                         onPressed: () => _addChildNode(selectedNode.id),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
 
                       // Edit button
                       IconButton(
@@ -357,9 +466,10 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                           color: Colors.green,
                         ),
                         tooltip: 'Edit Teks',
-                        onPressed: () => _editNodeText(selectedNode.id),
+                        onPressed: () =>
+                            _startInlineEdit(selectedNode.id),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
 
                       // Color palette selection
                       Expanded(
@@ -385,8 +495,8 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                                       shape: BoxShape.circle,
                                       border: isCurrentColor
                                           ? Border.all(
-                                              color:
-                                                  theme.colorScheme.onSurface,
+                                              color: theme
+                                                  .colorScheme.onSurface,
                                               width: 2,
                                             )
                                           : null,
@@ -398,7 +508,7 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
 
                       // Delete button
                       IconButton(
@@ -419,8 +529,54 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
     );
   }
 
-  Widget _buildNodeWidget(MindMapNode node, bool isSelected, ThemeData theme) {
+  Widget _buildNodeWidget(
+    MindMapNode node,
+    bool isSelected,
+    bool isEditing,
+    ThemeData theme,
+  ) {
     final nodeColor = Color(node.colorValue);
+
+    if (isEditing) {
+      // Inline editing mode
+      return Container(
+        constraints: const BoxConstraints(maxWidth: 180, minWidth: 120),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: nodeColor,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: nodeColor.withValues(alpha: 0.5),
+              blurRadius: 16,
+              spreadRadius: 2,
+              offset: const Offset(0, 3),
+            ),
+          ],
+          border: Border.all(
+            color: Colors.white,
+            width: 2,
+          ),
+        ),
+        child: TextField(
+          controller: _inlineEditController,
+          focusNode: _inlineEditFocusNode,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.zero,
+            isDense: true,
+          ),
+          onSubmitted: (_) => _finishInlineEdit(),
+        ),
+      );
+    }
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 160),
@@ -443,14 +599,23 @@ class _MindMapCanvasViewState extends State<MindMapCanvasView> {
           width: isSelected ? 3 : 1.5,
         ),
       ),
-      child: Text(
-        node.text,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 13,
-          fontWeight: FontWeight.bold,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Text(
+              node.text,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -494,26 +659,22 @@ class _MindMapLinesPainter extends CustomPainter {
     for (var node in nodes) {
       if (node.parentId == null) continue;
 
-      // Find parent node
       final parent = nodes.firstWhere(
         (n) => n.id == node.parentId,
         orElse: () => node,
       );
       if (parent == node) continue;
 
-      // Calculate connection coordinates from node centers
-      // Nodes constraint is approx 160 max width, let's estimate centers based on offset
       final start = Offset(parent.position.dx + 80, parent.position.dy + 20);
       final end = Offset(node.position.dx + 80, node.position.dy + 20);
 
-      // Curved Bezier line path drawing
       final path = Path()
         ..moveTo(start.dx, start.dy)
         ..cubicTo(
           start.dx + (end.dx - start.dx) / 2,
-          start.dy, // control point 1
+          start.dy,
           start.dx + (end.dx - start.dx) / 2,
-          end.dy, // control point 2
+          end.dy,
           end.dx,
           end.dy,
         );

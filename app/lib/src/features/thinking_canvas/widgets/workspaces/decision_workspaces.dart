@@ -1,9 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
 import '../../../../core/i18n/daoji_text_resolver.dart';
 import '../../../../core/i18n/daoji_vocabulary_provider.dart';
+
+// ==========================================
+// SHARED: Step Progress Indicator
+// ==========================================
+class StepProgressIndicator extends StatelessWidget {
+  final int currentStep;
+  final int totalSteps;
+  final Color? activeColor;
+
+  const StepProgressIndicator({
+    super.key,
+    required this.currentStep,
+    required this.totalSteps,
+    this.activeColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = activeColor ?? theme.colorScheme.primary;
+
+    return Row(
+      children: List.generate(totalSteps, (index) {
+        final isCompleted = index < currentStep;
+        final isCurrent = index == currentStep;
+
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: 4,
+              decoration: BoxDecoration(
+                color: isCompleted
+                    ? color
+                    : isCurrent
+                        ? color.withValues(alpha: 0.5)
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+}
 
 // ==========================================
 // 1. SIX THINKING HATS WORKSPACE
@@ -115,9 +163,27 @@ class _SixThinkingHatsWorkspaceState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          DaojiText.resolve(DaojiTextKey.sixThinkingHatsTitle, vocabularyLevel),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              DaojiText.resolve(DaojiTextKey.sixThinkingHatsTitle, vocabularyLevel),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+            Text(
+              '${_selectedHatIndex + 1}/6',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        StepProgressIndicator(
+          currentStep: _selectedHatIndex,
+          totalSteps: 6,
         ),
         const SizedBox(height: 10),
         Wrap(
@@ -226,6 +292,53 @@ class _SixThinkingHatsWorkspaceState
             return null;
           },
         ),
+        const SizedBox(height: 12),
+        // Navigation buttons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (_selectedHatIndex > 0)
+              OutlinedButton.icon(
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  setState(() => _selectedHatIndex--);
+                },
+                icon: const Icon(Icons.arrow_back_rounded, size: 16),
+                label: Text(
+                  _hats[_selectedHatIndex - 1]['label'] as String,
+                  style: const TextStyle(fontSize: 12),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              )
+            else
+              const SizedBox.shrink(),
+            if (_selectedHatIndex < _hats.length - 1)
+              FilledButton.icon(
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  setState(() => _selectedHatIndex++);
+                },
+                icon: const Icon(Icons.arrow_forward_rounded, size: 16),
+                label: Text(
+                  _hats[_selectedHatIndex + 1]['label'] as String,
+                  style: const TextStyle(fontSize: 12),
+                ),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              )
+            else
+              const SizedBox.shrink(),
+          ],
+        ),
       ],
     );
   }
@@ -315,6 +428,11 @@ class _DisneyStrategyWorkspaceState extends State<DisneyStrategyWorkspace> {
         const Text(
           '4. Lembar Kerja Disney Strategy',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        const SizedBox(height: 6),
+        StepProgressIndicator(
+          currentStep: _activeRoomIndex,
+          totalSteps: 3,
         ),
         const SizedBox(height: 10),
         Row(

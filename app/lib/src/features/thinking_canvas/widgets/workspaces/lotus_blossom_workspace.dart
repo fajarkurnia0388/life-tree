@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
 import '../../../../core/i18n/daoji_text_resolver.dart';
@@ -178,7 +179,7 @@ class _LotusBlossomWorkspaceState extends ConsumerState<LotusBlossomWorkspace> {
 
         // Beautiful Radial Layout Canvas
         Container(
-          height: 290,
+          height: 310,
           decoration: BoxDecoration(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.02),
             borderRadius: BorderRadius.circular(16),
@@ -232,10 +233,11 @@ class _LotusBlossomWorkspaceState extends ConsumerState<LotusBlossomWorkspace> {
                         : _cells[index];
 
                     return Positioned(
-                      left: pos.dx - 32,
-                      top: pos.dy - 32,
+                      left: pos.dx - 36,
+                      top: pos.dy - 36,
                       child: GestureDetector(
                         onTap: () {
+                          HapticFeedback.selectionClick();
                           if (isViewingSubGrid) {
                             _editCell(index, true);
                           } else {
@@ -254,8 +256,8 @@ class _LotusBlossomWorkspaceState extends ConsumerState<LotusBlossomWorkspace> {
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
-                          width: 64,
-                          height: 64,
+                          width: 72,
+                          height: 72,
                           decoration: BoxDecoration(
                             color: isCenter
                                 ? theme.colorScheme.primary

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../domain/thinking_method.dart';
 
 class ScoringItem {
@@ -12,12 +13,16 @@ class MethodPickerBottomSheet extends StatefulWidget {
   final String currentMethodKey;
   final bool isPremiumUser;
   final ValueChanged<String>? onSelected;
+  final List<String> favoriteMethods;
+  final ValueChanged<String>? onToggleFavorite;
 
   const MethodPickerBottomSheet({
     super.key,
     this.currentMethodKey = '',
     this.isPremiumUser = true,
     this.onSelected,
+    this.favoriteMethods = const [],
+    this.onToggleFavorite,
   });
 
   @override
@@ -94,13 +99,14 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
   Widget _buildMethodCard(ThinkingMethod m, ThemeData theme) {
     final isSelected = widget.currentMethodKey == m.key;
     final levelColor = _getLevelColor(m.level, theme);
+    final isFavorite = widget.favoriteMethods.contains(m.key);
 
     return Semantics(
       button: true,
       selected: isSelected,
       label: 'Metode: ${m.name}',
       child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 6.0),
+        margin: const EdgeInsets.symmetric(vertical: 4.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
@@ -112,6 +118,7 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
         ),
         child: InkWell(
           onTap: () {
+            HapticFeedback.selectionClick();
             if (m.isPremium && !widget.isPremiumUser) {
               _showPremiumAdDialog();
             } else {
@@ -123,7 +130,7 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 44),
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(14.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -137,7 +144,7 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
                                 m.name,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 15,
+                                  fontSize: 14,
                                 ),
                               ),
                             ),
@@ -152,6 +159,27 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
                           ],
                         ),
                       ),
+                      // Favorite toggle
+                      GestureDetector(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          widget.onToggleFavorite?.call(m.key);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            isFavorite
+                                ? Icons.favorite_rounded
+                                : Icons.favorite_border_rounded,
+                            size: 16,
+                            color: isFavorite
+                                ? Colors.red
+                                : theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.3),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
@@ -176,7 +204,7 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
                   Text(
                     m.desc,
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 12,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
@@ -187,22 +215,22 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
                         m.template == WorkspaceTemplate.freeform
                             ? Icons.edit_note_rounded
                             : m.template == WorkspaceTemplate.multiColumn
-                            ? Icons.view_column_rounded
-                            : m.template == WorkspaceTemplate.sequential
-                            ? Icons.format_list_numbered_rounded
-                            : Icons.table_chart_rounded,
+                                ? Icons.view_column_rounded
+                                : m.template == WorkspaceTemplate.sequential
+                                    ? Icons.format_list_numbered_rounded
+                                    : Icons.table_chart_rounded,
                         size: 14,
                         color: theme.colorScheme.primary.withValues(alpha: 0.7),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         m.template == WorkspaceTemplate.freeform
-                            ? 'Workspace: Teks Bebas'
+                            ? 'Teks Bebas'
                             : m.template == WorkspaceTemplate.multiColumn
-                            ? 'Workspace: Input Kolom'
-                            : m.template == WorkspaceTemplate.sequential
-                            ? 'Workspace: Langkah Berurutan'
-                            : 'Workspace: Tabel Skoring',
+                                ? 'Input Kolom'
+                                : m.template == WorkspaceTemplate.sequential
+                                    ? 'Langkah Berurutan'
+                                    : 'Tabel Skoring',
                         style: TextStyle(
                           fontSize: 11,
                           color: theme.colorScheme.primary.withValues(
@@ -234,11 +262,19 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
             ),
           ),
           const SizedBox(width: 8),
-          Text(
-            '($count)',
-            style: TextStyle(
-              fontSize: 12,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              '$count',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
             ),
           ),
         ],
@@ -254,6 +290,16 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
     final query = _searchQuery.trim().toLowerCase();
 
     final methodsByKey = {for (final m in ThinkingMethod.allMethods) m.key: m};
+
+    // Favorites section (always shown if favorites exist and no search)
+    final favoriteMethods = <ThinkingMethod>[];
+    if (query.isEmpty && widget.favoriteMethods.isNotEmpty) {
+      for (final key in widget.favoriteMethods) {
+        final m = methodsByKey[key];
+        if (m != null) favoriteMethods.add(m);
+      }
+    }
+
     final visibleGroups = <MapEntry<String, List<ThinkingMethod>>>[];
     final seenKeys = <String>{};
 
@@ -292,7 +338,7 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
       }
     }
 
-    final hasResults = visibleGroups.isNotEmpty;
+    final hasResults = visibleGroups.isNotEmpty || favoriteMethods.isNotEmpty;
 
     return Container(
       padding: EdgeInsets.only(
@@ -347,26 +393,52 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
+              filled: true,
+              fillColor: theme.colorScheme.surfaceContainerHighest
+                  .withValues(alpha: 0.3),
             ),
           ),
           const SizedBox(height: 4),
           Expanded(
             child: !hasResults
-                ? const Center(
-                    child: Text(
-                      'Metode tidak ditemukan.',
-                      style: TextStyle(fontStyle: FontStyle.italic),
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off_rounded,
+                          size: 48,
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.2),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Metode tidak ditemukan.',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ],
                     ),
                   )
                 : ListView(
                     children: [
+                      // Favorites section
+                      if (favoriteMethods.isNotEmpty) ...[
+                        _buildSectionHeader(
+                          '⭐ Favorit',
+                          favoriteMethods.length,
+                          theme,
+                        ),
+                        for (final m in favoriteMethods)
+                          _buildMethodCard(m, theme),
+                      ],
                       for (final group in visibleGroups) ...[
                         _buildSectionHeader(
                           group.key,
                           group.value.length,
                           theme,
                         ),
-                        for (final m in group.value) _buildMethodCard(m, theme),
+                        for (final m in group.value)
+                          _buildMethodCard(m, theme),
                       ],
                     ],
                   ),
