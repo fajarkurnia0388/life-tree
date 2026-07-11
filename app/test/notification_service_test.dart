@@ -1,34 +1,76 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:timezone/data/latest.dart' as tz_data;
-import 'package:timezone/timezone.dart' as tz;
 import 'package:daoji/src/core/services/notification_service.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 void main() {
-  tz_data.initializeTimeZones();
+  NotificationService.configureLocalTimeZone('Asia/Jakarta');
   final jakarta = tz.getLocation('Asia/Jakarta');
-  tz.setLocalLocation(jakarta);
 
-  group('NotificationService nextInstanceOfTime Tests', () {
-    test('Schedules for today if time is in the future', () {
-      final now = tz.TZDateTime(jakarta, 2026, 7, 9, 7, 0); // 07:00 AM
-      final target = NotificationService.nextInstanceOfTime(8, 0, nowOverride: now); // Target 08:00 AM
+  group('NotificationService scheduling', () {
+    test('schedules for today if time is in the future', () {
+      final now = tz.TZDateTime(jakarta, 2026, 7, 9, 7);
+      final target = NotificationService.nextInstanceOfTime(
+        8,
+        0,
+        nowOverride: now,
+      );
 
-      expect(target.year, 2026);
-      expect(target.month, 7);
-      expect(target.day, 9);
-      expect(target.hour, 8);
-      expect(target.minute, 0);
+      expect(target, tz.TZDateTime(jakarta, 2026, 7, 9, 8));
     });
 
-    test('Schedules for tomorrow if time is in the past', () {
-      final now = tz.TZDateTime(jakarta, 2026, 7, 9, 9, 0); // 09:00 AM
-      final target = NotificationService.nextInstanceOfTime(8, 0, nowOverride: now); // Target 08:00 AM
+    test('schedules for tomorrow if time is past or exactly now', () {
+      final past = tz.TZDateTime(jakarta, 2026, 7, 9, 9);
+      expect(
+        NotificationService.nextInstanceOfTime(8, 0, nowOverride: past),
+        tz.TZDateTime(jakarta, 2026, 7, 10, 8),
+      );
 
-      expect(target.year, 2026);
-      expect(target.month, 7);
-      expect(target.day, 10); // Tomorrow!
-      expect(target.hour, 8);
-      expect(target.minute, 0);
+      final exact = tz.TZDateTime(jakarta, 2026, 7, 9, 8);
+      expect(
+        NotificationService.nextInstanceOfTime(8, 0, nowOverride: exact),
+        tz.TZDateTime(jakarta, 2026, 7, 10, 8),
+      );
+    });
+
+    test('weekly schedule advances to requested weekday', () {
+      final thursday = tz.TZDateTime(jakarta, 2026, 7, 9, 9);
+      final monday = NotificationService.nextInstanceOfWeekday(
+        DateTime.monday,
+        8,
+        0,
+        nowOverride: thursday,
+      );
+      expect(monday, tz.TZDateTime(jakarta, 2026, 7, 13, 8));
+    });
+
+    test('quiet hours move a reminder to quiet-hours end', () {
+      expect(
+        NotificationService.adjustForQuietHours(
+          hour: 23,
+          minute: 30,
+          quietHoursStart: '22:00',
+          quietHoursEnd: '07:00',
+        ),
+        (7, 0),
+      );
+      expect(
+        NotificationService.adjustForQuietHours(
+          hour: 8,
+          minute: 0,
+          quietHoursStart: '22:00',
+          quietHoursEnd: '07:00',
+        ),
+        (8, 0),
+      );
+    });
+
+    test('notification IDs are deterministic and slot-specific', () {
+      final first = NotificationService.notificationIdForHabit('habit-uuid');
+      expect(NotificationService.notificationIdForHabit('habit-uuid'), first);
+      expect(
+        NotificationService.notificationIdForHabit('habit-uuid', slot: 1),
+        isNot(first),
+      );
     });
   });
 }

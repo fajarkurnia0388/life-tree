@@ -24,7 +24,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable.value = next;
   }, fireImmediately: true);
 
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: '/',
     refreshListenable: refreshListenable,
     redirect: (context, state) {
@@ -119,4 +119,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+
+  ref.onDispose(() {
+    router.dispose();
+    refreshListenable.dispose();
+  });
+  return router;
 });

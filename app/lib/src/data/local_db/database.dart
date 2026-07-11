@@ -303,11 +303,15 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> countUniqueDoneDates(String userId) async {
     final result = await customSelect(
-      "SELECT COUNT(DISTINCT date(hl.date / 1000, 'unixepoch')) AS cnt "
+      "SELECT COUNT(DISTINCT date(hl.date, 'unixepoch')) AS cnt "
       "FROM habit_logs hl "
       "INNER JOIN habits h ON hl.habit_id = h.habit_id "
-      "WHERE hl.status = '${HabitStatus.done}' AND hl.deleted_at IS NULL AND h.user_id = ? AND h.deleted_at IS NULL",
-      variables: [Variable<String>(userId)],
+      "WHERE hl.status = ? AND hl.deleted_at IS NULL "
+      "AND h.user_id = ? AND h.deleted_at IS NULL",
+      variables: [
+        const Variable<String>(HabitStatus.done),
+        Variable<String>(userId),
+      ],
       readsFrom: {habitLogs, habits},
     ).getSingle();
     return result.read<int>('cnt');
@@ -316,163 +320,223 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 15;
 
+  String _quoteIdentifier(String identifier) =>
+      '"${identifier.replaceAll('"', '""')}"';
+
+  Future<bool> _tableExists(String tableName) async {
+    final row = await customSelect(
+      "SELECT 1 AS present FROM sqlite_master "
+      "WHERE type = 'table' AND name = ? LIMIT 1",
+      variables: [Variable<String>(tableName)],
+    ).getSingleOrNull();
+    return row != null;
+  }
+
+  Future<bool> _columnExists(String tableName, String columnName) async {
+    if (!await _tableExists(tableName)) return false;
+    final rows = await customSelect(
+      'PRAGMA table_info(${_quoteIdentifier(tableName)})',
+    ).get();
+    return rows.any((row) => row.read<String>('name') == columnName);
+  }
+
+  Future<void> _createTableIfMissing(Migrator migrator, TableInfo table) async {
+    if (!await _tableExists(table.actualTableName)) {
+      await migrator.createTable(table);
+    }
+  }
+
+  Future<void> _addColumnIfMissing(
+    Migrator migrator,
+    TableInfo table,
+    GeneratedColumn column,
+  ) async {
+    if (!await _columnExists(table.actualTableName, column.$name)) {
+      await migrator.addColumn(table, column);
+    }
+  }
+
+  Future<void> _ensureIndexes() async {
+    final statements = <String>[
+      'CREATE INDEX IF NOT EXISTS idx_habit_log_perf ON habit_logs (habit_id, date, status)',
+      'CREATE INDEX IF NOT EXISTS idx_habit_log_desc ON habit_logs (habit_id, date DESC)',
+      'CREATE INDEX IF NOT EXISTS idx_journal_entry_wellness ON journal_entries (user_id, date, mood_score)',
+      'CREATE INDEX IF NOT EXISTS idx_thinking_canvas_history ON thinking_canvas_sessions (user_id, created_at DESC)',
+      'CREATE INDEX IF NOT EXISTS idx_thinking_canvas_patterns ON thinking_canvas_sessions (user_id, method_key, created_at DESC)',
+      'CREATE INDEX IF NOT EXISTS idx_habit_active ON habits (user_id, status, domain_tag)',
+      'CREATE INDEX IF NOT EXISTS idx_weekly_pulse_ttl ON weekly_pulses (user_id, domain_tag, week_start_date DESC)',
+      'CREATE INDEX IF NOT EXISTS idx_wellness_prompt_log_cap ON wellness_prompt_logs (user_id, prompted_at DESC)',
+      'CREATE INDEX IF NOT EXISTS idx_consent_log_check ON consent_logs (user_id, consent_type)',
+      'CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed)',
+      'CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC)',
+    ];
+    for (final statement in statements) {
+      await customStatement(statement);
+    }
+  }
+
   @override
   MigrationStrategy get migration => MigrationStrategy(
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
-      // Safely backfill circadian_enabled and migrate legacy theme value
-      try {
+      if (await _columnExists('user_profiles', 'circadian_enabled') &&
+          await _columnExists('user_profiles', 'theme_mode')) {
         await customStatement(
-          "UPDATE user_profiles SET circadian_enabled = 1, theme_mode = 'System' WHERE theme_mode = 'Circadian';",
+          "UPDATE user_profiles SET circadian_enabled = 1, "
+          "theme_mode = 'System' WHERE theme_mode = 'Circadian'",
         );
-        await customStatement(
-          'UPDATE user_profiles SET circadian_enabled = 0 WHERE circadian_enabled IS NULL;',
-        );
-      } catch (_) {}
+      }
     },
-    onCreate: (m) async {
-      await m.createAll();
-      // Create custom performance and application indexes
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_habit_log_perf ON habit_logs (habit_id, date, status);',
-      );
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_habit_log_desc ON habit_logs (habit_id, date DESC);',
-      );
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_journal_entry_wellness ON journal_entries (user_id, date, mood_score);',
-      );
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_thinking_canvas_history ON thinking_canvas_sessions (user_id, created_at DESC);',
-      );
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_thinking_canvas_patterns ON thinking_canvas_sessions (user_id, method_key, created_at DESC);',
-      );
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_habit_active ON habits (user_id, status, domain_tag);',
-      );
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_weekly_pulse_ttl ON weekly_pulses (user_id, domain_tag, week_start_date DESC);',
-      );
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_wellness_prompt_log_cap ON wellness_prompt_logs (user_id, prompted_at DESC);',
-      );
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_consent_log_check ON consent_logs (user_id, consent_type);',
-      );
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);',
-      );
-      await customStatement(
-        'CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC);',
-      );
+    onCreate: (migrator) async {
+      await migrator.createAll();
+      await _ensureIndexes();
     },
-    onUpgrade: (m, from, to) async {
+    onUpgrade: (migrator, from, to) async {
       if (from < 2) {
-        await m.addColumn(userProfiles, userProfiles.selectedSkin);
-        await m.addColumn(userProfiles, userProfiles.unlockedSkins);
+        await _addColumnIfMissing(
+          migrator,
+          userProfiles,
+          userProfiles.selectedSkin,
+        );
+        await _addColumnIfMissing(
+          migrator,
+          userProfiles,
+          userProfiles.unlockedSkins,
+        );
       }
       if (from < 3) {
-        await m.addColumn(userProfiles, userProfiles.themeMode);
+        await _addColumnIfMissing(
+          migrator,
+          userProfiles,
+          userProfiles.themeMode,
+        );
       }
       if (from < 4) {
-        await m.createTable(decisionEntries);
-        await customStatement(
-          'CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);',
-        );
+        await _createTableIfMissing(migrator, decisionEntries);
       }
       if (from < 5) {
-        await m.addColumn(userProfiles, userProfiles.coreValues);
-        await m.addColumn(habits, habits.goalTag);
-        await m.addColumn(decisionEntries, decisionEntries.reviewPeriodDays);
+        await _addColumnIfMissing(
+          migrator,
+          userProfiles,
+          userProfiles.coreValues,
+        );
+        await _addColumnIfMissing(migrator, habits, habits.goalTag);
+        await _addColumnIfMissing(
+          migrator,
+          decisionEntries,
+          decisionEntries.reviewPeriodDays,
+        );
       }
       if (from < 6) {
-        await m.addColumn(userProfiles, userProfiles.isDeveloperMode);
-        await m.addColumn(userProfiles, userProfiles.recoveryEndDate);
-        // Create performance indexes for upgraded users (FIX-14)
-        await customStatement(
-          'CREATE INDEX IF NOT EXISTS idx_habit_log_perf ON habit_logs (habit_id, date, status);',
+        await _addColumnIfMissing(
+          migrator,
+          userProfiles,
+          userProfiles.isDeveloperMode,
         );
-        await customStatement(
-          'CREATE INDEX IF NOT EXISTS idx_habit_log_desc ON habit_logs (habit_id, date DESC);',
-        );
-        await customStatement(
-          'CREATE INDEX IF NOT EXISTS idx_journal_entry_wellness ON journal_entries (user_id, date, mood_score);',
-        );
-        await customStatement(
-          'CREATE INDEX IF NOT EXISTS idx_habit_active ON habits (user_id, status, domain_tag);',
-        );
-        await customStatement(
-          'CREATE INDEX IF NOT EXISTS idx_weekly_pulse_ttl ON weekly_pulses (user_id, domain_tag, week_start_date DESC);',
-        );
-        await customStatement(
-          'CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed);',
+        await _addColumnIfMissing(
+          migrator,
+          userProfiles,
+          userProfiles.recoveryEndDate,
         );
       }
       if (from < 7) {
-        await m.createTable(marketplaceTemplates);
+        await _createTableIfMissing(migrator, marketplaceTemplates);
       }
       if (from < 8) {
-        await m.createTable(valueDilemmaResponses);
-        await m.addColumn(userProfiles, userProfiles.revealedValueScores);
-        await m.addColumn(
+        await _createTableIfMissing(migrator, valueDilemmaResponses);
+        await _addColumnIfMissing(
+          migrator,
+          userProfiles,
+          userProfiles.revealedValueScores,
+        );
+        await _addColumnIfMissing(
+          migrator,
           userProfiles,
           userProfiles.revealedValueLastUpdatedAt,
         );
-        await customStatement(
-          'CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC);',
-        );
       }
       if (from < 9) {
-        await m.addColumn(userProfiles, userProfiles.cultivationThemeEnabled);
+        await _addColumnIfMissing(
+          migrator,
+          userProfiles,
+          userProfiles.cultivationThemeEnabled,
+        );
       }
       if (from < 10) {
-        await m.addColumn(
+        await _addColumnIfMissing(
+          migrator,
           valueDilemmaResponses,
           valueDilemmaResponses.responseReason,
         );
       }
       if (from < 11) {
-        // Migrate existing habit templates to new schema
-        await customStatement(
-          'ALTER TABLE marketplace_templates ADD COLUMN template_type TEXT NOT NULL DEFAULT "habit"',
+        final tableName = marketplaceTemplates.actualTableName;
+        final hasLegacyColumns =
+            await _columnExists(tableName, 'friction') &&
+            await _columnExists(tableName, 'energy') &&
+            await _columnExists(tableName, 'impact') &&
+            await _columnExists(tableName, 'mva_duration');
+
+        if (!await _columnExists(tableName, 'template_type')) {
+          await customStatement(
+            'ALTER TABLE ${_quoteIdentifier(tableName)} '
+            "ADD COLUMN template_type TEXT NOT NULL DEFAULT 'habit'",
+          );
+        }
+        await _addColumnIfMissing(
+          migrator,
+          marketplaceTemplates,
+          marketplaceTemplates.metadata,
         );
-        await customStatement(
-          'ALTER TABLE marketplace_templates ADD COLUMN metadata TEXT',
-        );
-        // Move habit-specific data to metadata JSON
-        await customStatement('''
-          UPDATE marketplace_templates
-          SET metadata = json_object(
-            'friction', friction,
-            'energy', energy,
-            'impact', impact,
-            'mvaDuration', mva_duration
-          )
-          WHERE template_type = 'habit'
-          ''');
-        // Keep old columns for backward compatibility but mark as deprecated
+
+        if (hasLegacyColumns) {
+          await customStatement('''
+            UPDATE marketplace_templates
+            SET metadata = json_object(
+              'friction', friction,
+              'energy', energy,
+              'impact', impact,
+              'mvaDuration', mva_duration
+            )
+            WHERE template_type = 'habit' AND metadata IS NULL
+            ''');
+        }
       }
       if (from < 12) {
-        await m.addColumn(userProfiles, userProfiles.vocabularyLevel);
+        await _addColumnIfMissing(
+          migrator,
+          userProfiles,
+          userProfiles.vocabularyLevel,
+        );
         await customStatement('''
           UPDATE user_profiles
           SET vocabulary_level = CASE
-            WHEN cultivation_theme_enabled = 0 THEN 'practical'
-            ELSE 'daoStream'
+            WHEN cultivation_theme_enabled = 0 THEN 'mortal'
+            ELSE 'earth'
           END
-          WHERE vocabulary_level IS NULL OR vocabulary_level = ''
           ''');
       }
       if (from < 14) {
-        await m.addColumn(habits, habits.stackedToHabitId);
-        await m.addColumn(userProfiles, userProfiles.circadianEnabled);
-        await customStatement("UPDATE user_profiles SET circadian_enabled = 1, theme_mode = 'System' WHERE theme_mode = 'Circadian'");
-        await customStatement('UPDATE user_profiles SET circadian_enabled = 0 WHERE circadian_enabled IS NULL');
+        await _addColumnIfMissing(migrator, habits, habits.stackedToHabitId);
+        await _addColumnIfMissing(
+          migrator,
+          userProfiles,
+          userProfiles.circadianEnabled,
+        );
+        await customStatement(
+          "UPDATE user_profiles SET circadian_enabled = 1, "
+          "theme_mode = 'System' WHERE theme_mode = 'Circadian'",
+        );
       }
       if (from < 15) {
-        await m.addColumn(decisionEntries, decisionEntries.confidenceScore);
+        await _addColumnIfMissing(
+          migrator,
+          decisionEntries,
+          decisionEntries.confidenceScore,
+        );
       }
+
+      await _ensureIndexes();
     },
   );
 }

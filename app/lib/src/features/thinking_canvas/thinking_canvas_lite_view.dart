@@ -14,6 +14,7 @@ import 'widgets/method_picker_bottom_sheet.dart';
 import 'widgets/specialized_workspace_widgets.dart';
 import 'widgets/thinking_canvas_onboarding_dialog.dart';
 import 'thinking_canvas_state.dart';
+import 'workspace_registry.dart';
 import 'widgets/method_visuals.dart';
 import 'widgets/session_history_sheet.dart';
 
@@ -25,12 +26,13 @@ class ThinkingCanvasLiteView extends ConsumerStatefulWidget {
       _ThinkingCanvasLiteViewState();
 }
 
-class _ThinkingCanvasLiteViewState
-    extends ConsumerState<ThinkingCanvasLiteView>
+class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
     with TickerProviderStateMixin {
-  final TextEditingController _freewritingController =
-      TextEditingController();
+  final TextEditingController _freewritingController = TextEditingController();
   bool _draftBannerExpanded = false;
+  static final Map<String, ThinkingMethod> _methodsByKey = {
+    for (final method in ThinkingMethod.allMethods) method.key: method,
+  };
 
   late AnimationController _saveIndicatorController;
   late Animation<double> _saveIndicatorOpacity;
@@ -43,10 +45,7 @@ class _ThinkingCanvasLiteViewState
       duration: const Duration(milliseconds: 400),
     );
     _saveIndicatorOpacity = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _saveIndicatorController,
-        curve: Curves.easeOut,
-      ),
+      CurvedAnimation(parent: _saveIndicatorController, curve: Curves.easeOut),
     );
 
     // Show onboarding on first visit
@@ -121,7 +120,9 @@ class _ThinkingCanvasLiteViewState
             hasActiveMethod
                 ? _getMethodDisplayName(canvasState.selectedMethod!)
                 : DaojiText.resolve(
-                    DaojiTextKey.thinkingCanvasTitle, vocabularyLevel),
+                    DaojiTextKey.thinkingCanvasTitle,
+                    vocabularyLevel,
+                  ),
           ),
           actions: [
             if (hasActiveMethod && canvasState.hasContent)
@@ -159,7 +160,12 @@ class _ThinkingCanvasLiteViewState
           ],
         ),
         body: canvasState.selectedMethod == null
-            ? _buildMethodSelection(context, theme, vocabularyLevel, canvasState)
+            ? _buildMethodSelection(
+                context,
+                theme,
+                vocabularyLevel,
+                canvasState,
+              )
             : _buildActiveCanvas(context, theme, canvasState, vocabularyLevel),
       ),
     );
@@ -172,23 +178,18 @@ class _ThinkingCanvasLiteViewState
     return _findMethod(key)?.name ?? key;
   }
 
-  ThinkingMethod? _findMethod(String key) {
-    try {
-      return ThinkingMethod.allMethods.firstWhere((m) => m.key == key);
-    } catch (_) {
-      return null;
-    }
-  }
+  ThinkingMethod? _findMethod(String key) => _methodsByKey[key];
 
   Color _getMethodColor(String methodKey) {
-    return ThinkingMethodVisuals.colorFor(methodKey, Theme.of(context).colorScheme);
+    return ThinkingMethodVisuals.colorFor(
+      methodKey,
+      Theme.of(context).colorScheme,
+    );
   }
-
 
   IconData _getMethodIcon(String methodKey) {
     return ThinkingMethodVisuals.iconFor(methodKey);
   }
-
 
   // ============================================
   // SAVE / PERSIST LOGIC
@@ -256,31 +257,33 @@ class _ThinkingCanvasLiteViewState
       onSessionSelected: (s) async {
         if (!mounted) return;
         final level = ref.read(daojiVocabularyLevelValueProvider);
-        unawaited(showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (dialogContext) => Center(
-            child: Card(
-              margin: const EdgeInsets.all(40),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 16),
-                    Text(
-                      DaojiText.resolve(
-                        DaojiTextKey.thinkingCanvasLoadingSession,
-                        level,
+        unawaited(
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (dialogContext) => Center(
+              child: Card(
+                margin: const EdgeInsets.all(40),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 16),
+                      Text(
+                        DaojiText.resolve(
+                          DaojiTextKey.thinkingCanvasLoadingSession,
+                          level,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ));
+        );
         await Future.delayed(const Duration(milliseconds: 100));
         if (!mounted) return;
         setState(() {
@@ -297,7 +300,7 @@ class _ThinkingCanvasLiteViewState
     );
   }
 
-    // ============================================
+  // ============================================
   // MOOD-BASED METHOD SELECTION
   // ============================================
   Widget _buildMethodSelection(
@@ -309,7 +312,12 @@ class _ThinkingCanvasLiteViewState
     final selectedMood = state.selectedMood;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.sm, AppSpacing.xl, AppSpacing.xxxl),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.xl,
+        AppSpacing.sm,
+        AppSpacing.xl,
+        AppSpacing.xxxl,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -328,11 +336,17 @@ class _ThinkingCanvasLiteViewState
           if (state.recentMethods.isNotEmpty) ...[
             Row(
               children: [
-                Icon(Icons.schedule_rounded, size: 14,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+                Icon(
+                  Icons.schedule_rounded,
+                  size: 14,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
                 const SizedBox(width: 6),
                 Text(
-                  DaojiText.resolve(DaojiTextKey.thinkingCanvasRecentlyUsed, level),
+                  DaojiText.resolve(
+                    DaojiTextKey.thinkingCanvasRecentlyUsed,
+                    level,
+                  ),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
@@ -346,10 +360,15 @@ class _ThinkingCanvasLiteViewState
               runSpacing: 8,
               children: state.recentMethods.map((key) {
                 return ActionChip(
-                  avatar: Icon(_getMethodIcon(key), size: 14,
-                      color: _getMethodColor(key)),
-                  label: Text(_getMethodDisplayName(key),
-                      style: const TextStyle(fontSize: 11)),
+                  avatar: Icon(
+                    _getMethodIcon(key),
+                    size: 14,
+                    color: _getMethodColor(key),
+                  ),
+                  label: Text(
+                    _getMethodDisplayName(key),
+                    style: const TextStyle(fontSize: 11),
+                  ),
                   onPressed: () {
                     HapticFeedback.selectionClick();
                     ref.read(thinkingCanvasProvider.notifier).setMethod(key);
@@ -364,8 +383,7 @@ class _ThinkingCanvasLiteViewState
               context: context,
               isScrollControlled: true,
               shape: const RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               builder: (context) => MethodPickerBottomSheet(
                 currentMethodKey: state.selectedMethod ?? '',
@@ -373,18 +391,22 @@ class _ThinkingCanvasLiteViewState
                 onToggleFavorite: (key) => ref
                     .read(thinkingCanvasProvider.notifier)
                     .toggleFavorite(key),
-                onSelected: (method) => ref
-                    .read(thinkingCanvasProvider.notifier)
-                    .setMethod(method),
+                onSelected: (method) =>
+                    ref.read(thinkingCanvasProvider.notifier).setMethod(method),
               ),
             ),
             icon: const Icon(Icons.apps_rounded, size: 18),
-            label: Text(DaojiText.resolve(
-                DaojiTextKey.thinkingCanvasOpenMethodCatalog, level)),
+            label: Text(
+              DaojiText.resolve(
+                DaojiTextKey.thinkingCanvasOpenMethodCatalog,
+                level,
+              ),
+            ),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14)),
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -393,7 +415,10 @@ class _ThinkingCanvasLiteViewState
             onPressed: _showOnboardingDialog,
             icon: const Icon(Icons.help_outline_rounded, size: 16),
             label: Text(
-              DaojiText.resolve(DaojiTextKey.thinkingCanvasShowGuideAgain, level),
+              DaojiText.resolve(
+                DaojiTextKey.thinkingCanvasShowGuideAgain,
+                level,
+              ),
               style: const TextStyle(fontSize: 12),
             ),
           ),
@@ -402,8 +427,11 @@ class _ThinkingCanvasLiteViewState
     );
   }
 
-  Widget _buildMoodPrompt(ThemeData theme, DaojiVocabularyLevel level,
-      String? selectedMood) {
+  Widget _buildMoodPrompt(
+    ThemeData theme,
+    DaojiVocabularyLevel level,
+    String? selectedMood,
+  ) {
     final moods = [
       {
         'key': 'overwhelmed',
@@ -418,8 +446,11 @@ class _ThinkingCanvasLiteViewState
         'subtitle': 'Eksplorasi ide',
         'color': Colors.orange,
         'methods': [
-          'Brainstorming', 'MindMapping', 'SCAMPER',
-          'LotusBlossom', 'MorphologicalAnalysis'
+          'Brainstorming',
+          'MindMapping',
+          'SCAMPER',
+          'LotusBlossom',
+          'MorphologicalAnalysis',
         ],
       },
       {
@@ -435,7 +466,10 @@ class _ThinkingCanvasLiteViewState
         'subtitle': 'Pilihan terbaik',
         'color': Colors.purple,
         'methods': [
-          'SixThinkingHats', 'DisneyStrategy', 'Scoring', 'Validation'
+          'SixThinkingHats',
+          'DisneyStrategy',
+          'Scoring',
+          'Validation',
         ],
       },
     ];
@@ -443,15 +477,23 @@ class _ThinkingCanvasLiteViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(DaojiText.resolve(DaojiTextKey.thinkingCanvasMoodPrompt, level),
-            style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold)),
+        Text(
+          DaojiText.resolve(DaojiTextKey.thinkingCanvasMoodPrompt, level),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 4),
-        Text(DaojiText.resolve(DaojiTextKey.thinkingCanvasMoodPromptSubtitle, level),
-            style: TextStyle(
-              fontSize: 12,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-            )),
+        Text(
+          DaojiText.resolve(
+            DaojiTextKey.thinkingCanvasMoodPromptSubtitle,
+            level,
+          ),
+          style: TextStyle(
+            fontSize: 12,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+          ),
+        ),
         const SizedBox(height: 12),
         Row(
           children: moods.map((mood) {
@@ -480,41 +522,49 @@ class _ThinkingCanvasLiteViewState
                     child: Container(
                       height: 68,
                       padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 4),
+                        vertical: 8,
+                        horizontal: 4,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isSelected
                               ? moodColor
-                              : theme.colorScheme.onSurface
-                                  .withValues(alpha: 0.08),
+                              : theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.08,
+                                ),
                           width: isSelected ? 2 : 1,
                         ),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(mood['label'] as String,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: isSelected
-                                    ? moodColor
-                                    : theme.colorScheme.onSurface,
-                              ),
-                              textAlign: TextAlign.center),
+                          Text(
+                            mood['label'] as String,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: isSelected
+                                  ? moodColor
+                                  : theme.colorScheme.onSurface,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                           const SizedBox(height: 2),
-                          Text(mood['subtitle'] as String,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isSelected
-                                    ? moodColor.withValues(alpha: 0.8)
-                                    : theme.colorScheme.onSurface
-                                        .withValues(alpha: 0.4),
-                              ),
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis),
+                          Text(
+                            mood['subtitle'] as String,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isSelected
+                                  ? moodColor.withValues(alpha: 0.8)
+                                  : theme.colorScheme.onSurface.withValues(
+                                      alpha: 0.4,
+                                    ),
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ],
                       ),
                     ),
@@ -533,10 +583,11 @@ class _ThinkingCanvasLiteViewState
   }
 
   Widget _buildMoodRecommendations(
-      ThemeData theme,
-      List<Map<String, dynamic>> moods,
-      String selectedMood,
-      DaojiVocabularyLevel level) {
+    ThemeData theme,
+    List<Map<String, dynamic>> moods,
+    String selectedMood,
+    DaojiVocabularyLevel level,
+  ) {
     final moodIndex = moods.indexWhere((m) => m['key'] == selectedMood);
     if (moodIndex < 0) return const SizedBox.shrink();
     final mood = moods[moodIndex];
@@ -546,26 +597,44 @@ class _ThinkingCanvasLiteViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          Container(
-              width: 3, height: 14,
+        Row(
+          children: [
+            Container(
+              width: 3,
+              height: 14,
               decoration: BoxDecoration(
-                  color: moodColor, borderRadius: BorderRadius.circular(2))),
-          const SizedBox(width: 6),
-          Text(DaojiText.resolve(DaojiTextKey.thinkingCanvasRecommendations, level),
+                color: moodColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              DaojiText.resolve(
+                DaojiTextKey.thinkingCanvasRecommendations,
+                level,
+              ),
               style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold, color: moodColor)),
-        ]),
+                fontWeight: FontWeight.bold,
+                color: moodColor,
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 6,
           runSpacing: 6,
           children: methods.map((methodKey) {
             return ActionChip(
-              avatar: Icon(_getMethodIcon(methodKey), size: 14,
-                  color: moodColor),
-              label: Text(_getMethodDisplayName(methodKey),
-                  style: const TextStyle(fontSize: 11)),
+              avatar: Icon(
+                _getMethodIcon(methodKey),
+                size: 14,
+                color: moodColor,
+              ),
+              label: Text(
+                _getMethodDisplayName(methodKey),
+                style: const TextStyle(fontSize: 11),
+              ),
               side: BorderSide(color: moodColor.withValues(alpha: 0.3)),
               onPressed: () {
                 HapticFeedback.selectionClick();
@@ -579,17 +648,35 @@ class _ThinkingCanvasLiteViewState
   }
 
   Widget _buildQuickMethodCards(
-      ThemeData theme, DaojiVocabularyLevel level, ThinkingCanvasState state) {
+    ThemeData theme,
+    DaojiVocabularyLevel level,
+    ThinkingCanvasState state,
+  ) {
     final quickMethods = [
-      {'key': 'MindDump', 'name': 'Mind Dump', 'emoji': '🧠',
-       'desc': 'Tuangkan beban pikiran tanpa hambatan.',
-       'icon': Icons.psychology_rounded, 'color': Colors.teal},
-      {'key': 'Freewriting', 'name': 'Freewriting', 'emoji': '✍️',
-       'desc': 'Tulis cepat tanpa jeda dengan timer fokus.',
-       'icon': Icons.edit_note_rounded, 'color': Colors.deepPurple},
-      {'key': 'MindMapping', 'name': 'Mind Map', 'emoji': '🗺️',
-       'desc': 'Petakan hubungan ide secara visual.',
-       'icon': Icons.account_tree_rounded, 'color': Colors.indigo},
+      {
+        'key': 'MindDump',
+        'name': 'Mind Dump',
+        'emoji': '🧠',
+        'desc': 'Tuangkan beban pikiran tanpa hambatan.',
+        'icon': Icons.psychology_rounded,
+        'color': Colors.teal,
+      },
+      {
+        'key': 'Freewriting',
+        'name': 'Freewriting',
+        'emoji': '✍️',
+        'desc': 'Tulis cepat tanpa jeda dengan timer fokus.',
+        'icon': Icons.edit_note_rounded,
+        'color': Colors.deepPurple,
+      },
+      {
+        'key': 'MindMapping',
+        'name': 'Mind Map',
+        'emoji': '🗺️',
+        'desc': 'Petakan hubungan ide secara visual.',
+        'icon': Icons.account_tree_rounded,
+        'color': Colors.indigo,
+      },
     ];
 
     return Row(
@@ -606,63 +693,89 @@ class _ThinkingCanvasLiteViewState
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
                   side: BorderSide(
-                      color: mColor.withValues(alpha: 0.2), width: 1.5),
+                    color: mColor.withValues(alpha: 0.2),
+                    width: 1.5,
+                  ),
                 ),
                 color: mColor.withValues(alpha: 0.04),
-                child: Stack(children: [
-                  InkWell(
-                    onTap: () {
-                      HapticFeedback.selectionClick();
-                      ref.read(thinkingCanvasProvider.notifier)
-                          .setMethod(m['key'] as String);
-                    },
-                    borderRadius: BorderRadius.circular(18),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: mColor.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(10),
+                child: Stack(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        ref
+                            .read(thinkingCanvasProvider.notifier)
+                            .setMethod(m['key'] as String);
+                      },
+                      borderRadius: BorderRadius.circular(18),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: mColor.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(
+                                m['icon'] as IconData,
+                                color: mColor,
+                                size: 20,
+                              ),
                             ),
-                            child: Icon(m['icon'] as IconData,
-                                color: mColor, size: 20),
-                          ),
-                          const Spacer(),
-                          Text('${m['emoji']} ${m['name']}',
+                            const Spacer(),
+                            Text(
+                              '${m['emoji']} ${m['name']}',
                               style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 12)),
-                          const SizedBox(height: 4),
-                          Text(m['desc'] as String,
-                              style: TextStyle(fontSize: 12,
-                                  color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.6)),
-                              maxLines: 3, overflow: TextOverflow.ellipsis),
-                        ],
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              m['desc'] as String,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.6,
+                                ),
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    top: 2, right: 2,
-                    child: IconButton(
-                      icon: Icon(
-                        isFavorite ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        size: 14,
-                        color: isFavorite ? Colors.red
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                    Positioned(
+                      top: 2,
+                      right: 2,
+                      child: IconButton(
+                        icon: Icon(
+                          isFavorite
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                          size: 14,
+                          color: isFavorite
+                              ? Colors.red
+                              : theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.2,
+                                ),
+                        ),
+                        onPressed: () => ref
+                            .read(thinkingCanvasProvider.notifier)
+                            .toggleFavorite(m['key'] as String),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: 28,
+                          minHeight: 28,
+                        ),
                       ),
-                      onPressed: () => ref
-                          .read(thinkingCanvasProvider.notifier)
-                          .toggleFavorite(m['key'] as String),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
                     ),
-                  ),
-                ]),
+                  ],
+                ),
               ),
             ),
           ),
@@ -683,31 +796,44 @@ class _ThinkingCanvasLiteViewState
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
         side: BorderSide(
-            color: theme.colorScheme.secondary.withValues(alpha: 0.2)),
+          color: theme.colorScheme.secondary.withValues(alpha: 0.2),
+        ),
       ),
       child: ExpansionTile(
         initiallyExpanded: _draftBannerExpanded,
         onExpansionChanged: (val) => setState(() => _draftBannerExpanded = val),
-        leading: Icon(Icons.history_edu_rounded,
-            color: theme.colorScheme.secondary),
-        title: Text('Draf Sesi Sebelumnya',
-            style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold)),
-        subtitle: Text('Gunakan sebagai referensi atau salin isinya.',
-            style: TextStyle(fontSize: 12,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+        leading: Icon(
+          Icons.history_edu_rounded,
+          color: theme.colorScheme.secondary,
+        ),
+        title: Text(
+          'Draf Sesi Sebelumnya',
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Text(
+          'Gunakan sebagai referensi atau salin isinya.',
+          style: TextStyle(
+            fontSize: 12,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+          ),
+        ),
         trailing: IconButton(
           icon: const Icon(Icons.copy_rounded, size: 18),
           tooltip: 'Salin ke Clipboard',
           onPressed: () {
             HapticFeedback.lightImpact();
             Clipboard.setData(ClipboardData(text: content));
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: const Text('Disalin ke clipboard!'),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-            ));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Disalin ke clipboard!'),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            );
           },
         ),
         children: [
@@ -717,15 +843,19 @@ class _ThinkingCanvasLiteViewState
               width: double.infinity,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest
-                    .withValues(alpha: 0.3),
+                color: theme.colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.3,
+                ),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: SelectableText(content,
-                  style: TextStyle(
-                    fontFamily: 'monospace', fontSize: 12,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  )),
+              child: SelectableText(
+                content,
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
+              ),
             ),
           ),
         ],
@@ -737,10 +867,11 @@ class _ThinkingCanvasLiteViewState
   // ACTIVE CANVAS (with guide + export)
   // ============================================
   Widget _buildActiveCanvas(
-      BuildContext context,
-      ThemeData theme,
-      ThinkingCanvasState state,
-      DaojiVocabularyLevel level) {
+    BuildContext context,
+    ThemeData theme,
+    ThinkingCanvasState state,
+    DaojiVocabularyLevel level,
+  ) {
     final hasDraft = state.currentDraftContent.trim().isNotEmpty;
     final methodColor = _getMethodColor(state.selectedMethod!);
 
@@ -757,14 +888,21 @@ class _ThinkingCanvasLiteViewState
           ),
           child: Row(
             children: [
-              Icon(_getMethodIcon(state.selectedMethod!), size: 16,
-                  color: methodColor),
+              Icon(
+                _getMethodIcon(state.selectedMethod!),
+                size: 16,
+                color: methodColor,
+              ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(_getMethodDisplayName(state.selectedMethod!),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 12,
-                        color: methodColor)),
+                child: Text(
+                  _getMethodDisplayName(state.selectedMethod!),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    color: methodColor,
+                  ),
+                ),
               ),
               // Export button
               WorkspaceExportButton(
@@ -774,11 +912,15 @@ class _ThinkingCanvasLiteViewState
               // Favorite toggle
               IconButton(
                 icon: Icon(
-                  ref.read(thinkingCanvasProvider.notifier)
+                  ref
+                          .read(thinkingCanvasProvider.notifier)
                           .isFavorite(state.selectedMethod!)
-                      ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
                   size: 16,
-                  color: ref.read(thinkingCanvasProvider.notifier)
+                  color:
+                      ref
+                          .read(thinkingCanvasProvider.notifier)
                           .isFavorite(state.selectedMethod!)
                       ? Colors.red
                       : theme.colorScheme.onSurface.withValues(alpha: 0.3),
@@ -791,9 +933,12 @@ class _ThinkingCanvasLiteViewState
               ),
               if (state.isSaving)
                 SizedBox(
-                  width: 12, height: 12,
+                  width: 12,
+                  height: 12,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: methodColor),
+                    strokeWidth: 2,
+                    color: methodColor,
+                  ),
                 ),
             ],
           ),
@@ -804,7 +949,12 @@ class _ThinkingCanvasLiteViewState
         // Workspace content
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, 100),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              0,
+              AppSpacing.lg,
+              100,
+            ),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),
               child: KeyedSubtree(
@@ -816,7 +966,12 @@ class _ThinkingCanvasLiteViewState
         ),
         // Bottom action bar
         Container(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.lg),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.sm,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -832,13 +987,19 @@ class _ThinkingCanvasLiteViewState
             child: FilledButton.icon(
               onPressed: _confirmSaveAndClearCanvas,
               icon: const Icon(Icons.check_rounded, size: 18),
-              label: Text(DaojiText.resolve(DaojiTextKey.thinkingCanvasSaveAndFinish, level)),
+              label: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.thinkingCanvasSaveAndFinish,
+                  level,
+                ),
+              ),
               style: FilledButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: theme.colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 minimumSize: const Size(double.infinity, 48),
               ),
             ),
@@ -860,133 +1021,23 @@ class _ThinkingCanvasLiteViewState
       ref.read(thinkingCanvasProvider).structuredOutput;
 
   Widget _getWorkspaceForMethod(String method) {
-    final onSO = _onStructuredOutput;
-    final initSO = _restoredStructuredOutput;
-    switch (method) {
-      case 'Freewriting':
-        return FreewritingWorkspace(controller: _freewritingController);
-      case 'MindMapping':
-        return _MindMapInline(onChanged: _onWorkspaceChanged);
-      case 'LotusBlossom':
-        return LotusBlossomWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'MorphologicalAnalysis':
-        return MorphologicalWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'MindDump':
-      case 'MindDumpCluster':
-        return MindDumpWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'AffinityMapping':
-        return AffinityMappingWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case '5Whys':
-        return FiveWhysWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'FirstPrinciples':
-        return FirstPrinciplesWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'DoubleDiamond':
-        return DoubleDiamondWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'Validation':
-      case 'Scoring':
-        return ValidationWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'SixThinkingHats':
-        return SixThinkingHatsWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'DisneyStrategy':
-        return DisneyStrategyWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'SCAMPER':
-        return ScamperWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'SWOT':
-        return SwotMatrixWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'Starbursting':
-        return StarburstingWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'Brainstorming':
-        return RapidBrainstormWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'ReverseBrainstorming':
-        return ReverseBrainstormWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'WorstPossibleIdea':
-        return WorstPossibleIdeaWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'QuestionStorming':
-        return QuestionStormWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'RandomWord':
-        return RandomWordWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      case 'RoleStorming':
-        return RoleStormingWorkspace(
-          onChanged: _onWorkspaceChanged,
-          onStructuredOutput: onSO,
-          initialStructuredOutput: initSO,
-        );
-      default:
-        return _GenericThinkingWorkspace(
-            title: method, onChanged: _onWorkspaceChanged);
+    if (method == 'Freewriting') {
+      return FreewritingWorkspace(controller: _freewritingController);
     }
+    if (method == 'MindMapping') {
+      return _MindMapInline(onChanged: _onWorkspaceChanged);
+    }
+
+    return ThinkingWorkspaceRegistry.build(
+          method,
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: _onStructuredOutput,
+          initialStructuredOutput: _restoredStructuredOutput,
+        ) ??
+        _GenericThinkingWorkspace(
+          title: method,
+          onChanged: _onWorkspaceChanged,
+        );
   }
 }
 
@@ -1009,7 +1060,8 @@ class _MindMapInlineState extends ConsumerState<_MindMapInline> {
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.08)),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+        ),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
@@ -1024,19 +1076,23 @@ class _MindMapInlineState extends ConsumerState<_MindMapInline> {
             extra: initial,
           );
           if (result != null && result.isNotEmpty) {
-            final serialized =
-                result.map((n) => '${n.text} (${n.id})').join('\n');
+            final serialized = result
+                .map((n) => '${n.text} (${n.id})')
+                .join('\n');
             widget.onChanged(serialized);
-            ref.read(thinkingCanvasProvider.notifier).updateMindMapNodes(
-                  result.map((n) => n.toJson()).toList(),
-                );
+            ref
+                .read(thinkingCanvasProvider.notifier)
+                .updateMindMapNodes(result.map((n) => n.toJson()).toList());
           }
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.account_tree_rounded,
-                size: 40, color: theme.colorScheme.primary),
+            Icon(
+              Icons.account_tree_rounded,
+              size: 40,
+              color: theme.colorScheme.primary,
+            ),
             const SizedBox(height: 8),
             Text(
               'Ketuk untuk buka editor Mind Map',
@@ -1064,7 +1120,10 @@ class _MindMapInlineState extends ConsumerState<_MindMapInline> {
 class _GenericThinkingWorkspace extends ConsumerWidget {
   final String title;
   final ValueChanged<String> onChanged;
-  const _GenericThinkingWorkspace({required this.title, required this.onChanged});
+  const _GenericThinkingWorkspace({
+    required this.title,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1077,14 +1136,19 @@ class _GenericThinkingWorkspace extends ConsumerWidget {
         onChanged: onChanged,
         decoration: InputDecoration(
           labelText: DaojiText.resolve(
-              DaojiTextKey.thinkingCanvasWorkspaceLabel, vocabularyLevel,
-              params: {'title': title}),
+            DaojiTextKey.thinkingCanvasWorkspaceLabel,
+            vocabularyLevel,
+            params: {'title': title},
+          ),
           hintText: DaojiText.resolve(
-              DaojiTextKey.thinkingCanvasWorkspaceHint, vocabularyLevel),
+            DaojiTextKey.thinkingCanvasWorkspaceHint,
+            vocabularyLevel,
+          ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
-          fillColor: theme.colorScheme.surfaceContainerHighest
-              .withValues(alpha: 0.3),
+          fillColor: theme.colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.3,
+          ),
         ),
       ),
     );

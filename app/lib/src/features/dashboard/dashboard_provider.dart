@@ -19,9 +19,11 @@ class DashboardData {
   final List<HabitWithLog> habitsToday;
   final bool allDone;
   final bool hasOverdueDecisions;
+
   /// True when the user's latest WHO-5 score is below the 50% well-being threshold.
   /// Triggers Recovery Mode protections across the UI (habit blocking, season lock).
   final bool isLowWellBeing;
+
   /// Dynamically adjusted canopy load capacity based on WHO-5 score.
   /// Uses CanopyLoadService.calculateDynamicCapacity formula.
   final int dynamicCanopyCapacity;
@@ -152,12 +154,13 @@ final devTimePlayProvider = StateNotifierProvider<DevTimePlayNotifier, bool>((
   return notifier;
 });
 
-
-
 class WellBeingStatus {
   final bool isLowWellBeing;
   final int dynamicCanopyCapacity;
-  WellBeingStatus({required this.isLowWellBeing, required this.dynamicCanopyCapacity});
+  WellBeingStatus({
+    required this.isLowWellBeing,
+    required this.dynamicCanopyCapacity,
+  });
 }
 
 final cumulativeDaysProvider = FutureProvider<int>((ref) async {
@@ -183,12 +186,24 @@ final currentSeasonProvider = FutureProvider<String>((ref) async {
 
   final now = DateTime.now();
   DateTime lastActivity = profile.updatedAt;
-  final latestLog = await (db.select(db.habitLogs)
-        ..orderBy([
-          (tbl) => OrderingTerm(expression: tbl.date, mode: OrderingMode.desc),
-        ])
-        ..limit(1))
-      .getSingleOrNull();
+  final userHabits =
+      await (db.select(db.habits)..where(
+            (tbl) => tbl.userId.equals(profile.userId) & tbl.deletedAt.isNull(),
+          ))
+          .get();
+  final habitIds = userHabits.map((habit) => habit.habitId).toList();
+  final latestLog = habitIds.isEmpty
+      ? null
+      : await (db.select(db.habitLogs)
+              ..where(
+                (tbl) => tbl.habitId.isIn(habitIds) & tbl.deletedAt.isNull(),
+              )
+              ..orderBy([
+                (tbl) =>
+                    OrderingTerm(expression: tbl.date, mode: OrderingMode.desc),
+              ])
+              ..limit(1))
+            .getSingleOrNull();
   if (latestLog != null) {
     lastActivity = latestLog.date;
   }
@@ -206,28 +221,27 @@ final habitsTodayProvider = FutureProvider<List<HabitWithLog>>((ref) async {
   final now = DateTime.now();
   final weekday = now.weekday;
 
-  final allActiveHabits = await (db.select(db.habits)
-        ..where(
-          (tbl) =>
-              tbl.userId.equals(profile.userId) &
-              tbl.status.equals(HabitStatus.active) &
-              tbl.deletedAt.isNull(),
-        ))
-      .get();
+  final allActiveHabits =
+      await (db.select(db.habits)..where(
+            (tbl) =>
+                tbl.userId.equals(profile.userId) &
+                tbl.status.equals(HabitStatus.active) &
+                tbl.deletedAt.isNull(),
+          ))
+          .get();
 
   final todayStart = DateTime(now.year, now.month, now.day);
   final userHabitIds = allActiveHabits.map((h) => h.habitId).toList();
 
   final todayLogs = userHabitIds.isEmpty
       ? <HabitLog>[]
-      : await (db.select(db.habitLogs)
-            ..where(
+      : await (db.select(db.habitLogs)..where(
               (tbl) =>
                   tbl.date.equals(todayStart) &
                   tbl.habitId.isIn(userHabitIds) &
                   tbl.deletedAt.isNull(),
             ))
-          .get();
+            .get();
 
   final List<HabitWithLog> habitsToday = [];
   for (final habit in allActiveHabits) {
@@ -245,7 +259,9 @@ final habitsTodayProvider = FutureProvider<List<HabitWithLog>>((ref) async {
     }
 
     if (isScheduled) {
-      final log = todayLogs.where((l) => l.habitId == habit.habitId).firstOrNull;
+      final log = todayLogs
+          .where((l) => l.habitId == habit.habitId)
+          .firstOrNull;
       habitsToday.add(HabitWithLog(habit: habit, log: log));
     }
   }
@@ -284,15 +300,15 @@ final overdueDecisionsProvider = FutureProvider<bool>((ref) async {
   final profile = await ref.watch(userProfileProvider.future);
   if (profile == null) return false;
 
-  final overdueDecisions = await (db.select(db.decisionEntries)
-        ..where(
-          (tbl) =>
-              tbl.userId.equals(profile.userId) &
-              tbl.deletedAt.isNull() &
-              tbl.isReviewed.equals(false) &
-              tbl.reviewDate.isSmallerThanValue(DateTime.now()),
-        ))
-      .get();
+  final overdueDecisions =
+      await (db.select(db.decisionEntries)..where(
+            (tbl) =>
+                tbl.userId.equals(profile.userId) &
+                tbl.deletedAt.isNull() &
+                tbl.isReviewed.equals(false) &
+                tbl.reviewDate.isSmallerThanValue(DateTime.now()),
+          ))
+          .get();
   return overdueDecisions.isNotEmpty;
 });
 
@@ -304,22 +320,37 @@ final wellBeingStatusProvider = FutureProvider<WellBeingStatus>((ref) async {
   }
 
   int latestWho5Percentage = 100;
-  final latestPulses = await (db.select(db.weeklyPulses)
-        ..where((tbl) => tbl.userId.equals(profile.userId) & tbl.domainTag.equals('WHO-5'))
-        ..orderBy([(tbl) => OrderingTerm(expression: tbl.weekStartDate, mode: OrderingMode.desc)])
-        ..limit(1))
-      .get();
+  final latestPulses =
+      await (db.select(db.weeklyPulses)
+            ..where(
+              (tbl) =>
+                  tbl.userId.equals(profile.userId) &
+                  tbl.domainTag.equals('WHO-5') &
+                  tbl.deletedAt.isNull(),
+            )
+            ..orderBy([
+              (tbl) => OrderingTerm(
+                expression: tbl.weekStartDate,
+                mode: OrderingMode.desc,
+              ),
+            ])
+            ..limit(1))
+          .get();
 
   if (latestPulses.isNotEmpty) {
     try {
-      final meta = jsonDecode(latestPulses.first.reflectionText ?? '{}') as Map<String, dynamic>;
+      final meta =
+          jsonDecode(latestPulses.first.reflectionText ?? '{}')
+              as Map<String, dynamic>;
       latestWho5Percentage = (meta['percentage'] as num?)?.toInt() ?? 100;
     } catch (e, stackTrace) {
-      ref.read(errorLoggerProvider).logError(
-        e,
-        stackTrace,
-        context: 'DashboardProvider.parseWho5Metadata',
-      );
+      ref
+          .read(errorLoggerProvider)
+          .logError(
+            e,
+            stackTrace,
+            context: 'DashboardProvider.parseWho5Metadata',
+          );
     }
   }
 

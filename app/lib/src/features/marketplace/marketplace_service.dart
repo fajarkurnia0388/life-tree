@@ -375,35 +375,28 @@ class LocalMarketplaceService implements MarketplaceService {
 
   @override
   Future<void> rateTemplate(String templateId, int rating) async {
-    await _seedIfEmpty();
-    final selectQuery = _db.select(_db.marketplaceTemplates)
-      ..where((t) => t.templateId.equals(templateId));
-    final template = await selectQuery.getSingleOrNull();
-    if (template != null) {
-      final updateCompanion = MarketplaceTemplatesCompanion(
-        ratingsSum: Value(template.ratingsSum + rating),
-        ratingsCount: Value(template.ratingsCount + 1),
-      );
-      final updateQuery = _db.update(_db.marketplaceTemplates)
-        ..where((t) => t.templateId.equals(templateId));
-      await updateQuery.write(updateCompanion);
+    if (rating < 1 || rating > 5) {
+      throw ArgumentError.value(rating, 'rating', 'Must be between 1 and 5');
     }
+    await _seedIfEmpty();
+    await _db.customUpdate(
+      'UPDATE marketplace_templates '
+      'SET ratings_sum = ratings_sum + ?, ratings_count = ratings_count + 1 '
+      'WHERE template_id = ?',
+      variables: [Variable<int>(rating), Variable<String>(templateId)],
+      updates: {_db.marketplaceTemplates},
+    );
   }
 
   @override
   Future<void> incrementDownloads(String templateId) async {
     await _seedIfEmpty();
-    final selectQuery = _db.select(_db.marketplaceTemplates)
-      ..where((t) => t.templateId.equals(templateId));
-    final template = await selectQuery.getSingleOrNull();
-    if (template != null) {
-      final updateCompanion = MarketplaceTemplatesCompanion(
-        downloadsCount: Value(template.downloadsCount + 1),
-      );
-      final updateQuery = _db.update(_db.marketplaceTemplates)
-        ..where((t) => t.templateId.equals(templateId));
-      await updateQuery.write(updateCompanion);
-    }
+    await _db.customUpdate(
+      'UPDATE marketplace_templates '
+      'SET downloads_count = downloads_count + 1 WHERE template_id = ?',
+      variables: [Variable<String>(templateId)],
+      updates: {_db.marketplaceTemplates},
+    );
   }
 }
 

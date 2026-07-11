@@ -25,7 +25,9 @@ class SettingsBottomSheet extends ConsumerWidget {
     final profile = await ref.read(userProfileProvider.future);
     if (profile == null) return;
 
-    await ref.read(dashboardActionServiceProvider).toggleDeveloperMode(profile.userId, enabled);
+    await ref
+        .read(dashboardActionServiceProvider)
+        .toggleDeveloperMode(profile.userId, enabled);
     ref.invalidate(dashboardDataProvider);
   }
 
@@ -33,21 +35,24 @@ class SettingsBottomSheet extends ConsumerWidget {
     final profile = await ref.read(userProfileProvider.future);
     if (profile == null) return;
 
-    final exportData = await ref.read(dashboardActionServiceProvider).exportAllUserData(profile.userId);
+    final exportData = await ref
+        .read(dashboardActionServiceProvider)
+        .exportAllUserData(profile.userId);
     if (exportData.isEmpty) return;
 
     final jsonString = const JsonEncoder.withIndent('  ').convert(exportData);
 
+    File? exportFile;
     try {
       final tempDir = await getTemporaryDirectory();
-      final file = File(
+      exportFile = File(
         '${tempDir.path}/daoji_export_${DateTime.now().millisecondsSinceEpoch}.json',
       );
-      await file.writeAsString(jsonString);
+      await exportFile.writeAsString(jsonString, flush: true);
 
       await SharePlus.instance.share(
         ShareParams(
-          files: [XFile(file.path, mimeType: 'application/json')],
+          files: [XFile(exportFile.path, mimeType: 'application/json')],
           subject: 'Daoji Data Export',
         ),
       );
@@ -65,6 +70,10 @@ class SettingsBottomSheet extends ConsumerWidget {
             backgroundColor: Colors.red,
           ),
         );
+      }
+    } finally {
+      if (exportFile != null && await exportFile.exists()) {
+        await exportFile.delete();
       }
     }
   }
@@ -97,7 +106,10 @@ class SettingsBottomSheet extends ConsumerWidget {
             onPressed: () => Navigator.pop(context, true),
             style: AppButtonStyles.destructive(context),
             child: Text(
-              DaojiText.resolve(DaojiTextKey.settingsResetConfirmAction, vocabularyLevel),
+              DaojiText.resolve(
+                DaojiTextKey.settingsResetConfirmAction,
+                vocabularyLevel,
+              ),
             ),
           ),
         ],
@@ -128,7 +140,6 @@ class SettingsBottomSheet extends ConsumerWidget {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -197,7 +208,9 @@ class SettingsBottomSheet extends ConsumerWidget {
               onChanged: (newMode) async {
                 if (newMode == null) return;
                 if (profile == null) return;
-                await ref.read(dashboardActionServiceProvider).updateThemeMode(profile.userId, newMode);
+                await ref
+                    .read(dashboardActionServiceProvider)
+                    .updateThemeMode(profile.userId, newMode);
                 ref.invalidate(dashboardDataProvider);
                 ref.invalidate(appThemeModeProvider);
               },
@@ -212,7 +225,9 @@ class SettingsBottomSheet extends ConsumerWidget {
               value: circadianEnabled,
               onChanged: (enabled) async {
                 if (profile == null) return;
-                await ref.read(dashboardActionServiceProvider).toggleCircadianTheme(profile.userId, enabled);
+                await ref
+                    .read(dashboardActionServiceProvider)
+                    .toggleCircadianTheme(profile.userId, enabled);
                 ref.invalidate(dashboardDataProvider);
                 ref.invalidate(appThemeModeProvider);
               },
@@ -257,10 +272,7 @@ class SettingsBottomSheet extends ConsumerWidget {
               color: Colors.blueGrey,
             ),
             title: Text(
-              DaojiText.resolve(
-                DaojiTextKey.settingsDevMode,
-                vocabularyLevel,
-              ),
+              DaojiText.resolve(DaojiTextKey.settingsDevMode, vocabularyLevel),
             ),
             subtitle: Text(
               DaojiText.resolve(

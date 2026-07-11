@@ -23,7 +23,9 @@ class ActivityHeatmapService {
           ),
         ])..where(
           _db.habits.userId.equals(userId) &
+              _db.habits.deletedAt.isNull() &
               _db.habitLogs.status.equals('Done') &
+              _db.habitLogs.deletedAt.isNull() &
               _db.habitLogs.date.isBiggerOrEqualValue(startDate),
         );
 

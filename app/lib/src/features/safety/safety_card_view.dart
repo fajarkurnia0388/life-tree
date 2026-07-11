@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -12,24 +14,26 @@ class SafetyCardView extends ConsumerWidget {
   const SafetyCardView({super.key});
 
   Future<void> _logHotlineTap(WidgetRef ref, String serviceName) async {
-    final db = ref.read(dbProvider);
-    final now = DateTime.now();
+    try {
+      final db = ref.read(dbProvider);
+      final profiles = await db.select(db.userProfiles).get();
+      if (profiles.isEmpty) return;
 
-    // Get user id
-    final profiles = await db.select(db.userProfiles).get();
-    if (profiles.isEmpty) return;
-    final userId = profiles.first.userId;
-
-    // Log the interaction locally
-    await db.into(db.wellnessPromptLogs).insert(
-          WellnessPromptLogsCompanion.insert(
-            promptId: const Uuid().v4(),
-            userId: userId,
-            triggerType: WellnessPromptTrigger.safetyCard,
-            promptedAt: now,
-            userAction: const drift.Value('Tapped_Hotline_CTA'),
-          ),
-        );
+      await db
+          .into(db.wellnessPromptLogs)
+          .insert(
+            WellnessPromptLogsCompanion.insert(
+              promptId: const Uuid().v4(),
+              userId: profiles.first.userId,
+              triggerType: WellnessPromptTrigger.safetyCard,
+              promptedAt: DateTime.now(),
+              userAction: drift.Value('Tapped_Hotline_CTA:$serviceName'),
+            ),
+          );
+    } catch (error) {
+      // Telemetry must never block or crash an emergency support action.
+      debugPrint('Unable to log hotline action: $error');
+    }
   }
 
   @override
@@ -37,18 +41,14 @@ class SafetyCardView extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dukungan Kesehatan Diri'),
-      ),
+      appBar: AppBar(title: const Text('Dukungan Kesehatan Diri')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Safe space header
-            const Center(
-              child: Text('🛡️', style: TextStyle(fontSize: 60)),
-            ),
+            const Center(child: Text('🛡️', style: TextStyle(fontSize: 60))),
             const SizedBox(height: 16),
             Text(
               'Pusat Dukungan & Bantuan',
@@ -59,7 +59,10 @@ class SafetyCardView extends ConsumerWidget {
             Text(
               'Jika Anda merasa sangat kewalahan, berada dalam kondisi krisis emosional, atau membutuhkan pertolongan darurat, ketuk kontak di bawah ini untuk terhubung dengan layanan bantuan profesional.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+              style: TextStyle(
+                fontSize: 13,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
             ),
             const SizedBox(height: 32),
 
@@ -80,7 +83,7 @@ class SafetyCardView extends ConsumerWidget {
                       Color(0xFFC2B280),
                       CalmTheme.alertMutedRed,
                     ];
-              
+
               final index1 = DateTime.now().day % accentColors.length;
               final index2 = (index1 + 1) % accentColors.length;
               final index3 = (index1 + 2) % accentColors.length;
@@ -96,16 +99,20 @@ class SafetyCardView extends ConsumerWidget {
                     theme: theme,
                     title: 'Layanan Kesehatan Jiwa SEJIWA (Healing119)',
                     number: '119 (Ekstensi 8)',
-                    description: 'Layanan konseling psikologis darurat bebas biaya dari Pemerintah Indonesia. Terintegrasi dengan platform Healing119.id.',
+                    description:
+                        'Layanan konseling psikologis darurat bebas biaya dari Pemerintah Indonesia. Terintegrasi dengan platform Healing119.id.',
                     color: color1,
                     onTap: () async {
-                      await _logHotlineTap(ref, 'SEJIWA_Call');
+                      unawaited(_logHotlineTap(ref, 'SEJIWA_Call'));
                       final uri = Uri.parse('tel:119');
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(uri);
                       } else {
                         if (context.mounted) {
-                          _showCallMockDialog(context, 'Layanan SEJIWA (119 Ext 8)');
+                          _showCallMockDialog(
+                            context,
+                            'Layanan SEJIWA (119 Ext 8)',
+                          );
                         }
                       }
                     },
@@ -114,21 +121,29 @@ class SafetyCardView extends ConsumerWidget {
                         Expanded(
                           child: OutlinedButton.icon(
                             onPressed: () async {
-                              await _logHotlineTap(ref, 'SEJIWA_WhatsApp');
+                              unawaited(_logHotlineTap(ref, 'SEJIWA_WhatsApp'));
                               final url = Uri.parse(
                                 'https://api.whatsapp.com/send/?phone=6281380073120&text=halo%20kak%2C%20saya%20ingin%20bercerita%20mengenai...&type=phone_number&app_absent=0',
                               );
                               if (await canLaunchUrl(url)) {
-                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                                await launchUrl(
+                                  url,
+                                  mode: LaunchMode.externalApplication,
+                                );
                               }
                             },
                             icon: const Icon(Icons.chat_outlined, size: 16),
-                            label: const Text('Chat WhatsApp', style: TextStyle(fontSize: 11)),
+                            label: const Text(
+                              'Chat WhatsApp',
+                              style: TextStyle(fontSize: 11),
+                            ),
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(color: color1),
                               foregroundColor: color1,
                               minimumSize: const Size(0, 44),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
@@ -136,19 +151,29 @@ class SafetyCardView extends ConsumerWidget {
                         Expanded(
                           child: OutlinedButton.icon(
                             onPressed: () async {
-                              await _logHotlineTap(ref, 'SEJIWA_Website');
-                              final url = Uri.parse('https://www.healing119.id/');
+                              unawaited(_logHotlineTap(ref, 'SEJIWA_Website'));
+                              final url = Uri.parse(
+                                'https://www.healing119.id/',
+                              );
                               if (await canLaunchUrl(url)) {
-                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                                await launchUrl(
+                                  url,
+                                  mode: LaunchMode.externalApplication,
+                                );
                               }
                             },
                             icon: const Icon(Icons.language_rounded, size: 16),
-                            label: const Text('Buka Website', style: TextStyle(fontSize: 11)),
+                            label: const Text(
+                              'Buka Website',
+                              style: TextStyle(fontSize: 11),
+                            ),
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(color: color1),
                               foregroundColor: color1,
                               minimumSize: const Size(0, 44),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
@@ -162,16 +187,20 @@ class SafetyCardView extends ConsumerWidget {
                     theme: theme,
                     title: 'Pusat Krisis Kedaruratan PSC (Layanan Medis)',
                     number: '119',
-                    description: 'Nomor darurat nasional terpadu untuk ambulans dan layanan medis darurat.',
+                    description:
+                        'Nomor darurat nasional terpadu untuk ambulans dan layanan medis darurat.',
                     color: color2,
                     onTap: () async {
-                      await _logHotlineTap(ref, 'PSC 119');
+                      unawaited(_logHotlineTap(ref, 'PSC 119'));
                       final uri = Uri.parse('tel:119');
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(uri);
                       } else {
                         if (context.mounted) {
-                          _showCallMockDialog(context, 'Pusat Medis Darurat PSC (119)');
+                          _showCallMockDialog(
+                            context,
+                            'Pusat Medis Darurat PSC (119)',
+                          );
                         }
                       }
                     },
@@ -183,16 +212,20 @@ class SafetyCardView extends ConsumerWidget {
                     theme: theme,
                     title: 'LISA Helpline (Love Inside Suicide Awareness)',
                     number: '0811-3855-472',
-                    description: 'Layanan pencegahan tindakan melukai diri sendiri dan krisis bunuh diri 24 jam bebas stigma dari Love Inside Suicide Awareness.',
+                    description:
+                        'Layanan pencegahan tindakan melukai diri sendiri dan krisis bunuh diri 24 jam bebas stigma dari Love Inside Suicide Awareness.',
                     color: color3,
                     onTap: () async {
-                      await _logHotlineTap(ref, 'LISA_Call');
+                      unawaited(_logHotlineTap(ref, 'LISA_Call'));
                       final uri = Uri.parse('tel:08113855472');
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(uri);
                       } else {
                         if (context.mounted) {
-                          _showCallMockDialog(context, 'LISA Helpline (0811-3855-472)');
+                          _showCallMockDialog(
+                            context,
+                            'LISA Helpline (0811-3855-472)',
+                          );
                         }
                       }
                     },
@@ -201,21 +234,29 @@ class SafetyCardView extends ConsumerWidget {
                         Expanded(
                           child: OutlinedButton.icon(
                             onPressed: () async {
-                              await _logHotlineTap(ref, 'LISA_WhatsApp');
+                              unawaited(_logHotlineTap(ref, 'LISA_WhatsApp'));
                               final url = Uri.parse(
                                 'https://wa.me/628113855472?text=Halo%20LISA%20Helpline%2C%20saya%20membutuhkan%20teman%20bicara%20dan%20bantuan%20terkait%20kesehatan%20mental%20saya',
                               );
                               if (await canLaunchUrl(url)) {
-                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                                await launchUrl(
+                                  url,
+                                  mode: LaunchMode.externalApplication,
+                                );
                               }
                             },
                             icon: const Icon(Icons.chat_outlined, size: 16),
-                            label: const Text('Chat WhatsApp', style: TextStyle(fontSize: 11)),
+                            label: const Text(
+                              'Chat WhatsApp',
+                              style: TextStyle(fontSize: 11),
+                            ),
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(color: color3),
                               foregroundColor: color3,
                               minimumSize: const Size(0, 44),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
@@ -232,7 +273,10 @@ class SafetyCardView extends ConsumerWidget {
               color: theme.colorScheme.onSurface.withValues(alpha: 0.03),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.08), width: 1),
+                side: BorderSide(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                  width: 1,
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -241,18 +285,35 @@ class SafetyCardView extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.lock_outline_rounded, size: 16, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                        Icon(
+                          Icons.lock_outline_rounded,
+                          size: 16,
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'Data Tersimpan Lokal di Perangkat Anda',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.8,
+                            ),
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Daoji menyimpan semua data secara offline pada memori internal perangkat Anda — tidak ada yang diunggah ke internet atau dibagikan ke pihak ketiga. Enkripsi database (SQLCipher) direncanakan pada fase berikutnya.',
-                      style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -291,7 +352,10 @@ class SafetyCardView extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               description,
-              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
@@ -300,9 +364,13 @@ class SafetyCardView extends ConsumerWidget {
               label: Text('Hubungi $number'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: color,
-                foregroundColor: theme.colorScheme.brightness == Brightness.dark ? Colors.black : Colors.white,
+                foregroundColor: theme.colorScheme.brightness == Brightness.dark
+                    ? Colors.black
+                    : Colors.white,
                 minimumSize: const Size(88, 48), // WCAG touch target
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             if (additionalActions != null) ...[
@@ -322,9 +390,9 @@ class SafetyCardView extends ConsumerWidget {
         return AlertDialog(
           title: const Text('Menghubungi Layanan...'),
           content: Text(
-            'Aplikasi sedang membuka dialer telepon Anda untuk menghubungi:\n\n'
+            'Dialer tidak dapat dibuka otomatis. Silakan hubungi secara manual:\n\n'
             '$serviceName\n\n'
-            '(Interaksi ini telah dicatat di database lokal sebagai Tapped_Hotline_CTA).'
+            'Untuk Healing119, hubungi 119 lalu pilih ekstensi 8.',
           ),
           actions: [
             TextButton(

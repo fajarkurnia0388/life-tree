@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../../data/local_db/database.dart';
@@ -6,97 +7,41 @@ import 'cultivation_constants.dart';
 
 // Small wrapper that exposes a Map-like interface while allowing callers to
 // lookup values using either `CultivationPath` or the legacy `CultivationPalace`.
-class _DualPalaceMap implements Map<Object, double> {
-  final Map<CultivationPath, double> _inner;
-  _DualPalaceMap(this._inner);
+class _DualPalaceMap extends MapBase<Object, double> {
+  _DualPalaceMap(Map<CultivationPath, double> inner)
+    : _inner = Map<CultivationPath, double>.unmodifiable(inner);
 
-  @override
-  double? operator [](Object? key) {
-    if (key is CultivationPath) return _inner[key];
-    if (key is CultivationPalace) {
-      final path = CultivationPath.values[key.index];
-      return _inner[path];
-    }
-    return _inner[key];
+  final Map<CultivationPath, double> _inner;
+
+  CultivationPath? _normalizeKey(Object? key) {
+    if (key is CultivationPath) return key;
+    if (key is CultivationPalace) return CultivationPath.values[key.index];
+    return null;
   }
 
   @override
-  Iterable<MapEntry<Object, double>> get entries =>
-      _inner.entries.map((e) => MapEntry(e.key, e.value));
+  double? operator [](Object? key) {
+    final normalized = _normalizeKey(key);
+    return normalized == null ? null : _inner[normalized];
+  }
+
+  @override
+  void operator []=(Object key, double value) {
+    throw UnsupportedError('Palace scores are read-only');
+  }
+
+  @override
+  void clear() {
+    throw UnsupportedError('Palace scores are read-only');
+  }
 
   @override
   Iterable<Object> get keys => _inner.keys;
 
   @override
-  int get length => _inner.length;
-
-  @override
-  Iterable<double> get values => _inner.values;
-
-  // The rest of Map methods delegate to the inner map where meaningful.
-  @override
-  bool containsKey(Object? key) {
-    if (key is CultivationPath) return _inner.containsKey(key);
-    if (key is CultivationPalace) {
-      return _inner.containsKey(CultivationPath.values[key.index]);
-    }
-    return _inner.containsKey(key);
+  double? remove(Object? key) {
+    throw UnsupportedError('Palace scores are read-only');
   }
-
-  @override
-  bool containsValue(Object? value) => _inner.containsValue(value);
-
-  @override
-  void forEach(void Function(Object key, double value) action) =>
-      _inner.forEach(action);
-
-  // Unsupported mutation operations for this read-only wrapper.
-  @override
-  double putIfAbsent(Object key, double Function() ifAbsent) =>
-      throw UnimplementedError();
-  @override
-  void addAll(Map other) => throw UnimplementedError();
-  @override
-  double? remove(Object? key) => throw UnimplementedError();
-  @override
-  void clear() => throw UnimplementedError();
-  @override
-  void operator []=(Object key, double value) => throw UnimplementedError();
-
-  @override
-  Map<RK, RV> cast<RK, RV>() => _inner.cast<RK, RV>();
-
-  @override
-  bool get isEmpty => _inner.isEmpty;
-
-  @override
-  bool get isNotEmpty => _inner.isNotEmpty;
-
-  @override
-  Map<K2, V2> map<K2, V2>(
-    MapEntry<K2, V2> Function(Object key, double value) transform,
-  ) => _inner.map(
-    (k, v) => MapEntry(transform(k, v).key, transform(k, v).value),
-  );
-
-  @override
-  void addEntries(Iterable<MapEntry<Object, double>> newEntries) =>
-      throw UnimplementedError();
-
-  @override
-  double update(
-    Object key,
-    double Function(double value) update, {
-    double Function()? ifAbsent,
-  }) => throw UnimplementedError();
-
-  @override
-  void updateAll(double Function(Object key, double value) update) =>
-      throw UnimplementedError();
-
-  @override
-  void removeWhere(bool Function(Object key, double value) predicate) =>
-      throw UnimplementedError();
 }
 
 /// Core cultivation layer that interprets existing dashboard data through

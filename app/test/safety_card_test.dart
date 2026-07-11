@@ -13,9 +13,7 @@ void main() {
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     container = ProviderContainer(
-      overrides: [
-        dbProvider.overrideWithValue(db),
-      ],
+      overrides: [dbProvider.overrideWithValue(db)],
     );
   });
 
@@ -24,12 +22,16 @@ void main() {
     container.dispose();
   });
 
-  testWidgets('SafetyCardView logs hotline CTA taps in database', (tester) async {
+  testWidgets('SafetyCardView logs hotline CTA taps in database', (
+    tester,
+  ) async {
     final userId = 'user-test-safety';
     final now = DateTime.now();
 
     // 1. Populate user profiles
-    await db.into(db.userProfiles).insert(
+    await db
+        .into(db.userProfiles)
+        .insert(
           UserProfilesCompanion.insert(
             userId: userId,
             ageBand: '18-24',
@@ -42,9 +44,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const MaterialApp(
-          home: SafetyCardView(),
-        ),
+        child: const MaterialApp(home: SafetyCardView()),
       ),
     );
 
@@ -58,6 +58,6 @@ void main() {
     // 4. Verify that a WellnessPromptLog was created
     final logs = await db.select(db.wellnessPromptLogs).get();
     expect(logs.isNotEmpty, true);
-    expect(logs.first.userAction, 'Tapped_Hotline_CTA');
+    expect(logs.first.userAction, 'Tapped_Hotline_CTA:SEJIWA_Call');
   });
 }

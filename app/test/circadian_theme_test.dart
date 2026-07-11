@@ -1,8 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:daoji/src/core/theme/theme.dart';
+import 'package:daoji/src/features/dashboard/dashboard_provider.dart';
 
 void main() {
+  test('circadian period changes only at configured boundaries', () {
+    expect(celestialTimeFor(DateTime(2026, 7, 11, 4, 59)), CelestialTime.night);
+    expect(celestialTimeFor(DateTime(2026, 7, 11, 5)), CelestialTime.morning);
+    expect(celestialTimeFor(DateTime(2026, 7, 11, 8)), CelestialTime.noon);
+    expect(celestialTimeFor(DateTime(2026, 7, 11, 15)), CelestialTime.sunset);
+    expect(celestialTimeFor(DateTime(2026, 7, 11, 18)), CelestialTime.night);
+  });
+
   test('Circadian Theme mapping returns correct styles based on hours', () {
     // Fajar: 5 - 8
     final fajarTheme = CalmTheme.fajarTheme;

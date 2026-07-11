@@ -33,21 +33,39 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
   final PageController _pageController = PageController();
 
   List<String> _getQuestions(DaojiVocabularyLevel level) => [
-        DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion1, level),
-        DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion2, level),
-        DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion3, level),
-        DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion4, level),
-        DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion5, level),
-      ];
+    DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion1, level),
+    DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion2, level),
+    DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion3, level),
+    DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion4, level),
+    DaojiText.resolve(DaojiTextKey.weeklyPulseQuestion5, level),
+  ];
 
   List<Map<String, dynamic>> _getOptions(DaojiVocabularyLevel level) => [
-        {'value': 5, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption5, level)},
-        {'value': 4, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption4, level)},
-        {'value': 3, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption3, level)},
-        {'value': 2, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption2, level)},
-        {'value': 1, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption1, level)},
-        {'value': 0, 'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption0, level)},
-      ];
+    {
+      'value': 5,
+      'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption5, level),
+    },
+    {
+      'value': 4,
+      'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption4, level),
+    },
+    {
+      'value': 3,
+      'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption3, level),
+    },
+    {
+      'value': 2,
+      'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption2, level),
+    },
+    {
+      'value': 1,
+      'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption1, level),
+    },
+    {
+      'value': 0,
+      'label': DaojiText.resolve(DaojiTextKey.weeklyPulseOption0, level),
+    },
+  ];
 
   Future<void> _submitPulse() async {
     if (_isSaving) return;
@@ -99,145 +117,153 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
         now.day,
       ).subtract(Duration(days: mondayOffset));
 
-      final existing =
-          await (db.select(db.weeklyPulses)..where(
-                (tbl) =>
-                    tbl.userId.equals(userId) &
-                    tbl.weekStartDate.equals(weekStartDate),
-              ))
-              .get();
-
-      if (existing.isNotEmpty) {
-        await (db.update(
-          db.weeklyPulses,
-        )..where((tbl) => tbl.pulseId.equals(existing.first.pulseId))).write(
-          WeeklyPulsesCompanion(
-            score: drift.Value(mappedScore),
-            reflectionText: drift.Value(jsonEncode(metadata)),
-          ),
-        );
-      } else {
-        await db
-            .into(db.weeklyPulses)
-            .insert(
-              WeeklyPulsesCompanion.insert(
-                pulseId: const Uuid().v4(),
-                userId: userId,
-                domainTag: 'WHO-5',
-                score: mappedScore,
-                reflectionText: drift.Value(jsonEncode(metadata)),
-                weekStartDate: weekStartDate,
-              ),
-            );
-      }
-
-      // Sync WHO-5 score to 'Emosi' domain in userProfiles.latestDomainScores
       final currentProfile = profiles.first;
-      final domainScores = Map<String, double>.from(currentProfile.parsedDomainScores);
+      final domainScores = Map<String, double>.from(
+        currentProfile.parsedDomainScores,
+      );
       domainScores['Emosi'] = mappedScore.toDouble();
       final domainScoresJson = jsonEncode(domainScores);
-      await (db.update(
-        db.userProfiles,
-      )..where((tbl) => tbl.userId.equals(userId))).write(
-        UserProfilesCompanion(
-          latestDomainScores: drift.Value(domainScoresJson),
-          updatedAt: drift.Value(now),
-        ),
-      );
-
-      // Log a historical snapshot of domain scores in lifeAudits table
-      await db.into(db.lifeAudits).insert(
-            LifeAuditsCompanion.insert(
-              auditId: const Uuid().v4(),
-              userId: userId,
-              domainScores: domainScoresJson,
-              timestamp: now,
-            ),
-          );
-
-      // Auto-set SupportMode based on WHO-5 well-being threshold (< 50% = Recovery).
-      // This is a protective intervention: system adapts to user's real condition.
-      final newSupportMode = percentage < 50 ? SupportMode.recovery : SupportMode.normal;
-      final recoveryEndDate = percentage < 50
+      final isLowMood = percentage < 50;
+      final lastPrompt = currentProfile.lastWellnessPromptAt;
+      final shouldLogPrompt =
+          isLowMood &&
+          (lastPrompt == null || now.difference(lastPrompt).inHours >= 24);
+      final newSupportMode = isLowMood
+          ? SupportMode.recovery
+          : SupportMode.normal;
+      final recoveryEndDate = isLowMood
           ? drift.Value<DateTime?>(now.add(const Duration(days: 7)))
           : const drift.Value<DateTime?>(null);
-      await (db.update(db.userProfiles)
-            ..where((tbl) => tbl.userId.equals(userId)))
-          .write(UserProfilesCompanion(
-        supportMode: drift.Value(newSupportMode),
-        recoveryEndDate: recoveryEndDate,
-        updatedAt: drift.Value(now),
-      ));
+
+      await db.transaction(() async {
+        final existing =
+            await (db.select(db.weeklyPulses)..where(
+                  (tbl) =>
+                      tbl.userId.equals(userId) &
+                      tbl.domainTag.equals('WHO-5') &
+                      tbl.weekStartDate.equals(weekStartDate),
+                ))
+                .getSingleOrNull();
+
+        if (existing != null) {
+          await (db.update(
+            db.weeklyPulses,
+          )..where((tbl) => tbl.pulseId.equals(existing.pulseId))).write(
+            WeeklyPulsesCompanion(
+              score: drift.Value(mappedScore),
+              reflectionText: drift.Value(jsonEncode(metadata)),
+              deletedAt: const drift.Value(null),
+            ),
+          );
+        } else {
+          await db
+              .into(db.weeklyPulses)
+              .insert(
+                WeeklyPulsesCompanion.insert(
+                  pulseId: const Uuid().v4(),
+                  userId: userId,
+                  domainTag: 'WHO-5',
+                  score: mappedScore,
+                  reflectionText: drift.Value(jsonEncode(metadata)),
+                  weekStartDate: weekStartDate,
+                ),
+              );
+        }
+
+        await (db.update(
+          db.userProfiles,
+        )..where((tbl) => tbl.userId.equals(userId))).write(
+          UserProfilesCompanion(
+            latestDomainScores: drift.Value(domainScoresJson),
+            supportMode: drift.Value(newSupportMode),
+            recoveryEndDate: recoveryEndDate,
+            lastWellnessPromptAt: shouldLogPrompt
+                ? drift.Value(now)
+                : const drift.Value.absent(),
+            updatedAt: drift.Value(now),
+          ),
+        );
+
+        await db
+            .into(db.lifeAudits)
+            .insert(
+              LifeAuditsCompanion.insert(
+                auditId: const Uuid().v4(),
+                userId: userId,
+                domainScores: domainScoresJson,
+                timestamp: now,
+              ),
+            );
+
+        if (isLowMood) {
+          await db
+              .into(db.wellnessPromptLogs)
+              .insert(
+                WellnessPromptLogsCompanion.insert(
+                  promptId: const Uuid().v4(),
+                  userId: userId,
+                  triggerType: WellnessPromptTrigger.weeklyPulse,
+                  promptedAt: now,
+                ),
+              );
+        }
+      });
 
       ref.invalidate(dashboardDataProvider);
 
       if (mounted) {
         final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
-        // Show wellness review prompt if WHO-5 is low (< 50%)
-        final isLowMood = percentage < 50;
-        if (isLowMood) {
-          final profiles = await db.select(db.userProfiles).get();
-          if (profiles.isNotEmpty) {
-            await db
-                .into(db.wellnessPromptLogs)
-                .insert(
-                  WellnessPromptLogsCompanion.insert(
-                    promptId: const Uuid().v4(),
-                    userId: profiles.first.userId,
-                    triggerType: WellnessPromptTrigger.weeklyPulse,
-                    promptedAt: DateTime.now(),
-                  ),
-                );
-          }
-        }
+        // Show the result dialog after the transaction commits.
         if (!mounted) return;
-        unawaited(showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              title: Text(
-                DaojiText.resolve(
-                  isLowMood
-                      ? DaojiTextKey.weeklyPulseTitleLow
-                      : DaojiTextKey.weeklyPulseTitleHigh,
-                  vocabularyLevel,
+        unawaited(
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ),
-              content: Text(
-                DaojiText.resolve(
-                  isLowMood
-                      ? DaojiTextKey.weeklyPulseDescriptionLow
-                      : DaojiTextKey.weeklyPulseDescriptionHigh,
-                  vocabularyLevel,
-                  params: {'percentage': percentage},
-                ),
-              ),
-              actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close dialog
-                    context.go('/'); // Back to dashboard
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    DaojiText.resolve(
-                      DaojiTextKey.weeklyBackDashboard,
-                      vocabularyLevel,
-                    ),
+                title: Text(
+                  DaojiText.resolve(
+                    isLowMood
+                        ? DaojiTextKey.weeklyPulseTitleLow
+                        : DaojiTextKey.weeklyPulseTitleHigh,
+                    vocabularyLevel,
                   ),
                 ),
-              ],
-            );
-          },
-        ));
+                content: Text(
+                  DaojiText.resolve(
+                    isLowMood
+                        ? DaojiTextKey.weeklyPulseDescriptionLow
+                        : DaojiTextKey.weeklyPulseDescriptionHigh,
+                    vocabularyLevel,
+                    params: {'percentage': percentage},
+                  ),
+                ),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close dialog
+                      context.go('/'); // Back to dashboard
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      DaojiText.resolve(
+                        DaojiTextKey.weeklyBackDashboard,
+                        vocabularyLevel,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -425,7 +451,10 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                   DaojiTextKey.weeklyPulseOptionalReflection,
                   vocabularyLevel,
                 ),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 12),
               Text(
@@ -482,7 +511,12 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
                 children: [
                   const CircularProgressIndicator(),
                   const SizedBox(height: 16),
-                  Text(DaojiText.resolve(DaojiTextKey.weeklyPulseSaving, vocabularyLevel)),
+                  Text(
+                    DaojiText.resolve(
+                      DaojiTextKey.weeklyPulseSaving,
+                      vocabularyLevel,
+                    ),
+                  ),
                 ],
               ),
             )

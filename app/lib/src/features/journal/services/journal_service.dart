@@ -11,30 +11,38 @@ class JournalService {
 
   Stream<List<JournalEntry>> watchJournalEntries(String userId) {
     return (db.select(db.journalEntries)
-          ..where((tbl) => tbl.userId.equals(userId))
+          ..where((tbl) => tbl.userId.equals(userId) & tbl.deletedAt.isNull())
           ..orderBy([
             (tbl) => drift.OrderingTerm(
-                  expression: tbl.date,
-                  mode: drift.OrderingMode.desc,
-                ),
+              expression: tbl.date,
+              mode: drift.OrderingMode.desc,
+            ),
           ]))
         .watch();
   }
 
-  Future<List<JournalEntry>> getRecentJournalEntries(String userId, DateTime since) async {
-    return await (db.select(db.journalEntries)
-          ..where((tbl) =>
+  Future<List<JournalEntry>> getRecentJournalEntries(
+    String userId,
+    DateTime since,
+  ) async {
+    return await (db.select(db.journalEntries)..where(
+          (tbl) =>
               tbl.userId.equals(userId) &
               tbl.deletedAt.isNull() &
-              tbl.date.isBiggerOrEqualValue(since)))
+              tbl.date.isBiggerOrEqualValue(since),
+        ))
         .get();
   }
 
   Future<JournalEntry?> getTodayJournalEntry(String userId) async {
     final now = DateTime.now();
     final todayStart = DateTime(now.year, now.month, now.day);
-    return await (db.select(db.journalEntries)
-          ..where((tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart)))
+    return await (db.select(db.journalEntries)..where(
+          (tbl) =>
+              tbl.userId.equals(userId) &
+              tbl.date.equals(todayStart) &
+              tbl.deletedAt.isNull(),
+        ))
         .getSingleOrNull();
   }
 
@@ -44,20 +52,23 @@ class JournalService {
   }) async {
     final now = DateTime.now();
     final todayStart = DateTime(now.year, now.month, now.day);
-    final existing = await (db.select(db.journalEntries)
-          ..where((tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart)))
-        .getSingleOrNull();
+    final existing =
+        await (db.select(db.journalEntries)..where(
+              (tbl) =>
+                  tbl.userId.equals(userId) &
+                  tbl.date.equals(todayStart) &
+                  tbl.deletedAt.isNull(),
+            ))
+            .getSingleOrNull();
 
     if (existing != null) {
       await (db.update(db.journalEntries)
             ..where((tbl) => tbl.entryId.equals(existing.entryId)))
-          .write(
-        JournalEntriesCompanion(
-          moodScore: drift.Value(score),
-        ),
-      );
+          .write(JournalEntriesCompanion(moodScore: drift.Value(score)));
     } else {
-      await db.into(db.journalEntries).insert(
+      await db
+          .into(db.journalEntries)
+          .insert(
             JournalEntriesCompanion.insert(
               entryId: const Uuid().v4(),
               userId: userId,
@@ -81,14 +92,19 @@ class JournalService {
     final todayStart = DateTime(now.year, now.month, now.day);
     final entryType = showDeepReflection ? 'Deep' : 'Lite';
 
-    final existing = await (db.select(db.journalEntries)
-          ..where((tbl) => tbl.userId.equals(userId) & tbl.date.equals(todayStart)))
-        .getSingleOrNull();
+    final existing =
+        await (db.select(db.journalEntries)..where(
+              (tbl) =>
+                  tbl.userId.equals(userId) &
+                  tbl.date.equals(todayStart) &
+                  tbl.deletedAt.isNull(),
+            ))
+            .getSingleOrNull();
 
     if (existing != null) {
-      await (db.update(db.journalEntries)
-            ..where((tbl) => tbl.entryId.equals(existing.entryId)))
-          .write(
+      await (db.update(
+        db.journalEntries,
+      )..where((tbl) => tbl.entryId.equals(existing.entryId))).write(
         JournalEntriesCompanion(
           moodScore: drift.Value(moodScore),
           keyword: drift.Value(keywordText.isEmpty ? null : keywordText),
@@ -98,7 +114,9 @@ class JournalService {
         ),
       );
     } else {
-      await db.into(db.journalEntries).insert(
+      await db
+          .into(db.journalEntries)
+          .insert(
             JournalEntriesCompanion.insert(
               entryId: const Uuid().v4(),
               userId: userId,
@@ -121,13 +139,14 @@ class JournalService {
     final dayH1 = todayStart.subtract(const Duration(days: 1));
     final dayH2 = todayStart.subtract(const Duration(days: 2));
 
-    final consecutiveEntries = await (db.select(db.journalEntries)
-          ..where(
-            (tbl) =>
-                tbl.userId.equals(userId) &
-                tbl.date.isIn([dayH0, dayH1, dayH2]),
-          ))
-        .get();
+    final consecutiveEntries =
+        await (db.select(db.journalEntries)..where(
+              (tbl) =>
+                  tbl.userId.equals(userId) &
+                  tbl.date.isIn([dayH0, dayH1, dayH2]) &
+                  tbl.deletedAt.isNull(),
+            ))
+            .get();
 
     final moodByDate = {
       for (final e in consecutiveEntries) e.date: e.moodScore,
@@ -141,15 +160,39 @@ class JournalService {
         moodByDate[dayH2]! <= 2;
   }
 
-  Future<void> logWellnessPrompt(String userId) async {
-    await db.into(db.wellnessPromptLogs).insert(
-          WellnessPromptLogsCompanion.insert(
-            promptId: const Uuid().v4(),
-            userId: userId,
-            triggerType: WellnessPromptTrigger.lowMood,
-            promptedAt: DateTime.now(),
-          ),
-        );
+  Future<bool> logWellnessPrompt(String userId) async {
+    final profile = await (db.select(
+      db.userProfiles,
+    )..where((tbl) => tbl.userId.equals(userId))).getSingleOrNull();
+    if (profile == null) return false;
+
+    final now = DateTime.now();
+    final lastPrompt = profile.lastWellnessPromptAt;
+    if (lastPrompt != null && now.difference(lastPrompt).inHours < 24) {
+      return false;
+    }
+
+    await db.transaction(() async {
+      await db
+          .into(db.wellnessPromptLogs)
+          .insert(
+            WellnessPromptLogsCompanion.insert(
+              promptId: const Uuid().v4(),
+              userId: userId,
+              triggerType: WellnessPromptTrigger.lowMood,
+              promptedAt: now,
+            ),
+          );
+      await (db.update(
+        db.userProfiles,
+      )..where((tbl) => tbl.userId.equals(userId))).write(
+        UserProfilesCompanion(
+          lastWellnessPromptAt: drift.Value(now),
+          updatedAt: drift.Value(now),
+        ),
+      );
+    });
+    return true;
   }
 }
 

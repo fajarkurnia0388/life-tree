@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,29 +20,44 @@ final _moodHistoryProvider = StreamProvider<List<JournalEntry>>((ref) {
   return profileAsync.when(
     data: (profile) {
       if (profile == null) return const Stream.empty();
-      return ref.watch(journalServiceProvider).watchJournalEntries(profile.userId);
+      return ref
+          .watch(journalServiceProvider)
+          .watchJournalEntries(profile.userId);
     },
     loading: () => const Stream.empty(),
     error: (_, _) => const Stream.empty(),
   );
 });
 
-final _decisionSummaryProvider = StreamProvider<Map<String, int>>((ref) {
+final _decisionSummaryProvider = StreamProvider<Map<String, int>>((ref) async* {
   final db = ref.watch(dbProvider);
-  return db.select(db.decisionEntries).watch().map((list) {
-    final now = DateTime.now();
-    final pending = list.where((d) => !d.isReviewed).length;
-    final overdue = list
-        .where((d) => !d.isReviewed && now.isAfter(d.reviewDate))
-        .length;
-    return {'pending': pending, 'overdue': overdue};
-  });
+  final userId = await ref.watch(currentUserIdProvider.future);
+  if (userId == null) {
+    yield const {'pending': 0, 'overdue': 0};
+    return;
+  }
+  yield* (db.select(db.decisionEntries)
+        ..where((tbl) => tbl.userId.equals(userId) & tbl.deletedAt.isNull()))
+      .watch()
+      .map((list) {
+        final now = DateTime.now();
+        final pending = list.where((decision) => !decision.isReviewed).length;
+        final overdue = list
+            .where(
+              (decision) =>
+                  !decision.isReviewed && now.isAfter(decision.reviewDate),
+            )
+            .length;
+        return {'pending': pending, 'overdue': overdue};
+      });
 });
 
 final _todayMoodProvider = FutureProvider.autoDispose<int?>((ref) async {
   final userId = await ref.watch(currentUserIdProvider.future);
   if (userId == null) return null;
-  final entry = await ref.watch(journalServiceProvider).getTodayJournalEntry(userId);
+  final entry = await ref
+      .watch(journalServiceProvider)
+      .getTodayJournalEntry(userId);
   return entry?.moodScore;
 });
 
@@ -72,7 +88,9 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
     final userId = await ref.read(currentUserIdProvider.future);
     if (userId == null) return;
 
-    await ref.read(journalServiceProvider).saveMoodScore(userId: userId, score: score);
+    await ref
+        .read(journalServiceProvider)
+        .saveMoodScore(userId: userId, score: score);
 
     ref.invalidate(_todayMoodProvider);
     ref.invalidate(_moodHistoryProvider);
@@ -120,7 +138,9 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(DaojiText.resolve(DaojiTextKey.journalTabTitle, vocabularyLevel)),
+        title: Text(
+          DaojiText.resolve(DaojiTextKey.journalTabTitle, vocabularyLevel),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),

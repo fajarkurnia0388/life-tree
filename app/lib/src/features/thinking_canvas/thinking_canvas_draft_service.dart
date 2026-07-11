@@ -91,12 +91,14 @@ class ThinkingCanvasDraftService {
   Future<void> deleteDraft({String? userId}) async {
     final draft = await loadDraftSession(userId: userId);
     if (draft == null) return;
-    await (db.update(db.thinkingCanvasSessions)
-          ..where((tbl) => tbl.sessionId.equals(draft.sessionId)))
-        .write(ThinkingCanvasSessionsCompanion(
-      deletedAt: drift.Value(DateTime.now()),
-      isDraft: const drift.Value(false),
-    ));
+    await (db.update(
+      db.thinkingCanvasSessions,
+    )..where((tbl) => tbl.sessionId.equals(draft.sessionId))).write(
+      ThinkingCanvasSessionsCompanion(
+        deletedAt: drift.Value(DateTime.now()),
+        isDraft: const drift.Value(false),
+      ),
+    );
   }
 
   /// Commit current content as a permanent history session and clear draft.
@@ -111,24 +113,26 @@ class ThinkingCanvasDraftService {
     if (content.trim().isEmpty) return;
 
     final now = DateTime.now();
-    await db
-        .into(db.thinkingCanvasSessions)
-        .insert(
-          ThinkingCanvasSessionsCompanion.insert(
-            sessionId: now.millisecondsSinceEpoch.toString(),
-            userId: uid,
-            methodKey: methodKey,
-            isDraft: const drift.Value(false),
-            topic: drift.Value(topic),
-            rawNotes: drift.Value(content),
-            structuredOutput: drift.Value(structuredOutput),
-            paperSession: const drift.Value(false),
-            createdAt: now,
-          ),
-        );
+    await db.transaction(() async {
+      await db
+          .into(db.thinkingCanvasSessions)
+          .insert(
+            ThinkingCanvasSessionsCompanion.insert(
+              sessionId: '${now.microsecondsSinceEpoch}_$uid',
+              userId: uid,
+              methodKey: methodKey,
+              isDraft: const drift.Value(false),
+              topic: drift.Value(topic),
+              rawNotes: drift.Value(content),
+              structuredOutput: drift.Value(structuredOutput),
+              paperSession: const drift.Value(false),
+              createdAt: now,
+            ),
+          );
 
-    // Soft-delete any active draft so it does not shadow history restore.
-    await deleteDraft(userId: uid);
+      // Clear the active draft atomically with the history insert.
+      await deleteDraft(userId: uid);
+    });
   }
 
   Stream<List<ThinkingCanvasSession>> watchHistory({int limit = 20}) async* {
@@ -156,25 +160,22 @@ class ThinkingCanvasDraftService {
   }
 
   Future<void> softDeleteSession(String sessionId) async {
-    await (db.update(db.thinkingCanvasSessions)
-          ..where((tbl) => tbl.sessionId.equals(sessionId)))
-        .write(
-          ThinkingCanvasSessionsCompanion(
-            deletedAt: drift.Value(DateTime.now()),
-          ),
-        );
+    await (db.update(
+      db.thinkingCanvasSessions,
+    )..where((tbl) => tbl.sessionId.equals(sessionId))).write(
+      ThinkingCanvasSessionsCompanion(deletedAt: drift.Value(DateTime.now())),
+    );
   }
 
   Future<void> softDeleteAllHistory() async {
     final uid = await _currentUserId();
     if (uid == null) return;
-    await (db.update(db.thinkingCanvasSessions)
-          ..where(
-            (tbl) =>
-                tbl.userId.equals(uid) &
-                tbl.isDraft.equals(false) &
-                tbl.deletedAt.isNull(),
-          ))
+    await (db.update(db.thinkingCanvasSessions)..where(
+          (tbl) =>
+              tbl.userId.equals(uid) &
+              tbl.isDraft.equals(false) &
+              tbl.deletedAt.isNull(),
+        ))
         .write(
           ThinkingCanvasSessionsCompanion(
             deletedAt: drift.Value(DateTime.now()),

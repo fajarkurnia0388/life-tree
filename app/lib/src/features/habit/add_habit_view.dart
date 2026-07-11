@@ -6,6 +6,7 @@ import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
 import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_level.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/user_profile_provider.dart';
 import 'services/habit_crud_service.dart';
@@ -87,7 +88,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
   }
 
   Future<void> _loadHabitForEdit() async {
-    final detail = await ref.read(habitCrudServiceProvider).getHabitDetail(widget.habitId!);
+    final detail = await ref
+        .read(habitCrudServiceProvider)
+        .getHabitDetail(widget.habitId!);
     if (detail != null && mounted) {
       final habit = detail.habit;
       final reminder = detail.reminder;
@@ -141,7 +144,11 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             DaojiText.resolve(
               DaojiTextKey.habitDeleteConfirm,
               vocabularyLevel,
-              params: {'label': CultivationStrings.habitLabel(languageLevel).toLowerCase()},
+              params: {
+                'label': CultivationStrings.habitLabel(
+                  languageLevel,
+                ).toLowerCase(),
+              },
             ),
           ),
           actions: [
@@ -149,20 +156,14 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               onPressed: () => Navigator.pop(context, false),
               style: AppButtonStyles.secondary(context),
               child: Text(
-                DaojiText.resolve(
-                  DaojiTextKey.systemCancel,
-                  vocabularyLevel,
-                ),
+                DaojiText.resolve(DaojiTextKey.systemCancel, vocabularyLevel),
               ),
             ),
             TextButton(
               style: AppButtonStyles.text(context),
               onPressed: () => Navigator.pop(context, true),
               child: Text(
-                DaojiText.resolve(
-                  DaojiTextKey.systemDelete,
-                  vocabularyLevel,
-                ),
+                DaojiText.resolve(DaojiTextKey.systemDelete, vocabularyLevel),
                 style: const TextStyle(color: Colors.red),
               ),
             ),
@@ -173,17 +174,47 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
     if (proceed != true) return;
 
-    await ref.read(habitCrudServiceProvider).deleteHabit(_existingHabit!.habitId);
+    await ref
+        .read(habitCrudServiceProvider)
+        .deleteHabit(_existingHabit!.habitId);
 
-    await NotificationService.cancel(
-      _existingHabit!.habitId.hashCode.abs() % 100000,
-    );
+    await NotificationService.cancelHabit(_existingHabit!.habitId);
 
     ref.invalidate(dashboardDataProvider);
 
     if (mounted) {
       context.pop();
     }
+  }
+
+  Future<void> _syncReminder(
+    String habitId,
+    DaojiVocabularyLevel vocabularyLevel,
+  ) async {
+    if (!_reminderEnabled) {
+      await NotificationService.cancelHabit(habitId);
+      return;
+    }
+
+    final parts = _reminderTime.split(':');
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+    await NotificationService.scheduleHabitReminder(
+      habitId: habitId,
+      title: DaojiText.resolve(
+        DaojiTextKey.habitReminderTitle,
+        vocabularyLevel,
+        params: {'title': _titleController.text.trim()},
+      ),
+      body: DaojiText.resolve(DaojiTextKey.habitReminderBody, vocabularyLevel),
+      hour: hour,
+      minute: minute,
+      weekdays: _frequency == HabitFrequency.daily
+          ? const {}
+          : _selectedDays.toSet(),
+      quietHoursStart: _quietHoursStart,
+      quietHoursEnd: _quietHoursEnd,
+    );
   }
 
   Future<void> _saveHabit() async {
@@ -196,21 +227,21 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     final userId = await ref.read(currentUserIdProvider.future);
     if (userId == null) return;
 
-    final activeHabits = await ref.read(habitCrudServiceProvider).getActiveHabits(userId);
+    final activeHabits = await ref
+        .read(habitCrudServiceProvider)
+        .getActiveHabits(userId);
 
     // --- Anti-Guilt Protection: block NEW habit creation during low well-being ---
     // Editing an existing habit is always allowed (preserving user agency).
     if (!_isEditing) {
       final dashboardAsync = ref.read(dashboardDataProvider);
-      final isLowWellBeing = dashboardAsync.whenOrNull(data: (d) => d.isLowWellBeing) ?? false;
+      final isLowWellBeing =
+          dashboardAsync.whenOrNull(data: (d) => d.isLowWellBeing) ?? false;
       if (isLowWellBeing) {
         if (!mounted) return;
         SnackBarService.showInfo(
           context,
-          DaojiText.resolve(
-            DaojiTextKey.marketRestPrompt,
-            vocabularyLevel,
-          ),
+          DaojiText.resolve(DaojiTextKey.marketRestPrompt, vocabularyLevel),
         );
         return;
       }
@@ -253,7 +284,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 params: {
                   'maxCapacity': maxCapacity,
                   'nextLoad': nextLoad,
-                  'label': CultivationStrings.habitLabel(languageLevel).toLowerCase(),
+                  'label': CultivationStrings.habitLabel(
+                    languageLevel,
+                  ).toLowerCase(),
                 },
               ),
             ),
@@ -261,10 +294,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
                 child: Text(
-                  DaojiText.resolve(
-                    DaojiTextKey.systemCancel,
-                    vocabularyLevel,
-                  ),
+                  DaojiText.resolve(DaojiTextKey.systemCancel, vocabularyLevel),
                 ),
               ),
               TextButton(
@@ -291,7 +321,9 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
 
     if (_isEditing && _existingHabit != null) {
       final habitId = _existingHabit!.habitId;
-      await ref.read(habitCrudServiceProvider).updateHabit(
+      await ref
+          .read(habitCrudServiceProvider)
+          .updateHabit(
             habitId: habitId,
             domainTag: _domainTag,
             title: _titleController.text.trim(),
@@ -302,35 +334,16 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             impactScore: _impactScore,
             mvaDurationMin: _mvaDurationMin,
             stackedToHabitId: _stackedToHabitId,
-            goalTag: _goalTagController.text.trim().isEmpty ? null : _goalTagController.text.trim(),
+            goalTag: _goalTagController.text.trim().isEmpty
+                ? null
+                : _goalTagController.text.trim(),
             reminderEnabled: _reminderEnabled,
             reminderTime: _reminderTime,
             quietHoursStart: _quietHoursStart,
             quietHoursEnd: _quietHoursEnd,
           );
 
-      final parts = _reminderTime.split(':');
-      final hour = int.parse(parts[0]);
-      final minute = int.parse(parts[1]);
-
-      if (_reminderEnabled) {
-        await NotificationService.scheduleDaily(
-          id: habitId.hashCode.abs() % 100000,
-          title: DaojiText.resolve(
-            DaojiTextKey.habitReminderTitle,
-            vocabularyLevel,
-            params: {'title': _titleController.text.trim()},
-          ),
-          body: DaojiText.resolve(
-            DaojiTextKey.habitReminderBody,
-            vocabularyLevel,
-          ),
-          hour: hour,
-          minute: minute,
-        );
-      } else {
-        await NotificationService.cancel(habitId.hashCode.abs() % 100000);
-      }
+      await _syncReminder(habitId, vocabularyLevel);
     } else {
       final habitId = const Uuid().v4();
       final newHabit = HabitsCompanion.insert(
@@ -363,31 +376,11 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
         quietHoursEnd: drift.Value(_quietHoursEnd),
       );
 
-      await ref.read(habitCrudServiceProvider).createHabit(
-            newHabit: newHabit,
-            reminder: reminder,
-          );
+      await ref
+          .read(habitCrudServiceProvider)
+          .createHabit(newHabit: newHabit, reminder: reminder);
 
-      final parts = _reminderTime.split(':');
-      final hour = int.parse(parts[0]);
-      final minute = int.parse(parts[1]);
-
-      if (_reminderEnabled) {
-        await NotificationService.scheduleDaily(
-          id: habitId.hashCode.abs() % 100000,
-          title: DaojiText.resolve(
-            DaojiTextKey.habitReminderTitle,
-            vocabularyLevel,
-            params: {'title': _titleController.text.trim()},
-          ),
-          body: DaojiText.resolve(
-            DaojiTextKey.habitReminderBody,
-            vocabularyLevel,
-          ),
-          hour: hour,
-          minute: minute,
-        );
-      }
+      await _syncReminder(habitId, vocabularyLevel);
     }
 
     ref.invalidate(dashboardDataProvider);
@@ -710,8 +703,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 future: _habitsFuture,
                 builder: (context, snapshot) {
                   final habits = snapshot.data ?? [];
-                  final validHabits = habits.where((h) => h.habitId != widget.habitId).toList();
-                  
+                  final validHabits = habits
+                      .where((h) => h.habitId != widget.habitId)
+                      .toList();
+
                   return DropdownButtonFormField<String?>(
                     initialValue: _stackedToHabitId,
                     decoration: AppFormTheme.inputDecoration(
@@ -724,10 +719,12 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                         value: null,
                         child: Text('Tanpa Stacking (Mulai Mandiri)'),
                       ),
-                      ...validHabits.map((h) => DropdownMenuItem<String?>(
-                        value: h.habitId,
-                        child: Text('Setelah selesai "${h.title}"'),
-                      )),
+                      ...validHabits.map(
+                        (h) => DropdownMenuItem<String?>(
+                          value: h.habitId,
+                          child: Text('Setelah selesai "${h.title}"'),
+                        ),
+                      ),
                     ],
                     onChanged: (val) {
                       setState(() {
@@ -802,10 +799,12 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                 energyCost: _energyCost,
                 impactScore: _impactScore,
                 mvaDurationMin: _mvaDurationMin,
-                onFrictionChanged: (val) => setState(() => _initiationFriction = val),
+                onFrictionChanged: (val) =>
+                    setState(() => _initiationFriction = val),
                 onEnergyChanged: (val) => setState(() => _energyCost = val),
                 onImpactChanged: (val) => setState(() => _impactScore = val),
-                onDurationChanged: (val) => setState(() => _mvaDurationMin = val),
+                onDurationChanged: (val) =>
+                    setState(() => _mvaDurationMin = val),
                 habitsFuture: _habitsFuture,
                 isEditing: _isEditing,
                 existingHabit: _existingHabit,
@@ -829,7 +828,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                         children: [
                           const Row(
                             children: [
-                              Icon(Icons.notifications_active_outlined, size: 20),
+                              Icon(
+                                Icons.notifications_active_outlined,
+                                size: 20,
+                              ),
                               SizedBox(width: 8),
                               Text(
                                 'Pengingat Kebiasaan',
@@ -848,9 +850,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                         const Divider(),
                         ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: const Text('Waktu Pengingat', style: TextStyle(fontSize: 14)),
+                          title: const Text(
+                            'Waktu Pengingat',
+                            style: TextStyle(fontSize: 14),
+                          ),
                           trailing: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.primaryContainer,
                               borderRadius: BorderRadius.circular(8),
@@ -864,7 +872,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                             ),
                           ),
                           onTap: () async {
-                            final time = await _pickTime(context, _reminderTime);
+                            final time = await _pickTime(
+                              context,
+                              _reminderTime,
+                            );
                             if (time != null) {
                               setState(() => _reminderTime = time);
                             }
@@ -872,9 +883,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                         ),
                         ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: const Text('Jam Sunyi Mulai (Quiet Start)', style: TextStyle(fontSize: 14)),
+                          title: const Text(
+                            'Jam Sunyi Mulai (Quiet Start)',
+                            style: TextStyle(fontSize: 14),
+                          ),
                           trailing: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(8),
@@ -888,7 +905,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                             ),
                           ),
                           onTap: () async {
-                            final time = await _pickTime(context, _quietHoursStart);
+                            final time = await _pickTime(
+                              context,
+                              _quietHoursStart,
+                            );
                             if (time != null) {
                               setState(() => _quietHoursStart = time);
                             }
@@ -896,9 +916,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                         ),
                         ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: const Text('Jam Sunyi Selesai (Quiet End)', style: TextStyle(fontSize: 14)),
+                          title: const Text(
+                            'Jam Sunyi Selesai (Quiet End)',
+                            style: TextStyle(fontSize: 14),
+                          ),
                           trailing: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(8),
@@ -912,7 +938,10 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
                             ),
                           ),
                           onTap: () async {
-                            final time = await _pickTime(context, _quietHoursEnd);
+                            final time = await _pickTime(
+                              context,
+                              _quietHoursEnd,
+                            );
                             if (time != null) {
                               setState(() => _quietHoursEnd = time);
                             }
@@ -975,8 +1004,6 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
       ),
     );
   }
-
-
 
   Future<String?> _pickTime(BuildContext context, String current) async {
     final parts = current.split(':');

@@ -4,7 +4,7 @@ import '../../data/local_db/database.dart';
 import '../domain/app_constants.dart';
 
 extension UserProfileJsonParsing on UserProfile {
-  /// Safely parses latestDomainScores and returns Map<String, double>.
+  /// Safely parses latestDomainScores and returns `Map<String, double>`.
   /// Falls back to DomainDefaults.scores when missing or unparseable.
   Map<String, double> get parsedDomainScores {
     final scores = Map<String, double>.from(DomainDefaults.scores);
@@ -24,7 +24,7 @@ extension UserProfileJsonParsing on UserProfile {
     return scores;
   }
 
-  /// Safely parses coreValues and returns List<String>.
+  /// Safely parses coreValues and returns `List<String>`.
   /// Returns empty list when missing or unparseable.
   List<String> get parsedCoreValues {
     final raw = coreValues;
@@ -38,7 +38,7 @@ extension UserProfileJsonParsing on UserProfile {
     }
   }
 
-  /// Safely parses revealedValueScores and returns Map<String, int>.
+  /// Safely parses revealedValueScores and returns `Map<String, int>`.
   /// Returns empty map when missing or unparseable.
   Map<String, int> get parsedRevealedValueScores {
     final raw = revealedValueScores;
@@ -47,7 +47,9 @@ extension UserProfileJsonParsing on UserProfile {
       final Map<String, dynamic> parsed = jsonDecode(raw);
       return parsed.map((k, v) => MapEntry(k, (v as num).toInt()));
     } catch (e) {
-      debugPrint('[UserProfileJsonParsing] Error parsing revealed value scores: $e');
+      debugPrint(
+        '[UserProfileJsonParsing] Error parsing revealed value scores: $e',
+      );
       return const {};
     }
   }

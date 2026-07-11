@@ -18,20 +18,22 @@ class ValueCompassService {
     String? reason, // Optional reason for the choice
   }) async {
     final responseId = const Uuid().v4();
-    await _db
-        .into(_db.valueDilemmaResponses)
-        .insert(
-          ValueDilemmaResponsesCompanion.insert(
-            responseId: responseId,
-            userId: userId,
-            dilemmaKey: dilemmaKey,
-            chosenValueTag: drift.Value(chosenValueTag),
-            chosenOptionLabel: drift.Value(chosenOptionLabel),
-            responseReason: drift.Value(reason),
-            answeredAt: DateTime.now(),
-          ),
-        );
-    await _recomputeRevealedValues(userId);
+    await _db.transaction(() async {
+      await _db
+          .into(_db.valueDilemmaResponses)
+          .insert(
+            ValueDilemmaResponsesCompanion.insert(
+              responseId: responseId,
+              userId: userId,
+              dilemmaKey: dilemmaKey,
+              chosenValueTag: drift.Value(chosenValueTag),
+              chosenOptionLabel: drift.Value(chosenOptionLabel),
+              responseReason: drift.Value(reason),
+              answeredAt: DateTime.now(),
+            ),
+          );
+      await _recomputeRevealedValues(userId);
+    });
   }
 
   /// Record "both important" or "depends on context" response.

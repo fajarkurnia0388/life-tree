@@ -89,16 +89,13 @@ class _ShareTemplateBottomSheetState
       if (mounted) {
         SnackBarService.showSuccess(
           context,
-          'Kebiasaan Anda berhasil dibagikan ke publik!',
+          'Template tersimpan di koleksi lokal perangkat ini.',
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        SnackBarService.showError(
-          context,
-          'Gagal membagikan: $e',
-        );
+        SnackBarService.showError(context, 'Gagal membagikan: $e');
       }
     }
   }
@@ -141,7 +138,7 @@ class _ShareTemplateBottomSheetState
                   const Text('😔', style: TextStyle(fontSize: 40)),
                   const SizedBox(height: 12),
                   const Text(
-                    'Anda belum memiliki kebiasaan aktif untuk dibagikan.',
+                    'Anda belum memiliki kebiasaan aktif untuk dijadikan template.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -175,13 +172,13 @@ class _ShareTemplateBottomSheetState
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'Bagikan Kebiasaan Saya 👥',
+                      'Simpan Template Lokal',
                       style: theme.textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Bantu orang lain membangun rutinitas sehat berdasarkan pengalaman Anda.',
+                      'Simpan kebiasaan sebagai template lokal. Data tidak diunggah atau dibagikan ke pengguna lain.',
                       style: TextStyle(
                         fontSize: 12,
                         color: theme.colorScheme.onSurface.withValues(
@@ -271,7 +268,7 @@ class _ShareTemplateBottomSheetState
                         ),
                       ),
                       child: const Text(
-                        'Bagikan Sekarang',
+                        'Simpan Template',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

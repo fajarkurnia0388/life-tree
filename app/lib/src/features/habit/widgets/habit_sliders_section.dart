@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/i18n/daoji_text_key.dart';
 import '../../../core/i18n/daoji_text_resolver.dart';
-import '../../../core/i18n/daoji_vocabulary_level.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../data/local_db/database.dart';
@@ -45,8 +44,10 @@ class HabitSlidersSection extends ConsumerWidget {
       children: [
         _buildSlider(
           context: context,
-          title: '🚀 ${DaojiText.resolve(DaojiTextKey.habitFriction, vocabularyLevel)}',
-          helperText: 'Contoh: olahraga ke gym = susah (4-5), baca 1 halaman = mudah (1-2)',
+          title:
+              '🚀 ${DaojiText.resolve(DaojiTextKey.habitFriction, vocabularyLevel)}',
+          helperText:
+              'Contoh: olahraga ke gym = susah (4-5), baca 1 halaman = mudah (1-2)',
           value: initiationFriction,
           minLabel: 'Sangat Mudah',
           maxLabel: 'Sangat Susah',
@@ -54,8 +55,10 @@ class HabitSlidersSection extends ConsumerWidget {
         ),
         _buildSlider(
           context: context,
-          title: '⚡ ${DaojiText.resolve(DaojiTextKey.habitEnergy, vocabularyLevel)}',
-          helperText: 'Contoh: lari 30 menit = banyak energi (4-5), nulis jurnal = sedikit (1-2)',
+          title:
+              '⚡ ${DaojiText.resolve(DaojiTextKey.habitEnergy, vocabularyLevel)}',
+          helperText:
+              'Contoh: lari 30 menit = banyak energi (4-5), nulis jurnal = sedikit (1-2)',
           value: energyCost,
           minLabel: 'Sedikit Energi',
           maxLabel: 'Banyak Energi',
@@ -63,8 +66,10 @@ class HabitSlidersSection extends ConsumerWidget {
         ),
         _buildSlider(
           context: context,
-          title: '🎯 ${DaojiText.resolve(DaojiTextKey.habitImpact, vocabularyLevel)}',
-          helperText: 'Contoh: olahraga rutin = dampak besar (5), minum vitamin = menengah (3)',
+          title:
+              '🎯 ${DaojiText.resolve(DaojiTextKey.habitImpact, vocabularyLevel)}',
+          helperText:
+              'Contoh: olahraga rutin = dampak besar (5), minum vitamin = menengah (3)',
           value: impactScore,
           minLabel: 'Dampak Kecil',
           maxLabel: 'Dampak Besar',
@@ -72,8 +77,10 @@ class HabitSlidersSection extends ConsumerWidget {
         ),
         _buildSlider(
           context: context,
-          title: '⏱️ ${DaojiText.resolve(DaojiTextKey.habitMva, vocabularyLevel)} (menit)',
-          helperText: 'MVA: Minimum Viable Action — durasi terpendek agar tetap "valid dilakukan"',
+          title:
+              '⏱️ ${DaojiText.resolve(DaojiTextKey.habitMva, vocabularyLevel)} (menit)',
+          helperText:
+              'MVA: Minimum Viable Action — durasi terpendek agar tetap "valid dilakukan"',
           value: mvaDurationMin,
           minLabel: '1 menit',
           maxLabel: '30 menit',
@@ -84,7 +91,9 @@ class HabitSlidersSection extends ConsumerWidget {
           onChanged: onDurationChanged,
         ),
         const SizedBox(height: 20),
-        ref.watch(userProfileProvider).when(
+        ref
+            .watch(userProfileProvider)
+            .when(
               data: (profile) {
                 final maxCapacity = profile?.canopyLoadCapacity ?? 10;
                 return FutureBuilder<List<Habit>>(
@@ -98,7 +107,8 @@ class HabitSlidersSection extends ConsumerWidget {
                     );
                     int nextLoad = currentLoad;
                     if (isEditing && existingHabit != null) {
-                      nextLoad = currentLoad -
+                      nextLoad =
+                          currentLoad -
                           (existingHabit!.initiationFriction +
                               existingHabit!.energyCost) +
                           initiationFriction +
@@ -115,8 +125,8 @@ class HabitSlidersSection extends ConsumerWidget {
                         ? theme.colorScheme.error
                         : theme.colorScheme.primary;
                     final bgColor = isOverloaded
-                        ? theme.colorScheme.error.withOpacity(0.08)
-                        : theme.colorScheme.primary.withOpacity(0.08);
+                        ? theme.colorScheme.error.withValues(alpha: 0.08)
+                        : theme.colorScheme.primary.withValues(alpha: 0.08);
 
                     return Card(
                       elevation: 0,
@@ -125,8 +135,10 @@ class HabitSlidersSection extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
                           color: isOverloaded
-                              ? theme.colorScheme.error.withOpacity(0.3)
-                              : theme.colorScheme.primary.withOpacity(0.3),
+                              ? theme.colorScheme.error.withValues(alpha: 0.3)
+                              : theme.colorScheme.primary.withValues(
+                                  alpha: 0.3,
+                                ),
                         ),
                       ),
                       child: Padding(
@@ -165,7 +177,8 @@ class HabitSlidersSection extends ConsumerWidget {
                                         : 'Beban kanopi Anda berada dalam batas aman dan seimbang.',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.6),
                                     ),
                                   ),
                                 ],
@@ -213,7 +226,7 @@ class HabitSlidersSection extends ConsumerWidget {
             helperText,
             style: TextStyle(
               fontSize: 12,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           Row(
@@ -230,7 +243,10 @@ class HabitSlidersSection extends ConsumerWidget {
               const SizedBox(width: 8),
               Text(
                 '$value$unit',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -241,11 +257,17 @@ class HabitSlidersSection extends ConsumerWidget {
               children: [
                 Text(
                   minLabel,
-                  style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
                 ),
                 Text(
                   maxLabel,
-                  style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
                 ),
               ],
             ),

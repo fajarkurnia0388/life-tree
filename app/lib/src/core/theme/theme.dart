@@ -203,8 +203,6 @@ class CalmTheme {
   }
 }
 
-
-
 final appThemeRawModeProvider = StreamProvider<String>((ref) {
   final db = ref.watch(dbProvider);
   return (db.select(db.userProfiles)..limit(1)).watch().map((profiles) {
@@ -228,24 +226,42 @@ final appThemeModeProvider = StreamProvider<ThemeMode>((ref) {
   );
 });
 
+CelestialTime celestialTimeFor(DateTime time) {
+  final hour = time.hour;
+  if (hour >= 5 && hour < 8) return CelestialTime.morning;
+  if (hour >= 8 && hour < 15) return CelestialTime.noon;
+  if (hour >= 15 && hour < 18) return CelestialTime.sunset;
+  return CelestialTime.night;
+}
 
-
-final _timeTickProvider = StreamProvider<DateTime>((ref) {
-  return Stream.periodic(const Duration(minutes: 1), (_) => DateTime.now());
+final _circadianPeriodProvider = StreamProvider.autoDispose<CelestialTime>((
+  ref,
+) async* {
+  var current = celestialTimeFor(DateTime.now());
+  yield current;
+  await for (final now in Stream<DateTime>.periodic(
+    const Duration(minutes: 1),
+    (_) => DateTime.now(),
+  )) {
+    final next = celestialTimeFor(now);
+    if (next != current) {
+      current = next;
+      yield current;
+    }
+  }
 });
 
 final appDynamicThemeProvider = Provider<ThemeData>((ref) {
   final circadianAsync = ref.watch(circadianEnabledProvider);
   final circadianEnabled = circadianAsync.valueOrNull ?? false;
 
-  if (circadianEnabled) {
-    ref.watch(_timeTickProvider);
-  }
-  
+  final circadianPeriod = circadianEnabled
+      ? ref.watch(_circadianPeriodProvider).valueOrNull
+      : null;
+
   final themeModeAsync = ref.watch(appThemeModeProvider);
   final themeMode = themeModeAsync.valueOrNull ?? ThemeMode.system;
   final devTimeOverride = ref.watch(devTimeOfDayOverrideProvider);
-
 
   // Determine base theme from themeMode
   ThemeData baseTheme;
@@ -257,19 +273,9 @@ final appDynamicThemeProvider = Provider<ThemeData>((ref) {
 
   // If circadian is enabled, apply circadian palette overlay
   if (circadianEnabled || devTimeOverride != CelestialTime.auto) {
-    CelestialTime activeTime = devTimeOverride;
-    if (activeTime == CelestialTime.auto) {
-      final hour = DateTime.now().hour;
-      if (hour >= 5 && hour < 8) {
-        activeTime = CelestialTime.morning;
-      } else if (hour >= 8 && hour < 15) {
-        activeTime = CelestialTime.noon;
-      } else if (hour >= 15 && hour < 18) {
-        activeTime = CelestialTime.sunset;
-      } else {
-        activeTime = CelestialTime.night;
-      }
-    }
+    final activeTime = devTimeOverride == CelestialTime.auto
+        ? (circadianPeriod ?? celestialTimeFor(DateTime.now()))
+        : devTimeOverride;
 
     // Apply circadian tint to base theme
     switch (activeTime) {

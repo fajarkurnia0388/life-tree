@@ -139,13 +139,13 @@ class HabitListSection extends ConsumerWidget {
         },
         onDismissed: (direction) async {
           final deletedHabit = item.habit;
-          
-          await ref.read(dashboardActionServiceProvider).deleteHabit(item.habit.habitId);
-          await NotificationService.cancel(
-            item.habit.habitId.hashCode.abs() % 100000,
-          );
+
+          await ref
+              .read(dashboardActionServiceProvider)
+              .deleteHabit(item.habit.habitId);
+          await NotificationService.cancelHabit(item.habit.habitId);
           ref.invalidate(dashboardDataProvider);
-          
+
           // Show undo snackbar
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -155,7 +155,9 @@ class HabitListSection extends ConsumerWidget {
                 action: SnackBarAction(
                   label: 'UNDO',
                   onPressed: () async {
-                    await ref.read(dashboardActionServiceProvider).restoreHabit(deletedHabit.habitId);
+                    await ref
+                        .read(dashboardActionServiceProvider)
+                        .restoreHabit(deletedHabit.habitId);
                     ref.invalidate(dashboardDataProvider);
                   },
                 ),
@@ -250,7 +252,7 @@ class HabitListSection extends ConsumerWidget {
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: domainColor,
-                                ),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -271,10 +273,11 @@ class HabitListSection extends ConsumerWidget {
                                     fontSize: 11,
                                     color: isDone
                                         ? domainColor
-                                        : theme.colorScheme.onSurface.withValues(
-                                          alpha: 0.4,
-                                        ),
-                                    fontWeight: isDone ? FontWeight.bold : FontWeight.normal,
+                                        : theme.colorScheme.onSurface
+                                              .withValues(alpha: 0.4),
+                                    fontWeight: isDone
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                   ),
                                 ),
                               ],

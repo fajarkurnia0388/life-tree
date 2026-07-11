@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/routing/router.dart';
 import 'core/theme/theme.dart';
 import 'features/onboarding/onboarding_view.dart';
+import 'core/widgets/error_state_widget.dart';
 import 'core/widgets/loading_state_widget.dart';
 
 class DaojiApp extends ConsumerWidget {
@@ -20,6 +22,13 @@ class DaojiApp extends ConsumerWidget {
         final dynamicTheme = ref.watch(appDynamicThemeProvider);
         final appWidget = MaterialApp.router(
           title: 'Daoji',
+          locale: const Locale('id', 'ID'),
+          supportedLocales: const [Locale('id', 'ID')],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           theme: dynamicTheme,
           darkTheme: CalmTheme.darkTheme,
           themeMode: themeMode,
@@ -37,9 +46,17 @@ class DaojiApp extends ConsumerWidget {
           ),
         ),
       ),
-      error: (err, stack) => MaterialApp(
+      error: (_, _) => MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Scaffold(body: Center(child: Text('Gagal memuat profil: $err'))),
+        home: Scaffold(
+          body: ErrorStateWidget(
+            message: 'Gagal memuat profil.',
+            onRetry: () {
+              ref.invalidate(onboardingCompletedProvider);
+              ref.invalidate(appThemeModeProvider);
+            },
+          ),
+        ),
       ),
     );
   }
