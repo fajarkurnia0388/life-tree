@@ -134,7 +134,7 @@ class _FrictionInterventionSheetState
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       '💡 Tips Ringan',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -160,7 +160,7 @@ class _FrictionInterventionSheetState
                   children: [
                     Text(
                       '❄️ ${DaojiText.resolve(DaojiTextKey.frictionRecoveryTitle, vocabularyLevel)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: CalmTheme.secondaryBlue,
                       ),

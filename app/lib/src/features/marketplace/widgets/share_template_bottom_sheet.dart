@@ -126,7 +126,7 @@ class _ShareTemplateBottomSheetState
         MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       child: _isLoading
-          ? SizedBox(
+          ? const SizedBox(
               height: 200,
               child: Center(
                 child: LoadingStateWidget(message: 'Memuat kebiasaan...'),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import '../../core/i18n/daoji_vocabulary_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 import '../../core/providers/db_provider.dart';
-import '../../core/services/error_handler_service.dart';
 import '../../core/services/error_logger_provider.dart';
 import '../../core/services/snackbar_service.dart';
 import '../../core/theme/theme.dart';
@@ -216,7 +216,7 @@ class _ValueMirrorSessionViewState
       }
 
       if (mounted) {
-        showModalBottomSheet(
+        unawaited(showModalBottomSheet(
           context: context,
           isDismissible: false,
           enableDrag: false,
@@ -229,7 +229,7 @@ class _ValueMirrorSessionViewState
               totalResponses: totalResponses,
             );
           },
-        );
+        ));
       }
     } catch (e) {
       if (mounted) {
@@ -302,7 +302,7 @@ class _ValueMirrorSessionViewState
         future: _sessionFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: LoadingStateWidget(message: 'Memuat sesi refleksi...'),
             );
           }
@@ -429,7 +429,7 @@ class _ValueMirrorSessionViewState
               if (_isSaving)
                 Container(
                   color: Colors.black.withValues(alpha: 0.1),
-                  child: Center(
+                  child: const Center(
                     child: LoadingStateWidget(message: 'Menyimpan jawaban...'),
                   ),
                 ),

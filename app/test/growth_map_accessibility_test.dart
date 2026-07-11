@@ -9,7 +9,7 @@ void main() {
     const languageLevel = CultivationLanguageLevel.plain;
 
     test('RootNode semantic label contains core values', () {
-      final node = RootNode(
+      final node = const RootNode(
         id: 'root',
         label: 'Akar Diri',
         semanticLabel: '',
@@ -22,7 +22,7 @@ void main() {
     });
 
     test('BranchNode semantic label contains domain status and score', () {
-      final node = BranchNode(
+      final node = const BranchNode(
         id: 'Tubuh',
         label: 'Tubuh',
         icon: Icons.directions_run,
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('LeafNode semantic label contains habit title and status', () {
-      final nodeDone = LeafNode(
+      final nodeDone = const LeafNode(
         id: 'h1',
         label: 'Minum Air Hangat',
         domainTag: 'Tubuh',
@@ -53,7 +53,7 @@ void main() {
       expect(labelDone, contains('Kebiasaan: Minum Air Hangat'));
       expect(labelDone, contains('Sudah diselesaikan'));
 
-      final nodePending = LeafNode(
+      final nodePending = const LeafNode(
         id: 'h1',
         label: 'Minum Air Hangat',
         domainTag: 'Tubuh',

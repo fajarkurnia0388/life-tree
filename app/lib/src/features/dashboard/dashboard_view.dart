@@ -176,8 +176,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             loading: () => const SizedBox.shrink(),
             error: (_, _) => const SizedBox.shrink(),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
+          const Padding(
+            padding: EdgeInsets.only(right: 8.0),
             child: Center(child: CultivationBadge()),
           ),
         ],

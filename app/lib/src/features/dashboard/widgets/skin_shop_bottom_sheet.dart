@@ -9,11 +9,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:drift/drift.dart' as drift;
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../data/local_db/database.dart';
-import '../../../core/providers/db_provider.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../services/dashboard_action_service.dart';
 
@@ -112,7 +110,6 @@ class _TreeSkinShopBottomSheetState
   }
 
   Future<void> _buySkin(Map<String, dynamic> skin) async {
-    final db = ref.read(dbProvider);
     final skinId = skin['id'] as String;
     final priceStr =
         'Rp ${(skin['price'] as int).toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")}';

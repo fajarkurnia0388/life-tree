@@ -13,7 +13,6 @@ import '../../../core/i18n/daoji_text_key.dart';
 import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/i18n/daoji_vocabulary_level.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
-import '../../../core/services/error_handler_service.dart';
 import '../../../core/services/error_logger_provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../cultivation/cultivation_constants.dart';
@@ -160,13 +159,13 @@ class TreeDisplayWidget extends StatelessWidget {
 
             // ── Quiet Integration state: night sky with stars, stable soft glow ──
             if (isQuietIntegration)
-              Positioned.fill(
+              const Positioned.fill(
                 child: IgnorePointer(child: QuietIntegrationOverlay()),
               ),
 
             // ── Tribulation state: blue aura with subtle pulse, not harsh/violent ──
             if (isTribulation)
-              Positioned.fill(
+              const Positioned.fill(
                 child: IgnorePointer(child: TribulationAuraWidget()),
               ),
 
@@ -879,8 +878,8 @@ class QuietIntegrationOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: const [
+    return const Stack(
+      children: [
         Positioned.fill(child: _QuietIntegrationGradient()),
         Positioned(left: 48, top: 56, child: _SoftStar(size: 3.5, alpha: 0.42)),
         Positioned(

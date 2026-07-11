@@ -1,13 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
-import 'package:drift/drift.dart' as drift;
-import '../../../core/providers/db_provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../services/decision_journal_service.dart';
 import '../../../core/theme/button_theme.dart';
-import '../../../data/local_db/database.dart';
 
 class CreateDecisionSheet extends ConsumerStatefulWidget {
   const CreateDecisionSheet({super.key});

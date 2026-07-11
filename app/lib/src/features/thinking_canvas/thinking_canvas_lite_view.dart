@@ -173,11 +173,8 @@ class _ThinkingCanvasLiteViewState
   }
 
   ThinkingMethod? _findMethod(String key) {
-    try {
-      return ThinkingMethod.allMethods.firstWhere((m) => m.key == key);
-    } catch (_) {
-      return null;
-    }
+    final idx = ThinkingMethod.allMethods.indexWhere((m) => m.key == key);
+    return idx >= 0 ? ThinkingMethod.allMethods[idx] : null;
   }
 
   Color _getMethodColor(String methodKey) {

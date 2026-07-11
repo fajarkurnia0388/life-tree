@@ -35,7 +35,7 @@ void main() {
           UserProfilesCompanion.insert(
             userId: userId,
             ageBand: '25-35',
-            latestDomainScores: drift.Value('{"Tubuh":8,"Keuangan":3}'),
+            latestDomainScores: const drift.Value('{"Tubuh":8,"Keuangan":3}'),
             createdAt: now,
             updatedAt: now,
           ),

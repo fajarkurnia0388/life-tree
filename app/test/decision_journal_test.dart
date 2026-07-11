@@ -64,7 +64,7 @@ void main() {
     container.dispose();
   });
 
-  Future<List<DecisionEntry>> _waitForEntries(ProviderContainer container) async {
+  Future<List<DecisionEntry>> waitForEntries(ProviderContainer container) async {
     List<DecisionEntry>? result;
     final sub = container.listen(
       decisionListProvider,
@@ -106,7 +106,7 @@ void main() {
         );
 
     // 2. Read stream using listener helper
-    final list = await _waitForEntries(container);
+    final list = await waitForEntries(container);
     expect(list.length, 1);
     expect(list.first.title, 'Beli laptop baru');
   });
@@ -131,7 +131,7 @@ void main() {
           ),
         );
 
-    final list = await _waitForEntries(container);
+    final list = await waitForEntries(container);
     final careerDecision = list.firstWhere((d) => d.decisionId == 'decision-2');
     expect(careerDecision.confidenceScore, 75);
   });

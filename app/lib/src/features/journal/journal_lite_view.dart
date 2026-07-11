@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
 import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
-import '../../core/providers/db_provider.dart';
 import '../../core/providers/user_profile_provider.dart';
 import '../../core/services/snackbar_service.dart';
 import '../../core/theme/form_theme.dart';
 import 'services/journal_service.dart';
 import '../../core/theme/button_theme.dart';
-import '../../data/local_db/database.dart';
-import 'package:drift/drift.dart' as drift;
-import '../../core/domain/app_constants.dart';
 import '../cultivation/cultivation_provider.dart';
 import '../cultivation/cultivation_strings.dart';
 

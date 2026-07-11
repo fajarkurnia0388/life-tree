@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:drift/drift.dart' as drift;
-import '../../../core/providers/db_provider.dart';
 import '../services/decision_journal_service.dart';
-import '../../../core/services/error_handler_service.dart';
 import '../../../core/services/error_logger_provider.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../../data/local_db/database.dart';

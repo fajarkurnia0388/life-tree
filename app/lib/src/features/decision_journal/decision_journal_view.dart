@@ -5,16 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
-import '../../core/providers/db_provider.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../core/widgets/empty_state_widget.dart';
-import '../../core/services/error_handler_service.dart';
 import '../../core/services/error_logger_provider.dart';
 import '../../data/local_db/database.dart';
 import '../../core/providers/user_profile_provider.dart';
 import 'services/decision_journal_service.dart';
 import '../dashboard/dashboard_provider.dart';
-import 'package:drift/drift.dart' as drift;
 import 'widgets/create_decision_sheet.dart';
 import 'widgets/review_decision_sheet.dart';
 
@@ -120,7 +117,7 @@ class _DecisionJournalViewState extends ConsumerState<DecisionJournalView>
             ],
           );
         },
-        loading: () => Center(
+        loading: () => const Center(
           child: LoadingStateWidget(message: 'Memuat jurnal keputusan...'),
         ),
         error: (err, stack) => Center(child: Text('Gagal memuat jurnal: $err')),

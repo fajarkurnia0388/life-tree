@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/app_constants.dart';
 import '../../../core/widgets/empty_state_widget.dart';
 import '../../../core/animations/dialog_animations.dart';
-import 'package:drift/drift.dart' as drift;
 import 'package:go_router/go_router.dart';
 import '../../../data/local_db/database.dart';
-import '../../../core/providers/db_provider.dart';
 import '../../cultivation/cultivation_provider.dart';
 import '../../cultivation/cultivation_strings.dart';
 import '../dashboard_provider.dart';
@@ -153,7 +151,7 @@ class HabitListSection extends ConsumerWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Kebiasaan "${deletedHabit.title}" dihapus'),
-                duration: Duration(seconds: 5),
+                duration: const Duration(seconds: 5),
                 action: SnackBarAction(
                   label: 'UNDO',
                   onPressed: () async {

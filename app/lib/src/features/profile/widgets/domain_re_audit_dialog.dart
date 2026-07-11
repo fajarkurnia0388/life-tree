@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,7 +19,6 @@ class DomainReAuditDialog extends ConsumerStatefulWidget {
 }
 
 class _DomainReAuditDialogState extends ConsumerState<DomainReAuditDialog> {
-  final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {
     'Tubuh': TextEditingController(text: '5.0'),
     'Keuangan': TextEditingController(text: '5.0'),

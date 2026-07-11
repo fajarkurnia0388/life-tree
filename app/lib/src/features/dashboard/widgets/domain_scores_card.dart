@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/domain/app_constants.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
-import '../../../core/services/error_handler_service.dart';
-import '../../../core/services/error_logger_provider.dart';
 import '../../../core/utils/profile_json_helpers.dart';
 import '../dashboard_provider.dart';
 import 'radar_chart_widget.dart';

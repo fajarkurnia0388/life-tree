@@ -13,7 +13,7 @@ class RealmBreakthroughDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       icon: const Icon(Icons.auto_awesome),
-      title: Text('Realm Breakthrough'),
+      title: const Text('Realm Breakthrough'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

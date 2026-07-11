@@ -7,7 +7,6 @@ import '../../data/local_db/database.dart';
 import '../../core/domain/app_constants.dart';
 import '../../core/domain/priority_helper.dart';
 import '../../core/services/error_logger_provider.dart';
-import '../../core/services/error_handler_service.dart';
 import '../../core/utils/profile_json_helpers.dart';
 import '../../core/providers/user_profile_provider.dart';
 import 'services/canopy_load_service.dart';

@@ -3,23 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:drift/drift.dart' as drift;
 import 'dart:io';
 import 'dart:convert';
 import '../../../core/i18n/daoji_text_key.dart';
 import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/i18n/daoji_vocabulary_level.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
-import '../../../core/providers/db_provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/button_theme.dart';
 import '../../../core/animations/dialog_animations.dart';
-import '../../../data/local_db/database.dart';
 import '../../onboarding/onboarding_view.dart';
 import '../dashboard_provider.dart';
 import '../services/dashboard_action_service.dart';
-import '../../../core/services/notification_service.dart';
 
 /// Bottom Sheet untuk Settings (Export, Reset, Theme)
 class SettingsBottomSheet extends ConsumerWidget {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../domain/value_dilemma.dart';
@@ -21,7 +22,7 @@ class ValueDilemmaCard extends StatelessWidget {
     String option,
     String valueTag,
   ) async {
-    HapticFeedback.selectionClick();
+    unawaited(HapticFeedback.selectionClick());
 
     // Ask if user wants to add optional reason
     final reason = await showDialog<String>(
@@ -100,8 +101,8 @@ class ValueDilemmaCard extends StatelessWidget {
             const Spacer(),
             // Option A Button
             ElevatedButton(
-              onPressed: () =>
-                  _handleSelection(context, 'A', dilemma.optionAValueTag),
+              onPressed: () => unawaited(
+                  _handleSelection(context, 'A', dilemma.optionAValueTag)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.surfaceContainerHighest
                     .withValues(alpha: isDark ? 0.3 : 0.6),
@@ -132,8 +133,8 @@ class ValueDilemmaCard extends StatelessWidget {
             const SizedBox(height: 12),
             // Option B Button
             ElevatedButton(
-              onPressed: () =>
-                  _handleSelection(context, 'B', dilemma.optionBValueTag),
+              onPressed: () => unawaited(
+                  _handleSelection(context, 'B', dilemma.optionBValueTag)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.surfaceContainerHighest
                     .withValues(alpha: isDark ? 0.3 : 0.6),
@@ -164,7 +165,7 @@ class ValueDilemmaCard extends StatelessWidget {
             const SizedBox(height: 12),
             // "Both Important" Button
             OutlinedButton(
-              onPressed: () => _handleSelection(context, 'Both', ''),
+              onPressed: () => unawaited(_handleSelection(context, 'Both', '')),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.teal,
                 padding: const EdgeInsets.symmetric(

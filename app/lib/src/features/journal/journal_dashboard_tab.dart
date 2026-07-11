@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
-import 'package:drift/drift.dart' as drift;
 import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
@@ -24,7 +22,7 @@ final _moodHistoryProvider = StreamProvider<List<JournalEntry>>((ref) {
       return ref.watch(journalServiceProvider).watchJournalEntries(profile.userId);
     },
     loading: () => const Stream.empty(),
-    error: (_, __) => const Stream.empty(),
+    error: (_, _) => const Stream.empty(),
   );
 });
 
@@ -352,7 +350,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                   ),
                 );
               },
-              loading: () => SizedBox(
+              loading: () => const SizedBox(
                 height: 80,
                 child: Center(
                   child: LoadingStateWidget(message: 'Memuat keputusan...'),
@@ -491,7 +489,7 @@ class _JournalDashboardTabState extends ConsumerState<JournalDashboardTab> {
                 );
               },
               loading: () =>
-                  LoadingStateWidget(message: 'Memuat riwayat mood...'),
+                  const LoadingStateWidget(message: 'Memuat riwayat mood...'),
               error: (err, _) => Text('Gagal memuat riwayat: $err'),
             ),
           ],

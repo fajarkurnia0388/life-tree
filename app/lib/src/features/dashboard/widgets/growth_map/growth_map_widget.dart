@@ -254,7 +254,7 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
     final growthMapAsync = ref.watch(growthMapProvider);
 
     return growthMapAsync.when(
-      loading: () => LoadingStateWidget(message: 'Memuat peta pertumbuhan...'),
+      loading: () => const LoadingStateWidget(message: 'Memuat peta pertumbuhan...'),
       error: (err, stack) => ErrorStateWidget(
         message: 'Gagal memuat peta pertumbuhan',
         error: err.toString(),
@@ -691,7 +691,7 @@ class _GrowthMapWidgetState extends ConsumerState<GrowthMapWidget> {
                   Positioned.fill(
                     child: Container(
                       color: Colors.transparent,
-                      child: Center(
+                      child: const Center(
                         child: LoadingStateWidget(
                           message: 'Memperbarui status kebiasaan...',
                         ),

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:drift/drift.dart' as drift;
 import '../../../core/domain/app_constants.dart';
 import '../../../core/i18n/daoji_text_key.dart';
 import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/theme/theme.dart';
-import '../../../core/providers/db_provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
-import '../../../data/local_db/database.dart';
 import '../dashboard_provider.dart';
 import '../services/dashboard_action_service.dart';
 

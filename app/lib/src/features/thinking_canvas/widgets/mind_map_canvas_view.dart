@@ -130,7 +130,9 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
   void _addChildNode(String parentId) {
     _saveToUndoStack();
     HapticFeedback.selectionClick();
-    final parent = _nodes.firstWhere((n) => n.id == parentId);
+    final parentIdx = _nodes.indexWhere((n) => n.id == parentId);
+    if (parentIdx < 0) return;
+    final parent = _nodes[parentIdx];
     final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
     setState(() {
       final id = 'node_${DateTime.now().millisecondsSinceEpoch}';
@@ -150,9 +152,11 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
 
   void _startInlineEdit(String nodeId) {
     _saveToUndoStack();
+    final nodeIdx = _nodes.indexWhere((n) => n.id == nodeId);
+    if (nodeIdx < 0) return;
     setState(() {
       _editingNodeId = nodeId;
-      _inlineEditController.text = _nodes.firstWhere((n) => n.id == nodeId).text;
+      _inlineEditController.text = _nodes[nodeIdx].text;
     });
     _inlineEditFocusNode.requestFocus();
   }
@@ -160,9 +164,13 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
   void _finishInlineEdit() {
     if (_editingNodeId == null) return;
     final vocabularyLevel = ref.read(daojiVocabularyLevelValueProvider);
+    final nodeIdx = _nodes.indexWhere((n) => n.id == _editingNodeId);
+    if (nodeIdx < 0) {
+      setState(() => _editingNodeId = null);
+      return;
+    }
     setState(() {
-      final node = _nodes.firstWhere((n) => n.id == _editingNodeId);
-      node.text = _inlineEditController.text.trim().isEmpty
+      _nodes[nodeIdx].text = _inlineEditController.text.trim().isEmpty
           ? DaojiText.resolve(DaojiTextKey.mindMapDefaultNodeText, vocabularyLevel)
           : _inlineEditController.text.trim();
       _editingNodeId = null;
@@ -190,7 +198,9 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
 
   void _changeNodeColor(String nodeId, int colorValue) {
     _saveToUndoStack();
-    setState(() => _nodes.firstWhere((n) => n.id == nodeId).colorValue = colorValue);
+    final idx = _nodes.indexWhere((n) => n.id == nodeId);
+    if (idx < 0) return;
+    setState(() => _nodes[idx].colorValue = colorValue);
   }
 
   @override

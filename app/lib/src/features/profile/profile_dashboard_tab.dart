@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 
-import '../../core/domain/app_constants.dart';
 import '../../core/i18n/daoji_text_key.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
 import '../../core/utils/profile_json_helpers.dart';
-import '../../core/services/error_handler_service.dart';
-import '../../core/services/error_logger_provider.dart';
 import '../../core/theme/button_theme.dart';
 import '../../core/widgets/loading_state_widget.dart';
 import '../../data/local_db/database.dart';
@@ -135,9 +132,9 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                       dateRange: dateRange,
                     );
                   },
-                  loading: () => Card(
+                  loading: () => const Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       child: Center(
                         child: LoadingStateWidget(
                           message: 'Memuat aktivitas...',
@@ -150,7 +147,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
                       padding: const EdgeInsets.all(16),
                       child: Text(
                         'Gagal memuat aktivitas: $err',
-                        style: TextStyle(color: Colors.red),
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                   ),
@@ -166,7 +163,7 @@ class _ProfileDashboardTabState extends ConsumerState<ProfileDashboardTab> {
           );
         },
         loading: () =>
-            Center(child: LoadingStateWidget(message: 'Memuat profil...')),
+            const Center(child: LoadingStateWidget(message: 'Memuat profil...')),
         error: (err, _) => Center(child: Text('Gagal memuat profil: $err')),
       ),
     );

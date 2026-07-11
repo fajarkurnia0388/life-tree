@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,8 +9,6 @@ import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_level.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/providers/db_provider.dart';
-import '../../core/services/error_handler_service.dart';
-import '../../core/services/error_logger_provider.dart';
 import '../../core/services/snackbar_service.dart';
 import '../../core/utils/profile_json_helpers.dart';
 import '../../core/theme/app_spacing.dart';
@@ -192,7 +191,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
           }
         }
         if (!mounted) return;
-        showDialog(
+        unawaited(showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) {
@@ -238,7 +237,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
               ],
             );
           },
-        );
+        ));
       }
     } catch (e) {
       if (mounted) {

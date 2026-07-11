@@ -519,7 +519,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
               future: _templatesFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                     child: LoadingStateWidget(message: 'Memuat template...'),
                   );
                 }
