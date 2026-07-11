@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -9,7 +10,14 @@ import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 // ==========================================
 class FirstPrinciplesWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const FirstPrinciplesWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const FirstPrinciplesWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<FirstPrinciplesWorkspace> createState() =>
@@ -32,6 +40,18 @@ class _FirstPrinciplesWorkspaceState
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final steps = data['steps'] as List<dynamic>?;
+        if (steps != null) {
+          for (int i = 0; i < steps.length && i < 3; i++) {
+            _controllers[i].text = steps[i] as String? ?? '';
+          }
+        }
+      } catch (_) {}
+    }
     for (final c in _controllers) {
       c.addListener(_notifyChanges);
     }
@@ -58,6 +78,9 @@ class _FirstPrinciplesWorkspaceState
     buffer.writeln('- $step2: ${_controllers[1].text.trim()}');
     buffer.writeln('- $step3: ${_controllers[2].text.trim()}');
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'steps': _controllers.map((c) => c.text.trim()).toList(),
+    }));
   }
 
 

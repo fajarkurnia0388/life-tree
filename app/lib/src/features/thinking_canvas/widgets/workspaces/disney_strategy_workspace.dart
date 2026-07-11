@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -10,7 +11,14 @@ import 'step_progress_indicator.dart';
 // ==========================================
 class DisneyStrategyWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const DisneyStrategyWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const DisneyStrategyWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<DisneyStrategyWorkspace> createState() =>
@@ -53,8 +61,21 @@ class _DisneyStrategyWorkspaceState extends ConsumerState<DisneyStrategyWorkspac
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        const keys = ['dreamer', 'realist', 'critic'];
+        for (int i = 0; i < keys.length; i++) {
+          final value = data[keys[i]] as String?;
+          if (value != null) {
+            _controllers[i] = TextEditingController(text: value);
+          }
+        }
+      } catch (_) {}
+    }
     for (int i = 0; i < 3; i++) {
-      _controllers[i] = TextEditingController();
+      _controllers.putIfAbsent(i, () => TextEditingController());
       _controllers[i]!.addListener(_notifyChanges);
     }
   }
@@ -78,6 +99,11 @@ class _DisneyStrategyWorkspaceState extends ConsumerState<DisneyStrategyWorkspac
     buffer.writeln('- $realistLabel: ${_controllers[1]!.text.trim()}');
     buffer.writeln('- $criticLabel: ${_controllers[2]!.text.trim()}');
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'dreamer': _controllers[0]!.text.trim(),
+      'realist': _controllers[1]!.text.trim(),
+      'critic': _controllers[2]!.text.trim(),
+    }));
   }
 
   @override

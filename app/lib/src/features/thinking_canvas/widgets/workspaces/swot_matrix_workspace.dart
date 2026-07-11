@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -9,7 +10,14 @@ import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 // ==========================================
 class SwotMatrixWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const SwotMatrixWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const SwotMatrixWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<SwotMatrixWorkspace> createState() => _SwotMatrixWorkspaceState();
@@ -27,6 +35,18 @@ class _SwotMatrixWorkspaceState extends ConsumerState<SwotMatrixWorkspace> {
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        for (final key in ['S', 'W', 'O', 'T']) {
+          final value = data[key] as String?;
+          if (value != null && value.isNotEmpty) {
+            _controllers[key]?.text = value;
+          }
+        }
+      } catch (_) {}
+    }
     _controllers.forEach((_, c) => c.addListener(_notifyChanges));
   }
 
@@ -52,6 +72,12 @@ class _SwotMatrixWorkspaceState extends ConsumerState<SwotMatrixWorkspace> {
     buffer.writeln('- $opportunitiesLabel: ${_controllers['O']!.text.trim()}');
     buffer.writeln('- $threatsLabel: ${_controllers['T']!.text.trim()}');
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'S': _controllers['S']!.text.trim(),
+      'W': _controllers['W']!.text.trim(),
+      'O': _controllers['O']!.text.trim(),
+      'T': _controllers['T']!.text.trim(),
+    }));
   }
 
   @override

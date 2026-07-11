@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -8,7 +9,14 @@ import '../../../../core/theme/app_spacing.dart';
 // ==========================================
 class RandomWordWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const RandomWordWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const RandomWordWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<RandomWordWorkspace> createState() => _RandomWordWorkspaceState();
@@ -345,6 +353,21 @@ class _RandomWordWorkspaceState extends ConsumerState<RandomWordWorkspace> {
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final currentWord = data['currentWord'] as String?;
+        if (currentWord != null) _currentWord = currentWord;
+        final saved = data['saved'] as List<dynamic>?;
+        if (saved != null) {
+          for (final s in saved) {
+            final m = s as Map<String, dynamic>;
+            _saved.add((word: m['word'] as String, note: m['note'] as String));
+          }
+        }
+      } catch (_) {}
+    }
     _notesController.addListener(_notifyChanges);
   }
 

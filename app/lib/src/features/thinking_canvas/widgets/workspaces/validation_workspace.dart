@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -9,7 +10,14 @@ import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 // ==========================================
 class ValidationWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const ValidationWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const ValidationWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<ValidationWorkspace> createState() =>
@@ -29,6 +37,20 @@ class _ValidationWorkspaceState extends ConsumerState<ValidationWorkspace> {
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final assumption = data['assumption'] as String?;
+        if (assumption != null) _asumsiController.text = assumption;
+        final isValidated = data['isValidated'] as bool?;
+        if (isValidated != null) _isValidated = isValidated;
+        final supports = data['supports'] as List<dynamic>?;
+        if (supports != null) _supports.addAll(supports.map((e) => e.toString()));
+        final opposes = data['opposes'] as List<dynamic>?;
+        if (opposes != null) _opposes.addAll(opposes.map((e) => e.toString()));
+      } catch (_) {}
+    }
     _asumsiController.addListener(_notifyChanges);
   }
 
@@ -111,6 +133,12 @@ class _ValidationWorkspaceState extends ConsumerState<ValidationWorkspace> {
       buffer.writeln('  - $o');
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'assumption': _asumsiController.text.trim(),
+      'isValidated': _isValidated,
+      'supports': _supports,
+      'opposes': _opposes,
+    }));
   }
 
   @override

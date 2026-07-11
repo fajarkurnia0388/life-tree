@@ -2,6 +2,7 @@
 // All templates are free. Do not gate UI on isPremium.
 import 'dart:async';
 import 'dart:math';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -103,9 +104,13 @@ class MorphologicalTemplate {
 
 class MorphologicalWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
   const MorphologicalWorkspace({
     super.key,
     required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
   });
 
   @override
@@ -129,8 +134,36 @@ class _MorphologicalWorkspaceState
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final dims = data['dimensions'] as List<dynamic>?;
+        if (dims != null) {
+          _dimensions.clear();
+          _options.clear();
+          for (var c in _controllers.values) { c.dispose(); }
+          _controllers.clear();
+          for (final d in dims) {
+            final dimName = d.toString();
+            _dimensions.add(dimName);
+            _controllers[dimName] = FixedExtentScrollController();
+          }
+        }
+        final opts = data['options'] as Map<String, dynamic>?;
+        if (opts != null) {
+          opts.forEach((key, value) {
+            _options[key] = (value as List<dynamic>).map((e) => e.toString()).toList();
+          });
+        }
+        final spin = data['spinResult'] as Map<String, dynamic>?;
+        if (spin != null) {
+          _spinResult = spin.map((k, v) => MapEntry(k, v.toString()));
+        }
+      } catch (_) {}
+    }
     for (var dim in _dimensions) {
-      _controllers[dim] = FixedExtentScrollController();
+      _controllers.putIfAbsent(dim, () => FixedExtentScrollController());
     }
     // keep initial options as-is; UI strings are resolved at build
   }
@@ -154,6 +187,11 @@ class _MorphologicalWorkspaceState
       _spinResult!.forEach((k, v) => buffer.writeln('  * $k -> $v'));
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'dimensions': _dimensions,
+      'options': _options,
+      'spinResult': _spinResult,
+    }));
   }
 
   Future<void> _spinCombinations() async {

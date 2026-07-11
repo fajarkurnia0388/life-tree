@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,11 +12,15 @@ import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 // ==========================================
 class LotusBlossomWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
   final String? initialValue;
 
   const LotusBlossomWorkspace({
     super.key,
     required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
     this.initialValue,
   });
 
@@ -40,6 +45,27 @@ class _LotusBlossomWorkspaceState extends ConsumerState<LotusBlossomWorkspace> {
       if (i != 4) {
         _subGrids[i] = List.filled(9, '');
       }
+    }
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final cells = data['cells'] as List<dynamic>?;
+        if (cells != null) {
+          for (int i = 0; i < cells.length && i < 9; i++) {
+            _cells[i] = cells[i] as String? ?? '';
+          }
+        }
+        final subGrids = data['subGrids'] as Map<String, dynamic>?;
+        if (subGrids != null) {
+          subGrids.forEach((key, value) {
+            final idx = int.tryParse(key);
+            if (idx != null) {
+              _subGrids[idx] = (value as List<dynamic>).map((e) => e.toString()).toList();
+            }
+          });
+        }
+      } catch (_) {}
     }
     // Defer initial notify: calling widget.onChanged (which modifies a Riverpod
     // provider) inside initState is forbidden — it mutates state while the
@@ -66,6 +92,10 @@ class _LotusBlossomWorkspaceState extends ConsumerState<LotusBlossomWorkspace> {
       }
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'cells': _cells,
+      'subGrids': _subGrids.map((k, v) => MapEntry(k.toString(), v)),
+    }));
   }
 
   void _editCell(int index, bool isSubGrid) {

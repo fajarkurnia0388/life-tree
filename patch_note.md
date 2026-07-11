@@ -85,3 +85,58 @@ cd D:/LAB/git/life-tree/app/
 - `test/decision_journal_test.dart`
 - `test/growth_map_accessibility_test.dart`
 - `test/thinking_canvas_draft_service_test.dart`
+
+# P2 Patch Notes — Thinking Canvas Structured Output + Session Restore
+
+## Tanggal: 2026-07-11
+
+## Ringkasan
+P2 patch mengimplementasi **structured output (JSON)** untuk semua 18 workspace widgets, sehingga sesi yang disimpan ke database bisa di-restore secara akurat saat user membuka kembali sesi dari history.
+
+## Verifikasi
+- ✅ `flutter analyze`: **0 issues**
+- ✅ `flutter test`: **100/100 passed**
+
+## Perubahan Utama
+
+### P2 #4: Structured Output + Session Restore
+Semua 18 workspace sekarang menerima parameter opsional:
+- `onStructuredOutput`: callback untuk emit JSON data saat workspace berubah
+- `initialStructuredOutput`: string JSON untuk restore state saat init
+
+**Workspace yang di-patch:**
+| # | Workspace | JSON Schema |
+|---|-----------|-------------|
+| 1 | MindDumpWorkspace | `{"notes": [...]}` |
+| 2 | SixThinkingHatsWorkspace | `{"hats": {"white": "...", "red": "...", ...}}` |
+| 3 | SwotMatrixWorkspace | `{"S": "...", "W": "...", "O": "...", "T": "..."}` |
+| 4 | AffinityMappingWorkspace | `{"groups": [...], "items": [...]}` |
+| 5 | FiveWhysWorkspace | `{"whys": [...], "rootCause": "..."}` |
+| 6 | FirstPrinciplesWorkspace | `{"steps": [...]}` |
+| 7 | DoubleDiamondWorkspace | `{"discover": "...", "define": "...", "develop": "...", "deliver": "..."}` |
+| 8 | ValidationWorkspace | `{"assumption": "...", "isValidated": bool, "supports": [...], "opposes": [...]}` |
+| 9 | ScamperWorkspace | `{"S": "...", "C": "...", "A": "...", "M": "...", "P": "...", "E": "...", "R": "..."}` |
+| 10 | StarburstingWorkspace | `{"WHO": "...", "WHAT": "...", "WHERE": "...", "WHEN": "...", "WHY": "...", "HOW": "..."}` |
+| 11 | DisneyStrategyWorkspace | `{"dreamer": "...", "realist": "...", "critic": "..."}` |
+| 12 | RapidBrainstormWorkspace | `{"ideas": [...]}` |
+| 13 | ReverseBrainstormWorkspace | `{"worsen": [...], "invert": [...], "summary": "..."}` |
+| 14 | WorstPossibleIdeaWorkspace | `{"badIdeas": [...], "inversions": [...], "action": "...", "phase": int}` |
+| 15 | QuestionStormWorkspace | `{"questions": [...], "actions": {...}}` |
+| 16 | RandomWordWorkspace | `{"currentWord": "...", "saved": [...]}` |
+| 17 | RoleStormingWorkspace | `{"activePackage": "...", "personaNotes": {...}, "summary": "..."}` |
+| 18 | MorphologicalWorkspace | `{"dimensions": [...], "options": {...}, "spinResult": {...}}` |
+| 19 | LotusBlossomWorkspace | `{"cells": [...], "subGrids": {...}}` |
+
+**File core yang diubah:**
+- `thinking_canvas_state.dart` — tambah `structuredOutput` field, `updateStructuredOutput()`, update `loadSession()`, `_scheduleDraftSave()`, `commitToHistory()`
+- `thinking_canvas_lite_view.dart` — tambah `_onStructuredOutput()`, `_restoredStructuredOutput`, update `_getWorkspaceForMethod()` untuk pass SO ke semua workspace
+
+### Catatan
+- Freewriting dan MindMapping **tidak** menggunakan structured output (Freewriting pakai controller langsung, MindMapping pakai node model terpisah)
+- `_GenericThinkingWorkspace` tidak menggunakan structured output (fallback sederhana)
+
+## Cara Install
+1. Extract ZIP ke root project: `D:/LAB/git/life-tree/app/`
+2. File akan overwrite sesuai struktur `lib/` 
+3. Jalankan `dart run build_runner build` untuk regenerate drift code
+4. Jalankan `flutter analyze` untuk verifikasi 0 issues

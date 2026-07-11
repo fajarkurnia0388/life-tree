@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -7,8 +8,14 @@ import 'step_progress_indicator.dart';
 /// 1) dump bad ideas, 2) invert each into a smart seed, 3) concrete first action.
 class WorstPossibleIdeaWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-
-  const WorstPossibleIdeaWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const WorstPossibleIdeaWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<WorstPossibleIdeaWorkspace> createState() =>
@@ -30,6 +37,20 @@ class _WorstPossibleIdeaWorkspaceState
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final badIdeas = data['badIdeas'] as List<dynamic>?;
+        if (badIdeas != null) _badIdeas.addAll(badIdeas.map((e) => e.toString()));
+        final inversions = data['inversions'] as List<dynamic>?;
+        if (inversions != null) _inversions.addAll(inversions.map((e) => e.toString()));
+        final action = data['action'] as String?;
+        if (action != null) _actionController.text = action;
+        final phase = data['phase'] as int?;
+        if (phase != null) _phase = phase;
+      } catch (_) {}
+    }
     _actionController.addListener(_notifyChanges);
   }
 
@@ -57,6 +78,12 @@ class _WorstPossibleIdeaWorkspaceState
       buffer.writeln(action);
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'badIdeas': _badIdeas,
+      'inversions': _inversions,
+      'action': _actionController.text.trim(),
+      'phase': _phase,
+    }));
   }
 
   void _addBadIdea() {

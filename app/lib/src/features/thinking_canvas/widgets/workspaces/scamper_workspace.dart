@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -9,7 +10,14 @@ import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 // ==========================================
 class ScamperWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const ScamperWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const ScamperWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<ScamperWorkspace> createState() => _ScamperWorkspaceState();
@@ -61,8 +69,21 @@ class _ScamperWorkspaceState extends ConsumerState<ScamperWorkspace> {
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        const keys = ['S', 'C', 'A', 'M', 'P', 'E', 'R'];
+        for (int i = 0; i < keys.length; i++) {
+          final value = data[keys[i]] as String?;
+          if (value != null) {
+            _controllers[i] = TextEditingController(text: value);
+          }
+        }
+      } catch (_) {}
+    }
     for (int i = 0; i < _panels.length; i++) {
-      _controllers[i] = TextEditingController();
+      _controllers.putIfAbsent(i, () => TextEditingController());
       _controllers[i]!.addListener(_notifyChanges);
     }
   }
@@ -86,6 +107,15 @@ class _ScamperWorkspaceState extends ConsumerState<ScamperWorkspace> {
       }
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'S': _controllers[0]!.text.trim(),
+      'C': _controllers[1]!.text.trim(),
+      'A': _controllers[2]!.text.trim(),
+      'M': _controllers[3]!.text.trim(),
+      'P': _controllers[4]!.text.trim(),
+      'E': _controllers[5]!.text.trim(),
+      'R': _controllers[6]!.text.trim(),
+    }));
   }
 
   @override

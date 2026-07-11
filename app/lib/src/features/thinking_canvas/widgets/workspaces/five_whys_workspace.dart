@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -9,7 +10,14 @@ import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 // ==========================================
 class FiveWhysWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const FiveWhysWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const FiveWhysWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<FiveWhysWorkspace> createState() => _FiveWhysWorkspaceState();
@@ -26,6 +34,22 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final whys = data['whys'] as List<dynamic>?;
+        if (whys != null) {
+          for (int i = 0; i < whys.length && i < 5; i++) {
+            _controllers[i].text = whys[i] as String? ?? '';
+          }
+        }
+        final rootCause = data['rootCause'] as String?;
+        if (rootCause != null) {
+          _rootCauseController.text = rootCause;
+        }
+      } catch (_) {}
+    }
     for (final c in _controllers) {
       c.addListener(_notifyChanges);
     }
@@ -54,6 +78,10 @@ class _FiveWhysWorkspaceState extends ConsumerState<FiveWhysWorkspace> {
       buffer.writeln('Akar penyebab sejati: $root');
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'whys': _controllers.map((c) => c.text.trim()).toList(),
+      'rootCause': _rootCauseController.text.trim(),
+    }));
   }
 
 

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
 import '../../../../core/i18n/daoji_text_resolver.dart';
@@ -8,7 +9,14 @@ import '../../../../core/i18n/daoji_vocabulary_level.dart';
 // ==========================================
 class RapidBrainstormWorkspace extends StatefulWidget {
   final ValueChanged<String> onChanged;
-  const RapidBrainstormWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const RapidBrainstormWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   State<RapidBrainstormWorkspace> createState() =>
@@ -18,6 +26,21 @@ class RapidBrainstormWorkspace extends StatefulWidget {
 
 class _RapidBrainstormWorkspaceState extends State<RapidBrainstormWorkspace> {
   final List<String> _ideas = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final ideas = data['ideas'] as List<dynamic>?;
+        if (ideas != null) {
+          _ideas.addAll(ideas.map((e) => e.toString()));
+        }
+      } catch (_) {}
+    }
+  }
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   final TextEditingController _inputController = TextEditingController();
 
@@ -28,6 +51,9 @@ class _RapidBrainstormWorkspaceState extends State<RapidBrainstormWorkspace> {
       buffer.writeln('${i + 1}. ${_ideas[i]}');
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'ideas': _ideas,
+    }));
   }
 
   void _submitIdea() {

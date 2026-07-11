@@ -16,13 +16,10 @@ class _WorkspaceGuideSectionState extends State<WorkspaceGuideSection> {
   bool _expanded = false;
 
   ThinkingMethod? _findMethod() {
-    try {
-      return ThinkingMethod.allMethods.firstWhere(
-        (m) => m.key == widget.methodKey,
-      );
-    } catch (_) {
-      return null;
-    }
+    final idx = ThinkingMethod.allMethods.indexWhere(
+      (m) => m.key == widget.methodKey,
+    );
+    return idx >= 0 ? ThinkingMethod.allMethods[idx] : null;
   }
 
   @override

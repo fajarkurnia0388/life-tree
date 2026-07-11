@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -9,7 +10,14 @@ import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 // ==========================================
 class AffinityMappingWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const AffinityMappingWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const AffinityMappingWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<AffinityMappingWorkspace> createState() =>
@@ -23,6 +31,29 @@ class _AffinityMappingWorkspaceState
   final List<String> _groups = ['Grup A', 'Grup B', 'Grup C'];
 
   final TextEditingController _inputController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final groups = data['groups'] as List<dynamic>?;
+        if (groups != null && groups.isNotEmpty) {
+          _groups.clear();
+          _groups.addAll(groups.map((e) => e.toString()));
+        }
+        final items = data['items'] as List<dynamic>?;
+        if (items != null) {
+          for (final item in items) {
+            final m = item as Map<String, dynamic>;
+            _items.add({'text': m['text'] as String, 'group': m['group'] as String});
+          }
+        }
+      } catch (_) {}
+    }
+  }
 
   void _addItem() {
     final text = _inputController.text.trim();
@@ -128,6 +159,10 @@ class _AffinityMappingWorkspaceState
       }
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'groups': _groups,
+      'items': _items,
+    }));
   }
 
   @override

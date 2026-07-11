@@ -21,6 +21,7 @@ class ThinkingCanvasState {
   final String? selectedMood;
   final bool hasSeenOnboarding;
   final bool prefsLoaded;
+  final String? structuredOutput;
 
   ThinkingCanvasState({
     this.selectedMethod,
@@ -35,6 +36,7 @@ class ThinkingCanvasState {
     this.selectedMood,
     this.hasSeenOnboarding = false,
     this.prefsLoaded = false,
+    this.structuredOutput,
   });
 
   ThinkingCanvasState copyWith({
@@ -50,6 +52,7 @@ class ThinkingCanvasState {
     String? selectedMood,
     bool? hasSeenOnboarding,
     bool? prefsLoaded,
+    String? structuredOutput,
     bool clearMood = false,
     bool clearMethod = false,
     bool clearDraftSavedAt = false,
@@ -72,6 +75,7 @@ class ThinkingCanvasState {
       selectedMood: clearMood ? null : (selectedMood ?? this.selectedMood),
       hasSeenOnboarding: hasSeenOnboarding ?? this.hasSeenOnboarding,
       prefsLoaded: prefsLoaded ?? this.prefsLoaded,
+      structuredOutput: structuredOutput ?? this.structuredOutput,
     );
   }
 
@@ -195,6 +199,7 @@ class ThinkingCanvasController extends Notifier<ThinkingCanvasState> {
     state = ThinkingCanvasState(
       selectedMethod: session.methodKey,
       currentDraftContent: session.rawNotes ?? '',
+      structuredOutput: session.structuredOutput,
       recentMethods: state.recentMethods,
       favoriteMethods: state.favoriteMethods,
       hasSeenOnboarding: state.hasSeenOnboarding,
@@ -211,6 +216,10 @@ class ThinkingCanvasController extends Notifier<ThinkingCanvasState> {
     state = state.copyWith(mindMapNodes: nodes);
   }
 
+  void updateStructuredOutput(String json) {
+    state = state.copyWith(structuredOutput: json);
+  }
+
   void _scheduleDraftSave(String content) {
     _draftDebounce?.cancel();
     if (content.trim().isEmpty || state.selectedMethod == null) return;
@@ -221,6 +230,7 @@ class ThinkingCanvasController extends Notifier<ThinkingCanvasState> {
         await draftService.upsertDraft(
           methodKey: state.selectedMethod!,
           content: content,
+          structuredOutput: state.structuredOutput,
         );
         if (_disposed) return;
         state = state.copyWith(
@@ -238,7 +248,7 @@ class ThinkingCanvasController extends Notifier<ThinkingCanvasState> {
     final method = state.selectedMethod;
     final content = state.currentDraftContent;
     if (method == null || content.trim().isEmpty) return;
-    await draftService.commitSession(methodKey: method, content: content);
+    await draftService.commitSession(methodKey: method, content: content, structuredOutput: state.structuredOutput);
     if (_disposed) return;
     state = state.copyWith(
       historyCommittedAt: DateTime.now(),

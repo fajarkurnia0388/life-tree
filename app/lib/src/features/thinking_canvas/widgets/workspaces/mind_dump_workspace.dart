@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -9,7 +10,14 @@ import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 // ==========================================
 class MindDumpWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const MindDumpWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const MindDumpWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<MindDumpWorkspace> createState() => _MindDumpWorkspaceState();
@@ -107,6 +115,7 @@ class _MindDumpWorkspaceState extends ConsumerState<MindDumpWorkspace> {
       buffer.writeln('- ${_notes[i]}');
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({'notes': _notes}));
   }
 
   @override

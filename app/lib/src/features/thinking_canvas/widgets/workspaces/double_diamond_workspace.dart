@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -21,7 +22,14 @@ class _DoubleDiamondPhaseDefinition {
 
 class DoubleDiamondWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const DoubleDiamondWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const DoubleDiamondWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<DoubleDiamondWorkspace> createState() =>
@@ -67,6 +75,17 @@ class _DoubleDiamondWorkspaceState
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final keys = ['discover', 'define', 'develop', 'deliver'];
+        for (int i = 0; i < keys.length; i++) {
+          final value = data[keys[i]] as String?;
+          if (value != null) _controllers[i].text = value;
+        }
+      } catch (_) {}
+    }
     for (final c in _controllers) {
       c.addListener(_notifyChanges);
     }
@@ -88,6 +107,12 @@ class _DoubleDiamondWorkspaceState
     buffer.writeln('- DEVELOP: ${_controllers[2].text.trim()}');
     buffer.writeln('- DELIVER: ${_controllers[3].text.trim()}');
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'discover': _controllers[0].text.trim(),
+      'define': _controllers[1].text.trim(),
+      'develop': _controllers[2].text.trim(),
+      'deliver': _controllers[3].text.trim(),
+    }));
   }
 
   @override

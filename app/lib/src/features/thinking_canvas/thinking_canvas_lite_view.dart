@@ -173,8 +173,11 @@ class _ThinkingCanvasLiteViewState
   }
 
   ThinkingMethod? _findMethod(String key) {
-    final idx = ThinkingMethod.allMethods.indexWhere((m) => m.key == key);
-    return idx >= 0 ? ThinkingMethod.allMethods[idx] : null;
+    try {
+      return ThinkingMethod.allMethods.firstWhere((m) => m.key == key);
+    } catch (_) {
+      return null;
+    }
   }
 
   Color _getMethodColor(String methodKey) {
@@ -849,52 +852,137 @@ class _ThinkingCanvasLiteViewState
     ref.read(thinkingCanvasProvider.notifier).updateDraft(content);
   }
 
+  void _onStructuredOutput(String json) {
+    ref.read(thinkingCanvasProvider.notifier).updateStructuredOutput(json);
+  }
+
+  String? get _restoredStructuredOutput =>
+      ref.read(thinkingCanvasProvider).structuredOutput;
+
   Widget _getWorkspaceForMethod(String method) {
+    final onSO = _onStructuredOutput;
+    final initSO = _restoredStructuredOutput;
     switch (method) {
       case 'Freewriting':
         return FreewritingWorkspace(controller: _freewritingController);
       case 'MindMapping':
         return _MindMapInline(onChanged: _onWorkspaceChanged);
       case 'LotusBlossom':
-        return LotusBlossomWorkspace(onChanged: _onWorkspaceChanged);
+        return LotusBlossomWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'MorphologicalAnalysis':
-        return MorphologicalWorkspace(onChanged: _onWorkspaceChanged);
+        return MorphologicalWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'MindDump':
       case 'MindDumpCluster':
-        return MindDumpWorkspace(onChanged: _onWorkspaceChanged);
+        return MindDumpWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'AffinityMapping':
-        return AffinityMappingWorkspace(onChanged: _onWorkspaceChanged);
+        return AffinityMappingWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case '5Whys':
-        return FiveWhysWorkspace(onChanged: _onWorkspaceChanged);
+        return FiveWhysWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'FirstPrinciples':
-        return FirstPrinciplesWorkspace(onChanged: _onWorkspaceChanged);
+        return FirstPrinciplesWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'DoubleDiamond':
-        return DoubleDiamondWorkspace(onChanged: _onWorkspaceChanged);
+        return DoubleDiamondWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'Validation':
       case 'Scoring':
-        return ValidationWorkspace(onChanged: _onWorkspaceChanged);
+        return ValidationWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'SixThinkingHats':
-        return SixThinkingHatsWorkspace(onChanged: _onWorkspaceChanged);
+        return SixThinkingHatsWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'DisneyStrategy':
-        return DisneyStrategyWorkspace(onChanged: _onWorkspaceChanged);
+        return DisneyStrategyWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'SCAMPER':
-        return ScamperWorkspace(onChanged: _onWorkspaceChanged);
+        return ScamperWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'SWOT':
-        return SwotMatrixWorkspace(onChanged: _onWorkspaceChanged);
+        return SwotMatrixWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'Starbursting':
-        return StarburstingWorkspace(onChanged: _onWorkspaceChanged);
+        return StarburstingWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'Brainstorming':
-        return RapidBrainstormWorkspace(onChanged: _onWorkspaceChanged);
+        return RapidBrainstormWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'ReverseBrainstorming':
-        return ReverseBrainstormWorkspace(onChanged: _onWorkspaceChanged);
+        return ReverseBrainstormWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'WorstPossibleIdea':
-        return WorstPossibleIdeaWorkspace(onChanged: _onWorkspaceChanged);
+        return WorstPossibleIdeaWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'QuestionStorming':
-        return QuestionStormWorkspace(onChanged: _onWorkspaceChanged);
+        return QuestionStormWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'RandomWord':
-        return RandomWordWorkspace(onChanged: _onWorkspaceChanged);
+        return RandomWordWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       case 'RoleStorming':
-        return RoleStormingWorkspace(onChanged: _onWorkspaceChanged);
+        return RoleStormingWorkspace(
+          onChanged: _onWorkspaceChanged,
+          onStructuredOutput: onSO,
+          initialStructuredOutput: initSO,
+        );
       default:
         return _GenericThinkingWorkspace(
             title: method, onChanged: _onWorkspaceChanged);

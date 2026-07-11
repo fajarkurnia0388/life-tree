@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -5,8 +6,14 @@ import '../../../../core/theme/app_spacing.dart';
 /// Reverse brainstorming: generate failure modes, then invert each into fixes.
 class ReverseBrainstormWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-
-  const ReverseBrainstormWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const ReverseBrainstormWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<ReverseBrainstormWorkspace> createState() =>
@@ -27,6 +34,18 @@ class _ReverseBrainstormWorkspaceState
   void initState() {
     super.initState();
     _tabs = TabController(length: 2, vsync: this);
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final worsen = data['worsen'] as List<dynamic>?;
+        if (worsen != null) _worsen.addAll(worsen.map((e) => e.toString()));
+        final invert = data['invert'] as List<dynamic>?;
+        if (invert != null) _invert.addAll(invert.map((e) => e.toString()));
+        final summary = data['summary'] as String?;
+        if (summary != null) _summary.text = summary;
+      } catch (_) {}
+    }
     _summary.addListener(_notifyChanges);
   }
 
@@ -57,6 +76,11 @@ class _ReverseBrainstormWorkspaceState
       buffer.writeln(s);
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'worsen': _worsen,
+      'invert': _invert,
+      'summary': _summary.text.trim(),
+    }));
   }
 
   void _addWorsen() {

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/i18n/daoji_text_key.dart';
@@ -9,7 +10,14 @@ import '../../../../core/i18n/daoji_vocabulary_provider.dart';
 // ==========================================
 class QuestionStormWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const QuestionStormWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const QuestionStormWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<QuestionStormWorkspace> createState() => _QuestionStormWorkspaceState();
@@ -19,6 +27,28 @@ class _QuestionStormWorkspaceState extends ConsumerState<QuestionStormWorkspace>
   final List<Map<String, dynamic>> _questions = [];
   final TextEditingController _inputController = TextEditingController();
   final Map<String, String> _questionActions = {}; // keyed by question text
+
+  @override
+  void initState() {
+    super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final questions = data['questions'] as List<dynamic>?;
+        if (questions != null) {
+          for (final q in questions) {
+            final m = q as Map<String, dynamic>;
+            _questions.add({'text': m['text'] as String, 'starred': m['starred'] as bool? ?? false});
+          }
+        }
+        final actions = data['actions'] as Map<String, dynamic>?;
+        if (actions != null) {
+          actions.forEach((k, v) => _questionActions[k] = v.toString());
+        }
+      } catch (_) {}
+    }
+  }
 
   void _notifyChanges() {
     final buffer = StringBuffer();
@@ -35,6 +65,10 @@ class _QuestionStormWorkspaceState extends ConsumerState<QuestionStormWorkspace>
       }
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'questions': _questions,
+      'actions': _questionActions,
+    }));
   }
 
   void _submitQuestion() {

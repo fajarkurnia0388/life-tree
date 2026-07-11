@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,14 @@ import 'step_progress_indicator.dart';
 // ==========================================
 class SixThinkingHatsWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  const SixThinkingHatsWorkspace({super.key, required this.onChanged});
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
+  const SixThinkingHatsWorkspace({
+    super.key,
+    required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
+  });
 
   @override
   ConsumerState<SixThinkingHatsWorkspace> createState() =>
@@ -80,8 +88,24 @@ class _SixThinkingHatsWorkspaceState
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final hats = data['hats'] as Map<String, dynamic>?;
+        if (hats != null) {
+          const hatKeys = ['white', 'red', 'black', 'amber', 'green', 'blue'];
+          for (int i = 0; i < hatKeys.length; i++) {
+            final value = hats[hatKeys[i]] as String?;
+            if (value != null) {
+              _controllers[i] = TextEditingController(text: value);
+            }
+          }
+        }
+      } catch (_) {}
+    }
     for (int i = 0; i < _hats.length; i++) {
-      _controllers[i] = TextEditingController();
+      _controllers.putIfAbsent(i, () => TextEditingController());
       _controllers[i]!.addListener(_notifyChanges);
     }
   }
@@ -106,6 +130,16 @@ class _SixThinkingHatsWorkspaceState
       }
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'hats': {
+        'white': _controllers[0]!.text.trim(),
+        'red': _controllers[1]!.text.trim(),
+        'black': _controllers[2]!.text.trim(),
+        'amber': _controllers[3]!.text.trim(),
+        'green': _controllers[4]!.text.trim(),
+        'blue': _controllers[5]!.text.trim(),
+      },
+    }));
   }
 
   @override

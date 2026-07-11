@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -175,9 +176,13 @@ class PersonaPackage {
 
 class RoleStormingWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onStructuredOutput;
+  final String? initialStructuredOutput;
   const RoleStormingWorkspace({
     super.key,
     required this.onChanged,
+    this.onStructuredOutput,
+    this.initialStructuredOutput,
   });
 
   @override
@@ -217,6 +222,11 @@ class _RoleStormingWorkspaceState extends ConsumerState<RoleStormingWorkspace> {
       buffer.writeln('- Ringkasan Lintas Persona: $summary');
     }
     widget.onChanged(buffer.toString());
+    widget.onStructuredOutput?.call(jsonEncode({
+      'activePackage': _activePackage.id,
+      'personaNotes': _personaNotes,
+      'summary': _summaryController.text.trim(),
+    }));
   }
 
   void _selectPersona(int index) {
@@ -236,6 +246,23 @@ class _RoleStormingWorkspaceState extends ConsumerState<RoleStormingWorkspace> {
   @override
   void initState() {
     super.initState();
+    // Restore from structured output if available
+    if (widget.initialStructuredOutput != null) {
+      try {
+        final data = jsonDecode(widget.initialStructuredOutput!) as Map<String, dynamic>;
+        final packageId = data['activePackage'] as String?;
+        if (packageId != null) {
+          final idx = PersonaPackage.library.indexWhere((p) => p.id == packageId);
+          if (idx >= 0) _activePackage = PersonaPackage.library[idx];
+        }
+        final personaNotes = data['personaNotes'] as Map<String, dynamic>?;
+        if (personaNotes != null) {
+          personaNotes.forEach((k, v) => _personaNotes[k] = v.toString());
+        }
+        final summary = data['summary'] as String?;
+        if (summary != null) _summaryController.text = summary;
+      } catch (_) {}
+    }
     _notesController.addListener(_notifyChanges);
     _summaryController.addListener(_notifyChanges);
   }
