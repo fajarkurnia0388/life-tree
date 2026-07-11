@@ -516,6 +516,10 @@ class AppDatabase extends _$AppDatabase {
           END
           ''');
       }
+      if (from < 13) {
+        // Schema version 13 was reserved for a migration that was later
+        // consolidated into v14. No-op to preserve version continuity.
+      }
       if (from < 14) {
         await _addColumnIfMissing(migrator, habits, habits.stackedToHabitId);
         await _addColumnIfMissing(

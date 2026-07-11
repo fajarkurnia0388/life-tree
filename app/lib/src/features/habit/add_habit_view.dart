@@ -343,7 +343,16 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
             quietHoursEnd: _quietHoursEnd,
           );
 
-      await _syncReminder(habitId, vocabularyLevel);
+      try {
+        await _syncReminder(habitId, vocabularyLevel);
+      } catch (e) {
+        if (mounted) {
+          SnackBarService.showWarning(
+            context,
+            'Kebiasaan tersimpan, tapi pengingat gagal diaktifkan: $e',
+          );
+        }
+      }
     } else {
       final habitId = const Uuid().v4();
       final newHabit = HabitsCompanion.insert(
@@ -380,7 +389,16 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
           .read(habitCrudServiceProvider)
           .createHabit(newHabit: newHabit, reminder: reminder);
 
-      await _syncReminder(habitId, vocabularyLevel);
+      try {
+        await _syncReminder(habitId, vocabularyLevel);
+      } catch (e) {
+        if (mounted) {
+          SnackBarService.showWarning(
+            context,
+            'Kebiasaan tersimpan, tapi pengingat gagal diaktifkan: $e',
+          );
+        }
+      }
     }
 
     ref.invalidate(dashboardDataProvider);

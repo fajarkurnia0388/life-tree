@@ -94,6 +94,8 @@ class SnackBarService {
     String? actionLabel,
     VoidCallback? onActionPressed,
   }) {
+    if (!context.mounted) return;
+
     // Clear any existing SnackBars
     ScaffoldMessenger.of(context).clearSnackBars();
 

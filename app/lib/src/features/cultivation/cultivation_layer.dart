@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import '../../core/domain/app_constants.dart';
 import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'cultivation_constants.dart';
@@ -222,11 +223,11 @@ class CultivationLayer {
     // 3. Check for tribulation signals
     // 4. Default → growth
 
-    if (data.season == 'Recovery') {
+    if (data.season == Season.recovery) {
       return CultivationSeason.recovery;
     }
 
-    if (data.season == 'Dormant') {
+    if (data.season == Season.dormant) {
       return CultivationSeason.dormant;
     }
 
@@ -236,7 +237,7 @@ class CultivationLayer {
         .where(
           (hwl) =>
               hwl.log != null &&
-              (hwl.log!.status == 'Missed' ||
+              (hwl.log!.status == HabitStatus.missed ||
                   hwl.log!.frictionReasonSelected != null),
         )
         .length;
@@ -322,7 +323,7 @@ class CultivationLayer {
       totalLoad += (friction + energy).toDouble();
     }
 
-    final capacity = profile.canopyLoadCapacity.toDouble();
+    final capacity = profile.canopyLoadCapacity.toDouble().clamp(1.0, double.infinity);
     final loadRatio = (totalLoad / capacity).clamp(0.0, 2.0);
 
     // Invert: high load = low Qi

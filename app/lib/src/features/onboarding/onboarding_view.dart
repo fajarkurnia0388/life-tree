@@ -79,6 +79,11 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
 
   void _startReadGateIfNeeded() {
     if (_currentPage == 4) {
+      _readGateElapsed = false;
+      _comprehensionCorrect = null;
+      _readSecondsRemaining = _readGateSeconds;
+      _readGateTimer?.cancel();
+      _readGateTimer = null;
       _startReadGate();
     }
   }

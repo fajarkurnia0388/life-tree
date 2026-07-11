@@ -136,6 +136,8 @@ class HabitLogService {
     required Habit habit,
     required HabitLog log,
   }) async {
+    if (log.status != HabitStatus.done) return;
+
     await _db.transaction(() async {
       final now = DateTime.now();
       await (_db.update(_db.habitLogs)

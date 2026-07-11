@@ -8,6 +8,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/i18n/daoji_text_resolver.dart';
 import '../../core/i18n/daoji_vocabulary_level.dart';
 import '../../core/i18n/daoji_vocabulary_provider.dart';
+import '../../core/services/snackbar_service.dart';
 import 'domain/thinking_method.dart';
 import 'domain/mind_map_model.dart';
 import 'widgets/method_picker_bottom_sheet.dart';
@@ -242,8 +243,14 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
     final notifier = ref.read(thinkingCanvasProvider.notifier);
     try {
       await notifier.commitToHistory();
-    } catch (_) {
-      // Non-fatal; still clear canvas so user is not stuck
+    } catch (e) {
+      if (mounted) {
+        SnackBarService.showError(
+          context,
+          'Gagal menyimpan sesi. Silakan coba lagi.',
+        );
+      }
+      return;
     }
     notifier.clearCanvas();
   }
@@ -257,31 +264,35 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
       onSessionSelected: (s) async {
         if (!mounted) return;
         final level = ref.read(daojiVocabularyLevelValueProvider);
+        BuildContext? dialogContext;
         unawaited(
           showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (dialogContext) => Center(
-              child: Card(
-                margin: const EdgeInsets.all(40),
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 16),
-                      Text(
-                        DaojiText.resolve(
-                          DaojiTextKey.thinkingCanvasLoadingSession,
-                          level,
+            builder: (ctx) {
+              dialogContext = ctx;
+              return Center(
+                child: Card(
+                  margin: const EdgeInsets.all(40),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(),
+                        const SizedBox(height: 16),
+                        Text(
+                          DaojiText.resolve(
+                            DaojiTextKey.thinkingCanvasLoadingSession,
+                            level,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         );
         await Future.delayed(const Duration(milliseconds: 100));
@@ -293,8 +304,8 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
           }
         });
         ref.read(thinkingCanvasProvider.notifier).loadSession(s);
-        if (context.mounted) {
-          Navigator.of(context).pop();
+        if (dialogContext != null && dialogContext!.mounted) {
+          Navigator.of(dialogContext!).pop();
         }
       },
     );

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dashboard_selection.dart';
@@ -270,9 +271,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     Builder(
                       builder: (context) {
                         final aotd = activeActionOfTheDay;
-                        final hwl = data.habitsToday.firstWhere(
+                        final hwl = data.habitsToday.firstWhereOrNull(
                           (item) => item.habit.habitId == aotd.habitId,
                         );
+                        if (hwl == null) return const SizedBox.shrink();
                         return ActionOfTheDayCard(
                           habit: aotd,
                           data: data,
