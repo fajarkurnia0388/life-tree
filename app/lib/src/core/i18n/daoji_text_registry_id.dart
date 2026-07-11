@@ -1,27 +1,30 @@
 import 'daoji_text_key.dart';
 import 'daoji_vocabulary_level.dart';
+import 'registry/nav_id.dart';
+import 'registry/thinking_canvas_id.dart';
 
 /// Indonesian UI copy with English Daoji brand terms where intentional.
-const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
+///
+/// Domain partials live under [registry/] (nav + thinking canvas first).
+/// Public API [daojiTextsId] is unchanged for [DaojiText.resolve].
+final Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
+
   DaojiVocabularyLevel.mortal: {
-    DaojiTextKey.navHome: 'Home',
-    DaojiTextKey.navJournal: 'Journal',
-    DaojiTextKey.navReflection: 'Reflection',
-    DaojiTextKey.navMarketplace: 'Store',
-    DaojiTextKey.navProfile: 'Profile',
+    ...daojiNavTextsId[DaojiVocabularyLevel.mortal]!,
+    ...daojiThinkingCanvasTextsId[DaojiVocabularyLevel.mortal]!,
     DaojiTextKey.dashboardNoActionsTitle:
-        'Tidak ada kebiasaan yang terjadwal untuk hari ini.',
+    'Tidak ada kebiasaan yang terjadwal untuk hari ini.',
     DaojiTextKey.dashboardNoActionsBody:
-        'Gunakan waktu hari ini untuk beristirahat atau tambahkan kebiasaan baru.',
+    'Gunakan waktu hari ini untuk beristirahat atau tambahkan kebiasaan baru.',
     DaojiTextKey.dashboardQuickActionsTitle: 'Quick Actions',
     DaojiTextKey.dashboardAddPracticeTitle: 'Add Habit',
     DaojiTextKey.dashboardAddPracticeSubtitle:
-        'Buat kebiasaan baru di domain kehidupan Anda',
+    'Buat kebiasaan baru di domain kehidupan Anda',
     DaojiTextKey.dashboardJournalTitle: 'Write Journal',
     DaojiTextKey.dashboardJournalSubtitle: 'Catat mood & jurnal harian Anda',
     DaojiTextKey.dashboardShowCultivationStatus: 'Lihat status pertumbuhan',
     DaojiTextKey.dashboardHideCultivationStatus:
-        'Sembunyikan status pertumbuhan',
+    'Sembunyikan status pertumbuhan',
     DaojiTextKey.dashboardLoading: 'Memuat data dashboard...',
     DaojiTextKey.dashboardLoadError: 'Gagal memuat dashboard',
     DaojiTextKey.realmDisplay: 'Hari ke-{days}',
@@ -53,11 +56,11 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.stateQuietIntegration: 'Quiet Recovery',
     DaojiTextKey.stateGrowthDescription: 'Ritme harianmu sedang aktif.',
     DaojiTextKey.stateRecoveryDescription:
-        'Target dilembutkan. Fokus pemulihan.',
+    'Target dilembutkan. Fokus pemulihan.',
     DaojiTextKey.stateDormantDescription: 'Lama tidak aktif. Kembali perlahan.',
     DaojiTextKey.frictionTitle: 'Bottleneck',
     DaojiTextKey.frictionNoGuilt:
-        'Jangan merasa bersalah. Ini data yang berguna.',
+    'Jangan merasa bersalah. Ini data yang berguna.',
     DaojiTextKey.frictionTime: 'Lack of time',
     DaojiTextKey.frictionEnergy: 'Exhaustion',
     DaojiTextKey.frictionForgot: 'Forgot',
@@ -85,7 +88,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.journalSavedSuccess: 'Jurnal harian berhasil disimpan!',
     DaojiTextKey.reflectionTitle: 'Reflection',
     DaojiTextKey.reflectionSubtitle:
-        'Tinjau pola pikiran, kebiasaan, dan kondisi mental.',
+    'Tinjau pola pikiran, kebiasaan, dan kondisi mental.',
     DaojiTextKey.reflectionValueMirror: 'Value Mirror',
     DaojiTextKey.reflectionWeeklyPulse: 'Weekly Review',
     DaojiTextKey.reflectionThinkingCanvas: 'Thinking Canvas',
@@ -104,13 +107,13 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketShareTooltip: 'Bagikan Template Saya',
     DaojiTextKey.marketNoTemplatesTitle: 'Tidak Ada Template',
     DaojiTextKey.marketNoTemplatesSearchMessage:
-        'Tidak ada template yang cocok dengan pencarian Anda',
+    'Tidak ada template yang cocok dengan pencarian Anda',
     DaojiTextKey.marketNoTemplatesEmptyMessage:
-        'Belum ada template kebiasaan di kategori ini',
+    'Belum ada template kebiasaan di kategori ini',
     DaojiTextKey.marketShareActionLabel: 'Bagikan Kebiasaan Anda',
     DaojiTextKey.marketRateDialogTitle: 'Beri Rating Kebiasaan',
     DaojiTextKey.marketRateDialogQuestion:
-        'Seberapa bermanfaat kebiasaan "{title}" ini bagi Anda?',
+    'Seberapa bermanfaat kebiasaan "{title}" ini bagi Anda?',
     DaojiTextKey.marketRatingThanks: 'Terima kasih atas rating Anda!',
     DaojiTextKey.marketRateButton: 'Beri Rating',
     DaojiTextKey.marketUseButton: 'Gunakan',
@@ -119,19 +122,19 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketMvaPrefix: 'MVA:',
     DaojiTextKey.rapidBrainstormTitle: '4. Logger Ide Cepat (Rapid Brainstorm)',
     DaojiTextKey.rapidBrainstormHint:
-        'Ketik ide baru di sini lalu tekan Enter 🚀...',
+    'Ketik ide baru di sini lalu tekan Enter 🚀...',
     DaojiTextKey.rapidBrainstormAddTooltip: 'Tambah ide',
     DaojiTextKey.rapidBrainstormQuantity: 'Kuantitas Ide: {count}',
     DaojiTextKey.rapidBrainstormReset: 'Reset',
     DaojiTextKey.questionStormTitle:
-        '4. Logger Pertanyaan Kunci (Question Storming)',
+    '4. Logger Pertanyaan Kunci (Question Storming)',
     DaojiTextKey.questionStormHint:
-        'Ketik pertanyaan kritis Anda lalu tekan Enter...',
+    'Ketik pertanyaan kritis Anda lalu tekan Enter...',
     DaojiTextKey.questionStormAddTooltip: 'Tambah pertanyaan',
     DaojiTextKey.questionStormStats:
-        'Pertanyaan: {total} | Prioritas: {starred}/3',
+    'Pertanyaan: {total} | Prioritas: {starred}/3',
     DaojiTextKey.questionStormMaxPriority:
-        'Maksimal pilih 3 pertanyaan prioritas saja!',
+    'Maksimal pilih 3 pertanyaan prioritas saja!',
     DaojiTextKey.randomWordTitle: 'Random Words',
     DaojiTextKey.randomWordHint: 'Pilih kata untuk memicu ide',
     DaojiTextKey.profileDomainReauditTitle: 'Perbarui Penilaian Domain',
@@ -148,19 +151,26 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.settingsReset: 'Reset App',
     DaojiTextKey.settingsResetSubtitle: 'Hapus semua data dan kembali ke awal',
     DaojiTextKey.settingsResetConfirmBody:
-        'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
+    'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
     DaojiTextKey.settingsResetConfirmAction: 'Hapus Semua',
     DaojiTextKey.settingsResetSuccess: 'Semua data telah dihapus.',
     DaojiTextKey.settingsDarkMode: 'Dark Mode',
     DaojiTextKey.settingsDevMode: 'Developer Mode',
     DaojiTextKey.settingsDevModeSubtitle:
-        'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
+    'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
     DaojiTextKey.systemLoading: 'Loading...',
     DaojiTextKey.systemRetry: 'Retry',
     DaojiTextKey.systemCancel: 'Cancel',
     DaojiTextKey.systemClose: 'Close',
     DaojiTextKey.systemSave: 'Save',
     DaojiTextKey.systemDelete: 'Delete',
+
+    DaojiTextKey.radarChartTitle: 'Life Balance Chart',
+    DaojiTextKey.canopyLoadTitle: 'Canopy Load',
+    DaojiTextKey.habitListTitle: 'Today\'s Habits',
+    DaojiTextKey.journalDeep: 'Deep Journal',
+    DaojiTextKey.valueMirrorTitle: 'Value Mirror',
+
     DaojiTextKey.habitCanopyLoadStatus: 'Beban Kanopi: {load}/{capacity}',
     DaojiTextKey.celebrationTitle: 'Luar Biasa! 🎉',
     DaojiTextKey.celebrationSubtitleDefault: 'Semua kebiasaan hari ini telah selesai!',
@@ -171,56 +181,21 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.breathingSubtitle: 'Tarik napas perlahan untuk meredakan ketegangan.',
     DaojiTextKey.reflectionReauditAction: 'Audit Mandiri Istana Batin',
     DaojiTextKey.reflectionCompassCompareAction: 'Cek Keselarasan Kompas',
-    DaojiTextKey.thinkingCanvasTitle: 'Thinking Canvas',
-    DaojiTextKey.thinkingCanvasHistory: 'Riwayat Sesi',
-    DaojiTextKey.thinkingCanvasSessionHistoryTitle: 'Riwayat Thinking Canvas',
-    DaojiTextKey.thinkingCanvasOpenMethodCatalog: 'Buka Katalog Metode',
-    DaojiTextKey.thinkingCanvasWorkspaceLabel: 'Workspace: {title}',
-    DaojiTextKey.thinkingCanvasWorkspaceHint:
-        'Tulis ide atau kerangka berpikir Anda di sini...',
-    DaojiTextKey.thinkingCanvasSaveSessionTitle: 'Simpan Sesi?',
-    DaojiTextKey.thinkingCanvasSaveSessionBody:
-        'Anda memiliki konten yang belum disimpan ke riwayat. Apa yang ingin Anda lakukan?',
-    DaojiTextKey.thinkingCanvasDiscard: 'Buang',
-    DaojiTextKey.thinkingCanvasSaveAndFinish: 'Simpan & Selesai',
-    DaojiTextKey.thinkingCanvasDraftSaved: 'Draf tersimpan',
-    DaojiTextKey.thinkingCanvasQuickStart: 'Mulai Cepat',
-    DaojiTextKey.thinkingCanvasRecentlyUsed: 'Terakhir Digunakan',
-    DaojiTextKey.thinkingCanvasShowGuideAgain: 'Lihat Panduan Lagi',
-    DaojiTextKey.thinkingCanvasDeleteAllHistory: 'Hapus Semua History?',
-    DaojiTextKey.thinkingCanvasDeleteAllAction: 'Hapus Semua',
-    DaojiTextKey.thinkingCanvasDeleteAllHistoryBody:
-        'Semua sesi akan dihapus dari riwayat (bisa di-soft-delete di database).',
-    DaojiTextKey.thinkingCanvasNoSessionsTitle: 'Belum Ada Sesi',
-    DaojiTextKey.thinkingCanvasNoSessionsBody:
-        'Semua sesi eksplorasi ide terstruktur Anda akan tercatat di sini.',
-    DaojiTextKey.thinkingCanvasDeleteSession: 'Hapus Sesi?',
-    DaojiTextKey.thinkingCanvasLoadingSession: 'Memuat sesi...',
-    DaojiTextKey.thinkingCanvasMoodPrompt: 'Apa yang Anda rasakan saat ini?',
-    DaojiTextKey.thinkingCanvasMoodPromptSubtitle:
-        'Pilih suasana hati untuk rekomendasi metode',
-    DaojiTextKey.thinkingCanvasRecommendations: 'Rekomendasi untuk Anda',
-    DaojiTextKey.navHomeHeaven: 'Sanctuary',
-    DaojiTextKey.navJournalHeaven: 'Scripture',
-    DaojiTextKey.navReflectionHeaven: 'Alchemy',
-    DaojiTextKey.navMarketplaceHeaven: 'Archive',
-    DaojiTextKey.navProfileHeaven: 'Dao Heart',
-    DaojiTextKey.methodPickerTitle: 'Pilih Metode Berpikir',
     DaojiTextKey.sixThinkingHatsTitle: '4. Analisis 6 Topi Berpikir (Six Hats)',
     DaojiTextKey.sixThinkingHatsNoteLabel: 'Catatan untuk {name}',
     DaojiTextKey.sixThinkingHatsNoteHint:
-        'Tuliskan analisis kognitif Anda di sini...',
+    'Tuliskan analisis kognitif Anda di sini...',
     DaojiTextKey.sixThinkingHatsValidatorMessage:
-        'Harap tuliskan analisis untuk {name}',
+    'Harap tuliskan analisis untuk {name}',
     DaojiTextKey.freewritingTitle: '4. Sesi Freewriting Tanpa Henti',
     DaojiTextKey.freewritingHint:
-        'Mulai menulis apa saja di sini, jangan biarkan jari Anda berhenti mengetik...',
+    'Mulai menulis apa saja di sini, jangan biarkan jari Anda berhenti mengetik...',
     DaojiTextKey.freewritingValidator: 'Tuliskan pemikiran Freewriting Anda',
     DaojiTextKey.freewritingInactivityAlert:
-        '🚨 JANGAN BERHENTI MENULIS! Alirkan pikiran...',
+    '🚨 JANGAN BERHENTI MENULIS! Alirkan pikiran...',
     DaojiTextKey.freewritingTimeFinishedTitle: 'Waktu Habis! 🎉',
     DaojiTextKey.freewritingTimeFinishedContent:
-        'Selamat! Sesi menulis bebas (Freewriting) tanpa henti selesai.\n\nKembali ke kertas coretan untuk menyeleksi poin terbaik.',
+    'Selamat! Sesi menulis bebas (Freewriting) tanpa henti selesai.\n\nKembali ke kertas coretan untuk menyeleksi poin terbaik.',
     DaojiTextKey.freewritingContinueButton: 'Lanjut',
     DaojiTextKey.lotusTitle: '4. Kelopak Radial Lotus Blossom',
     DaojiTextKey.lotusCenterPlaceholder: 'Topik Utama',
@@ -232,13 +207,13 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.lotusCancel: 'Batal',
     DaojiTextKey.lotusSave: 'Simpan',
     DaojiTextKey.lotusFootnote:
-        '*Kelopak berbentuk melingkar. Ketuk petal terisi untuk masuk ke sub-cabang ide.',
+    '*Kelopak berbentuk melingkar. Ketuk petal terisi untuk masuk ke sub-cabang ide.',
     DaojiTextKey.mindDumpTitle: '4. Kuras Pikiran (Mind Dump Sticky Notes)',
     DaojiTextKey.mindDumpAddLabel: 'Tambah Item',
     DaojiTextKey.mindDumpHint:
-        'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
+    'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
     DaojiTextKey.mindDumpEmptyMessage:
-        'Belum ada catatan tempel. Ketik sesuatu di atas untuk meluapkan isi kepala Anda!',
+    'Belum ada catatan tempel. Ketik sesuatu di atas untuk meluapkan isi kepala Anda!',
     DaojiTextKey.mindDumpEditTitle: 'Edit Catatan #{index}',
     DaojiTextKey.mindDumpEditLabel: 'Catatan',
     DaojiTextKey.mindDumpStickyHeader: 'Hasil Kuras Pikiran (Mind Dump Sticky Notes):',
@@ -246,7 +221,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.affinityAddLabel: 'Tambah Gagasan',
     DaojiTextKey.affinityHint: 'Ketik gagasan/ide Anda lalu tekan Enter...',
     DaojiTextKey.affinityEmptyMessage:
-        'Belum ada ide. Tambahkan ide di atas lalu kelompokkan ke dalam grup!',
+    'Belum ada ide. Tambahkan ide di atas lalu kelompokkan ke dalam grup!',
     DaojiTextKey.affinityAddGroup: 'Tambah Grup',
     DaojiTextKey.affinityRenameGroup: 'Ubah Nama Grup',
     DaojiTextKey.affinityRenameOption: '✏️ Ubah Nama...',
@@ -254,14 +229,14 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.affinityGroupEmpty: '(Kosong)',
     DaojiTextKey.fiveWhysTitle: '5 Whys (Why Chain)',
     DaojiTextKey.fiveWhysPrompt:
-        'Tuliskan sebab pertama lalu gali 5 kali "mengapa"',
+    'Tuliskan sebab pertama lalu gali 5 kali "mengapa"',
     DaojiTextKey.morphologicalTitle: '4. Slot Machine Kombinasi Morfologi',
     DaojiTextKey.morphologicalMarketplaceTitle: 'Perpustakaan Dimensi 🛒',
     DaojiTextKey.morphologicalMarketplaceClose: 'Tutup',
     DaojiTextKey.morphologicalMarketplaceDescription:
-        'Pilih dari set parameter siap-pakai untuk memancing kreativitas Anda secara instan!',
+    'Pilih dari set parameter siap-pakai untuk memancing kreativitas Anda secara instan!',
     DaojiTextKey.morphologicalApplyTemplateSuccess:
-        'Template "{title}" berhasil diterapkan!',
+    'Template "{title}" berhasil diterapkan!',
     DaojiTextKey.morphologicalAddOptionTitle: 'Tambah Opsi di "{dimension}"',
     DaojiTextKey.morphologicalOptionLabel: 'Opsi',
     DaojiTextKey.morphologicalAddButton: 'Tambah',
@@ -319,20 +294,6 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.validationNoOpposes: 'Belum ada bukti menentang',
 
     // Mind Map Canvas
-    DaojiTextKey.mindMapEditorTitle: 'Mind Map Editor',
-    DaojiTextKey.mindMapUndoTooltip: 'Batalkan',
-    DaojiTextKey.mindMapRecenterTooltip: 'Pusatkan',
-    DaojiTextKey.mindMapAddBranchTooltip: 'Tambah Cabang',
-    DaojiTextKey.mindMapEditTooltip: 'Edit',
-    DaojiTextKey.mindMapDeleteTooltip: 'Hapus',
-    DaojiTextKey.mindMapDefaultNodeText: 'Gagasan',
-    DaojiTextKey.mindMapDefaultRootText: 'Topik Utama',
-    DaojiTextKey.mindMapNewNodeText: 'Ide Baru',
-    DaojiTextKey.mindMapNewChildNodeText: 'Sub-ide',
-    DaojiTextKey.mindMapSaveButton: 'Simpan',
-    DaojiTextKey.mindMapNewTopicButton: 'Topik Baru',
-
-    // Weekly Pulse
     DaojiTextKey.weeklyPulseTitleLow: 'Refleksi Diri 🌱',
     DaojiTextKey.weeklyPulseTitleHigh: 'Luar Biasa! ✨',
     DaojiTextKey.weeklyPulseDescriptionLow: 'Skor kesejahteraan emosional Anda berada di angka {percentage}%. Minggu ini mungkin terasa berat. Beristirahatlah sejenak dan pertimbangkan untuk mengaktifkan Recovery Mode.',
@@ -447,47 +408,20 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.starburstingLabel: 'Ajukan Pertanyaan Kritis untuk {key}',
     DaojiTextKey.starburstingHint: 'Tuliskan draf pertanyaan di sini...',
   },
-
   DaojiVocabularyLevel.human: {
-
-    DaojiTextKey.thinkingCanvasSaveSessionTitle: 'Simpan sesi ini?',
-    DaojiTextKey.thinkingCanvasSaveSessionBody:
-        'Masih ada catatan yang belum masuk riwayat. Simpan dulu, atau buang?',
-    DaojiTextKey.thinkingCanvasDiscard: 'Buang',
-    DaojiTextKey.thinkingCanvasSaveAndFinish: 'Simpan & Selesai',
-    DaojiTextKey.thinkingCanvasDraftSaved: 'Draf tersimpan',
-    DaojiTextKey.thinkingCanvasQuickStart: 'Mulai cepat',
-    DaojiTextKey.thinkingCanvasRecentlyUsed: 'Baru dipakai',
-    DaojiTextKey.thinkingCanvasShowGuideAgain: 'Lihat panduan lagi',
-    DaojiTextKey.thinkingCanvasDeleteAllHistory: 'Hapus semua riwayat?',
-    DaojiTextKey.thinkingCanvasDeleteAllAction: 'Hapus semua',
-    DaojiTextKey.thinkingCanvasDeleteAllHistoryBody:
-        'Semua sesi akan disembunyikan dari riwayat (soft-delete).',
-    DaojiTextKey.thinkingCanvasNoSessionsTitle: 'Belum ada sesi',
-    DaojiTextKey.thinkingCanvasNoSessionsBody:
-        'Sesi berpikir terstruktur Anda akan muncul di sini.',
-    DaojiTextKey.thinkingCanvasDeleteSession: 'Hapus sesi?',
-    DaojiTextKey.thinkingCanvasLoadingSession: 'Memuat sesi...',
-    DaojiTextKey.thinkingCanvasMoodPrompt: 'Bagaimana perasaan Anda sekarang?',
-    DaojiTextKey.thinkingCanvasMoodPromptSubtitle:
-        'Pilih mood untuk rekomendasi metode',
-    DaojiTextKey.thinkingCanvasRecommendations: 'Rekomendasi untuk Anda',
-    DaojiTextKey.navHome: 'Home',
-    DaojiTextKey.navJournal: 'Disciplines',
-    DaojiTextKey.navReflection: 'Insight',
-    DaojiTextKey.navMarketplace: 'Library',
-    DaojiTextKey.navProfile: 'Compass',
+    ...daojiNavTextsId[DaojiVocabularyLevel.human]!,
+    ...daojiThinkingCanvasTextsId[DaojiVocabularyLevel.human]!,
     DaojiTextKey.dashboardNoActionsTitle:
-        'Tidak ada disiplin yang terjadwal untuk hari ini.',
+    'Tidak ada disiplin yang terjadwal untuk hari ini.',
     DaojiTextKey.dashboardNoActionsBody:
-        'Istirahat atau tambahkan disiplin baru.',
+    'Istirahat atau tambahkan disiplin baru.',
     DaojiTextKey.dashboardQuickActionsTitle: 'Quick Actions',
     DaojiTextKey.dashboardAddPracticeTitle: 'Add Discipline',
     DaojiTextKey.dashboardAddPracticeSubtitle:
-        'Buat disiplin baru di path kehidupan Anda',
+    'Buat disiplin baru di path kehidupan Anda',
     DaojiTextKey.dashboardJournalTitle: 'Write Discipline Log',
     DaojiTextKey.dashboardJournalSubtitle:
-        'Catat mood & refleksi disiplin Anda',
+    'Catat mood & refleksi disiplin Anda',
     DaojiTextKey.dashboardShowCultivationStatus: 'Lihat status disiplin',
     DaojiTextKey.dashboardHideCultivationStatus: 'Sembunyikan status disiplin',
     DaojiTextKey.dashboardLoading: 'Memuat data disiplin...',
@@ -521,7 +455,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.stateQuietIntegration: 'Quiet Integration',
     DaojiTextKey.stateGrowthDescription: 'Ritme disiplin sedang bergerak.',
     DaojiTextKey.stateRecoveryDescription:
-        'Disciplines are softened. Recovery counts.',
+    'Disciplines are softened. Recovery counts.',
     DaojiTextKey.stateDormantDescription: 'Ritme sedang hening, bukan rusak.',
     DaojiTextKey.frictionTitle: 'Bottleneck',
     DaojiTextKey.frictionNoGuilt: 'Friction is part of the path.',
@@ -552,7 +486,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.journalSavedSuccess: 'Jurnal harian berhasil disimpan!',
     DaojiTextKey.reflectionTitle: 'Insight',
     DaojiTextKey.reflectionSubtitle:
-        'Notice patterns in your disciplines and mind.',
+    'Notice patterns in your disciplines and mind.',
     DaojiTextKey.reflectionValueMirror: 'Inner Mirror',
     DaojiTextKey.reflectionWeeklyPulse: 'Weekly Check-in',
     DaojiTextKey.reflectionThinkingCanvas: 'Insight Canvas',
@@ -571,13 +505,13 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketShareTooltip: 'Bagikan Template Saya',
     DaojiTextKey.marketNoTemplatesTitle: 'Tidak Ada Template',
     DaojiTextKey.marketNoTemplatesSearchMessage:
-        'Tidak ada template yang cocok dengan pencarian Anda',
+    'Tidak ada template yang cocok dengan pencarian Anda',
     DaojiTextKey.marketNoTemplatesEmptyMessage:
-        'Belum ada template di kategori ini',
+    'Belum ada template di kategori ini',
     DaojiTextKey.marketShareActionLabel: 'Bagikan Disiplin Anda',
     DaojiTextKey.marketRateDialogTitle: 'Beri Rating Disiplin',
     DaojiTextKey.marketRateDialogQuestion:
-        'Seberapa bermanfaat disiplin "{title}" ini bagi Anda?',
+    'Seberapa bermanfaat disiplin "{title}" ini bagi Anda?',
     DaojiTextKey.marketRatingThanks: 'Terima kasih atas rating Anda!',
     DaojiTextKey.marketRateButton: 'Beri Rating',
     DaojiTextKey.marketUseButton: 'Gunakan',
@@ -586,19 +520,19 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketMvaPrefix: 'MVA:',
     DaojiTextKey.rapidBrainstormTitle: '4. Logger Ide Cepat (Rapid Brainstorm)',
     DaojiTextKey.rapidBrainstormHint:
-        'Ketik ide baru di sini lalu tekan Enter 🚀...',
+    'Ketik ide baru di sini lalu tekan Enter 🚀...',
     DaojiTextKey.rapidBrainstormAddTooltip: 'Tambah ide',
     DaojiTextKey.rapidBrainstormQuantity: 'Kuantitas Ide: {count}',
     DaojiTextKey.rapidBrainstormReset: 'Reset',
     DaojiTextKey.questionStormTitle:
-        '4. Logger Pertanyaan Kunci (Question Storming)',
+    '4. Logger Pertanyaan Kunci (Question Storming)',
     DaojiTextKey.questionStormHint:
-        'Ketik pertanyaan kritis Anda lalu tekan Enter...',
+    'Ketik pertanyaan kritis Anda lalu tekan Enter...',
     DaojiTextKey.questionStormAddTooltip: 'Tambah pertanyaan',
     DaojiTextKey.questionStormStats:
-        'Pertanyaan: {total} | Prioritas: {starred}/3',
+    'Pertanyaan: {total} | Prioritas: {starred}/3',
     DaojiTextKey.questionStormMaxPriority:
-        'Maksimal pilih 3 pertanyaan prioritas saja!',
+    'Maksimal pilih 3 pertanyaan prioritas saja!',
     DaojiTextKey.randomWordTitle: 'Random Words',
     DaojiTextKey.randomWordHint: 'Pilih kata untuk memicu ide',
     DaojiTextKey.profileDomainReauditTitle: 'Perbarui Penilaian Domain',
@@ -615,13 +549,13 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.settingsReset: 'Reset App',
     DaojiTextKey.settingsResetSubtitle: 'Hapus semua data dan kembali ke awal',
     DaojiTextKey.settingsResetConfirmBody:
-        'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
+    'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
     DaojiTextKey.settingsResetConfirmAction: 'Hapus Semua',
     DaojiTextKey.settingsResetSuccess: 'Semua data telah dihapus.',
     DaojiTextKey.settingsDarkMode: 'Dark Mode',
     DaojiTextKey.settingsDevMode: 'Developer Mode',
     DaojiTextKey.settingsDevModeSubtitle:
-        'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
+    'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
     DaojiTextKey.systemLoading: 'Loading...',
     DaojiTextKey.systemRetry: 'Retry',
     DaojiTextKey.systemCancel: 'Cancel',
@@ -651,41 +585,15 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketRestPrompt: '🌿 Daoji menyarankan Rest Mode.\nEnergi mental Anda memerlukan pengisian ulang. Selesaikan kuis berikutnya untuk membuka fitur.',
   },
   DaojiVocabularyLevel.earth: {
-
-    DaojiTextKey.thinkingCanvasSaveSessionTitle: 'Akar-kan sesi ini?',
-    DaojiTextKey.thinkingCanvasSaveSessionBody:
-        'Catatan ini belum mengakar di riwayat. Simpan, buang, atau lanjut menumbuhkan dulu?',
-    DaojiTextKey.thinkingCanvasDiscard: 'Buang',
-    DaojiTextKey.thinkingCanvasSaveAndFinish: 'Simpan & Selesai',
-    DaojiTextKey.thinkingCanvasDraftSaved: 'Draf mengakar',
-    DaojiTextKey.thinkingCanvasQuickStart: 'Tunas cepat',
-    DaojiTextKey.thinkingCanvasRecentlyUsed: 'Baru dipelihara',
-    DaojiTextKey.thinkingCanvasShowGuideAgain: 'Buka panduan lagi',
-    DaojiTextKey.thinkingCanvasDeleteAllHistory: 'Cabut semua riwayat?',
-    DaojiTextKey.thinkingCanvasDeleteAllAction: 'Cabut semua',
-    DaojiTextKey.thinkingCanvasDeleteAllHistoryBody:
-        'Semua sesi akan di-soft-delete dari tanah riwayat.',
-    DaojiTextKey.thinkingCanvasNoSessionsTitle: 'Tanah masih kosong',
-    DaojiTextKey.thinkingCanvasNoSessionsBody:
-        'Sesi eksplorasi yang Anda tanam akan tercatat di sini.',
-    DaojiTextKey.thinkingCanvasDeleteSession: 'Cabut sesi ini?',
-    DaojiTextKey.thinkingCanvasLoadingSession: 'Menyirami sesi...',
-    DaojiTextKey.thinkingCanvasMoodPrompt: 'Cuaca batin Anda hari ini?',
-    DaojiTextKey.thinkingCanvasMoodPromptSubtitle:
-        'Pilih suasana untuk rekomendasi metode',
-    DaojiTextKey.thinkingCanvasRecommendations: 'Rekomendasi musim ini',
-    DaojiTextKey.navHome: 'Training Hub',
-    DaojiTextKey.navJournal: 'Qi Log',
-    DaojiTextKey.navReflection: 'Refinement',
-    DaojiTextKey.navMarketplace: 'Sutra Pavilion',
-    DaojiTextKey.navProfile: 'Compass',
+    ...daojiNavTextsId[DaojiVocabularyLevel.earth]!,
+    ...daojiThinkingCanvasTextsId[DaojiVocabularyLevel.earth]!,
     DaojiTextKey.dashboardNoActionsTitle: 'No practice is calling today.',
     DaojiTextKey.dashboardNoActionsBody:
-        'Rest, or open a path with one practice.',
+    'Rest, or open a path with one practice.',
     DaojiTextKey.dashboardQuickActionsTitle: 'Quick Actions',
     DaojiTextKey.dashboardAddPracticeTitle: 'Add Practice',
     DaojiTextKey.dashboardAddPracticeSubtitle:
-        'Buat practice baru di Dao Path Anda',
+    'Buat practice baru di Dao Path Anda',
     DaojiTextKey.dashboardJournalTitle: 'Write Qi Log',
     DaojiTextKey.dashboardJournalSubtitle: 'Catat mood & aliran qi hari ini',
     DaojiTextKey.dashboardShowCultivationStatus: 'Lihat status Dao Paths',
@@ -721,7 +629,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.stateQuietIntegration: 'Quiet Integration',
     DaojiTextKey.stateGrowthDescription: 'Dao Paths sedang bergerak.',
     DaojiTextKey.stateRecoveryDescription:
-        'Practices are softened. Recovery is cultivation.',
+    'Practices are softened. Recovery is cultivation.',
     DaojiTextKey.stateDormantDescription: 'The path is quiet, not broken.',
     DaojiTextKey.frictionTitle: 'Bottleneck Inquiry',
     DaojiTextKey.frictionNoGuilt: 'Friction is data from the path.',
@@ -770,13 +678,13 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketShareTooltip: 'Bagikan Template Saya',
     DaojiTextKey.marketNoTemplatesTitle: 'Tidak Ada Template',
     DaojiTextKey.marketNoTemplatesSearchMessage:
-        'Tidak ada template yang cocok dengan pencarian Anda',
+    'Tidak ada template yang cocok dengan pencarian Anda',
     DaojiTextKey.marketNoTemplatesEmptyMessage:
-        'Belum ada template di kategori ini',
+    'Belum ada template di kategori ini',
     DaojiTextKey.marketShareActionLabel: 'Bagikan Practice Anda',
     DaojiTextKey.marketRateDialogTitle: 'Beri Rating Practice',
     DaojiTextKey.marketRateDialogQuestion:
-        'Seberapa bermanfaat practice "{title}" ini bagi Anda?',
+    'Seberapa bermanfaat practice "{title}" ini bagi Anda?',
     DaojiTextKey.marketRatingThanks: 'Terima kasih atas rating Anda!',
     DaojiTextKey.marketRateButton: 'Beri Rating',
     DaojiTextKey.marketUseButton: 'Gunakan',
@@ -785,19 +693,19 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketMvaPrefix: 'MVA:',
     DaojiTextKey.rapidBrainstormTitle: '4. Logger Ide Cepat (Rapid Brainstorm)',
     DaojiTextKey.rapidBrainstormHint:
-        'Ketik ide baru di sini lalu tekan Enter 🚀...',
+    'Ketik ide baru di sini lalu tekan Enter 🚀...',
     DaojiTextKey.rapidBrainstormAddTooltip: 'Tambah ide',
     DaojiTextKey.rapidBrainstormQuantity: 'Kuantitas Ide: {count}',
     DaojiTextKey.rapidBrainstormReset: 'Reset',
     DaojiTextKey.questionStormTitle:
-        '4. Logger Pertanyaan Kunci (Question Storming)',
+    '4. Logger Pertanyaan Kunci (Question Storming)',
     DaojiTextKey.questionStormHint:
-        'Ketik pertanyaan kritis Anda lalu tekan Enter...',
+    'Ketik pertanyaan kritis Anda lalu tekan Enter...',
     DaojiTextKey.questionStormAddTooltip: 'Tambah pertanyaan',
     DaojiTextKey.questionStormStats:
-        'Pertanyaan: {total} | Prioritas: {starred}/3',
+    'Pertanyaan: {total} | Prioritas: {starred}/3',
     DaojiTextKey.questionStormMaxPriority:
-        'Maksimal pilih 3 pertanyaan prioritas saja!',
+    'Maksimal pilih 3 pertanyaan prioritas saja!',
     DaojiTextKey.randomWordTitle: 'Random Words',
     DaojiTextKey.randomWordHint: 'Pilih kata untuk memicu ide',
     DaojiTextKey.profileDomainReauditTitle: 'Refine Domain Resonance',
@@ -814,13 +722,13 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.settingsReset: 'Reset App',
     DaojiTextKey.settingsResetSubtitle: 'Hapus semua data dan kembali ke awal',
     DaojiTextKey.settingsResetConfirmBody:
-        'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
+    'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
     DaojiTextKey.settingsResetConfirmAction: 'Hapus Semua',
     DaojiTextKey.settingsResetSuccess: 'Semua data telah dihapus.',
     DaojiTextKey.settingsDarkMode: 'Dark Mode',
     DaojiTextKey.settingsDevMode: 'Developer Mode',
     DaojiTextKey.settingsDevModeSubtitle:
-        'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
+    'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
     DaojiTextKey.systemLoading: 'Reading local data...',
     DaojiTextKey.systemRetry: 'Retry',
     DaojiTextKey.systemCancel: 'Cancel',
@@ -850,52 +758,23 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketRestPrompt: '🌿 Daoji menyarankan Seclusion Mode.\nKondisi mental Anda memerlukan pemulihan. Selesaikan evaluasi berikutnya untuk membuka fitur.',
   },
   DaojiVocabularyLevel.heaven: {
-
-    DaojiTextKey.thinkingCanvasSaveSessionTitle: 'Abadikan sesi ini?',
-    DaojiTextKey.thinkingCanvasSaveSessionBody:
-        'Masih ada jejak yang belum masuk scripture riwayat. Abadikan, buang, atau lanjut merenung?',
-    DaojiTextKey.thinkingCanvasDiscard: 'Lepaskan',
-    DaojiTextKey.thinkingCanvasSaveAndFinish: 'Abadikan & Selesai',
-    DaojiTextKey.thinkingCanvasDraftSaved: 'Jejak draf tersimpan',
-    DaojiTextKey.thinkingCanvasQuickStart: 'Pintu cepat',
-    DaojiTextKey.thinkingCanvasRecentlyUsed: 'Baru dilalui',
-    DaojiTextKey.thinkingCanvasShowGuideAgain: 'Buka scripture panduan',
-    DaojiTextKey.thinkingCanvasDeleteAllHistory: 'Hapus seluruh scripture sesi?',
-    DaojiTextKey.thinkingCanvasDeleteAllAction: 'Hapus arsip',
-    DaojiTextKey.thinkingCanvasDeleteAllHistoryBody:
-        'Semua sesi akan di-soft-delete dari arsip batin.',
-    DaojiTextKey.thinkingCanvasNoSessionsTitle: 'Arsip masih hening',
-    DaojiTextKey.thinkingCanvasNoSessionsBody:
-        'Sesi kontemplasi terstruktur akan tercatat di sini.',
-    DaojiTextKey.thinkingCanvasDeleteSession: 'Hapus sesi ini?',
-    DaojiTextKey.thinkingCanvasLoadingSession: 'Membuka sesi...',
-    DaojiTextKey.thinkingCanvasMoodPrompt: 'Getaran hati Anda saat ini?',
-    DaojiTextKey.thinkingCanvasMoodPromptSubtitle:
-        'Pilih resonansi untuk rekomendasi metode',
-    DaojiTextKey.thinkingCanvasRecommendations: 'Resonansi yang disarankan',
-    DaojiTextKey.thinkingCanvasTitle: 'Thinking Canvas',
-    DaojiTextKey.thinkingCanvasHistory: 'Riwayat Sesi',
-    DaojiTextKey.thinkingCanvasSessionHistoryTitle: 'Riwayat Thinking Canvas',
-    DaojiTextKey.thinkingCanvasOpenMethodCatalog: 'Buka Katalog Metode',
-    DaojiTextKey.thinkingCanvasWorkspaceLabel: 'Workspace: {title}',
-    DaojiTextKey.thinkingCanvasWorkspaceHint:
-        'Tulis ide atau kerangka berpikir Anda di sini...',
-    DaojiTextKey.methodPickerTitle: 'Pilih Metode Berpikir',
+    ...daojiNavTextsId[DaojiVocabularyLevel.heaven]!,
+    ...daojiThinkingCanvasTextsId[DaojiVocabularyLevel.heaven]!,
     DaojiTextKey.sixThinkingHatsTitle: '4. Analisis 6 Topi Berpikir (Six Hats)',
     DaojiTextKey.sixThinkingHatsNoteLabel: 'Catatan untuk {name}',
     DaojiTextKey.sixThinkingHatsNoteHint:
-        'Tuliskan analisis kognitif Anda di sini...',
+    'Tuliskan analisis kognitif Anda di sini...',
     DaojiTextKey.sixThinkingHatsValidatorMessage:
-        'Harap tuliskan analisis untuk {name}',
+    'Harap tuliskan analisis untuk {name}',
     DaojiTextKey.freewritingTitle: '4. Sesi Freewriting Tanpa Henti',
     DaojiTextKey.freewritingHint:
-        'Mulai menulis apa saja di sini, jangan biarkan jari Anda berhenti mengetik...',
+    'Mulai menulis apa saja di sini, jangan biarkan jari Anda berhenti mengetik...',
     DaojiTextKey.freewritingValidator: 'Tuliskan pemikiran Freewriting Anda',
     DaojiTextKey.freewritingInactivityAlert:
-        '🚨 JANGAN BERHENTI MENULIS! Alirkan pikiran...',
+    '🚨 JANGAN BERHENTI MENULIS! Alirkan pikiran...',
     DaojiTextKey.freewritingTimeFinishedTitle: 'Waktu Habis! 🎉',
     DaojiTextKey.freewritingTimeFinishedContent:
-        'Selamat! Sesi menulis bebas (Freewriting) tanpa henti selesai.\n\nKembali ke kertas coretan untuk menyeleksi poin terbaik.',
+    'Selamat! Sesi menulis bebas (Freewriting) tanpa henti selesai.\n\nKembali ke kertas coretan untuk menyeleksi poin terbaik.',
     DaojiTextKey.freewritingContinueButton: 'Lanjut',
     DaojiTextKey.lotusTitle: '4. Kelopak Radial Lotus Blossom',
     DaojiTextKey.lotusCenterPlaceholder: 'Topik Utama',
@@ -907,29 +786,29 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.lotusCancel: 'Batal',
     DaojiTextKey.lotusSave: 'Simpan',
     DaojiTextKey.lotusFootnote:
-        '*Kelopak berbentuk melingkar. Ketuk petal terisi untuk masuk ke sub-cabang ide.',
+    '*Kelopak berbentuk melingkar. Ketuk petal terisi untuk masuk ke sub-cabang ide.',
     // Synthesis workspace copy
     DaojiTextKey.mindDumpTitle: '4. Kuras Pikiran (Mind Dump Sticky Notes)',
     DaojiTextKey.mindDumpAddLabel: 'Tambah Item',
     DaojiTextKey.mindDumpHint:
-        'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
+    'Ketik apa saja yang ada di kepala Anda lalu tekan Enter...',
     DaojiTextKey.mindDumpEmptyMessage:
-        'Belum ada catatan tempel. Ketik sesuatu di atas untuk meluapkan isi kepala Anda!',
+    'Belum ada catatan tempel. Ketik sesuatu di atas untuk meluapkan isi kepala Anda!',
     DaojiTextKey.affinityTitle: '4. Pengelompokan Affinity Mapping',
     DaojiTextKey.affinityAddLabel: 'Tambah Gagasan',
     DaojiTextKey.affinityHint: 'Ketik gagasan/ide Anda lalu tekan Enter...',
     DaojiTextKey.affinityEmptyMessage:
-        'Belum ada ide. Tambahkan ide di atas lalu kelompokkan ke dalam grup!',
+    'Belum ada ide. Tambahkan ide di atas lalu kelompokkan ke dalam grup!',
     DaojiTextKey.fiveWhysTitle: '5 Whys (Why Chain)',
     DaojiTextKey.fiveWhysPrompt:
-        'Tuliskan sebab pertama lalu gali 5 kali "mengapa"',
+    'Tuliskan sebab pertama lalu gali 5 kali "mengapa"',
     DaojiTextKey.morphologicalTitle: '4. Slot Machine Kombinasi Morfologi',
     DaojiTextKey.morphologicalMarketplaceTitle: 'Perpustakaan Dimensi 🛒',
     DaojiTextKey.morphologicalMarketplaceClose: 'Tutup',
     DaojiTextKey.morphologicalMarketplaceDescription:
-        'Pilih dari set parameter siap-pakai untuk memancing kreativitas Anda secara instan!',
+    'Pilih dari set parameter siap-pakai untuk memancing kreativitas Anda secara instan!',
     DaojiTextKey.morphologicalApplyTemplateSuccess:
-        'Template "{title}" berhasil diterapkan!',
+    'Template "{title}" berhasil diterapkan!',
     DaojiTextKey.morphologicalAddOptionTitle: 'Tambah Opsi di "{dimension}"',
     DaojiTextKey.morphologicalOptionLabel: 'Opsi',
     DaojiTextKey.morphologicalAddButton: 'Tambah',
@@ -941,18 +820,13 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.morphologicalOptionsPlusLabel: '+ Opsi',
     DaojiTextKey.morphologicalDimensionCount: '{dim} ({count} opsi)',
     DaojiTextKey.morphologicalCancel: 'Batal',
-    DaojiTextKey.navHome: 'Void Sanctuary',
-    DaojiTextKey.navJournal: 'Heart Scripture',
-    DaojiTextKey.navReflection: 'Inner Alchemy',
-    DaojiTextKey.navMarketplace: 'Heritage Archive',
-    DaojiTextKey.navProfile: 'Dao Heart',
     DaojiTextKey.dashboardNoActionsTitle: 'No technique is required today.',
     DaojiTextKey.dashboardNoActionsBody:
-        'Enter stillness, or adopt a technique.',
+    'Enter stillness, or adopt a technique.',
     DaojiTextKey.dashboardQuickActionsTitle: 'Cultivation Actions',
     DaojiTextKey.dashboardAddPracticeTitle: 'Adopt Technique',
     DaojiTextKey.dashboardAddPracticeSubtitle:
-        'Adopt a technique into your meridian cycle',
+    'Adopt a technique into your meridian cycle',
     DaojiTextKey.dashboardJournalTitle: 'Inscribe Heart Scripture',
     DaojiTextKey.dashboardJournalSubtitle: 'Record qi, shen, and inner signs',
     DaojiTextKey.dashboardShowCultivationStatus: 'Reveal cultivation status',
@@ -988,7 +862,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.stateQuietIntegration: 'Silent Comprehension',
     DaojiTextKey.stateGrowthDescription: 'Qi circulation is stable.',
     DaojiTextKey.stateRecoveryDescription:
-        'Techniques are suspended. Preserve the Dantian.',
+    'Techniques are suspended. Preserve the Dantian.',
     DaojiTextKey.stateDormantDescription: 'The root sleeps; the path remains.',
     DaojiTextKey.frictionTitle: 'Heart Demon Inquiry',
     DaojiTextKey.frictionNoGuilt: 'Observe the Heart Demon without punishment.',
@@ -1019,7 +893,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.journalSavedSuccess: 'Jurnal harian berhasil disimpan!',
     DaojiTextKey.reflectionTitle: 'Inner Alchemy',
     DaojiTextKey.reflectionSubtitle:
-        'Observe the inner world and refine the Dao.',
+    'Observe the inner world and refine the Dao.',
     DaojiTextKey.reflectionValueMirror: 'Heart Mirror',
     DaojiTextKey.reflectionWeeklyPulse: 'Meridian Resonance',
     DaojiTextKey.reflectionThinkingCanvas: 'Comprehension Canvas',
@@ -1027,7 +901,7 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.reflectionMarketplace: 'Heritage Archive',
     DaojiTextKey.weeklyTitle: 'Meridian Resonance',
     DaojiTextKey.weeklyIntro:
-        'Observe meridian resonance over the last two weeks.',
+    'Observe meridian resonance over the last two weeks.',
     DaojiTextKey.weeklyBackDashboard: 'Return to Inner World',
     DaojiTextKey.valueIntroTitle: 'Heart Mirror',
     DaojiTextKey.valueStart: 'Enter Heart Mirror',
@@ -1039,13 +913,13 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketShareTooltip: 'Bagikan Template Saya',
     DaojiTextKey.marketNoTemplatesTitle: 'Tidak Ada Template',
     DaojiTextKey.marketNoTemplatesSearchMessage:
-        'Tidak ada template yang cocok dengan pencarian Anda',
+    'Tidak ada template yang cocok dengan pencarian Anda',
     DaojiTextKey.marketNoTemplatesEmptyMessage:
-        'Belum ada template di kategori ini',
+    'Belum ada template di kategori ini',
     DaojiTextKey.marketShareActionLabel: 'Bagikan Teknik Anda',
     DaojiTextKey.marketRateDialogTitle: 'Beri Rating Teknik',
     DaojiTextKey.marketRateDialogQuestion:
-        'Seberapa bermanfaat teknik "{title}" ini bagi Anda?',
+    'Seberapa bermanfaat teknik "{title}" ini bagi Anda?',
     DaojiTextKey.marketRatingThanks: 'Terima kasih atas rating Anda!',
     DaojiTextKey.marketRateButton: 'Beri Rating',
     DaojiTextKey.marketUseButton: 'Gunakan',
@@ -1054,19 +928,19 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketMvaPrefix: 'MVA:',
     DaojiTextKey.rapidBrainstormTitle: '4. Logger Ide Cepat (Rapid Brainstorm)',
     DaojiTextKey.rapidBrainstormHint:
-        'Ketik ide baru di sini lalu tekan Enter 🚀...',
+    'Ketik ide baru di sini lalu tekan Enter 🚀...',
     DaojiTextKey.rapidBrainstormAddTooltip: 'Tambah ide',
     DaojiTextKey.rapidBrainstormQuantity: 'Kuantitas Ide: {count}',
     DaojiTextKey.rapidBrainstormReset: 'Reset',
     DaojiTextKey.questionStormTitle:
-        '4. Logger Pertanyaan Kunci (Question Storming)',
+    '4. Logger Pertanyaan Kunci (Question Storming)',
     DaojiTextKey.questionStormHint:
-        'Ketik pertanyaan kritis Anda lalu tekan Enter...',
+    'Ketik pertanyaan kritis Anda lalu tekan Enter...',
     DaojiTextKey.questionStormAddTooltip: 'Tambah pertanyaan',
     DaojiTextKey.questionStormStats:
-        'Pertanyaan: {total} | Prioritas: {starred}/3',
+    'Pertanyaan: {total} | Prioritas: {starred}/3',
     DaojiTextKey.questionStormMaxPriority:
-        'Maksimal pilih 3 pertanyaan prioritas saja!',
+    'Maksimal pilih 3 pertanyaan prioritas saja!',
     DaojiTextKey.randomWordTitle: 'Random Words',
     DaojiTextKey.randomWordHint: 'Pilih kata untuk memicu ide',
     DaojiTextKey.profileDomainReauditTitle: 'Refine Meridian Resonance',
@@ -1083,13 +957,13 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.settingsReset: 'Reset Inner Record',
     DaojiTextKey.settingsResetSubtitle: 'Hapus semua data dan kembali ke awal',
     DaojiTextKey.settingsResetConfirmBody:
-        'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
+    'Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.',
     DaojiTextKey.settingsResetConfirmAction: 'Hapus Semua',
     DaojiTextKey.settingsResetSuccess: 'Semua data telah dihapus.',
     DaojiTextKey.settingsDarkMode: 'Dark Mode',
     DaojiTextKey.settingsDevMode: 'Developer Mode',
     DaojiTextKey.settingsDevModeSubtitle:
-        'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
+    'Aktifkan kontrol simulasi untuk pengalaman pengembangan.',
     DaojiTextKey.systemLoading: 'Reading cultivation record...',
     DaojiTextKey.systemRetry: 'Retry',
     DaojiTextKey.systemCancel: 'Cancel',
@@ -1119,3 +993,4 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.marketRestPrompt: '🌿 Daoji menyarankan Closed-Door Seclusion.\nAliran Qi Anda sedang tidak stabil. Selesaikan pertapaan berikutnya untuk membuka kembali penyerapan teknik.',
   },
 };
+

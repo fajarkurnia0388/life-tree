@@ -23,6 +23,8 @@ linter:
   rules:
     unawaited_futures: true
     use_build_context_synchronously: true
+    # Gradual hygiene (Wave 5) — not fatal unless CI promotes warnings.
+    prefer_const_constructors: true
     # avoid_print: false
     # prefer_single_quotes: true
 

@@ -95,9 +95,11 @@ class ThinkingCanvasState {
 }
 
 /// Controller for Thinking Canvas state and logic.
-class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
-  final AppDatabase db;
-  final ThinkingCanvasDraftService draftService;
+///
+/// Migrated from [StateNotifier] to Riverpod [Notifier] (manual, no codegen).
+class ThinkingCanvasController extends Notifier<ThinkingCanvasState> {
+  late final AppDatabase db;
+  late final ThinkingCanvasDraftService draftService;
   Timer? _draftDebounce;
   bool _disposed = false;
 
@@ -105,9 +107,17 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
   static const prefsMethodKey = '__canvas_prefs__';
   static const prefsSessionId = 'canvas_prefs_singleton';
 
-  ThinkingCanvasController(this.db, this.draftService)
-      : super(ThinkingCanvasState()) {
-    _loadPrefs();
+  @override
+  ThinkingCanvasState build() {
+    db = ref.watch(dbProvider);
+    draftService = ref.watch(thinkingCanvasDraftServiceProvider);
+    ref.onDispose(() {
+      _disposed = true;
+      _draftDebounce?.cancel();
+    });
+    // Fire-and-forget prefs load after first frame of notifier lifetime.
+    Future.microtask(_loadPrefs);
+    return ThinkingCanvasState();
   }
 
   Future<void> _loadPrefs() async {
@@ -284,18 +294,9 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
     );
   }
 
-  @override
-  void dispose() {
-    _disposed = true;
-    _draftDebounce?.cancel();
-    super.dispose();
-  }
 }
 
 final thinkingCanvasProvider =
-    StateNotifierProvider<ThinkingCanvasController, ThinkingCanvasState>((ref) {
-  return ThinkingCanvasController(
-    ref.watch(dbProvider),
-    ref.watch(thinkingCanvasDraftServiceProvider),
-  );
-});
+    NotifierProvider<ThinkingCanvasController, ThinkingCanvasState>(
+  ThinkingCanvasController.new,
+);

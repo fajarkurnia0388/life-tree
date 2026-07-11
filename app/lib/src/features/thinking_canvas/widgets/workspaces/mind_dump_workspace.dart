@@ -164,7 +164,7 @@ class _MindDumpWorkspaceState extends ConsumerState<MindDumpWorkspace> {
             ),
             child: Column(
               children: [
-                Icon(Icons.note_alt_outlined, size: 40, color: Colors.grey),
+                const Icon(Icons.note_alt_outlined, size: 40, color: Colors.grey),
                 const SizedBox(height: 8),
                 Text(
                   DaojiText.resolve(
