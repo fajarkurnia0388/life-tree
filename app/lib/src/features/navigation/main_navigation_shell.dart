@@ -37,20 +37,15 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
 
     String navLabel(DaojiTextKey key) {
       if (vocabularyLevel == DaojiVocabularyLevel.heaven) {
-        switch (key) {
-          case DaojiTextKey.navHome:
-            return 'Sanctuary';
-          case DaojiTextKey.navJournal:
-            return 'Scripture';
-          case DaojiTextKey.navReflection:
-            return 'Alchemy';
-          case DaojiTextKey.navMarketplace:
-            return 'Archive';
-          case DaojiTextKey.navProfile:
-            return 'Dao Heart';
-          default:
-            return DaojiText.resolve(key, vocabularyLevel);
-        }
+        final heavenKey = switch (key) {
+          DaojiTextKey.navHome => DaojiTextKey.navHomeHeaven,
+          DaojiTextKey.navJournal => DaojiTextKey.navJournalHeaven,
+          DaojiTextKey.navReflection => DaojiTextKey.navReflectionHeaven,
+          DaojiTextKey.navMarketplace => DaojiTextKey.navMarketplaceHeaven,
+          DaojiTextKey.navProfile => DaojiTextKey.navProfileHeaven,
+          _ => key,
+        };
+        return DaojiText.resolve(heavenKey, vocabularyLevel);
       }
       return DaojiText.resolve(key, vocabularyLevel);
     }

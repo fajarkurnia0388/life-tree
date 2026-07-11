@@ -100,14 +100,9 @@ class MorphologicalTemplate {
 
 class MorphologicalWorkspace extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
-  final bool isPremiumUser;
-  final VoidCallback onPremiumLocked;
-
   const MorphologicalWorkspace({
     super.key,
     required this.onChanged,
-    required this.isPremiumUser,
-    required this.onPremiumLocked,
   });
 
   @override
@@ -187,11 +182,11 @@ class _MorphologicalWorkspaceState
           (targetItem - (baseTarget % opts.length) + opts.length) % opts.length;
       final int targetIndex = baseTarget + remainderDiff;
 
-      _controllers[dim]!.animateToItem(
+      unawaited(_controllers[dim]!.animateToItem(
         targetIndex,
         duration: Duration(milliseconds: 1800 + i * 600),
         curve: Curves.easeOutCirc,
-      );
+      ));
     }
 
     await Future.delayed(
@@ -364,7 +359,7 @@ class _MorphologicalWorkspaceState
                   DaojiTextKey.morphologicalMarketplaceDescription,
                   ref.read(daojiVocabularyLevelValueProvider),
                 ),
-                style: const TextStyle(fontSize: 11, color: Colors.grey),
+                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
               ),
               const SizedBox(height: 12),
               Expanded(
@@ -398,7 +393,7 @@ class _MorphologicalWorkspaceState
                               child: Text(
                                 t.category,
                                 style: TextStyle(
-                                  fontSize: 9,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: theme.colorScheme.primary,
                                 ),
@@ -412,9 +407,9 @@ class _MorphologicalWorkspaceState
                             const SizedBox(height: 4),
                             Text(
                               t.description,
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -435,7 +430,7 @@ class _MorphologicalWorkspaceState
                                       child: Text(
                                         k,
                                         style: const TextStyle(
-                                          fontSize: 9,
+                                          fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -446,11 +441,6 @@ class _MorphologicalWorkspaceState
                           ],
                         ),
                         onTap: () {
-                          if (t.isPremium && !widget.isPremiumUser) {
-                            Navigator.pop(context);
-                            widget.onPremiumLocked();
-                            return;
-                          }
                           setState(() {
                             for (var c in _controllers.values) {
                               c.dispose();
@@ -506,7 +496,7 @@ class _MorphologicalWorkspaceState
                   icon: const Icon(Icons.storefront_rounded, size: 16),
                   label: const Text(
                     'Marketplace',
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                 ),
                 IconButton(
@@ -545,7 +535,7 @@ class _MorphologicalWorkspaceState
                     Text(
                       dim.toUpperCase(),
                       style: TextStyle(
-                        fontSize: 9,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.primary,
                         letterSpacing: 1.2,
@@ -600,7 +590,7 @@ class _MorphologicalWorkspaceState
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: const TextStyle(
-                                                      fontSize: 11,
+                                                      fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.white,
@@ -613,12 +603,12 @@ class _MorphologicalWorkspaceState
                                       ),
                                 )
                               else
-                                const Center(
+                                Center(
                                   child: Text(
                                     'Kosong',
                                     style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey,
+                                      fontSize: 12,
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                                     ),
                                   ),
                                 ),
@@ -717,7 +707,7 @@ class _MorphologicalWorkspaceState
                 child: Text(
                   '$dim (${list.length} opsi)',
                   style: const TextStyle(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

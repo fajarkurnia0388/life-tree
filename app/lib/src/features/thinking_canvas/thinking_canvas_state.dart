@@ -1,6 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local_db/database.dart';
 import '../../core/providers/db_provider.dart';
+import 'thinking_canvas_draft_service.dart';
 
 /// State for the Thinking Canvas.
 class ThinkingCanvasState {
@@ -8,24 +13,28 @@ class ThinkingCanvasState {
   final List<Map<String, dynamic>> mindMapNodes;
   final List<Map<String, dynamic>> scoringItems;
   final String currentDraftContent;
-  final bool isSaving;
-  final DateTime? lastSavedAt;
+  final bool isSavingDraft;
+  final DateTime? draftSavedAt;
+  final DateTime? historyCommittedAt;
   final List<String> recentMethods;
   final List<String> favoriteMethods;
   final String? selectedMood;
   final bool hasSeenOnboarding;
+  final bool prefsLoaded;
 
   ThinkingCanvasState({
     this.selectedMethod,
     this.mindMapNodes = const [],
     this.scoringItems = const [],
     this.currentDraftContent = '',
-    this.isSaving = false,
-    this.lastSavedAt,
+    this.isSavingDraft = false,
+    this.draftSavedAt,
+    this.historyCommittedAt,
     this.recentMethods = const [],
     this.favoriteMethods = const [],
     this.selectedMood,
     this.hasSeenOnboarding = false,
+    this.prefsLoaded = false,
   });
 
   ThinkingCanvasState copyWith({
@@ -33,47 +42,122 @@ class ThinkingCanvasState {
     List<Map<String, dynamic>>? mindMapNodes,
     List<Map<String, dynamic>>? scoringItems,
     String? currentDraftContent,
-    bool? isSaving,
-    DateTime? lastSavedAt,
+    bool? isSavingDraft,
+    DateTime? draftSavedAt,
+    DateTime? historyCommittedAt,
     List<String>? recentMethods,
     List<String>? favoriteMethods,
     String? selectedMood,
     bool? hasSeenOnboarding,
+    bool? prefsLoaded,
     bool clearMood = false,
     bool clearMethod = false,
+    bool clearDraftSavedAt = false,
+    bool clearHistoryCommittedAt = false,
   }) {
     return ThinkingCanvasState(
-      selectedMethod: clearMethod ? null : (selectedMethod ?? this.selectedMethod),
+      selectedMethod:
+          clearMethod ? null : (selectedMethod ?? this.selectedMethod),
       mindMapNodes: mindMapNodes ?? this.mindMapNodes,
       scoringItems: scoringItems ?? this.scoringItems,
       currentDraftContent: currentDraftContent ?? this.currentDraftContent,
-      isSaving: isSaving ?? this.isSaving,
-      lastSavedAt: lastSavedAt ?? this.lastSavedAt,
+      isSavingDraft: isSavingDraft ?? this.isSavingDraft,
+      draftSavedAt:
+          clearDraftSavedAt ? null : (draftSavedAt ?? this.draftSavedAt),
+      historyCommittedAt: clearHistoryCommittedAt
+          ? null
+          : (historyCommittedAt ?? this.historyCommittedAt),
       recentMethods: recentMethods ?? this.recentMethods,
       favoriteMethods: favoriteMethods ?? this.favoriteMethods,
       selectedMood: clearMood ? null : (selectedMood ?? this.selectedMood),
       hasSeenOnboarding: hasSeenOnboarding ?? this.hasSeenOnboarding,
+      prefsLoaded: prefsLoaded ?? this.prefsLoaded,
     );
   }
 
-  /// Whether there is unsaved meaningful content
   bool get hasContent => currentDraftContent.trim().isNotEmpty;
 
-  /// Time ago string for last save
-  String get lastSavedLabel {
-    if (lastSavedAt == null) return '';
-    final diff = DateTime.now().difference(lastSavedAt!);
-    if (diff.inSeconds < 5) return 'Baru disimpan';
-    if (diff.inSeconds < 60) return '${diff.inSeconds}d lalu';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m lalu';
-    return '${diff.inHours}j lalu';
+  /// Honest label: draft DB save only (not history commit).
+  String get draftSavedLabel {
+    if (draftSavedAt == null) return '';
+    final diff = DateTime.now().difference(draftSavedAt!);
+    if (diff.inSeconds < 5) return 'Draf tersimpan';
+    if (diff.inSeconds < 60) return 'Draf ${diff.inSeconds}d lalu';
+    if (diff.inMinutes < 60) return 'Draf ${diff.inMinutes}m lalu';
+    return 'Draf ${diff.inHours}j lalu';
   }
+
+  /// Back-compat for UI still reading lastSavedLabel.
+  String get lastSavedLabel => draftSavedLabel;
+
+  DateTime? get lastSavedAt => draftSavedAt;
+  bool get isSaving => isSavingDraft;
 }
 
 /// Controller for Thinking Canvas state and logic.
 class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
   final AppDatabase db;
-  ThinkingCanvasController(this.db) : super(ThinkingCanvasState());
+  final ThinkingCanvasDraftService draftService;
+  Timer? _draftDebounce;
+  bool _disposed = false;
+
+  /// Stored as a special session row (methodKey) so we avoid clobbering coreValues.
+  static const prefsMethodKey = '__canvas_prefs__';
+  static const prefsSessionId = 'canvas_prefs_singleton';
+
+  ThinkingCanvasController(this.db, this.draftService)
+      : super(ThinkingCanvasState()) {
+    _loadPrefs();
+  }
+
+  Future<void> _loadPrefs() async {
+    try {
+      final row = await (db.select(db.thinkingCanvasSessions)
+            ..where((t) => t.sessionId.equals(prefsSessionId))
+            ..limit(1))
+          .getSingleOrNull();
+      if (row?.rawNotes != null && row!.rawNotes!.trim().isNotEmpty) {
+        final map = jsonDecode(row.rawNotes!) as Map<String, dynamic>;
+        state = state.copyWith(
+          recentMethods: List<String>.from(map['recent'] as List? ?? const []),
+          favoriteMethods:
+              List<String>.from(map['favorites'] as List? ?? const []),
+          hasSeenOnboarding: map['hasSeenOnboarding'] as bool? ?? false,
+          prefsLoaded: true,
+        );
+      } else {
+        state = state.copyWith(prefsLoaded: true);
+      }
+    } catch (_) {
+      state = state.copyWith(prefsLoaded: true);
+    }
+  }
+
+  Future<void> _persistPrefs() async {
+    try {
+      final profiles = await db.select(db.userProfiles).get();
+      final userId = profiles.isEmpty ? 'local' : profiles.first.userId;
+      final payload = jsonEncode({
+        'recent': state.recentMethods,
+        'favorites': state.favoriteMethods,
+        'hasSeenOnboarding': state.hasSeenOnboarding,
+      });
+      await db.into(db.thinkingCanvasSessions).insertOnConflictUpdate(
+            ThinkingCanvasSessionsCompanion.insert(
+              sessionId: prefsSessionId,
+              userId: userId,
+              methodKey: prefsMethodKey,
+              isDraft: const drift.Value(true),
+              rawNotes: drift.Value(payload),
+              paperSession: const drift.Value(false),
+              createdAt: DateTime.fromMillisecondsSinceEpoch(0),
+              deletedAt: const drift.Value(null),
+            ),
+          );
+    } catch (_) {
+      // Non-critical prefs
+    }
+  }
 
   void setMethod(String method) {
     state = state.copyWith(selectedMethod: method);
@@ -94,6 +178,7 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
 
   void markOnboardingSeen() {
     state = state.copyWith(hasSeenOnboarding: true);
+    unawaited(_persistPrefs());
   }
 
   void loadSession(ThinkingCanvasSession session) {
@@ -103,24 +188,64 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
       recentMethods: state.recentMethods,
       favoriteMethods: state.favoriteMethods,
       hasSeenOnboarding: state.hasSeenOnboarding,
+      prefsLoaded: state.prefsLoaded,
     );
   }
 
   void updateDraft(String content) {
     state = state.copyWith(currentDraftContent: content);
-    _autoSave(content);
+    _scheduleDraftSave(content);
   }
 
   void updateMindMapNodes(List<Map<String, dynamic>> nodes) {
     state = state.copyWith(mindMapNodes: nodes);
   }
 
-  Future<void> _autoSave(String content) async {
-    state = state.copyWith(isSaving: true);
-    await Future.delayed(const Duration(milliseconds: 300));
+  void _scheduleDraftSave(String content) {
+    _draftDebounce?.cancel();
+    if (content.trim().isEmpty || state.selectedMethod == null) return;
+
+    state = state.copyWith(isSavingDraft: true);
+    _draftDebounce = Timer(const Duration(milliseconds: 700), () async {
+      try {
+        await draftService.upsertDraft(
+          methodKey: state.selectedMethod!,
+          content: content,
+        );
+        if (_disposed) return;
+        state = state.copyWith(
+          isSavingDraft: false,
+          draftSavedAt: DateTime.now(),
+        );
+      } catch (_) {
+        if (_disposed) return;
+        state = state.copyWith(isSavingDraft: false);
+      }
+    });
+  }
+
+  Future<void> commitToHistory() async {
+    final method = state.selectedMethod;
+    final content = state.currentDraftContent;
+    if (method == null || content.trim().isEmpty) return;
+    await draftService.commitSession(methodKey: method, content: content);
+    if (_disposed) return;
     state = state.copyWith(
-      isSaving: false,
-      lastSavedAt: DateTime.now(),
+      historyCommittedAt: DateTime.now(),
+      clearDraftSavedAt: true,
+    );
+  }
+
+  Future<void> restoreDraftIfAny() async {
+    final draft = await draftService.loadDraftSession();
+    if (draft == null || _disposed) return;
+    if (state.hasContent) return;
+    // Ignore prefs singleton
+    if (draft.methodKey == prefsMethodKey) return;
+    state = state.copyWith(
+      selectedMethod: draft.methodKey,
+      currentDraftContent: draft.rawNotes ?? '',
+      draftSavedAt: draft.createdAt,
     );
   }
 
@@ -132,6 +257,7 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
       current.insert(0, methodKey);
     }
     state = state.copyWith(favoriteMethods: current);
+    unawaited(_persistPrefs());
   }
 
   bool isFavorite(String methodKey) {
@@ -144,18 +270,32 @@ class ThinkingCanvasController extends StateNotifier<ThinkingCanvasState> {
     current.insert(0, method);
     if (current.length > 5) current.removeLast();
     state = state.copyWith(recentMethods: current);
+    unawaited(_persistPrefs());
   }
 
   /// Clear canvas but preserve favorites, recents, and onboarding status
   void clearCanvas() {
+    _draftDebounce?.cancel();
     state = ThinkingCanvasState(
       recentMethods: state.recentMethods,
       favoriteMethods: state.favoriteMethods,
       hasSeenOnboarding: state.hasSeenOnboarding,
+      prefsLoaded: state.prefsLoaded,
     );
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _draftDebounce?.cancel();
+    super.dispose();
   }
 }
 
-final thinkingCanvasProvider = StateNotifierProvider<ThinkingCanvasController, ThinkingCanvasState>((ref) {
-  return ThinkingCanvasController(ref.watch(dbProvider));
+final thinkingCanvasProvider =
+    StateNotifierProvider<ThinkingCanvasController, ThinkingCanvasState>((ref) {
+  return ThinkingCanvasController(
+    ref.watch(dbProvider),
+    ref.watch(thinkingCanvasDraftServiceProvider),
+  );
 });

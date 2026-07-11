@@ -178,6 +178,32 @@ const Map<DaojiVocabularyLevel, Map<DaojiTextKey, String>> daojiTextsId = {
     DaojiTextKey.thinkingCanvasWorkspaceLabel: 'Workspace: {title}',
     DaojiTextKey.thinkingCanvasWorkspaceHint:
         'Tulis ide atau kerangka berpikir Anda di sini...',
+    DaojiTextKey.thinkingCanvasSaveSessionTitle: 'Simpan Sesi?',
+    DaojiTextKey.thinkingCanvasSaveSessionBody:
+        'Anda memiliki konten yang belum disimpan ke riwayat. Apa yang ingin Anda lakukan?',
+    DaojiTextKey.thinkingCanvasDiscard: 'Buang',
+    DaojiTextKey.thinkingCanvasSaveAndFinish: 'Simpan & Selesai',
+    DaojiTextKey.thinkingCanvasDraftSaved: 'Draf tersimpan',
+    DaojiTextKey.thinkingCanvasQuickStart: 'Mulai Cepat',
+    DaojiTextKey.thinkingCanvasRecentlyUsed: 'Terakhir Digunakan',
+    DaojiTextKey.thinkingCanvasShowGuideAgain: 'Lihat Panduan Lagi',
+    DaojiTextKey.thinkingCanvasDeleteAllHistory: 'Hapus Semua History?',
+    DaojiTextKey.thinkingCanvasDeleteAllHistoryBody:
+        'Semua sesi akan dihapus (soft-delete).',
+    DaojiTextKey.thinkingCanvasNoSessionsTitle: 'Belum Ada Sesi',
+    DaojiTextKey.thinkingCanvasNoSessionsBody:
+        'Semua sesi eksplorasi ide terstruktur Anda akan tercatat di sini.',
+    DaojiTextKey.thinkingCanvasDeleteSession: 'Hapus Sesi?',
+    DaojiTextKey.thinkingCanvasLoadingSession: 'Memuat sesi...',
+    DaojiTextKey.thinkingCanvasMoodPrompt: 'Apa yang Anda rasakan saat ini?',
+    DaojiTextKey.thinkingCanvasMoodPromptSubtitle:
+        'Pilih suasana hati untuk rekomendasi metode',
+    DaojiTextKey.thinkingCanvasRecommendations: 'Rekomendasi untuk Anda',
+    DaojiTextKey.navHomeHeaven: 'Sanctuary',
+    DaojiTextKey.navJournalHeaven: 'Scripture',
+    DaojiTextKey.navReflectionHeaven: 'Alchemy',
+    DaojiTextKey.navMarketplaceHeaven: 'Archive',
+    DaojiTextKey.navProfileHeaven: 'Dao Heart',
     DaojiTextKey.methodPickerTitle: 'Pilih Metode Berpikir',
     DaojiTextKey.sixThinkingHatsTitle: '4. Analisis 6 Topi Berpikir (Six Hats)',
     DaojiTextKey.sixThinkingHatsNoteLabel: 'Catatan untuk {name}',

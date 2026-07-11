@@ -289,7 +289,7 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
             border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
           ),
           child: Text('${(_currentScale * 100).round()}%',
-              style: TextStyle(fontSize: 9,
+              style: TextStyle(fontSize: 12,
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
         )),
         Positioned(top: 8, left: 8, child: Container(
@@ -303,7 +303,7 @@ class _MindMapCanvasViewState extends ConsumerState<MindMapCanvasView> {
             Icon(Icons.account_tree_rounded, size: 10, color: theme.colorScheme.primary),
             const SizedBox(width: 3),
             Text('${_nodes.length}',
-                style: TextStyle(fontSize: 9,
+                style: TextStyle(fontSize: 12,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
           ]),
         )),
@@ -440,8 +440,8 @@ class _LinesPainter extends CustomPainter {
       final parent = nodes.firstWhere((n) => n.id == node.parentId,
           orElse: () => node);
       if (parent == node) continue;
-      final start = Offset(parent.position.dx + 80, parent.position.dy + 20);
-      final end = Offset(node.position.dx + 80, node.position.dy + 20);
+      final start = Offset(parent.position.dx + 70, parent.position.dy + 18);
+      final end = Offset(node.position.dx + 70, node.position.dy + 18);
       final path = Path()..moveTo(start.dx, start.dy)
         ..cubicTo(start.dx + (end.dx - start.dx) / 2, start.dy,
             start.dx + (end.dx - start.dx) / 2, end.dy, end.dx, end.dy);
@@ -450,5 +450,16 @@ class _LinesPainter extends CustomPainter {
     }
   }
   @override
-  bool shouldRepaint(covariant _LinesPainter old) => true;
+  bool shouldRepaint(covariant _LinesPainter old) {
+    if (identical(old.nodes, nodes)) return false;
+    if (old.nodes.length != nodes.length) return true;
+    for (var i = 0; i < nodes.length; i++) {
+      final a = old.nodes[i];
+      final b = nodes[i];
+      if (a.id != b.id || a.position != b.position || a.parentId != b.parentId || a.colorValue != b.colorValue) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

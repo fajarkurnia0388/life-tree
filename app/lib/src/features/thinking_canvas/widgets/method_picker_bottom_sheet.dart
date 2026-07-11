@@ -11,7 +11,6 @@ class ScoringItem {
 
 class MethodPickerBottomSheet extends StatefulWidget {
   final String currentMethodKey;
-  final bool isPremiumUser;
   final ValueChanged<String>? onSelected;
   final List<String> favoriteMethods;
   final ValueChanged<String>? onToggleFavorite;
@@ -19,7 +18,6 @@ class MethodPickerBottomSheet extends StatefulWidget {
   const MethodPickerBottomSheet({
     super.key,
     this.currentMethodKey = '',
-    this.isPremiumUser = true,
     this.onSelected,
     this.favoriteMethods = const [],
     this.onToggleFavorite,
@@ -72,30 +70,6 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
     }
   }
 
-  void _showPremiumAdDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text('Fitur Premium 👑'),
-          content: const Text(
-            'Metode berpikir tingkat lanjut dan workspace interaktif ini eksklusif untuk pengguna Premium.\n\n'
-            'Aktifkan Mode Developer di menu dashboard utama untuk membuka kunci seluruh fitur premium secara gratis!',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Tutup'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Widget _buildMethodCard(ThinkingMethod m, ThemeData theme) {
     final isSelected = widget.currentMethodKey == m.key;
     final levelColor = _getLevelColor(m.level, theme);
@@ -119,12 +93,8 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
         child: InkWell(
           onTap: () {
             HapticFeedback.selectionClick();
-            if (m.isPremium && !widget.isPremiumUser) {
-              _showPremiumAdDialog();
-            } else {
-              widget.onSelected?.call(m.key);
-              Navigator.pop(context);
-            }
+            widget.onSelected?.call(m.key);
+            Navigator.pop(context);
           },
           borderRadius: BorderRadius.circular(16),
           child: ConstrainedBox(
@@ -148,14 +118,6 @@ class _MethodPickerBottomSheetState extends State<MethodPickerBottomSheet> {
                                 ),
                               ),
                             ),
-                            if (m.isPremium) ...[
-                              const SizedBox(width: 6),
-                              Icon(
-                                Icons.lock_rounded,
-                                color: Colors.amber[700],
-                                size: 14,
-                              ),
-                            ],
                           ],
                         ),
                       ),

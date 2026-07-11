@@ -749,14 +749,9 @@ class PersonaPackage {
 
 class RoleStormingWorkspace extends StatefulWidget {
   final ValueChanged<String> onChanged;
-  final bool isPremiumUser;
-  final VoidCallback onPremiumLocked;
-
   const RoleStormingWorkspace({
     super.key,
     required this.onChanged,
-    required this.isPremiumUser,
-    required this.onPremiumLocked,
   });
 
   @override
@@ -900,19 +895,8 @@ class _RoleStormingWorkspaceState extends State<RoleStormingWorkspace> {
                                     Icons.check_circle_rounded,
                                     color: theme.colorScheme.primary,
                                   )
-                                : pkg.isPremium
-                                ? const Icon(
-                                    Icons.lock_rounded,
-                                    color: Colors.amber,
-                                    size: 20,
-                                  )
                                 : const Icon(Icons.chevron_right_rounded),
                             onTap: () {
-                              if (pkg.isPremium && !widget.isPremiumUser) {
-                                Navigator.pop(context);
-                                widget.onPremiumLocked();
-                                return;
-                              }
                               setState(() {
                                 _activePackage = pkg;
                                 _selectedPersonaIndex = 0;

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,8 @@ import 'widgets/mind_map_canvas_view.dart';
 import 'widgets/specialized_workspace_widgets.dart';
 import 'widgets/thinking_canvas_onboarding_dialog.dart';
 import 'thinking_canvas_state.dart';
+import 'thinking_canvas_draft_service.dart';
+import 'widgets/method_visuals.dart';
 
 class ThinkingCanvasLiteView extends ConsumerStatefulWidget {
   const ThinkingCanvasLiteView({super.key});
@@ -50,7 +53,9 @@ class _ThinkingCanvasLiteViewState
     );
 
     // Show onboarding on first visit
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final notifier = ref.read(thinkingCanvasProvider.notifier);
+      await notifier.restoreDraftIfAny();
       final state = ref.read(thinkingCanvasProvider);
       if (!state.hasSeenOnboarding) {
         _showOnboardingDialog();
@@ -85,8 +90,6 @@ class _ThinkingCanvasLiteViewState
         },
       ),
     );
-    // Mark as seen regardless
-    canvasNotifier.markOnboardingSeen();
   }
 
   @override
@@ -181,64 +184,14 @@ class _ThinkingCanvasLiteViewState
   }
 
   Color _getMethodColor(String methodKey) {
-    switch (methodKey) {
-      case 'MindDump':
-      case 'MindDumpCluster':
-        return Colors.teal;
-      case 'Freewriting':
-        return Colors.deepPurple;
-      case 'MindMapping':
-        return Colors.indigo;
-      case 'Brainstorming':
-      case 'ReverseBrainstorming':
-      case 'WorstPossibleIdea':
-        return Colors.orange;
-      case 'SCAMPER':
-        return Colors.pink;
-      case 'SixThinkingHats':
-        return Colors.blue;
-      case 'SWOT':
-        return Colors.green;
-      case '5Whys':
-        return Colors.amber.shade800;
-      case 'LotusBlossom':
-        return Colors.purple;
-      case 'MorphologicalAnalysis':
-        return Colors.cyan;
-      default:
-        return Theme.of(context).colorScheme.primary;
-    }
+    return ThinkingMethodVisuals.colorFor(methodKey, Theme.of(context).colorScheme);
   }
 
+
   IconData _getMethodIcon(String methodKey) {
-    switch (methodKey) {
-      case 'MindDump':
-      case 'MindDumpCluster':
-        return Icons.psychology_rounded;
-      case 'Freewriting':
-        return Icons.edit_note_rounded;
-      case 'MindMapping':
-        return Icons.account_tree_rounded;
-      case 'Brainstorming':
-      case 'ReverseBrainstorming':
-      case 'WorstPossibleIdea':
-        return Icons.lightbulb_rounded;
-      case 'SCAMPER':
-        return Icons.transform_rounded;
-      case 'SixThinkingHats':
-        return Icons.hotel_class_rounded;
-      case 'SWOT':
-        return Icons.grid_view_rounded;
-      case '5Whys':
-        return Icons.help_rounded;
-      case 'LotusBlossom':
-        return Icons.local_florist_rounded;
-      case 'MorphologicalAnalysis':
-        return Icons.casino_rounded;
-      default:
-        return Icons.insights_rounded;
-    }
+    return ThinkingMethodVisuals.iconFor(methodKey);
   }
+
 
   // ============================================
   // SAVE / PERSIST LOGIC
@@ -286,36 +239,14 @@ class _ThinkingCanvasLiteViewState
     }
   }
 
-  void _saveAndClearCanvas() {
-    final state = ref.read(thinkingCanvasProvider);
-    if (state.selectedMethod != null) {
-      _persistSession(state);
-    }
-    ref.read(thinkingCanvasProvider.notifier).clearCanvas();
-  }
-
-  Future<void> _persistSession(ThinkingCanvasState state) async {
+  Future<void> _saveAndClearCanvas() async {
+    final notifier = ref.read(thinkingCanvasProvider.notifier);
     try {
-      final db = ref.read(dbProvider);
-      final profiles = await db.select(db.userProfiles).get();
-      if (profiles.isEmpty) return;
-      final userId = profiles.first.userId;
-
-      final method = state.selectedMethod ?? 'Unknown';
-      final content = state.currentDraftContent;
-      if (content.trim().isEmpty) return;
-      await db.into(db.thinkingCanvasSessions).insert(
-            ThinkingCanvasSessionsCompanion.insert(
-              sessionId: DateTime.now().millisecondsSinceEpoch.toString(),
-              userId: userId,
-              methodKey: method,
-              rawNotes: drift.Value(content),
-              createdAt: DateTime.now(),
-            ),
-          );
+      await notifier.commitToHistory();
     } catch (_) {
-      // Silent fail — non-critical
+      // Non-fatal; still clear canvas so user is not stuck
     }
+    notifier.clearCanvas();
   }
 
   // ============================================
@@ -414,9 +345,10 @@ class _ThinkingCanvasLiteViewState
                                     ),
                                   );
                                   if (confirm == true) {
-                                    await (db.delete(
-                                            db.thinkingCanvasSessions))
-                                        .go();
+                                    await ref
+                                        .read(thinkingCanvasDraftServiceProvider)
+                                        .softDeleteAllHistory();
+                                    ref.invalidate(thinkingCanvasHistoryProvider);
                                     if (context.mounted) {
                                       Navigator.pop(context);
                                     }
@@ -498,12 +430,10 @@ class _ThinkingCanvasLiteViewState
                                         );
                                       },
                                       onDismissed: (_) async {
-                                        await (db.delete(db
-                                                .thinkingCanvasSessions)
-                                              ..where((tbl) =>
-                                                  tbl.sessionId.equals(
-                                                      s.sessionId)))
-                                            .go();
+                                        await ref
+                                            .read(thinkingCanvasDraftServiceProvider)
+                                            .softDeleteSession(s.sessionId); // fire-and-forget
+                                        ref.invalidate(thinkingCanvasHistoryProvider);
                                       },
                                       child: Material(
                                         color: theme.colorScheme.surface,
@@ -514,7 +444,7 @@ class _ThinkingCanvasLiteViewState
                                               BorderRadius.circular(12),
                                           onTap: () async {
                                             Navigator.pop(context);
-                                            showDialog(
+                                            unawaited(showDialog(
                                               context: context,
                                               barrierDismissible: false,
                                               builder: (dialogContext) =>
@@ -542,7 +472,7 @@ class _ThinkingCanvasLiteViewState
                                                   ),
                                                 ),
                                               ),
-                                            );
+                                            ));
                                             await Future.delayed(
                                               const Duration(
                                                   milliseconds: 100),
@@ -770,7 +700,6 @@ class _ThinkingCanvasLiteViewState
               ),
               builder: (context) => MethodPickerBottomSheet(
                 currentMethodKey: state.selectedMethod ?? '',
-                isPremiumUser: true,
                 favoriteMethods: state.favoriteMethods,
                 onToggleFavorite: (key) => ref
                     .read(thinkingCanvasProvider.notifier)
@@ -1255,9 +1184,7 @@ class _ThinkingCanvasLiteViewState
       case 'LotusBlossom':
         return LotusBlossomWorkspace(onChanged: _onWorkspaceChanged);
       case 'MorphologicalAnalysis':
-        return MorphologicalWorkspace(
-            isPremiumUser: true, onPremiumLocked: () {},
-            onChanged: _onWorkspaceChanged);
+        return MorphologicalWorkspace(onChanged: _onWorkspaceChanged);
       case 'MindDump':
       case 'MindDumpCluster':
         return MindDumpWorkspace(onChanged: _onWorkspaceChanged);
@@ -1291,9 +1218,7 @@ class _ThinkingCanvasLiteViewState
       case 'RandomWord':
         return RandomWordWorkspace(onChanged: _onWorkspaceChanged);
       case 'RoleStorming':
-        return RoleStormingWorkspace(
-            isPremiumUser: true, onPremiumLocked: () {},
-            onChanged: _onWorkspaceChanged);
+        return RoleStormingWorkspace(onChanged: _onWorkspaceChanged);
       default:
         return _GenericThinkingWorkspace(
             title: method, onChanged: _onWorkspaceChanged);
@@ -1325,7 +1250,7 @@ class _MindMapInlineState extends ConsumerState<_MindMapInline> {
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: () async {
-          HapticFeedback.selectionClick();
+          unawaited(HapticFeedback.selectionClick());
           final canvasState = ref.read(thinkingCanvasProvider);
           final result = await Navigator.of(context).push<Map<String, dynamic>>(
             MaterialPageRoute(
