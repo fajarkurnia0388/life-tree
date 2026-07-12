@@ -78,7 +78,7 @@ class MarketplaceTemplateCard extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      ' (${template.ratingsCount})',
+                      ' (${template.ratingsCount} lokal)',
                       style: TextStyle(
                         fontSize: 11,
                         color: theme.colorScheme.onSurface.withValues(
@@ -226,7 +226,7 @@ class MarketplaceTemplateCard extends ConsumerWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              '${template.downloadsCount}',
+              '${template.downloadsCount} pakai lokal',
               style: TextStyle(
                 fontSize: 12,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -351,7 +351,7 @@ class MarketplaceTemplateCard extends ConsumerWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  '${template.downloadsCount}',
+                  '${template.downloadsCount} pakai lokal',
                   style: TextStyle(
                     fontSize: 12,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),

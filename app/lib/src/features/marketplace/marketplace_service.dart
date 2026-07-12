@@ -8,6 +8,7 @@ import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import 'models/marketplace_template_model.dart';
 
+/// Local-only template library (not a remote marketplace).
 abstract class MarketplaceService {
   Future<List<MarketplaceTemplateModel>> fetchTemplates({
     String? templateType,
@@ -16,6 +17,7 @@ abstract class MarketplaceService {
     String? sortBy,
   });
 
+  /// Persists a habit template locally (legacy name: "upload").
   Future<void> uploadHabitTemplate({
     required String title,
     required String description,
@@ -27,6 +29,7 @@ abstract class MarketplaceService {
     required String creatorPenName,
   });
 
+  /// Persists a core-value template locally (legacy name: "upload").
   Future<void> uploadCoreValueTemplate({
     required String title,
     required String description,
@@ -39,6 +42,49 @@ abstract class MarketplaceService {
 
   Future<void> rateTemplate(String templateId, int rating);
   Future<void> incrementDownloads(String templateId);
+}
+
+/// Honest aliases for local-only template saves (not remote uploads).
+extension MarketplaceServiceLocalSave on MarketplaceService {
+  Future<void> saveHabitTemplateLocally({
+    required String title,
+    required String description,
+    required String domainTag,
+    required int friction,
+    required int energy,
+    required int impact,
+    required int mvaDuration,
+    required String creatorPenName,
+  }) =>
+      uploadHabitTemplate(
+        title: title,
+        description: description,
+        domainTag: domainTag,
+        friction: friction,
+        energy: energy,
+        impact: impact,
+        mvaDuration: mvaDuration,
+        creatorPenName: creatorPenName,
+      );
+
+  Future<void> saveCoreValueTemplateLocally({
+    required String title,
+    required String description,
+    required String emoji,
+    required String whyItMatters,
+    required List<String> relatedDomains,
+    required String reflectionPrompt,
+    required String creatorPenName,
+  }) =>
+      uploadCoreValueTemplate(
+        title: title,
+        description: description,
+        emoji: emoji,
+        whyItMatters: whyItMatters,
+        relatedDomains: relatedDomains,
+        reflectionPrompt: reflectionPrompt,
+        creatorPenName: creatorPenName,
+      );
 }
 
 class LocalMarketplaceService implements MarketplaceService {
@@ -68,9 +114,10 @@ class LocalMarketplaceService implements MarketplaceService {
         impact: 4,
         mvaDuration: 1,
         creator: 'dr. Budi',
-        ratingsSum: 48,
-        ratingsCount: 10,
-        downloadsCount: 342,
+        // Honest local seed: no fake social proof.
+        ratingsSum: 0,
+        ratingsCount: 0,
+        downloadsCount: 0,
         createdAt: now.subtract(const Duration(days: 30)),
       ),
       _habitTemplate(
@@ -84,9 +131,9 @@ class LocalMarketplaceService implements MarketplaceService {
         impact: 3,
         mvaDuration: 2,
         creator: 'Coach Fitri',
-        ratingsSum: 35,
-        ratingsCount: 8,
-        downloadsCount: 189,
+        ratingsSum: 0,
+        ratingsCount: 0,
+        downloadsCount: 0,
         createdAt: now.subtract(const Duration(days: 15)),
       ),
       _habitTemplate(
@@ -100,9 +147,9 @@ class LocalMarketplaceService implements MarketplaceService {
         impact: 4,
         mvaDuration: 2,
         creator: 'ZenMind',
-        ratingsSum: 88,
-        ratingsCount: 18,
-        downloadsCount: 310,
+        ratingsSum: 0,
+        ratingsCount: 0,
+        downloadsCount: 0,
         createdAt: now.subtract(const Duration(days: 10)),
       ),
       _habitTemplate(
@@ -116,9 +163,9 @@ class LocalMarketplaceService implements MarketplaceService {
         impact: 5,
         mvaDuration: 5,
         creator: 'FinPlan',
-        ratingsSum: 40,
-        ratingsCount: 9,
-        downloadsCount: 220,
+        ratingsSum: 0,
+        ratingsCount: 0,
+        downloadsCount: 0,
         createdAt: now.subtract(const Duration(days: 5)),
       ),
       _coreValueTemplate(
@@ -133,9 +180,9 @@ class LocalMarketplaceService implements MarketplaceService {
         reflectionPrompt:
             'Apa satu keputusan kecil minggu ini yang akan menjaga energi tubuh Anda?',
         creator: 'LifeTree',
-        ratingsSum: 50,
-        ratingsCount: 10,
-        downloadsCount: 240,
+        ratingsSum: 0,
+        ratingsCount: 0,
+        downloadsCount: 0,
         createdAt: now.subtract(const Duration(days: 18)),
       ),
       _coreValueTemplate(
@@ -150,9 +197,9 @@ class LocalMarketplaceService implements MarketplaceService {
         reflectionPrompt:
             'Di area mana Anda ingin punya lebih banyak ruang memilih?',
         creator: 'LifeTree',
-        ratingsSum: 45,
-        ratingsCount: 9,
-        downloadsCount: 210,
+        ratingsSum: 0,
+        ratingsCount: 0,
+        downloadsCount: 0,
         createdAt: now.subtract(const Duration(days: 16)),
       ),
       _coreValueTemplate(
@@ -167,9 +214,9 @@ class LocalMarketplaceService implements MarketplaceService {
         reflectionPrompt:
             'Apa bentuk kehadiran sederhana yang bisa Anda berikan minggu ini?',
         creator: 'LifeTree',
-        ratingsSum: 60,
-        ratingsCount: 12,
-        downloadsCount: 260,
+        ratingsSum: 0,
+        ratingsCount: 0,
+        downloadsCount: 0,
         createdAt: now.subtract(const Duration(days: 12)),
       ),
     ];
@@ -335,9 +382,9 @@ class LocalMarketplaceService implements MarketplaceService {
         ),
       ),
       creatorPenName: creatorPenName.trim().isEmpty ? 'Anonim' : creatorPenName,
-      ratingsSum: 5,
-      ratingsCount: 1,
-      downloadsCount: 1,
+      ratingsSum: 0,
+      ratingsCount: 0,
+      downloadsCount: 0,
       createdAt: DateTime.now(),
     );
     await _db.into(_db.marketplaceTemplates).insert(companion);
@@ -372,9 +419,9 @@ class LocalMarketplaceService implements MarketplaceService {
         ),
       ),
       creatorPenName: creatorPenName.trim().isEmpty ? 'Anonim' : creatorPenName,
-      ratingsSum: 5,
-      ratingsCount: 1,
-      downloadsCount: 1,
+      ratingsSum: 0,
+      ratingsCount: 0,
+      downloadsCount: 0,
       createdAt: DateTime.now(),
     );
     await _db.into(_db.marketplaceTemplates).insert(companion);

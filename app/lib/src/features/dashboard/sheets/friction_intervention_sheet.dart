@@ -8,7 +8,6 @@ import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
-import '../../../core/services/notification_service.dart';
 import '../../habit/services/habit_log_service.dart';
 import '../../../core/services/reminder_coordinator.dart';
 

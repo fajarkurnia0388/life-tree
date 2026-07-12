@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/db_provider.dart';
 import '../providers/data_history_providers.dart';
-import '../../features/dashboard/dashboard_provider.dart';
+import '../debug/dev_providers.dart';
 
 class CalmTheme {
   // Daoji brand palette (aligned with landing page).

@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../dashboard_provider.dart';
 
 /// Dev tools for inspecting and simulating tree growth state during development.
+///
+/// Hidden outside [kDebugMode]. Production builds never show this toolbar.
 class DevToolbarWidget extends StatelessWidget {
   const DevToolbarWidget({super.key, required this.data});
 
@@ -10,6 +13,8 @@ class DevToolbarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!kDebugMode) return const SizedBox.shrink();
+
     return Consumer(
       builder: (context, ref, child) {
         final ageOverride = ref.watch(devCumulativeDaysOverrideProvider);

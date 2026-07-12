@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart';
@@ -9,7 +8,18 @@ import '../../core/domain/priority_helper.dart';
 import '../../core/services/error_logger_provider.dart';
 import '../../core/utils/profile_json_helpers.dart';
 import '../../core/providers/user_profile_provider.dart';
+import '../../core/debug/dev_providers.dart';
 import 'services/canopy_load_service.dart';
+
+export '../../core/debug/dev_providers.dart'
+    show
+        CelestialTime,
+        devTimeOfDayOverrideProvider,
+        devCumulativeDaysOverrideProvider,
+        devAgePlayProvider,
+        devTimePlayProvider,
+        DevAgePlayNotifier,
+        DevTimePlayNotifier;
 
 class DashboardData {
   final UserProfile profile;
@@ -46,113 +56,6 @@ class HabitWithLog {
   final HabitLog? log;
   HabitWithLog({required this.habit, this.log});
 }
-
-enum CelestialTime { auto, morning, noon, sunset, night }
-
-final devTimeOfDayOverrideProvider = StateProvider<CelestialTime>(
-  (ref) => CelestialTime.auto,
-);
-
-final devCumulativeDaysOverrideProvider = StateProvider<int?>((ref) => null);
-
-class DevAgePlayNotifier extends StateNotifier<bool> {
-  final Ref _ref;
-  Timer? _timer;
-
-  DevAgePlayNotifier(this._ref) : super(false);
-
-  void toggle() {
-    if (state) {
-      stop();
-    } else {
-      start();
-    }
-  }
-
-  void start() {
-    state = true;
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(milliseconds: 800), (timer) {
-      final current = _ref.read(devCumulativeDaysOverrideProvider) ?? 0;
-      if (current >= 100) {
-        _ref.read(devCumulativeDaysOverrideProvider.notifier).state = 0;
-      } else {
-        _ref.read(devCumulativeDaysOverrideProvider.notifier).state =
-            current + 1;
-      }
-    });
-  }
-
-  void stop() {
-    state = false;
-    _timer?.cancel();
-    _timer = null;
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-}
-
-final devAgePlayProvider = StateNotifierProvider<DevAgePlayNotifier, bool>((
-  ref,
-) {
-  final notifier = DevAgePlayNotifier(ref);
-  ref.onDispose(() => notifier.dispose());
-  return notifier;
-});
-
-class DevTimePlayNotifier extends StateNotifier<bool> {
-  final Ref _ref;
-  Timer? _timer;
-
-  DevTimePlayNotifier(this._ref) : super(false);
-
-  void toggle() {
-    if (state) {
-      stop();
-    } else {
-      start();
-    }
-  }
-
-  void start() {
-    state = true;
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(milliseconds: 1500), (timer) {
-      final current = _ref.read(devTimeOfDayOverrideProvider);
-      final next = switch (current) {
-        CelestialTime.morning => CelestialTime.noon,
-        CelestialTime.noon => CelestialTime.sunset,
-        CelestialTime.sunset => CelestialTime.night,
-        _ => CelestialTime.morning,
-      };
-      _ref.read(devTimeOfDayOverrideProvider.notifier).state = next;
-    });
-  }
-
-  void stop() {
-    state = false;
-    _timer?.cancel();
-    _timer = null;
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-}
-
-final devTimePlayProvider = StateNotifierProvider<DevTimePlayNotifier, bool>((
-  ref,
-) {
-  final notifier = DevTimePlayNotifier(ref);
-  ref.onDispose(() => notifier.dispose());
-  return notifier;
-});
 
 class WellBeingStatus {
   final bool isLowWellBeing;

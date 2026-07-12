@@ -161,7 +161,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
       if (mounted) {
         SnackBarService.showSuccess(
           context,
-          'Kebiasaan "${t.title}" berhasil diunduh ke daftar lokal!',
+          'Kebiasaan "${t.title}" ditambahkan ke daftar lokal (template lokal).',
         );
         _refreshTemplates();
       }
@@ -379,6 +379,19 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: Text(
+              'Pustaka template lokal di perangkat — bukan toko online.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurface.withValues(
+                      alpha: 0.6,
+                    ),
+              ),
+            ),
+          ),
           // Template Type Selector
           SizedBox(
             height: 56,

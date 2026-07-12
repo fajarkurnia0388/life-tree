@@ -304,7 +304,7 @@ class _RoleStormingWorkspaceState extends ConsumerState<RoleStormingWorkspace> {
                           Icon(Icons.style_rounded, color: Colors.blue),
                           SizedBox(width: 8),
                           Text(
-                            'Marketplace Paket Persona 🎭',
+                            'Pustaka Persona (Lokal) 🎭',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -470,9 +470,9 @@ class _RoleStormingWorkspaceState extends ConsumerState<RoleStormingWorkspace> {
             ),
             TextButton.icon(
               onPressed: _openMarketplace,
-              icon: const Icon(Icons.storefront_rounded, size: 16),
+              icon: const Icon(Icons.menu_book_rounded, size: 16),
               label: const Text(
-                'Marketplace',
+                'Pustaka Lokal',
                 style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
               ),
               style: TextButton.styleFrom(

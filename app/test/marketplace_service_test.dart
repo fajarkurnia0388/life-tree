@@ -122,36 +122,36 @@ void main() {
     });
 
     test('Rating template', () async {
-      // habit-temp-1 averageRating awal: 48 / 10 = 4.8
+      // Bundled templates start with honest zero social metrics.
       final initial = (await service.fetchTemplates()).firstWhere(
         (t) => t.templateId == 'habit-temp-1',
       );
-      expect(initial.ratingsSum, 48);
-      expect(initial.ratingsCount, 10);
+      expect(initial.ratingsSum, 0);
+      expect(initial.ratingsCount, 0);
 
-      // Rate dengan 5 bintang
+      // Rate with 5 stars
       await service.rateTemplate('habit-temp-1', 5);
 
       final updated = (await service.fetchTemplates()).firstWhere(
         (t) => t.templateId == 'habit-temp-1',
       );
-      expect(updated.ratingsSum, 53);
-      expect(updated.ratingsCount, 11);
-      expect(updated.averageRating, 53 / 11);
+      expect(updated.ratingsSum, 5);
+      expect(updated.ratingsCount, 1);
+      expect(updated.averageRating, 5.0);
     });
 
     test('Increment download count', () async {
       final initial = (await service.fetchTemplates()).firstWhere(
         (t) => t.templateId == 'habit-temp-2',
       );
-      expect(initial.downloadsCount, 189);
+      expect(initial.downloadsCount, 0);
 
       await service.incrementDownloads('habit-temp-2');
 
       final updated = (await service.fetchTemplates()).firstWhere(
         (t) => t.templateId == 'habit-temp-2',
       );
-      expect(updated.downloadsCount, 190);
+      expect(updated.downloadsCount, 1);
     });
   });
 }

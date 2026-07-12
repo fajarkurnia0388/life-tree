@@ -9,6 +9,10 @@ import '../../core/providers/db_provider.dart';
 import '../../data/local_db/database.dart';
 import '../../core/theme/theme.dart';
 import '../../core/domain/app_constants.dart';
+import '../../core/i18n/daoji_text_key.dart';
+import '../../core/i18n/daoji_text_resolver.dart';
+import '../../core/i18n/daoji_vocabulary_level.dart';
+import '../../core/i18n/daoji_vocabulary_provider.dart';
 
 class SafetyCardView extends ConsumerWidget {
   const SafetyCardView({super.key});
@@ -39,9 +43,14 @@ class SafetyCardView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Dukungan Kesehatan Diri')),
+      appBar: AppBar(
+        title: Text(
+          DaojiText.resolve(DaojiTextKey.safetyTitle, vocabularyLevel),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -51,7 +60,7 @@ class SafetyCardView extends ConsumerWidget {
             const Center(child: Text('🛡️', style: TextStyle(fontSize: 60))),
             const SizedBox(height: 16),
             Text(
-              'Pusat Dukungan & Bantuan',
+              DaojiText.resolve(DaojiTextKey.safetyHeader, vocabularyLevel),
               style: theme.textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
@@ -97,6 +106,7 @@ class SafetyCardView extends ConsumerWidget {
                   // Hotline 1: SEJIWA (119 ext 8)
                   _buildHotlineCard(
                     theme: theme,
+                    vocabularyLevel: vocabularyLevel,
                     title: 'Layanan Kesehatan Jiwa SEJIWA (Healing119)',
                     number: '119 (Ekstensi 8)',
                     description:
@@ -192,6 +202,7 @@ class SafetyCardView extends ConsumerWidget {
                   // Hotline 2: PSC 119
                   _buildHotlineCard(
                     theme: theme,
+                    vocabularyLevel: vocabularyLevel,
                     title: 'Pusat Krisis Kedaruratan PSC (Layanan Medis)',
                     number: '119',
                     description:
@@ -220,6 +231,7 @@ class SafetyCardView extends ConsumerWidget {
                   // Hotline 3: LISA Suicide Helpline
                   _buildHotlineCard(
                     theme: theme,
+                    vocabularyLevel: vocabularyLevel,
                     title: 'LISA Helpline (Love Inside Suicide Awareness)',
                     number: '0811-3855-472',
                     description:
@@ -359,7 +371,10 @@ class SafetyCardView extends ConsumerWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Data Tersimpan Lokal di Perangkat Anda',
+                          DaojiText.resolve(
+                            DaojiTextKey.safetyLocalData,
+                            vocabularyLevel,
+                          ),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
@@ -393,6 +408,7 @@ class SafetyCardView extends ConsumerWidget {
 
   Widget _buildHotlineCard({
     required ThemeData theme,
+    required DaojiVocabularyLevel vocabularyLevel,
     required String title,
     required String number,
     required String description,
@@ -426,7 +442,13 @@ class SafetyCardView extends ConsumerWidget {
             ElevatedButton.icon(
               onPressed: onTap,
               icon: const Icon(Icons.phone_rounded),
-              label: Text('Hubungi $number'),
+              label: Text(
+                DaojiText.resolve(
+                  DaojiTextKey.safetyCall,
+                  vocabularyLevel,
+                  params: {'number': number},
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: color,
                 foregroundColor: theme.colorScheme.brightness == Brightness.dark

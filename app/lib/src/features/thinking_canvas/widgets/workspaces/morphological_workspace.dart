@@ -534,9 +534,9 @@ class _MorphologicalWorkspaceState
               children: [
                 TextButton.icon(
                   onPressed: _showTemplateMarketplace,
-                  icon: const Icon(Icons.storefront_rounded, size: 16),
+                  icon: const Icon(Icons.menu_book_rounded, size: 16),
                   label: const Text(
-                    'Marketplace',
+                    'Pustaka Lokal',
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                 ),

@@ -59,7 +59,7 @@ void main() {
           .map((level) => DaojiText.resolve(DaojiTextKey.safetyTitle, level))
           .toSet();
       expect(values.length, 1);
-      expect(values.single, 'Safety Support');
+      expect(values.single, 'Dukungan Kesehatan Diri');
     });
 
     test('maps domain keys to current vocabulary labels', () {
@@ -84,7 +84,7 @@ void main() {
           DaojiVocabularyLevel.mortal,
           params: {'number': '119'},
         ),
-        'Call 119',
+        'Hubungi 119',
       );
     });
   });
