@@ -34,6 +34,16 @@ jobs:
       - name: Test with coverage
         run: flutter test --coverage
 
+      - name: Check coverage threshold
+        run: |
+          sudo apt-get update && sudo apt-get install -y lcov
+          COVERAGE=$(lcov --summary coverage/lcov.info | grep "lines" | awk '{print $2}' | sed 's/%//')
+          echo "Coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 70" | bc -l) )); then
+            echo "Coverage $COVERAGE% is below threshold 70%"
+            exit 1
+          fi
+
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:

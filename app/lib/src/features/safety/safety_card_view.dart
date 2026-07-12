@@ -283,6 +283,56 @@ class SafetyCardView extends ConsumerWidget {
             }(),
             const SizedBox(height: 32),
 
+            // Crisis governance disclaimer
+            Card(
+              color: CalmTheme.alertMutedRed.withValues(alpha: 0.05),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: CalmTheme.alertMutedRed.withValues(alpha: 0.3),
+                  width: 1,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.emergency_outlined,
+                          size: 16,
+                          color: CalmTheme.alertMutedRed,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Penting: Bantuan Darurat',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: CalmTheme.alertMutedRed,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Jika Anda dalam bahaya segera atau memerlukan pertolongan medis darurat, hubungi 119 atau layanan darurat setempat. Nomor hotline di atas adalah layanan konseling, bukan pengganti bantuan medis darurat.\n\nNomor terverifikasi per Juli 2026.',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.7,
+                        ),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
             // Disclaimer card
             Card(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.03),
