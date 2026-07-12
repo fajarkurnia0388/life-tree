@@ -164,7 +164,7 @@ void main() {
     expect(row.read<String?>('metadata'), contains('"mvaDuration":5'));
   });
 
-  test('schema v3 upgrades to v15 without duplicate-column failures', () async {
+  test('schema v3 upgrades to v16 without duplicate-column failures', () async {
     final executor = NativeDatabase.memory(setup: _createVersion3Schema);
     final db = AppDatabase.forTesting(executor);
     addTearDown(db.close);
@@ -172,7 +172,7 @@ void main() {
     await db.customSelect('SELECT 1').get();
 
     final version = await db.customSelect('PRAGMA user_version').getSingle();
-    expect(version.read<int>('user_version'), 15);
+    expect(version.read<int>('user_version'), 16);
     expect(
       await _columns(db, 'decision_entries'),
       containsAll(['review_period_days', 'confidence_score']),

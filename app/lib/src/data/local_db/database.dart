@@ -566,7 +566,19 @@ class AppDatabase extends _$AppDatabase {
                 deleted_at INTEGER
               )
             ''');
-            await customStatement('INSERT INTO habit_logs_new SELECT * FROM habit_logs');
+            
+            final habitLogCols = <String>[];
+            if (await _columnExists('habit_logs', 'log_id')) habitLogCols.add('log_id');
+            if (await _columnExists('habit_logs', 'habit_id')) habitLogCols.add('habit_id');
+            if (await _columnExists('habit_logs', 'date')) habitLogCols.add('date');
+            if (await _columnExists('habit_logs', 'status')) habitLogCols.add('status');
+            if (await _columnExists('habit_logs', 'friction_reason_selected')) habitLogCols.add('friction_reason_selected');
+            if (await _columnExists('habit_logs', 'duration_target_min')) habitLogCols.add('duration_target_min');
+            if (await _columnExists('habit_logs', 'duration_actual_min')) habitLogCols.add('duration_actual_min');
+            if (await _columnExists('habit_logs', 'deleted_at')) habitLogCols.add('deleted_at');
+
+            final hlCols = habitLogCols.join(', ');
+            await customStatement('INSERT INTO habit_logs_new ($hlCols) SELECT $hlCols FROM habit_logs');
             await customStatement('DROP TABLE habit_logs');
             await customStatement('ALTER TABLE habit_logs_new RENAME TO habit_logs');
 
@@ -580,7 +592,16 @@ class AppDatabase extends _$AppDatabase {
                 quiet_hours_end TEXT NOT NULL DEFAULT '07:00'
               )
             ''');
-            await customStatement('INSERT INTO reminder_preferences_new SELECT * FROM reminder_preferences');
+            
+            final reminderCols = <String>[];
+            if (await _columnExists('reminder_preferences', 'habit_id')) reminderCols.add('habit_id');
+            if (await _columnExists('reminder_preferences', 'reminder_enabled')) reminderCols.add('reminder_enabled');
+            if (await _columnExists('reminder_preferences', 'reminder_time')) reminderCols.add('reminder_time');
+            if (await _columnExists('reminder_preferences', 'quiet_hours_start')) reminderCols.add('quiet_hours_start');
+            if (await _columnExists('reminder_preferences', 'quiet_hours_end')) reminderCols.add('quiet_hours_end');
+
+            final rpCols = reminderCols.join(', ');
+            await customStatement('INSERT INTO reminder_preferences_new ($rpCols) SELECT $rpCols FROM reminder_preferences');
             await customStatement('DROP TABLE reminder_preferences');
             await customStatement('ALTER TABLE reminder_preferences_new RENAME TO reminder_preferences');
           });
