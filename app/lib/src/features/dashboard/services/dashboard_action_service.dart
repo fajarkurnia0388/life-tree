@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/providers/db_provider.dart';
 import '../../../core/services/notification_service.dart';
+import '../../../core/services/reminder_coordinator.dart';
 import '../../../data/local_db/database.dart';
 
 class DashboardActionService {
   final AppDatabase db;
-  DashboardActionService(this.db);
+  final Ref? ref;
+  DashboardActionService(this.db, [this.ref]);
 
   Future<void> updateUserSkin(String userId, String skinId) async {
     await (db.update(
@@ -70,6 +72,9 @@ class DashboardActionService {
         updatedAt: drift.Value(DateTime.now()),
       ),
     );
+    if (ref != null) {
+      await ref!.read(reminderCoordinatorProvider).reconcileAll(userId);
+    }
   }
 
   Future<void> endRecoveryMode(String userId) async {
@@ -82,16 +87,24 @@ class DashboardActionService {
         updatedAt: drift.Value(DateTime.now()),
       ),
     );
+    if (ref != null) {
+      await ref!.read(reminderCoordinatorProvider).reconcileAll(userId);
+    }
   }
 
   Future<void> deleteHabit(String habitId) async {
     await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(habitId)))
         .write(HabitsCompanion(deletedAt: drift.Value(DateTime.now())));
+    await NotificationService.cancelHabit(habitId);
   }
 
   Future<void> restoreHabit(String habitId) async {
     await (db.update(db.habits)..where((tbl) => tbl.habitId.equals(habitId)))
         .write(const HabitsCompanion(deletedAt: drift.Value(null)));
+    final habits = await (db.select(db.habits)..where((tbl) => tbl.habitId.equals(habitId))).get();
+    if (habits.isNotEmpty && ref != null) {
+      await ref!.read(reminderCoordinatorProvider).reconcileAll(habits.first.userId);
+    }
   }
 
   Future<void> toggleDeveloperMode(String userId, bool enabled) async {
@@ -211,5 +224,5 @@ class DashboardActionService {
 }
 
 final dashboardActionServiceProvider = Provider<DashboardActionService>((ref) {
-  return DashboardActionService(ref.watch(dbProvider));
+  return DashboardActionService(ref.watch(dbProvider), ref);
 });

@@ -5,6 +5,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:drift/native.dart';
 import 'package:daoji/src/core/providers/db_provider.dart';
 import 'package:daoji/src/data/local_db/database.dart';
+import 'package:daoji/src/features/profile/services/activity_heatmap_service.dart';
 
 void main() {
   late AppDatabase db;
@@ -81,5 +82,30 @@ void main() {
     final parsed = List<String>.from(jsonDecode(profile.coreValues!));
     expect(parsed.length, 3);
     expect(parsed[0], 'Kesehatan 🏃');
+  });
+
+  test('ActivityHeatmapService generateLast52Weeks behaves correctly on weekdays', () {
+    final service = ActivityHeatmapService(db);
+
+    // Monday case
+    final monday = DateTime(2026, 7, 13); // Monday
+    final weeksMonday = service.generateLast52Weeks(baseDate: monday);
+    expect(weeksMonday.last, DateTime(2026, 7, 19)); // Should end on Sunday of that week
+    expect(weeksMonday.contains(monday), isTrue);
+
+    // Wednesday case
+    final wednesday = DateTime(2026, 7, 15); // Wednesday
+    final weeksWednesday = service.generateLast52Weeks(baseDate: wednesday);
+    expect(weeksWednesday.last, DateTime(2026, 7, 19)); // Should still end on Sunday of that week
+    expect(weeksWednesday.contains(wednesday), isTrue);
+
+    // Sunday case
+    final sunday = DateTime(2026, 7, 19); // Sunday
+    final weeksSunday = service.generateLast52Weeks(baseDate: sunday);
+    expect(weeksSunday.last, DateTime(2026, 7, 19)); // Should end on Sunday of that week
+    expect(weeksSunday.contains(sunday), isTrue);
+
+    // Range size should be exactly 364 days
+    expect(weeksMonday.length, 364);
   });
 }

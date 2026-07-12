@@ -48,6 +48,7 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => cached);
+      event.waitUntil(network);
       return cached || network;
     }),
   );

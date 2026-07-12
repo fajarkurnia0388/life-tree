@@ -297,7 +297,7 @@ class SafetyCardView extends ConsumerWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
@@ -305,7 +305,7 @@ class SafetyCardView extends ConsumerWidget {
                           size: 16,
                           color: CalmTheme.alertMutedRed,
                         ),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         Text(
                           'Penting: Bantuan Darurat',
                           style: TextStyle(

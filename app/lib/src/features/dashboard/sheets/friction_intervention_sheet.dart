@@ -10,6 +10,7 @@ import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
 import '../../../core/services/notification_service.dart';
 import '../../habit/services/habit_log_service.dart';
+import '../../../core/services/reminder_coordinator.dart';
 
 /// Bottom sheet for friction intervention — shown when user taps "Tidak Sanggup".
 class FrictionInterventionSheet extends ConsumerStatefulWidget {
@@ -58,12 +59,7 @@ class _FrictionInterventionSheetState
       }
 
       // FIX: Cancel all habit reminders during recovery mode
-      final userHabits = await (db.select(db.habits)
-            ..where((tbl) => tbl.userId.equals(profiles.first.userId) & tbl.deletedAt.isNull()))
-          .get();
-      for (final habit in userHabits) {
-        await NotificationService.cancelHabit(habit.habitId);
-      }
+      await ref.read(reminderCoordinatorProvider).reconcileAll(profiles.first.userId);
     }
 
     if (mounted) {

@@ -45,12 +45,12 @@ class ActivityHeatmapService {
 
   /// Helper untuk generate list of dates untuk 52 weeks (364 days)
   /// Dimulai dari hari Senin dan berakhir pada hari Minggu di minggu berjalan.
-  List<DateTime> generateLast52Weeks() {
-    final now = DateTime.now();
+  List<DateTime> generateLast52Weeks({DateTime? baseDate}) {
+    final now = baseDate ?? DateTime.now();
     final currentWeekday = now.weekday; // 1 = Monday, 7 = Sunday
 
-    // Find the most recent Sunday (end of current week)
-    final endDate = now.subtract(Duration(days: currentWeekday % 7));
+    // Find the Sunday of the current week (end of current week)
+    final endDate = now.add(Duration(days: 7 - currentWeekday));
 
     // 52 columns × 7 rows => 364 days total
     final startDate = endDate.subtract(const Duration(days: 363));

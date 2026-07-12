@@ -22,7 +22,7 @@ class CanopyLoadService {
     final wScore = (who5Percentage / 100.0).clamp(0.0, 1.0);
     // Floor at 30 % so the system never fully disables itself
     final adjusted = baseCapacity * (0.3 + 0.7 * wScore);
-    return adjusted.round();
+    return adjusted.round().clamp(1, baseCapacity);
   }
 
   /// Returns true when [who5Percentage] falls below the clinical well-being

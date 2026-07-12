@@ -17,21 +17,40 @@ class ValueCompassService {
     required String chosenValueTag,
     String? reason, // Optional reason for the choice
   }) async {
-    final responseId = const Uuid().v4();
     await _db.transaction(() async {
-      await _db
-          .into(_db.valueDilemmaResponses)
-          .insert(
-            ValueDilemmaResponsesCompanion.insert(
-              responseId: responseId,
-              userId: userId,
-              dilemmaKey: dilemmaKey,
-              chosenValueTag: drift.Value(chosenValueTag),
+      final oneHourAgo = DateTime.now().subtract(const Duration(hours: 1));
+      final existing = await (_db.select(_db.valueDilemmaResponses)
+            ..where((tbl) =>
+                tbl.userId.equals(userId) &
+                tbl.dilemmaKey.equals(dilemmaKey) &
+                tbl.answeredAt.isBiggerOrEqualValue(oneHourAgo) &
+                tbl.deletedAt.isNull())
+            ..limit(1))
+          .getSingleOrNull();
+
+      if (existing != null) {
+        await (_db.update(_db.valueDilemmaResponses)
+              ..where((tbl) => tbl.responseId.equals(existing.responseId)))
+            .write(ValueDilemmaResponsesCompanion(
               chosenOptionLabel: drift.Value(chosenOptionLabel),
+              chosenValueTag: drift.Value(chosenValueTag),
               responseReason: drift.Value(reason),
-              answeredAt: DateTime.now(),
-            ),
-          );
+              answeredAt: drift.Value(DateTime.now()),
+            ));
+      } else {
+        final responseId = const Uuid().v4();
+        await _db.into(_db.valueDilemmaResponses).insert(
+              ValueDilemmaResponsesCompanion.insert(
+                responseId: responseId,
+                userId: userId,
+                dilemmaKey: dilemmaKey,
+                chosenValueTag: drift.Value(chosenValueTag),
+                chosenOptionLabel: drift.Value(chosenOptionLabel),
+                responseReason: drift.Value(reason),
+                answeredAt: DateTime.now(),
+              ),
+            );
+      }
       await _recomputeRevealedValues(userId);
     });
   }
@@ -44,20 +63,40 @@ class ValueCompassService {
     required String neutralLabel, // 'Both' or 'Depends'
     String? reason,
   }) async {
-    final responseId = const Uuid().v4();
-    await _db
-        .into(_db.valueDilemmaResponses)
-        .insert(
-          ValueDilemmaResponsesCompanion.insert(
-            responseId: responseId,
-            userId: userId,
-            dilemmaKey: dilemmaKey,
-            chosenOptionLabel: drift.Value(neutralLabel),
-            responseReason: drift.Value(reason),
-            answeredAt: DateTime.now(),
-          ),
-        );
-    // No recompute — neutral answers don't affect value scores
+    await _db.transaction(() async {
+      final oneHourAgo = DateTime.now().subtract(const Duration(hours: 1));
+      final existing = await (_db.select(_db.valueDilemmaResponses)
+            ..where((tbl) =>
+                tbl.userId.equals(userId) &
+                tbl.dilemmaKey.equals(dilemmaKey) &
+                tbl.answeredAt.isBiggerOrEqualValue(oneHourAgo) &
+                tbl.deletedAt.isNull())
+            ..limit(1))
+          .getSingleOrNull();
+
+      if (existing != null) {
+        await (_db.update(_db.valueDilemmaResponses)
+              ..where((tbl) => tbl.responseId.equals(existing.responseId)))
+            .write(ValueDilemmaResponsesCompanion(
+              chosenOptionLabel: drift.Value(neutralLabel),
+              chosenValueTag: const drift.Value(null),
+              responseReason: drift.Value(reason),
+              answeredAt: drift.Value(DateTime.now()),
+            ));
+      } else {
+        final responseId = const Uuid().v4();
+        await _db.into(_db.valueDilemmaResponses).insert(
+              ValueDilemmaResponsesCompanion.insert(
+                responseId: responseId,
+                userId: userId,
+                dilemmaKey: dilemmaKey,
+                chosenOptionLabel: drift.Value(neutralLabel),
+                responseReason: drift.Value(reason),
+                answeredAt: DateTime.now(),
+              ),
+            );
+      }
+    });
   }
 
   Future<void> recordOpenResponse({
@@ -65,19 +104,37 @@ class ValueCompassService {
     required String dilemmaKey,
     required String text,
   }) async {
-    final responseId = const Uuid().v4();
-    await _db
-        .into(_db.valueDilemmaResponses)
-        .insert(
-          ValueDilemmaResponsesCompanion.insert(
-            responseId: responseId,
-            userId: userId,
-            dilemmaKey: dilemmaKey,
-            openTextResponse: drift.Value(text),
-            answeredAt: DateTime.now(),
-          ),
-        );
-    // Tidak memengaruhi skor — tidak perlu recompute.
+    await _db.transaction(() async {
+      final oneHourAgo = DateTime.now().subtract(const Duration(hours: 1));
+      final existing = await (_db.select(_db.valueDilemmaResponses)
+            ..where((tbl) =>
+                tbl.userId.equals(userId) &
+                tbl.dilemmaKey.equals(dilemmaKey) &
+                tbl.answeredAt.isBiggerOrEqualValue(oneHourAgo) &
+                tbl.deletedAt.isNull())
+            ..limit(1))
+          .getSingleOrNull();
+
+      if (existing != null) {
+        await (_db.update(_db.valueDilemmaResponses)
+              ..where((tbl) => tbl.responseId.equals(existing.responseId)))
+            .write(ValueDilemmaResponsesCompanion(
+              openTextResponse: drift.Value(text),
+              answeredAt: drift.Value(DateTime.now()),
+            ));
+      } else {
+        final responseId = const Uuid().v4();
+        await _db.into(_db.valueDilemmaResponses).insert(
+              ValueDilemmaResponsesCompanion.insert(
+                responseId: responseId,
+                userId: userId,
+                dilemmaKey: dilemmaKey,
+                openTextResponse: drift.Value(text),
+                answeredAt: DateTime.now(),
+              ),
+            );
+      }
+    });
   }
 
   /// Hitung ulang tally lengkap dari seluruh respons (bukan incremental).

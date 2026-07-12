@@ -5,6 +5,7 @@ import 'package:drift/native.dart';
 import 'package:daoji/src/core/providers/db_provider.dart';
 import 'package:daoji/src/data/local_db/database.dart';
 import 'package:daoji/src/features/dashboard/dashboard_provider.dart';
+import 'package:daoji/src/features/dashboard/services/canopy_load_service.dart';
 
 void main() {
   late AppDatabase db;
@@ -113,5 +114,13 @@ void main() {
     // adjusted = 10 * (0.3 + 0.7 * 0.32) = 10 * (0.3 + 0.224) = 10 * 0.524 = 5.24 -> rounded to 5
     expect(data.isLowWellBeing, isTrue);
     expect(data.dynamicCanopyCapacity, 5);
+  });
+
+  test('CanopyLoadService calculateDynamicCapacity clamps to minimum of 1', () {
+    final capacity = CanopyLoadService.calculateDynamicCapacity(
+      who5Percentage: 0,
+      baseCapacity: 1,
+    );
+    expect(capacity, 1);
   });
 }

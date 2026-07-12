@@ -49,3 +49,6 @@ app.*.map.json
 
 # Native binaries
 *.dll
+
+# Local diagnostics
+analysis.json

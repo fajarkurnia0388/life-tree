@@ -139,9 +139,73 @@ void main() {
       final profile = await (db.select(db.userProfiles)..where((tbl) => tbl.userId.equals('user-123'))).getSingle();
       final Map<String, dynamic> tally = jsonDecode(profile.revealedValueScores!);
 
-      // Stabilitas should be 3, Kebebasan should be 2 (since d3 is soft-deleted)
+       // Stabilitas should be 3, Kebebasan should be 2 (since d3 is soft-deleted)
       expect(tally['Stabilitas'], 3);
       expect(tally['Kebebasan'], 2);
+    });
+
+    test('recordBinaryResponse updates existing response in the same session (idempotent)', () async {
+      await service.recordBinaryResponse(
+        userId: 'user-123',
+        dilemmaKey: 'stabilitas_vs_kebebasan_01',
+        chosenOptionLabel: 'A',
+        chosenValueTag: 'Stabilitas',
+        reason: 'Reason 1',
+      );
+      
+      // Update same dilemma in same session
+      await service.recordBinaryResponse(
+        userId: 'user-123',
+        dilemmaKey: 'stabilitas_vs_kebebasan_01',
+        chosenOptionLabel: 'B',
+        chosenValueTag: 'Kebebasan',
+        reason: 'Reason 2',
+      );
+
+      final responses = await db.select(db.valueDilemmaResponses).get();
+      expect(responses.length, 1); // Only 1 row in DB
+      expect(responses.first.chosenOptionLabel, 'B');
+      expect(responses.first.chosenValueTag, 'Kebebasan');
+      expect(responses.first.responseReason, 'Reason 2');
+    });
+
+    test('recordNeutralResponse updates existing response in the same session (idempotent)', () async {
+      await service.recordBinaryResponse(
+        userId: 'user-123',
+        dilemmaKey: 'neutral_test_01',
+        chosenOptionLabel: 'A',
+        chosenValueTag: 'Stabilitas',
+      );
+
+      await service.recordNeutralResponse(
+        userId: 'user-123',
+        dilemmaKey: 'neutral_test_01',
+        neutralLabel: 'Both',
+        reason: 'Neutral reason',
+      );
+
+      final responses = await db.select(db.valueDilemmaResponses).get();
+      expect(responses.length, 1);
+      expect(responses.first.chosenOptionLabel, 'Both');
+      expect(responses.first.chosenValueTag, isNull);
+    });
+
+    test('recordOpenResponse updates existing response in the same session (idempotent)', () async {
+      await service.recordOpenResponse(
+        userId: 'user-123',
+        dilemmaKey: 'open_test_01',
+        text: 'Initial text',
+      );
+
+      await service.recordOpenResponse(
+        userId: 'user-123',
+        dilemmaKey: 'open_test_01',
+        text: 'Updated text',
+      );
+
+      final responses = await db.select(db.valueDilemmaResponses).get();
+      expect(responses.length, 1);
+      expect(responses.first.openTextResponse, 'Updated text');
     });
   });
 }

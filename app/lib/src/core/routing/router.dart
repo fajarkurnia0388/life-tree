@@ -21,7 +21,11 @@ final routerProvider = Provider<GoRouter>((ref) {
   );
 
   ref.listen<AsyncValue<bool>>(onboardingCompletedProvider, (previous, next) {
-    refreshListenable.value = next;
+    if (next is AsyncError) {
+      refreshListenable.value = const AsyncData(false);
+    } else {
+      refreshListenable.value = next;
+    }
   }, fireImmediately: true);
 
   final router = GoRouter(

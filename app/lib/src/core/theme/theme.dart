@@ -221,8 +221,8 @@ final appThemeModeProvider = StreamProvider<ThemeMode>((ref) {
       // 'Circadian' is deprecated - now handled by circadianEnabledProvider
       return Stream.value(resolvedMode);
     },
-    loading: () => const Stream.empty(),
-    error: (_, _) => const Stream.empty(),
+    loading: () => Stream.value(ThemeMode.system),
+    error: (_, _) => Stream.value(ThemeMode.system),
   );
 });
 
@@ -251,7 +251,7 @@ final _circadianPeriodProvider = StreamProvider.autoDispose<CelestialTime>((
   }
 });
 
-final appDynamicThemeProvider = Provider<ThemeData>((ref) {
+final appDynamicThemeProvider = Provider.autoDispose<ThemeData>((ref) {
   final circadianAsync = ref.watch(circadianEnabledProvider);
   final circadianEnabled = circadianAsync.valueOrNull ?? false;
 

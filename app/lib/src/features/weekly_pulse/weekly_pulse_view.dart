@@ -16,6 +16,7 @@ import '../../data/local_db/database.dart';
 import '../dashboard/dashboard_provider.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../core/domain/app_constants.dart';
+import '../../core/services/reminder_coordinator.dart';
 
 class WeeklyPulseView extends ConsumerStatefulWidget {
   const WeeklyPulseView({super.key});
@@ -183,6 +184,8 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
             updatedAt: drift.Value(now),
           ),
         );
+
+        await ref.read(reminderCoordinatorProvider).reconcileAll(userId);
 
         await db
             .into(db.lifeAudits)

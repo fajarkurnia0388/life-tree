@@ -164,7 +164,7 @@ void main() {
     expect(row.read<String?>('metadata'), contains('"mvaDuration":5'));
   });
 
-  test('schema v3 upgrades to v16 without duplicate-column failures', () async {
+  test('schema v3 upgrades to v17 without duplicate-column failures', () async {
     final executor = NativeDatabase.memory(setup: _createVersion3Schema);
     final db = AppDatabase.forTesting(executor);
     addTearDown(db.close);
@@ -172,7 +172,7 @@ void main() {
     await db.customSelect('SELECT 1').get();
 
     final version = await db.customSelect('PRAGMA user_version').getSingle();
-    expect(version.read<int>('user_version'), 16);
+    expect(version.read<int>('user_version'), 17);
     expect(
       await _columns(db, 'decision_entries'),
       containsAll(['review_period_days', 'confidence_score']),
@@ -189,5 +189,56 @@ void main() {
       await _columns(db, 'user_profiles'),
       containsAll(['vocabulary_level', 'circadian_enabled']),
     );
+  });
+
+  test('fresh install and migrated v17 have same indexes', () async {
+    final freshDb = AppDatabase.forTesting(NativeDatabase.memory());
+    await freshDb.customSelect('SELECT 1').get();
+    
+    final migratedDb = AppDatabase.forTesting(NativeDatabase.memory(setup: _createVersion3Schema));
+    await migratedDb.customSelect('SELECT 1').get();
+    
+    final freshIndexes = await freshDb.customSelect(
+      "SELECT name, sql FROM sqlite_master WHERE type='index' AND name LIKE 'uq_%'"
+    ).get();
+    final migratedIndexes = await migratedDb.customSelect(
+      "SELECT name, sql FROM sqlite_master WHERE type='index' AND name LIKE 'uq_%'"
+    ).get();
+    
+    expect(freshIndexes.length, migratedIndexes.length);
+    expect(freshIndexes.map((r) => r.read<String>('name')).toSet(),
+           migratedIndexes.map((r) => r.read<String>('name')).toSet());
+    
+    await freshDb.close();
+    await migratedDb.close();
+  });
+
+  test('cascade delete habit removes logs and reminders', () async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    await db.customSelect('SELECT 1').get();
+    
+    // Insert habit
+    await db.customStatement("INSERT INTO habits (habit_id, user_id, title, created_at) VALUES ('h1', 'u1', 'Test Habit', 123456)");
+    // Insert log
+    await db.customStatement("INSERT INTO habit_logs (log_id, habit_id, date, status) VALUES ('l1', 'h1', 123456, 'Done')");
+    // Insert reminder
+    await db.customStatement("INSERT INTO reminder_preferences (habit_id, reminder_enabled) VALUES ('h1', 1)");
+    
+    // Check they exist
+    final logsBefore = await db.customSelect("SELECT * FROM habit_logs").get();
+    final remindersBefore = await db.customSelect("SELECT * FROM reminder_preferences").get();
+    expect(logsBefore.length, 1);
+    expect(remindersBefore.length, 1);
+    
+    // Delete habit
+    await db.customStatement("DELETE FROM habits WHERE habit_id = 'h1'");
+    
+    // Verify logs and reminders are deleted due to CASCADE
+    final logsAfter = await db.customSelect("SELECT * FROM habit_logs").get();
+    final remindersAfter = await db.customSelect("SELECT * FROM reminder_preferences").get();
+    expect(logsAfter, isEmpty);
+    expect(remindersAfter, isEmpty);
+    
+    await db.close();
   });
 }

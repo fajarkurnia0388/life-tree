@@ -116,7 +116,7 @@ class Habits extends Table {
 @DataClassName('HabitLog')
 class HabitLogs extends Table {
   TextColumn get logId => text()();
-  TextColumn get habitId => text()();
+  TextColumn get habitId => text().references(Habits, #habitId, onDelete: KeyAction.cascade)();
   DateTimeColumn get date => dateTime()();
   TextColumn get status =>
       text()(); // 'Done', 'Missed', 'Skipped_Intentionally', 'Paused'
@@ -128,11 +128,6 @@ class HabitLogs extends Table {
 
   @override
   Set<Column> get primaryKey => {logId};
-
-  @override
-  List<Set<Column>> get uniqueKeys => [
-    {habitId, date},
-  ];
 }
 
 @DataClassName('JournalEntry')
@@ -155,7 +150,7 @@ class JournalEntries extends Table {
 
   @override
   List<Set<Column>> get uniqueKeys => [
-    {userId, date, entryType},
+    {userId, date},
   ];
 }
 
@@ -197,7 +192,7 @@ class ConsentLogs extends Table {
 
 @DataClassName('ReminderPreference')
 class ReminderPreferences extends Table {
-  TextColumn get habitId => text()();
+  TextColumn get habitId => text().references(Habits, #habitId, onDelete: KeyAction.cascade)();
   BoolColumn get reminderEnabled =>
       boolean().withDefault(const Constant(true))();
   TextColumn get reminderTime => text().withDefault(const Constant('08:00'))();
@@ -318,7 +313,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 16;
+  int get schemaVersion => 17;
 
   String _quoteIdentifier(String identifier) =>
       '"${identifier.replaceAll('"', '""')}"';
@@ -369,6 +364,7 @@ class AppDatabase extends _$AppDatabase {
       'CREATE INDEX IF NOT EXISTS idx_consent_log_check ON consent_logs (user_id, consent_type)',
       'CREATE INDEX IF NOT EXISTS idx_decision_review ON decision_entries (user_id, review_date, is_reviewed)',
       'CREATE INDEX IF NOT EXISTS idx_value_dilemma_user ON value_dilemma_responses (user_id, answered_at DESC)',
+      'CREATE UNIQUE INDEX IF NOT EXISTS uq_active_habit_log ON habit_logs(habit_id, date) WHERE deleted_at IS NULL',
     ];
     for (final statement in statements) {
       await customStatement(statement);
@@ -543,12 +539,6 @@ class AppDatabase extends _$AppDatabase {
         );
       }
       if (from < 16) {
-        // FIX: Add partial unique index for active (non-deleted) habit logs
-        await customStatement(
-          'CREATE UNIQUE INDEX IF NOT EXISTS uq_active_habit_log '
-          'ON habit_logs(habit_id, date) WHERE deleted_at IS NULL',
-        );
-
         // FIX: Add foreign key constraints via table rebuild
         await customStatement('PRAGMA foreign_keys = OFF');
         try {
@@ -604,6 +594,89 @@ class AppDatabase extends _$AppDatabase {
             await customStatement('INSERT INTO reminder_preferences_new ($rpCols) SELECT $rpCols FROM reminder_preferences');
             await customStatement('DROP TABLE reminder_preferences');
             await customStatement('ALTER TABLE reminder_preferences_new RENAME TO reminder_preferences');
+          });
+        } finally {
+          await customStatement('PRAGMA foreign_keys = ON');
+        }
+      }
+      if (from < 17) {
+        // 1. Deduplicate journal_entries (keep the latest one per user+date)
+        await customStatement('''
+          DELETE FROM journal_entries 
+          WHERE rowid NOT IN (
+            SELECT MAX(rowid) FROM journal_entries 
+            GROUP BY user_id, date
+          )
+        ''');
+
+        // 2. Rebuild journal_entries with the new UNIQUE(user_id, date) constraint
+        await customStatement('PRAGMA foreign_keys = OFF');
+        try {
+          await transaction(() async {
+            await customStatement('''
+              CREATE TABLE journal_entries_new (
+                entry_id TEXT NOT NULL PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                date INTEGER NOT NULL,
+                mood_score INTEGER NOT NULL,
+                keyword TEXT,
+                text_content TEXT,
+                gratitude_text TEXT,
+                entry_type TEXT NOT NULL DEFAULT 'Lite',
+                conflict_copy TEXT,
+                deleted_at INTEGER,
+                created_at INTEGER NOT NULL,
+                UNIQUE(user_id, date)
+              )
+            ''');
+
+            final journalCols = <String>[];
+            if (await _columnExists('journal_entries', 'entry_id')) journalCols.add('entry_id');
+            if (await _columnExists('journal_entries', 'user_id')) journalCols.add('user_id');
+            if (await _columnExists('journal_entries', 'date')) journalCols.add('date');
+            if (await _columnExists('journal_entries', 'mood_score')) journalCols.add('mood_score');
+            if (await _columnExists('journal_entries', 'keyword')) journalCols.add('keyword');
+            if (await _columnExists('journal_entries', 'text_content')) journalCols.add('text_content');
+            if (await _columnExists('journal_entries', 'gratitude_text')) journalCols.add('gratitude_text');
+            if (await _columnExists('journal_entries', 'entry_type')) journalCols.add('entry_type');
+            if (await _columnExists('journal_entries', 'conflict_copy')) journalCols.add('conflict_copy');
+            if (await _columnExists('journal_entries', 'deleted_at')) journalCols.add('deleted_at');
+            if (await _columnExists('journal_entries', 'created_at')) journalCols.add('created_at');
+
+            final jCols = journalCols.join(', ');
+            await customStatement('INSERT INTO journal_entries_new ($jCols) SELECT $jCols FROM journal_entries');
+            await customStatement('DROP TABLE journal_entries');
+            await customStatement('ALTER TABLE journal_entries_new RENAME TO journal_entries');
+
+            // 3. Rebuild habit_logs to ensure NO table-level UNIQUE constraint
+            // (fixes fresh installs on v16 which had UNIQUE(habit_id, date) constraint)
+            await customStatement('''
+              CREATE TABLE habit_logs_new (
+                log_id TEXT NOT NULL PRIMARY KEY,
+                habit_id TEXT NOT NULL REFERENCES habits(habit_id) ON DELETE CASCADE,
+                date INTEGER NOT NULL,
+                status TEXT NOT NULL,
+                friction_reason_selected TEXT,
+                duration_target_min INTEGER,
+                duration_actual_min INTEGER,
+                deleted_at INTEGER
+              )
+            ''');
+
+            final habitLogCols = <String>[];
+            if (await _columnExists('habit_logs', 'log_id')) habitLogCols.add('log_id');
+            if (await _columnExists('habit_logs', 'habit_id')) habitLogCols.add('habit_id');
+            if (await _columnExists('habit_logs', 'date')) habitLogCols.add('date');
+            if (await _columnExists('habit_logs', 'status')) habitLogCols.add('status');
+            if (await _columnExists('habit_logs', 'friction_reason_selected')) habitLogCols.add('friction_reason_selected');
+            if (await _columnExists('habit_logs', 'duration_target_min')) habitLogCols.add('duration_target_min');
+            if (await _columnExists('habit_logs', 'duration_actual_min')) habitLogCols.add('duration_actual_min');
+            if (await _columnExists('habit_logs', 'deleted_at')) habitLogCols.add('deleted_at');
+
+            final hlCols = habitLogCols.join(', ');
+            await customStatement('INSERT INTO habit_logs_new ($hlCols) SELECT $hlCols FROM habit_logs');
+            await customStatement('DROP TABLE habit_logs');
+            await customStatement('ALTER TABLE habit_logs_new RENAME TO habit_logs');
           });
         } finally {
           await customStatement('PRAGMA foreign_keys = ON');

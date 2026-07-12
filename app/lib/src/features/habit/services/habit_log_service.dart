@@ -9,28 +9,41 @@ class HabitLogService {
   final AppDatabase _db;
   HabitLogService(this._db);
 
+  Future<HabitLog?> _getLogForDay(String habitId, DateTime dateStart) async {
+    // 1. Try to find active log
+    final active = await (_db.select(_db.habitLogs)
+          ..where((tbl) =>
+              tbl.habitId.equals(habitId) &
+              tbl.date.equals(dateStart) &
+              tbl.deletedAt.isNull())
+          ..limit(1))
+        .getSingleOrNull();
+    if (active != null) return active;
+
+    // 2. Fallback to any soft-deleted log
+    final softDeleted = await (_db.select(_db.habitLogs)
+          ..where((tbl) =>
+              tbl.habitId.equals(habitId) &
+              tbl.date.equals(dateStart) &
+              tbl.deletedAt.isNotNull())
+          ..limit(1))
+        .getSingleOrNull();
+    return softDeleted;
+  }
+
   Future<void> markDone({required Habit habit, required DateTime date}) async {
     await _db.transaction(() async {
       final todayStart = DateTime(date.year, date.month, date.day);
+      final log = await _getLogForDay(habit.habitId, todayStart);
 
-      final existing =
-          await (_db.select(_db.habitLogs)..where(
-                (tbl) =>
-                    tbl.habitId.equals(habit.habitId) &
-                    tbl.date.equals(todayStart),
-              ))
-              .get();
-
-      if (existing.isNotEmpty) {
-        final log = existing.first;
-
+      if (log != null) {
         if (log.status == HabitStatus.done && log.deletedAt == null) {
           return; // Idempotent
         }
 
-        await (_db.update(
-          _db.habitLogs,
-        )..where((tbl) => tbl.logId.equals(log.logId))).write(
+        await (_db.update(_db.habitLogs)
+              ..where((tbl) => tbl.logId.equals(log.logId)))
+            .write(
           HabitLogsCompanion(
             status: const drift.Value(HabitStatus.done),
             durationTargetMin: drift.Value(habit.mvaDurationMin),
@@ -50,9 +63,7 @@ class HabitLogService {
         await _updateCompletionRate(habit.habitId);
       } else {
         final logId = const Uuid().v4();
-        await _db
-            .into(_db.habitLogs)
-            .insert(
+        await _db.into(_db.habitLogs).insert(
               HabitLogsCompanion.insert(
                 logId: logId,
                 habitId: habit.habitId,
@@ -172,20 +183,13 @@ class HabitLogService {
   }) async {
     await _db.transaction(() async {
       final todayStart = DateTime(date.year, date.month, date.day);
-      final existing =
-          await (_db.select(_db.habitLogs)..where(
-                (tbl) =>
-                    tbl.habitId.equals(habit.habitId) &
-                    tbl.date.equals(todayStart),
-              ))
-              .get();
+      final log = await _getLogForDay(habit.habitId, todayStart);
 
-      if (existing.isNotEmpty) {
-        final log = existing.first;
-        final wasDone = log.status == HabitStatus.done;
-        await (_db.update(
-          _db.habitLogs,
-        )..where((tbl) => tbl.logId.equals(log.logId))).write(
+      if (log != null) {
+        final wasDone = log.status == HabitStatus.done && log.deletedAt == null;
+        await (_db.update(_db.habitLogs)
+              ..where((tbl) => tbl.logId.equals(log.logId)))
+            .write(
           HabitLogsCompanion(
             status: const drift.Value(HabitStatus.missed),
             frictionReasonSelected: drift.Value(reason),
@@ -208,9 +212,7 @@ class HabitLogService {
         }
       } else {
         final logId = const Uuid().v4();
-        await _db
-            .into(_db.habitLogs)
-            .insert(
+        await _db.into(_db.habitLogs).insert(
               HabitLogsCompanion.insert(
                 logId: logId,
                 habitId: habit.habitId,
