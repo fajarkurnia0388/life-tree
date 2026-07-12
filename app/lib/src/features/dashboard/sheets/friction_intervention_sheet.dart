@@ -8,6 +8,7 @@ import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/providers/db_provider.dart';
 import '../../../data/local_db/database.dart';
+import '../../../core/services/notification_service.dart';
 import '../../habit/services/habit_log_service.dart';
 
 /// Bottom sheet for friction intervention — shown when user taps "Tidak Sanggup".
@@ -54,6 +55,14 @@ class _FrictionInterventionSheetState
             updatedAt: drift.Value(now),
           ),
         );
+      }
+
+      // FIX: Cancel all habit reminders during recovery mode
+      final userHabits = await (db.select(db.habits)
+            ..where((tbl) => tbl.userId.equals(profiles.first.userId) & tbl.deletedAt.isNull()))
+          .get();
+      for (final habit in userHabits) {
+        await NotificationService.cancelHabit(habit.habitId);
       }
     }
 

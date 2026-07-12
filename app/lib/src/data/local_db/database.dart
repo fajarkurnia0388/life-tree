@@ -318,7 +318,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 15;
+  int get schemaVersion => 16;
 
   String _quoteIdentifier(String identifier) =>
       '"${identifier.replaceAll('"', '""')}"';
@@ -379,12 +379,15 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
-      if (await _columnExists('user_profiles', 'circadian_enabled') &&
-          await _columnExists('user_profiles', 'theme_mode')) {
-        await customStatement(
-          "UPDATE user_profiles SET circadian_enabled = 1, "
-          "theme_mode = 'System' WHERE theme_mode = 'Circadian'",
-        );
+      // FIX: Only run migration logic when the database was actually upgraded
+      if (details.hadUpgrade) {
+        if (await _columnExists('user_profiles', 'circadian_enabled') &&
+            await _columnExists('user_profiles', 'theme_mode')) {
+          await customStatement(
+            "UPDATE user_profiles SET circadian_enabled = 1, "
+            "theme_mode = 'System' WHERE theme_mode = 'Circadian'",
+          );
+        }
       }
     },
     onCreate: (migrator) async {
@@ -538,6 +541,52 @@ class AppDatabase extends _$AppDatabase {
           decisionEntries,
           decisionEntries.confidenceScore,
         );
+      }
+      if (from < 16) {
+        // FIX: Add partial unique index for active (non-deleted) habit logs
+        await customStatement(
+          'CREATE UNIQUE INDEX IF NOT EXISTS uq_active_habit_log '
+          'ON habit_logs(habit_id, date) WHERE deleted_at IS NULL',
+        );
+
+        // FIX: Add foreign key constraints via table rebuild
+        await customStatement('PRAGMA foreign_keys = OFF');
+        try {
+          await transaction(() async {
+            // Rebuild habit_logs with FK to habits
+            await customStatement('''
+              CREATE TABLE habit_logs_new (
+                log_id TEXT NOT NULL PRIMARY KEY,
+                habit_id TEXT NOT NULL REFERENCES habits(habit_id) ON DELETE CASCADE,
+                date INTEGER NOT NULL,
+                status TEXT NOT NULL,
+                friction_reason_selected TEXT,
+                duration_target_min INTEGER,
+                duration_actual_min INTEGER,
+                deleted_at INTEGER
+              )
+            ''');
+            await customStatement('INSERT INTO habit_logs_new SELECT * FROM habit_logs');
+            await customStatement('DROP TABLE habit_logs');
+            await customStatement('ALTER TABLE habit_logs_new RENAME TO habit_logs');
+
+            // Rebuild reminder_preferences with FK to habits
+            await customStatement('''
+              CREATE TABLE reminder_preferences_new (
+                habit_id TEXT NOT NULL PRIMARY KEY REFERENCES habits(habit_id) ON DELETE CASCADE,
+                reminder_enabled INTEGER NOT NULL DEFAULT 1,
+                reminder_time TEXT NOT NULL DEFAULT '08:00',
+                quiet_hours_start TEXT NOT NULL DEFAULT '22:00',
+                quiet_hours_end TEXT NOT NULL DEFAULT '07:00'
+              )
+            ''');
+            await customStatement('INSERT INTO reminder_preferences_new SELECT * FROM reminder_preferences');
+            await customStatement('DROP TABLE reminder_preferences');
+            await customStatement('ALTER TABLE reminder_preferences_new RENAME TO reminder_preferences');
+          });
+        } finally {
+          await customStatement('PRAGMA foreign_keys = ON');
+        }
       }
 
       await _ensureIndexes();

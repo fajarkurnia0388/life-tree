@@ -344,6 +344,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
           );
 
       try {
+        if (_reminderEnabled) {
+          final hasPermission = await NotificationService.requestPermission();
+          if (!hasPermission && mounted) {
+            SnackBarService.showWarning(
+              context,
+              'Izin notifikasi ditolak. Pengingat tidak akan aktif.',
+            );
+          }
+        }
         await _syncReminder(habitId, vocabularyLevel);
       } catch (e) {
         if (mounted) {
@@ -390,6 +399,15 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
           .createHabit(newHabit: newHabit, reminder: reminder);
 
       try {
+        if (_reminderEnabled) {
+          final hasPermission = await NotificationService.requestPermission();
+          if (!hasPermission && mounted) {
+            SnackBarService.showWarning(
+              context,
+              'Izin notifikasi ditolak. Pengingat tidak akan aktif.',
+            );
+          }
+        }
         await _syncReminder(habitId, vocabularyLevel);
       } catch (e) {
         if (mounted) {

@@ -251,6 +251,7 @@ class ThinkingCanvasController extends Notifier<ThinkingCanvasState> {
   }
 
   Future<void> commitToHistory() async {
+    _draftDebounce?.cancel();
     final method = state.selectedMethod;
     final content = state.currentDraftContent;
     if (method == null || content.trim().isEmpty) return;
