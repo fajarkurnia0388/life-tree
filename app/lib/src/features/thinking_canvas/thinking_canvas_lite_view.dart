@@ -8,7 +8,9 @@ import '../../core/i18n/daoji_vocabulary_provider.dart';
 import '../../core/services/snackbar_service.dart';
 import 'domain/thinking_method.dart';
 import 'widgets/canvas_active_session_widget.dart';
+import 'widgets/canvas_app_bar_widget.dart';
 import 'widgets/canvas_method_selector_widget.dart';
+import 'widgets/canvas_save_dialog.dart';
 import 'widgets/canvas_workspace_body.dart';
 import 'widgets/thinking_canvas_onboarding_dialog.dart';
 import 'thinking_canvas_state.dart';
@@ -104,55 +106,14 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          leading: hasActiveMethod
-              ? IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: _confirmSaveAndClearCanvas,
-                )
-              : null,
-          title: Text(
-            hasActiveMethod
-                ? _getMethodDisplayName(canvasState.selectedMethod!)
-                : DaojiText.resolve(
-                    DaojiTextKey.thinkingCanvasTitle,
-                    vocabularyLevel,
-                  ),
-          ),
-          actions: [
-            if (hasActiveMethod && canvasState.hasContent)
-              Padding(
-                padding: const EdgeInsets.only(right: 4),
-                child: AnimatedBuilder(
-                  animation: _saveIndicatorOpacity,
-                  builder: (context, child) {
-                    return Opacity(
-                      opacity: canvasState.lastSavedAt != null
-                          ? _saveIndicatorOpacity.value
-                          : 0.0,
-                      child: child,
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Text(
-                      canvasState.lastSavedLabel,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            IconButton(
-              icon: const Icon(Icons.history_rounded),
-              tooltip: DaojiText.resolve(
-                DaojiTextKey.thinkingCanvasHistory,
-                vocabularyLevel,
-              ),
-              onPressed: () => _showSessionHistory(context),
-            ),
-          ],
+        appBar: CanvasAppBarWidget(
+          hasActiveMethod: hasActiveMethod,
+          canvasState: canvasState,
+          vocabularyLevel: vocabularyLevel,
+          getMethodDisplayName: _getMethodDisplayName,
+          onBack: _confirmSaveAndClearCanvas,
+          onShowHistory: () => _showSessionHistory(context),
+          saveIndicatorOpacity: _saveIndicatorOpacity,
         ),
         body: canvasState.selectedMethod == null
             ? CanvasMethodSelectorWidget(
@@ -184,40 +145,15 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
   void _confirmSaveAndClearCanvas() {
     final state = ref.read(thinkingCanvasProvider);
     final level = ref.read(daojiVocabularyLevelValueProvider);
-    String t(DaojiTextKey key) => DaojiText.resolve(key, level);
     if (state.selectedMethod != null && state.hasContent) {
       HapticFeedback.mediumImpact();
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: Text(t(DaojiTextKey.thinkingCanvasSaveSessionTitle)),
-          content: Text(t(DaojiTextKey.thinkingCanvasSaveSessionBody)),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                ref.read(thinkingCanvasProvider.notifier).clearCanvas();
-              },
-              child: Text(
-                t(DaojiTextKey.thinkingCanvasDiscard),
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(t(DaojiTextKey.systemCancel)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _saveAndClearCanvas();
-              },
-              child: Text(t(DaojiTextKey.systemSave)),
-            ),
-          ],
+        builder: (context) => CanvasSaveDialog(
+          vocabularyLevel: level,
+          onDiscard: () =>
+              ref.read(thinkingCanvasProvider.notifier).clearCanvas(),
+          onSave: _saveAndClearCanvas,
         ),
       );
     } else {

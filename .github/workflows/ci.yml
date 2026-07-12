@@ -39,8 +39,8 @@ jobs:
           sudo apt-get update && sudo apt-get install -y lcov
           COVERAGE=$(lcov --summary coverage/lcov.info | grep "lines" | awk '{print $2}' | sed 's/%//')
           echo "Coverage: $COVERAGE%"
-          if (( $(echo "$COVERAGE < 20" | bc -l) )); then
-            echo "Coverage $COVERAGE% is below threshold 20%"
+          if (( $(echo "$COVERAGE < 25" | bc -l) )); then
+            echo "Coverage $COVERAGE% is below threshold 25%"
             exit 1
           fi
 
