@@ -426,26 +426,4 @@ class SafetyCardView extends ConsumerWidget {
       ),
     );
   }
-
-  void _showCallMockDialog(BuildContext context, String serviceName) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Menghubungi Layanan...'),
-          content: Text(
-            'Dialer tidak dapat dibuka otomatis. Silakan hubungi secara manual:\n\n'
-            '$serviceName\n\n'
-            'Untuk Healing119, hubungi 119 lalu pilih ekstensi 8.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Tutup'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
