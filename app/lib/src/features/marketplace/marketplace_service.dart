@@ -45,9 +45,15 @@ class LocalMarketplaceService implements MarketplaceService {
   final AppDatabase _db;
   LocalMarketplaceService(this._db);
 
+  bool _seeded = false;
+
   Future<void> _seedIfEmpty() async {
+    if (_seeded) return;
     final count = await (_db.select(_db.marketplaceTemplates)..limit(1)).get();
-    if (count.isNotEmpty) return;
+    if (count.isNotEmpty) {
+      _seeded = true;
+      return;
+    }
 
     final now = DateTime.now();
     final initialTemplates = [
@@ -171,6 +177,7 @@ class LocalMarketplaceService implements MarketplaceService {
     await _db.batch((batch) {
       batch.insertAll(_db.marketplaceTemplates, initialTemplates);
     });
+    _seeded = true;
   }
 
   MarketplaceTemplate _habitTemplate({

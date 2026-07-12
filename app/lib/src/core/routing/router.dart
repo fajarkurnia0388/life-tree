@@ -34,7 +34,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       final isGoingToOnboarding = state.matchedLocation == '/onboarding';
 
-      if (!value) {
+      if (!value && !isGoingToOnboarding) {
         // User has not finished onboarding, force them to Onboarding
         return '/onboarding';
       }

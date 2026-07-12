@@ -32,7 +32,7 @@ class ValueMirrorSessionView extends ConsumerStatefulWidget {
 
 class _ValueMirrorSessionViewState
     extends ConsumerState<ValueMirrorSessionView> {
-  late final Future<List<dynamic>> _sessionFuture;
+  late Future<List<dynamic>> _sessionFuture;
   final _pageController = PageController();
   int _currentIndex = 0;
   bool _isSaving = false;

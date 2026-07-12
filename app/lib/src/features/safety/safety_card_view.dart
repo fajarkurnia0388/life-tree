@@ -105,14 +105,17 @@ class SafetyCardView extends ConsumerWidget {
                     onTap: () async {
                       unawaited(_logHotlineTap(ref, 'SEJIWA_Call'));
                       final uri = Uri.parse('tel:119');
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri);
-                      } else {
+                      try {
+                        final launched = await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                        if (!launched && context.mounted) {
+                          _showManualCallFallback(context, '119', 'SEJIWA');
+                        }
+                      } catch (e) {
                         if (context.mounted) {
-                          _showCallMockDialog(
-                            context,
-                            'Layanan SEJIWA (119 Ext 8)',
-                          );
+                          _showManualCallFallback(context, '119', 'SEJIWA');
                         }
                       }
                     },
@@ -125,11 +128,13 @@ class SafetyCardView extends ConsumerWidget {
                               final url = Uri.parse(
                                 'https://api.whatsapp.com/send/?phone=6281380073120&text=halo%20kak%2C%20saya%20ingin%20bercerita%20mengenai...&type=phone_number&app_absent=0',
                               );
-                              if (await canLaunchUrl(url)) {
+                              try {
                                 await launchUrl(
                                   url,
                                   mode: LaunchMode.externalApplication,
                                 );
+                              } catch (e) {
+                                debugPrint('Failed to launch WhatsApp: $e');
                               }
                             },
                             icon: const Icon(Icons.chat_outlined, size: 16),
@@ -155,11 +160,13 @@ class SafetyCardView extends ConsumerWidget {
                               final url = Uri.parse(
                                 'https://www.healing119.id/',
                               );
-                              if (await canLaunchUrl(url)) {
+                              try {
                                 await launchUrl(
                                   url,
                                   mode: LaunchMode.externalApplication,
                                 );
+                              } catch (e) {
+                                debugPrint('Failed to launch website: $e');
                               }
                             },
                             icon: const Icon(Icons.language_rounded, size: 16),
@@ -193,14 +200,17 @@ class SafetyCardView extends ConsumerWidget {
                     onTap: () async {
                       unawaited(_logHotlineTap(ref, 'PSC 119'));
                       final uri = Uri.parse('tel:119');
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri);
-                      } else {
+                      try {
+                        final launched = await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                        if (!launched && context.mounted) {
+                          _showManualCallFallback(context, '119', 'PSC 119');
+                        }
+                      } catch (e) {
                         if (context.mounted) {
-                          _showCallMockDialog(
-                            context,
-                            'Pusat Medis Darurat PSC (119)',
-                          );
+                          _showManualCallFallback(context, '119', 'PSC 119');
                         }
                       }
                     },
@@ -218,14 +228,17 @@ class SafetyCardView extends ConsumerWidget {
                     onTap: () async {
                       unawaited(_logHotlineTap(ref, 'LISA_Call'));
                       final uri = Uri.parse('tel:08113855472');
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri);
-                      } else {
+                      try {
+                        final launched = await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                        if (!launched && context.mounted) {
+                          _showManualCallFallback(context, '0811-3855-472', 'LISA Helpline');
+                        }
+                      } catch (e) {
                         if (context.mounted) {
-                          _showCallMockDialog(
-                            context,
-                            'LISA Helpline (0811-3855-472)',
-                          );
+                          _showManualCallFallback(context, '0811-3855-472', 'LISA Helpline');
                         }
                       }
                     },
@@ -238,11 +251,13 @@ class SafetyCardView extends ConsumerWidget {
                               final url = Uri.parse(
                                 'https://wa.me/628113855472?text=Halo%20LISA%20Helpline%2C%20saya%20membutuhkan%20teman%20bicara%20dan%20bantuan%20terkait%20kesehatan%20mental%20saya',
                               );
-                              if (await canLaunchUrl(url)) {
+                              try {
                                 await launchUrl(
                                   url,
                                   mode: LaunchMode.externalApplication,
                                 );
+                              } catch (e) {
+                                debugPrint('Failed to launch WhatsApp: $e');
                               }
                             },
                             icon: const Icon(Icons.chat_outlined, size: 16),
@@ -379,6 +394,35 @@ class SafetyCardView extends ConsumerWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  void _showManualCallFallback(BuildContext context, String number, String service) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Hubungi $service'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Dialer tidak dapat dibuka otomatis.'),
+            const SizedBox(height: 12),
+            const Text('Silakan hubungi manual:'),
+            const SizedBox(height: 8),
+            SelectableText(
+              number,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tutup'),
+          ),
+        ],
       ),
     );
   }

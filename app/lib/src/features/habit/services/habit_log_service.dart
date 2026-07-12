@@ -23,26 +23,31 @@ class HabitLogService {
 
       if (existing.isNotEmpty) {
         final log = existing.first;
-        if (log.status != HabitStatus.done) {
-          await (_db.update(
-            _db.habitLogs,
-          )..where((tbl) => tbl.logId.equals(log.logId))).write(
-            HabitLogsCompanion(
-              status: const drift.Value(HabitStatus.done),
-              durationTargetMin: drift.Value(habit.mvaDurationMin),
-              durationActualMin: drift.Value(habit.mvaDurationMin),
-              frictionReasonSelected: const drift.Value(null),
-              deletedAt: const drift.Value(null),
-            ),
-          );
 
-          final newCount = habit.lifetimeDoneCount + 1;
-          await (_db.update(_db.habits)
-                ..where((tbl) => tbl.habitId.equals(habit.habitId)))
-              .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
-
-          await _updateCompletionRate(habit.habitId);
+        if (log.status == HabitStatus.done && log.deletedAt == null) {
+          return; // Idempotent
         }
+
+        await (_db.update(
+          _db.habitLogs,
+        )..where((tbl) => tbl.logId.equals(log.logId))).write(
+          HabitLogsCompanion(
+            status: const drift.Value(HabitStatus.done),
+            durationTargetMin: drift.Value(habit.mvaDurationMin),
+            durationActualMin: drift.Value(habit.mvaDurationMin),
+            frictionReasonSelected: const drift.Value(null),
+            deletedAt: const drift.Value(null),
+          ),
+        );
+
+        // FIX: Atomic increment via SQL
+        await _db.customUpdate(
+          'UPDATE habits SET lifetime_done_count = lifetime_done_count + 1 WHERE habit_id = ?',
+          variables: [drift.Variable<String>(habit.habitId)],
+          updates: {_db.habits},
+        );
+
+        await _updateCompletionRate(habit.habitId);
       } else {
         final logId = const Uuid().v4();
         await _db
@@ -58,10 +63,12 @@ class HabitLogService {
               ),
             );
 
-        final newCount = habit.lifetimeDoneCount + 1;
-        await (_db.update(_db.habits)
-              ..where((tbl) => tbl.habitId.equals(habit.habitId)))
-            .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+        // FIX: Atomic increment via SQL
+        await _db.customUpdate(
+          'UPDATE habits SET lifetime_done_count = lifetime_done_count + 1 WHERE habit_id = ?',
+          variables: [drift.Variable<String>(habit.habitId)],
+          updates: {_db.habits},
+        );
 
         await _updateCompletionRate(habit.habitId);
       }
@@ -144,10 +151,15 @@ class HabitLogService {
             ..where((tbl) => tbl.logId.equals(log.logId)))
           .write(HabitLogsCompanion(deletedAt: drift.Value(now)));
 
-      final newCount = (habit.lifetimeDoneCount - 1).clamp(0, 99999);
-      await (_db.update(_db.habits)
-            ..where((tbl) => tbl.habitId.equals(habit.habitId)))
-          .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+      // FIX: Atomic decrement via SQL with floor at 0
+      await _db.customUpdate(
+        'UPDATE habits SET lifetime_done_count = CASE '
+        'WHEN lifetime_done_count > 0 THEN lifetime_done_count - 1 '
+        'ELSE 0 END '
+        'WHERE habit_id = ?',
+        variables: [drift.Variable<String>(habit.habitId)],
+        updates: {_db.habits},
+      );
 
       await _updateCompletionRate(habit.habitId);
     });
@@ -184,10 +196,15 @@ class HabitLogService {
         );
 
         if (wasDone) {
-          final newCount = (habit.lifetimeDoneCount - 1).clamp(0, 99999);
-          await (_db.update(_db.habits)
-                ..where((tbl) => tbl.habitId.equals(habit.habitId)))
-              .write(HabitsCompanion(lifetimeDoneCount: drift.Value(newCount)));
+          // FIX: Atomic decrement via SQL with floor at 0
+          await _db.customUpdate(
+            'UPDATE habits SET lifetime_done_count = CASE '
+            'WHEN lifetime_done_count > 0 THEN lifetime_done_count - 1 '
+            'ELSE 0 END '
+            'WHERE habit_id = ?',
+            variables: [drift.Variable<String>(habit.habitId)],
+            updates: {_db.habits},
+          );
         }
       } else {
         final logId = const Uuid().v4();

@@ -195,7 +195,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
               ),
             );
 
-        if (isLowMood) {
+        if (shouldLogPrompt) {
           await db
               .into(db.wellnessPromptLogs)
               .insert(

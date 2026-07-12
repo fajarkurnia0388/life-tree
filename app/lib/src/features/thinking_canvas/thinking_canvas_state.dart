@@ -142,7 +142,9 @@ class ThinkingCanvasController extends Notifier<ThinkingCanvasState> {
       } else {
         state = state.copyWith(prefsLoaded: true);
       }
-    } catch (_) {
+    } catch (e, stackTrace) {
+      debugPrint('Error loading canvas prefs: $e');
+      debugPrintStack(stackTrace: stackTrace);
       state = state.copyWith(prefsLoaded: true);
     }
   }
@@ -168,8 +170,9 @@ class ThinkingCanvasController extends Notifier<ThinkingCanvasState> {
               deletedAt: const drift.Value(null),
             ),
           );
-    } catch (_) {
-      // Non-critical prefs
+    } catch (e, stackTrace) {
+      debugPrint('Error persisting canvas prefs: $e');
+      debugPrintStack(stackTrace: stackTrace);
     }
   }
 
@@ -237,7 +240,9 @@ class ThinkingCanvasController extends Notifier<ThinkingCanvasState> {
           isSavingDraft: false,
           draftSavedAt: DateTime.now(),
         );
-      } catch (_) {
+      } catch (e, stackTrace) {
+        debugPrint('Error saving draft: $e');
+        debugPrintStack(stackTrace: stackTrace);
         if (_disposed) return;
         state = state.copyWith(isSavingDraft: false);
       }
@@ -296,6 +301,12 @@ class ThinkingCanvasController extends Notifier<ThinkingCanvasState> {
   /// Clear canvas but preserve favorites, recents, and onboarding status
   void clearCanvas() {
     _draftDebounce?.cancel();
+    try {
+      draftService.deleteDraft();
+    } catch (e, stackTrace) {
+      debugPrint('Failed to delete draft: $e');
+      debugPrintStack(stackTrace: stackTrace);
+    }
     state = ThinkingCanvasState(
       recentMethods: state.recentMethods,
       favoriteMethods: state.favoriteMethods,

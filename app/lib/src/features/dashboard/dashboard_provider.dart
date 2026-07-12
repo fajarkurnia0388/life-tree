@@ -372,12 +372,22 @@ final dashboardDataProvider = FutureProvider<DashboardData>((ref) async {
     throw Exception('User profile not initialized');
   }
 
-  final cumulativeDays = await ref.watch(cumulativeDaysProvider.future);
-  final season = await ref.watch(currentSeasonProvider.future);
-  final habitsToday = await ref.watch(habitsTodayProvider.future);
-  final actionOfTheDay = await ref.watch(actionOfTheDayProvider.future);
-  final hasOverdueDecisions = await ref.watch(overdueDecisionsProvider.future);
-  final wellBeing = await ref.watch(wellBeingStatusProvider.future);
+  // FIX: Parallelize independent provider reads
+  final results = await Future.wait([
+    ref.watch(cumulativeDaysProvider.future),
+    ref.watch(currentSeasonProvider.future),
+    ref.watch(habitsTodayProvider.future),
+    ref.watch(actionOfTheDayProvider.future),
+    ref.watch(overdueDecisionsProvider.future),
+    ref.watch(wellBeingStatusProvider.future),
+  ]);
+
+  final cumulativeDays = results[0] as int;
+  final season = results[1] as String;
+  final habitsToday = results[2] as List<HabitWithLog>;
+  final actionOfTheDay = results[3] as Habit?;
+  final hasOverdueDecisions = results[4] as bool;
+  final wellBeing = results[5] as WellBeingStatus;
 
   final totalScheduledToday = habitsToday.length;
   final totalDoneToday = habitsToday
