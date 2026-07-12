@@ -212,7 +212,7 @@ class _MarketplaceViewState extends ConsumerState<MarketplaceView> {
         db.userProfiles,
       )..where((tbl) => tbl.userId.equals(profile.userId))).write(
         UserProfilesCompanion(
-          coreValues: drift.Value(const JsonEncoder().convert(currentValues)),
+          coreValues: drift.Value(currentValues),
         ),
       );
 

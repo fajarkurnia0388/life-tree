@@ -217,7 +217,7 @@ class CompassComparisonDialog extends ConsumerWidget {
 
     try {
       await (db.update(db.userProfiles)..where((tbl) => tbl.userId.equals(profile.userId)))
-          .write(UserProfilesCompanion(coreValues: drift.Value(jsonEncode(currentDeclared))));
+          .write(UserProfilesCompanion(coreValues: drift.Value(currentDeclared)));
       ref.invalidate(dashboardDataProvider);
 
       if (context.mounted) {

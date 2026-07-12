@@ -114,15 +114,12 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     }
 
     final userId = const Uuid().v4();
-    final String domainScoresJson = jsonEncode(
-      _auditScores.map((k, v) => MapEntry(k, v.toInt())),
-    );
 
     try {
       await ref.read(onboardingServiceProvider).completeOnboarding(
             userId: userId,
             ageBand: _selectedAgeBand,
-            domainScoresJson: domainScoresJson,
+            domainScores: _auditScores,
             cultivationThemeEnabled: _cultivationThemeEnabled,
           );
 

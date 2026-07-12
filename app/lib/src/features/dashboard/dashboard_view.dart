@@ -22,6 +22,7 @@ import '../habit/services/habit_log_service.dart';
 import 'widgets/season_badge_widget.dart';
 import 'sheets/friction_intervention_sheet.dart';
 import 'widgets/tree_display_widget.dart';
+import 'widgets/tree_vitality_card.dart';
 import '../cultivation/widgets/cultivation_badge.dart';
 import '../cultivation/widgets/cultivation_progress_bar.dart';
 
@@ -193,17 +194,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             _selectedDomainFilter,
           );
 
-          Map<String, dynamic> domainScores = {};
-          try {
-            domainScores =
-                parseDomainScoresJson(data.profile.latestDomainScores);
-          } catch (e, stackTrace) {
-            ref.read(errorLoggerProvider).logError(
-                  e,
-                  stackTrace,
-                  context: 'DashboardView.parseDomainScores',
-                );
-          }
+          final Map<String, dynamic> domainScores =
+              data.profile.latestDomainScores ?? {};
 
           final Habit? activeActionOfTheDay = resolveActiveActionOfTheDay(
             domainFilter: _selectedDomainFilter,

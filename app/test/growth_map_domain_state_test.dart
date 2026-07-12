@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/native.dart';
@@ -33,7 +32,7 @@ void main() {
           ageBand: '18-24',
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
-          latestDomainScores: drift.Value(jsonEncode({'Tubuh': 3.0})),
+          latestDomainScores: const drift.Value({'Tubuh': 3.0}),
         ),
       );
 
@@ -52,7 +51,7 @@ void main() {
           ageBand: '18-24',
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
-          latestDomainScores: drift.Value(jsonEncode({'Tubuh': 6.0})),
+          latestDomainScores: const drift.Value({'Tubuh': 6.0}),
         ),
       );
 
@@ -68,7 +67,7 @@ void main() {
           ageBand: '18-24',
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
-          latestDomainScores: drift.Value(jsonEncode({'Tubuh': 9.0})),
+          latestDomainScores: const drift.Value({'Tubuh': 9.0}),
         ),
       );
 

@@ -17,7 +17,7 @@ class OnboardingService {
   Future<void> completeOnboarding({
     required String userId,
     required String ageBand,
-    required String domainScoresJson,
+    required Map<String, double> domainScores,
     required bool cultivationThemeEnabled,
   }) async {
     final now = DateTime.now();
@@ -29,7 +29,7 @@ class OnboardingService {
       engagementState: const drift.Value('Active'),
       timezone: const drift.Value('Asia/Jakarta'),
       weekStartDay: const drift.Value(1),
-      latestDomainScores: drift.Value(domainScoresJson),
+      latestDomainScores: drift.Value(domainScores),
       canopyLoadCapacity: const drift.Value(10),
       wellnessDisclaimerAcknowledged: const drift.Value(true),
       cultivationThemeEnabled: drift.Value(cultivationThemeEnabled),
@@ -45,7 +45,7 @@ class OnboardingService {
     final audit = LifeAuditsCompanion.insert(
       auditId: const Uuid().v4(),
       userId: userId,
-      domainScores: domainScoresJson,
+      domainScores: domainScores,
       timestamp: now,
     );
 

@@ -49,7 +49,7 @@ void main() {
       final profile = await (db.select(db.userProfiles)..where((tbl) => tbl.userId.equals('user-123'))).getSingle();
       expect(profile.revealedValueScores, isNotNull);
 
-      final Map<String, dynamic> tally = jsonDecode(profile.revealedValueScores!);
+      final tally = profile.revealedValueScores!;
       expect(tally['Stabilitas'], 1);
       expect(profile.revealedValueLastUpdatedAt, isNotNull);
     });
@@ -137,7 +137,7 @@ void main() {
       await service.recordBinaryResponse(userId: 'user-123', dilemmaKey: 'd6', chosenOptionLabel: 'A', chosenValueTag: 'Stabilitas');
 
       final profile = await (db.select(db.userProfiles)..where((tbl) => tbl.userId.equals('user-123'))).getSingle();
-      final Map<String, dynamic> tally = jsonDecode(profile.revealedValueScores!);
+      final tally = profile.revealedValueScores!;
 
        // Stabilitas should be 3, Kebebasan should be 2 (since d3 is soft-deleted)
       expect(tally['Stabilitas'], 3);

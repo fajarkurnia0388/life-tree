@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/native.dart';
@@ -26,8 +25,8 @@ void main() {
         ageBand: '18-24',
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
-        coreValues: drift.Value(jsonEncode(['Kesehatan', 'Kebebasan', 'Keluarga'])),
-        latestDomainScores: drift.Value(jsonEncode({'Tubuh': 9.0, 'Keuangan': 4.0})),
+        coreValues: const drift.Value(['Kesehatan', 'Kebebasan', 'Keluarga']),
+        latestDomainScores: const drift.Value({'Tubuh': 9.0, 'Keuangan': 4.0}),
       ),
     );
   });

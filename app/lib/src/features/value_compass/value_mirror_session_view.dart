@@ -199,19 +199,9 @@ class _ValueMirrorSessionViewState
 
       int totalResponses = 0;
       if (profile.revealedValueScores != null) {
-        try {
-          final Map<String, dynamic> raw = jsonDecode(
-            profile.revealedValueScores!,
-          );
-          for (final v in raw.values) {
-            totalResponses += v as int;
-          }
-        } catch (e, stackTrace) {
-          ref.read(errorLoggerProvider).logError(
-            e,
-            stackTrace,
-            context: 'ValueMirrorSessionView.parseRevealedValueScores',
-          );
+        final raw = profile.revealedValueScores!;
+        for (final v in raw.values) {
+          totalResponses += v;
         }
       }
 

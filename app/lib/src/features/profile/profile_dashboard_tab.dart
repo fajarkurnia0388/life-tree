@@ -392,7 +392,7 @@ class _EditCompassDialogState extends ConsumerState<_EditCompassDialog> {
                 db.userProfiles,
               )..where((tbl) => tbl.userId.equals(widget.profile.userId))).write(
                 UserProfilesCompanion(
-                  coreValues: drift.Value(jsonEncode(values)),
+                  coreValues: drift.Value(values),
                 ),
               );
               ref.invalidate(dashboardDataProvider);

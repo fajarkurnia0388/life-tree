@@ -74,12 +74,12 @@ void main() {
     // 2. Set core values
     final list = ['Kesehatan 🏃', 'Kebebasan 🗽', 'Keluarga 👨‍👩‍👧'];
     await (db.update(db.userProfiles)..where((tbl) => tbl.userId.equals(userId)))
-        .write(UserProfilesCompanion(coreValues: drift.Value(jsonEncode(list))));
+        .write(UserProfilesCompanion(coreValues: drift.Value(list)));
 
     // Verify saved state
     profile = (await db.select(db.userProfiles).get()).first;
     expect(profile.coreValues, isNotNull);
-    final parsed = List<String>.from(jsonDecode(profile.coreValues!));
+    final parsed = profile.coreValues!;
     expect(parsed.length, 3);
     expect(parsed[0], 'Kesehatan 🏃');
   });

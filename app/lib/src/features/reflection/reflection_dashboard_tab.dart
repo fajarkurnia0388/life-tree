@@ -41,14 +41,13 @@ class _ReflectionDashboardTabState extends ConsumerState<ReflectionDashboardTab>
 
     if (result != null) {
       final db = ref.read(dbProvider);
-      final newScoresJson = jsonEncode(result);
 
       try {
         await (db.update(
           db.userProfiles,
         )..where((t) => t.userId.equals(profile.userId))).write(
           UserProfilesCompanion(
-            latestDomainScores: drift.Value(newScoresJson),
+            latestDomainScores: drift.Value(result),
             updatedAt: drift.Value(DateTime.now()),
           ),
         );
@@ -59,7 +58,7 @@ class _ReflectionDashboardTabState extends ConsumerState<ReflectionDashboardTab>
               LifeAuditsCompanion.insert(
                 auditId: const Uuid().v4(),
                 userId: profile.userId,
-                domainScores: newScoresJson,
+                domainScores: result,
                 timestamp: DateTime.now(),
               ),
             );
@@ -233,18 +232,9 @@ class _ReflectionDashboardTabState extends ConsumerState<ReflectionDashboardTab>
                   // Get real historical scores from life audits history
                   final List<double> scores = [];
                   for (final audit in history) {
-                    try {
-                      final Map<String, dynamic> parsed = jsonDecode(audit.domainScores);
-                      final val = parsed[d];
-                      if (val is num) {
-                        scores.add(val.toDouble());
-                      }
-                    } catch (e, stackTrace) {
-                      ref.read(errorLoggerProvider).logError(
-                            e,
-                            stackTrace,
-                            context: 'ReflectionDashboardTab.parseHistoryScores',
-                          );
+                    final val = audit.domainScores[d];
+                    if (val != null) {
+                      scores.add(val);
                     }
                   }
                   if (scores.isEmpty) {

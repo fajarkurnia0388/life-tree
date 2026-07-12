@@ -19,7 +19,14 @@ void main() {
             ageBand: '18-24',
             vocabularyLevel: const drift.Value('mortal'),
             latestDomainScores: const drift.Value(
-              '{"Tubuh":6.0,"Keuangan":5.0,"Hubungan":5.0,"Emosi":5.0,"Karir":5.0,"Rekreasi":5.0}',
+              {
+                "Tubuh": 6.0,
+                "Keuangan": 5.0,
+                "Hubungan": 5.0,
+                "Emosi": 5.0,
+                "Karir": 5.0,
+                "Rekreasi": 5.0,
+              },
             ),
             createdAt: now,
             updatedAt: now,

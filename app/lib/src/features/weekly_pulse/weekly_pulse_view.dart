@@ -123,7 +123,6 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
         currentProfile.parsedDomainScores,
       );
       domainScores['Emosi'] = mappedScore.toDouble();
-      final domainScoresJson = jsonEncode(domainScores);
       final isLowMood = percentage < 50;
       final lastPrompt = currentProfile.lastWellnessPromptAt;
       final shouldLogPrompt =
@@ -175,7 +174,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
           db.userProfiles,
         )..where((tbl) => tbl.userId.equals(userId))).write(
           UserProfilesCompanion(
-            latestDomainScores: drift.Value(domainScoresJson),
+            latestDomainScores: drift.Value(domainScores),
             supportMode: drift.Value(newSupportMode),
             recoveryEndDate: recoveryEndDate,
             lastWellnessPromptAt: shouldLogPrompt
@@ -193,7 +192,7 @@ class _WeeklyPulseViewState extends ConsumerState<WeeklyPulseView> {
               LifeAuditsCompanion.insert(
                 auditId: const Uuid().v4(),
                 userId: userId,
-                domainScores: domainScoresJson,
+                domainScores: domainScores,
                 timestamp: now,
               ),
             );

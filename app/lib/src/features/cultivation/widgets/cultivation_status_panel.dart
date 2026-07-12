@@ -97,7 +97,7 @@ class CultivationStatusPanel extends ConsumerWidget {
                     context,
                     icon: Icons.favorite,
                     label: CultivationStrings.lifeCompassTitle(languageLevel),
-                    value: cultivation.daoHeart!,
+                    value: cultivation.daoHeart!.join(', '),
                   ),
                 ],
               ],

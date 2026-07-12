@@ -38,10 +38,17 @@ void main() {
               userId: userId,
               ageBand: '25-35',
               latestDomainScores: const drift.Value(
-                '{"Tubuh":8.0,"Keuangan":6.0,"Hubungan":7.0,"Emosi":5.0,"Karir":6.5,"Rekreasi":7.5}',
+                {
+                  "Tubuh": 8.0,
+                  "Keuangan": 6.0,
+                  "Hubungan": 7.0,
+                  "Emosi": 5.0,
+                  "Karir": 6.5,
+                  "Rekreasi": 7.5,
+                },
               ),
               coreValues: const drift.Value(
-                'Kejujuran, Kesehatan, Kreativitas',
+                ["Kejujuran", "Kesehatan", "Kreativitas"],
               ),
               createdAt: now,
               updatedAt: now,
@@ -90,7 +97,14 @@ void main() {
               userId: userId,
               ageBand: '25-35',
               latestDomainScores: const drift.Value(
-                '{"Tubuh":8.0,"Keuangan":3.0,"Hubungan":9.0,"Emosi":4.0,"Karir":7.0,"Rekreasi":6.0}',
+                {
+                  "Tubuh": 8.0,
+                  "Keuangan": 3.0,
+                  "Hubungan": 9.0,
+                  "Emosi": 4.0,
+                  "Karir": 7.0,
+                  "Rekreasi": 6.0,
+                },
               ),
               createdAt: now,
               updatedAt: now,
@@ -120,7 +134,14 @@ void main() {
               userId: userId,
               ageBand: '25-35',
               latestDomainScores: const drift.Value(
-                '{"Tubuh":8.0,"Keuangan":2.0,"Hubungan":7.0,"Emosi":6.0,"Karir":5.0,"Rekreasi":4.0}',
+                {
+                  "Tubuh": 8.0,
+                  "Keuangan": 2.0,
+                  "Hubungan": 7.0,
+                  "Emosi": 6.0,
+                  "Karir": 5.0,
+                  "Rekreasi": 4.0,
+                },
               ),
               createdAt: now,
               updatedAt: now,
@@ -237,7 +258,7 @@ void main() {
             UserProfilesCompanion.insert(
               userId: userId,
               ageBand: '25-35',
-              coreValues: const drift.Value('Integrity, Growth, Balance'),
+              coreValues: const drift.Value(['Integrity', 'Growth', 'Balance']),
               recoveryEndDate: drift.Value(
                 now.subtract(const Duration(days: 30)),
               ),
@@ -352,7 +373,14 @@ void main() {
               userId: userId,
               ageBand: '25-35',
               latestDomainScores: const drift.Value(
-                '{"Tubuh":6.0,"Keuangan":6.5,"Hubungan":6.2,"Emosi":6.8,"Karir":6.3,"Rekreasi":6.5}',
+                {
+                  "Tubuh": 6.0,
+                  "Keuangan": 6.5,
+                  "Hubungan": 6.2,
+                  "Emosi": 6.8,
+                  "Karir": 6.3,
+                  "Rekreasi": 6.5,
+                },
               ),
               createdAt: now,
               updatedAt: now,

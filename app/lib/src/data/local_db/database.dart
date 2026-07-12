@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -6,6 +7,63 @@ import 'package:path/path.dart' as p;
 import '../../core/domain/app_constants.dart';
 
 part 'database.g.dart';
+
+class DomainScoresConverter extends TypeConverter<Map<String, double>, String> {
+  const DomainScoresConverter();
+
+  @override
+  Map<String, double> fromSql(String fromDb) {
+    try {
+      final parsed = jsonDecode(fromDb) as Map<String, dynamic>;
+      return parsed.map((k, v) => MapEntry(k, (v as num).toDouble()));
+    } catch (_) {
+      return {};
+    }
+  }
+
+  @override
+  String toSql(Map<String, double> value) {
+    return jsonEncode(value);
+  }
+}
+
+class StringListConverter extends TypeConverter<List<String>, String> {
+  const StringListConverter();
+
+  @override
+  List<String> fromSql(String fromDb) {
+    try {
+      final parsed = jsonDecode(fromDb) as List<dynamic>;
+      return parsed.map((e) => e.toString()).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  @override
+  String toSql(List<String> value) {
+    return jsonEncode(value);
+  }
+}
+
+class RevealedValueScoresConverter extends TypeConverter<Map<String, int>, String> {
+  const RevealedValueScoresConverter();
+
+  @override
+  Map<String, int> fromSql(String fromDb) {
+    try {
+      final parsed = jsonDecode(fromDb) as Map<String, dynamic>;
+      return parsed.map((k, v) => MapEntry(k, (v as num).toInt()));
+    } catch (_) {
+      return {};
+    }
+  }
+
+  @override
+  String toSql(Map<String, int> value) {
+    return jsonEncode(value);
+  }
+}
 
 @DataClassName('UserProfile')
 class UserProfiles extends Table {
@@ -18,7 +76,8 @@ class UserProfiles extends Table {
   TextColumn get timezone =>
       text().withDefault(const Constant('Asia/Jakarta'))();
   IntColumn get weekStartDay => integer().withDefault(const Constant(1))();
-  TextColumn get latestDomainScores => text().nullable()(); // JSON string
+  TextColumn get latestDomainScores =>
+      text().map(const DomainScoresConverter()).nullable()();
   IntColumn get canopyLoadCapacity =>
       integer().withDefault(const Constant(10))();
   BoolColumn get wellnessDisclaimerAcknowledged =>
@@ -36,11 +95,13 @@ class UserProfiles extends Table {
   TextColumn get themeMode => text().withDefault(const Constant('System'))();
   BoolColumn get circadianEnabled =>
       boolean().withDefault(const Constant(false))();
-  TextColumn get coreValues => text().nullable()();
+  TextColumn get coreValues =>
+      text().map(const StringListConverter()).nullable()();
   BoolColumn get isDeveloperMode =>
       boolean().withDefault(const Constant(false))();
   DateTimeColumn get recoveryEndDate => dateTime().nullable()();
-  TextColumn get revealedValueScores => text().nullable()();
+  TextColumn get revealedValueScores =>
+      text().map(const RevealedValueScoresConverter()).nullable()();
   DateTimeColumn get revealedValueLastUpdatedAt => dateTime().nullable()();
   BoolColumn get cultivationThemeEnabled =>
       boolean().withDefault(const Constant(true))();
@@ -55,7 +116,8 @@ class UserProfiles extends Table {
 class LifeAudits extends Table {
   TextColumn get auditId => text()();
   TextColumn get userId => text()();
-  TextColumn get domainScores => text()(); // JSON string
+  TextColumn get domainScores =>
+      text().map(const DomainScoresConverter())();
   DateTimeColumn get timestamp => dateTime()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 

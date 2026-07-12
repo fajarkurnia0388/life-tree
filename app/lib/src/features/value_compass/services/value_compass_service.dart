@@ -159,7 +159,7 @@ class ValueCompassService {
       _db.userProfiles,
     )..where((tbl) => tbl.userId.equals(userId))).write(
       UserProfilesCompanion(
-        revealedValueScores: drift.Value(jsonEncode(tally)),
+        revealedValueScores: drift.Value(tally),
         revealedValueLastUpdatedAt: drift.Value(DateTime.now()),
       ),
     );
@@ -173,17 +173,17 @@ class ValueCompassService {
     int topN = 3,
     int minResponses = 5,
   }) async {
-    if (profile.revealedValueScores == null) return [];
-    final Map<String, dynamic> raw = jsonDecode(profile.revealedValueScores!);
+    final raw = profile.revealedValueScores;
+    if (raw == null) return [];
     final totalResponses = raw.values.fold<int>(
       0,
-      (sum, v) => sum + (v as int),
+      (sum, v) => sum + v,
     );
     if (totalResponses < minResponses) return [];
 
     final entries = raw.entries.toList()
       ..sort((a, b) {
-        final cmp = (b.value as int).compareTo(a.value as int);
+        final cmp = b.value.compareTo(a.value);
         if (cmp != 0) return cmp;
         return a.key.compareTo(b.key); // tie-break alfabetis, deterministik
       });

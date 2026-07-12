@@ -89,7 +89,7 @@ class CultivationLayer {
   final int cumulativeDays;
 
   /// Core values / Dao Heart declaration
-  final String? daoHeart;
+  final List<String>? daoHeart;
 
   /// Detected heart demon (optional)
   final String? heartDemon;
@@ -260,9 +260,9 @@ class CultivationLayer {
     return CultivationSeason.growth;
   }
 
-  /// Map domain scores (JSON string) to palace scores
+  /// Map domain scores to palace scores
   static Map<CultivationPath, double> _mapDomainsToPalaces(
-    String? domainScoresJson,
+    Map<String, double>? domainScores,
   ) {
     final Map<CultivationPath, double> result = {
       CultivationPath.body: 5.0,
@@ -273,36 +273,26 @@ class CultivationLayer {
       CultivationPath.joy: 5.0,
     };
 
-    if (domainScoresJson == null || domainScoresJson.isEmpty) {
+    if (domainScores == null) {
       return result;
     }
 
-    try {
-      final Map<String, dynamic> domainScores = jsonDecode(domainScoresJson);
+    final mapping = {
+      'Tubuh': CultivationPath.body,
+      'Keuangan': CultivationPath.resource,
+      'Hubungan': CultivationPath.bond,
+      'Emosi': CultivationPath.heartSea,
+      'Karir': CultivationPath.craft,
+      'Rekreasi': CultivationPath.joy,
+    };
 
-      // Map domain keys to palaces
-      final mapping = {
-        'Tubuh': CultivationPath.body,
-        'Keuangan': CultivationPath.resource,
-        'Hubungan': CultivationPath.bond,
-        'Emosi': CultivationPath.heartSea,
-        'Karir': CultivationPath.craft,
-        'Rekreasi': CultivationPath.joy,
-      };
-
-      for (final entry in mapping.entries) {
-        final domainKey = entry.key;
-        final palace = entry.value;
-        if (domainScores.containsKey(domainKey)) {
-          final score = domainScores[domainKey];
-          if (score is num) {
-            result[palace] = score.toDouble().clamp(0.0, 10.0);
-          }
-        }
+    for (final entry in mapping.entries) {
+      final domainKey = entry.key;
+      final palace = entry.value;
+      final score = domainScores[domainKey];
+      if (score != null) {
+        result[palace] = score.clamp(0.0, 10.0);
       }
-    } catch (e) {
-      // If parsing fails, return defaults
-      debugPrint('CultivationLayer: Failed to parse domainScores: $e');
     }
 
     return result;
