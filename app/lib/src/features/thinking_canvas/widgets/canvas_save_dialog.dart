@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/i18n/daoji_text_key.dart';
 import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/i18n/daoji_vocabulary_level.dart';
-import '../../../core/i18n/daoji_vocabulary_provider.dart';
 
 /// Dialog to confirm saving or discarding canvas session.
 class CanvasSaveDialog extends StatelessWidget {

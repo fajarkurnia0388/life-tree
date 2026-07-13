@@ -145,7 +145,7 @@ class _AddHabitViewState extends ConsumerState<AddHabitView> {
     final languageLevel = ref.read(cultivationLanguageLevelProvider);
 
     final userId = await ref.read(currentUserIdProvider.future);
-    if (userId == null) return;
+    if (userId == null || !mounted) return;
 
     final handler = HabitSaveHandler(ref, context);
     final success = await handler.saveHabit(

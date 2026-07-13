@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/i18n/daoji_text_key.dart';
 import '../../../core/i18n/daoji_text_resolver.dart';
 import '../../../core/i18n/daoji_vocabulary_level.dart';
-import '../../../core/i18n/daoji_vocabulary_provider.dart';
 import '../thinking_canvas_state.dart';
 
 /// AppBar for Thinking Canvas with animated save indicator.

@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove"/>
 
+    <!-- Privacy: allowBackup=false; DB/files excluded. See docs/PRIVACY_THREAT_MODEL.md -->
     <application
         android:label="Daoji"
         android:name="${applicationName}"

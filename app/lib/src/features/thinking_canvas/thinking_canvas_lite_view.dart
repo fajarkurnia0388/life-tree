@@ -87,7 +87,6 @@ class _ThinkingCanvasLiteViewState extends ConsumerState<ThinkingCanvasLiteView>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final vocabularyLevel = ref.watch(daojiVocabularyLevelValueProvider);
     final canvasState = ref.watch(thinkingCanvasProvider);
     final hasActiveMethod = canvasState.selectedMethod != null;

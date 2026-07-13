@@ -107,7 +107,7 @@ void showTreeCaptureSuccessDialog({
                                 XFile(tempFile.path, mimeType: 'image/png'),
                               ],
                               text:
-                                  'Lihat keindahan pohon Daoji saya! 🌳 Hari ke-${cumulativeDays}. #Daoji',
+                                  'Lihat keindahan pohon Daoji saya! 🌳 Hari ke-$cumulativeDays. #Daoji',
                             ),
                           );
                         },
